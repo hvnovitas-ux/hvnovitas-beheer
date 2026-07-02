@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nieuwsbeheer | HV Novitas</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <div class="topbar">
+
+        <div class="logo">
+            🧡 HV Novitas Beheer
+        </div>
+
+        <div class="user">
+
+            👤 <span id="naam">...</span>
+
+            <button id="logout">
+                🚪 Uitloggen
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="welkom">
+
+        <h1>📰 Nieuwsbeheer</h1>
+
+        <p>
+            Publiceer nieuwsberichten voor de website.
+        </p>
+
+    </div>
+
+    <div class="kaart">
+
+        <h2>➕ Nieuw bericht</h2>
+
+        <br>
+
+        <label>Titel</label>
+
+        <input
+            type="text"
+            id="title"
+            placeholder="Titel">
+
+        <label>Bericht</label>
+
+        <textarea
+            id="text"
+            placeholder="Typ hier het nieuwsbericht..."></textarea>
+
+        <label>Foto (komt binnenkort)</label>
+
+        <input
+            type="file"
+            id="image"
+            accept="image/*">
+
+        <button id="publish">
+
+            📢 Publiceren
+
+        </button>
+
+        <br><br>
+
+        <div id="melding"></div>
+
+    </div>
+
+    <br>
+
+    <div class="kaart">
+
+        <h2>📰 Laatste berichten</h2>
+
+        <br>
+
+        <div id="newsList">
+
+            Nog geen nieuws geladen...
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="dashboard.js"></script>
+<script type="module" src="news.js"></script>
+
+</body>
+
+</html>
