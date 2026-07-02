@@ -13,53 +13,71 @@ import {
     getStorage
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
-// =====================================
-// Firebase Config
-// =====================================
+// ==========================================
+// HV NOVITAS BEHEER - FIREBASE
+// ==========================================
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
+
     authDomain: "hv-novitas-beheer.firebaseapp.com",
+
     databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+
     projectId: "hv-novitas-beheer",
+
     storageBucket: "hv-novitas-beheer.firebasestorage.app",
+
     messagingSenderId: "71716605241",
+
     appId: "1:71716605241:web:b7e87d680b7499421a6ce8"
+
 };
 
-// =====================================
-// Initialiseren
-// =====================================
+// ==========================================
+// INITIALISEREN
+// ==========================================
 
 const app = initializeApp(firebaseConfig);
 
-// =====================================
-// Authentication
-// =====================================
+// ==========================================
+// AUTHENTICATION
+// ==========================================
 
-export const auth = getAuth(app);
+const auth = getAuth(app);
 
-export const provider = new GoogleAuthProvider();
+const provider = new GoogleAuthProvider();
 
-// Altijd Google-account kiezen
 provider.setCustomParameters({
     prompt: "select_account"
 });
 
-// =====================================
-// Realtime Database
-// =====================================
+// ==========================================
+// DATABASE
+// ==========================================
 
-export const db = getDatabase(app);
+const db = getDatabase(app);
 
-// =====================================
-// Storage
-// =====================================
+// ==========================================
+// STORAGE
+// ==========================================
 
-export const storage = getStorage(app);
+const storage = getStorage(app);
 
-// =====================================
-// Console
-// =====================================
+// ==========================================
+// EXPORTS
+// ==========================================
+
+export {
+    auth,
+    provider,
+    db,
+    storage
+};
+
+// ==========================================
+// INFO
+// ==========================================
 
 console.log("🧡 HV Novitas Beheer succesvol verbonden met Firebase");
