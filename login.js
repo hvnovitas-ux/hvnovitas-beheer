@@ -8,19 +8,15 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-// ================================
-// Toegestane beheerders
-// ================================
+import {
+    ref,
+    get,
+    child
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const beheerders = [
-    "hvnovitas@gmail.com"
-    // Later:
-    // "patricia@gmail.com"
-];
-
-// ================================
-// Login
-// ================================
+import {
+    db
+} from "./firebase.js";
 
 const loginButton = document.getElementById("login");
 
@@ -34,42 +30,45 @@ async function login() {
     try {
 
         const result = await signInWithPopup(auth, provider);
+
         const user = result.user;
 
-        console.log("Ingelogd:", user.email);
+        console.log("Ingelogd als:", user.email);
 
-        // Geen beheerder
-        if (!beheerders.includes(user.email)) {
+        // Controle in Firebase of gebruiker beheerder is
+        const snapshot = await get(
+            child(ref(db), "admins/" + user.uid)
+        );
+
+        if (!snapshot.exists()) {
+
+            alert("❌ Je bent geen beheerder van HV Novitas.");
 
             await signOut(auth);
-
-            alert("❌ Je hebt geen toegang tot HV Novitas Beheer.");
 
             loginButton.disabled = false;
             loginButton.textContent = "🔐 Inloggen met Google";
 
             return;
+
         }
 
-        // Gegevens opslaan voor dashboard
-        sessionStorage.setItem("displayName", user.displayName || "");
-        sessionStorage.setItem("email", user.email || "");
-        sessionStorage.setItem("photoURL", user.photoURL || "");
+        sessionStorage.setItem("naam", user.displayName);
+        sessionStorage.setItem("email", user.email);
+        sessionStorage.setItem("foto", user.photoURL);
 
-        // Naar dashboard
-        window.location.replace("dashboard.html");
+        window.location.href = "dashboard.html";
 
-    } catch (error) {
+    }
+    catch(error){
 
         console.error(error);
 
-        alert(
-            "Inloggen mislukt.\n\n" +
-            error.message
-        );
+        alert(error.message);
 
         loginButton.disabled = false;
         loginButton.textContent = "🔐 Inloggen met Google";
+
     }
 
 }
