@@ -1,0 +1,251 @@
+/* ==========================================
+   HV NOVITAS - NIEUWSBEHEER
+========================================== */
+
+.formulier{
+
+    background:white;
+
+    color:#222;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+
+}
+
+.formulier h2{
+
+    margin-top:0;
+
+    color:#ff7a00;
+
+}
+
+.formulier label{
+
+    display:block;
+
+    margin-top:20px;
+
+    margin-bottom:8px;
+
+    font-weight:bold;
+
+}
+
+.formulier input[type=text]{
+
+    width:100%;
+
+    padding:12px;
+
+    font-size:16px;
+
+    border:1px solid #ccc;
+
+    border-radius:8px;
+
+    box-sizing:border-box;
+
+}
+
+.formulier textarea{
+
+    width:100%;
+
+    padding:12px;
+
+    font-size:16px;
+
+    border:1px solid #ccc;
+
+    border-radius:8px;
+
+    resize:vertical;
+
+    box-sizing:border-box;
+
+}
+
+.knoppen{
+
+    margin-top:25px;
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.knoppen button{
+
+    padding:14px 25px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+}
+
+#publish{
+
+    background:#ff7a00;
+
+    color:white;
+
+}
+
+#publish:hover{
+
+    background:#ff9500;
+
+}
+
+#reset{
+
+    background:#888;
+
+    color:white;
+
+}
+
+#reset:hover{
+
+    background:#666;
+
+}
+
+#melding{
+
+    margin-top:20px;
+
+    font-weight:bold;
+
+    color:green;
+
+}
+
+/* ==========================================
+   NIEUWSLIJST
+========================================== */
+
+.nieuwslijst{
+
+    margin-top:40px;
+
+}
+
+.bericht{
+
+    background:white;
+
+    color:#222;
+
+    padding:20px;
+
+    border-radius:12px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+
+}
+
+.bericht h3{
+
+    margin-top:0;
+
+    color:#ff7a00;
+
+}
+
+.bericht small{
+
+    color:#666;
+
+}
+
+.bericht p{
+
+    line-height:1.6;
+
+}
+
+.bericht button{
+
+    margin-right:10px;
+
+    margin-top:15px;
+
+    padding:10px 15px;
+
+    border:none;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+}
+
+.bericht button:first-of-type{
+
+    background:#2196F3;
+
+    color:white;
+
+}
+
+.bericht button:last-of-type{
+
+    background:#E53935;
+
+    color:white;
+
+}
+
+.bericht button:hover{
+
+    opacity:.9;
+
+}
+
+/* ==========================================
+   MOBIEL
+========================================== */
+
+@media(max-width:768px){
+
+    .formulier{
+
+        padding:20px;
+
+    }
+
+    .knoppen{
+
+        flex-direction:column;
+
+    }
+
+    .knoppen button{
+
+        width:100%;
+
+    }
+
+}
