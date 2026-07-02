@@ -1,30 +1,76 @@
-import { auth } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 
 import {
     onAuthStateChanged,
     signOut
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-const naam=document.getElementById("naam");
-const logout=document.getElementById("logout");
+import {
+    ref,
+    get,
+    child
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-onAuthStateChanged(auth,(user)=>{
+const naam = document.getElementById("naam");
+const logout = document.getElementById("logout");
 
-    if(!user){
+onAuthStateChanged(auth, async (user) => {
 
+    if (!user) {
         window.location.replace("index.html");
         return;
+    }
+
+    try {
+
+        // Controle of gebruiker beheerder is
+        const snapshot = await get(
+            child(ref(db), "admins/" + user.uid)
+        );
+
+        if (!snapshot.exists()) {
+
+            await signOut(auth);
+
+            window.location.replace("index.html");
+
+            return;
+        }
+
+        // Naam tonen
+        if (naam) {
+            naam.textContent = user.displayName || user.email;
+        }
+
+        // Profielfoto tonen (optioneel)
+        const foto = document.getElementById("foto");
+
+        if (foto && user.photoURL) {
+            foto.src = user.photoURL;
+            foto.style.display = "block";
+        }
+
+    } catch (error) {
+
+        console.error("Dashboard fout:", error);
+
+        await signOut(auth);
+
+        window.location.replace("index.html");
 
     }
 
-    naam.textContent=user.displayName;
-
 });
 
-logout.onclick=async()=>{
+// Uitloggen
+if (logout) {
 
-    await signOut(auth);
+    logout.addEventListener("click", async () => {
 
-    window.location.replace("index.html");
+        await signOut(auth);
 
-};
+        window.location.replace("index.html");
+
+    });
+
+}
