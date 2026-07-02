@@ -4,19 +4,8 @@ import {
 } from "./firebase.js";
 
 import {
-    signInWithPopup,
-    signOut
+    signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-import {
-    ref,
-    get,
-    child
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-import {
-    db
-} from "./firebase.js";
 
 const loginButton = document.getElementById("login");
 
@@ -33,38 +22,20 @@ async function login() {
 
         const user = result.user;
 
-        console.log("Ingelogd als:", user.email);
+        console.log("Ingelogd:", user);
 
-        // Controle in Firebase of gebruiker beheerder is
-        const snapshot = await get(
-            child(ref(db), "admins/" + user.uid)
-        );
-
-        if (!snapshot.exists()) {
-
-            alert("❌ Je bent geen beheerder van HV Novitas.");
-
-            await signOut(auth);
-
-            loginButton.disabled = false;
-            loginButton.textContent = "🔐 Inloggen met Google";
-
-            return;
-
-        }
-
-        sessionStorage.setItem("naam", user.displayName);
-        sessionStorage.setItem("email", user.email);
-        sessionStorage.setItem("foto", user.photoURL);
+        sessionStorage.setItem("uid", user.uid);
+        sessionStorage.setItem("naam", user.displayName || "");
+        sessionStorage.setItem("email", user.email || "");
+        sessionStorage.setItem("foto", user.photoURL || "");
 
         window.location.href = "dashboard.html";
 
-    }
-    catch(error){
+    } catch (error) {
 
         console.error(error);
 
-        alert(error.message);
+        alert("Inloggen mislukt.\n\n" + error.message);
 
         loginButton.disabled = false;
         loginButton.textContent = "🔐 Inloggen met Google";
