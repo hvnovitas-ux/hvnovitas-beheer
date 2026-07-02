@@ -8,39 +8,68 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-// Alleen deze e-mailadressen mogen inloggen
+// ================================
+// Toegestane beheerders
+// ================================
+
 const beheerders = [
-    hvnovitas@gmail.com"
-    // Later voegen we Patricia hier toe
+    "hvnovitas@gmail.com"
+    // Later:
+    // "patricia@gmail.com"
 ];
 
-document.getElementById("login").addEventListener("click", async () => {
+// ================================
+// Login
+// ================================
+
+const loginButton = document.getElementById("login");
+
+loginButton.addEventListener("click", login);
+
+async function login() {
+
+    loginButton.disabled = true;
+    loginButton.textContent = "⏳ Inloggen...";
 
     try {
 
         const result = await signInWithPopup(auth, provider);
-
         const user = result.user;
 
-        if (beheerders.includes(user.email)) {
+        console.log("Ingelogd:", user.email);
 
-            alert("Welkom " + user.displayName);
-
-            // Later sturen we door naar dashboard.html
-            // window.location = "dashboard.html";
-
-        } else {
-
-            alert("Je hebt geen toegang.");
+        // Geen beheerder
+        if (!beheerders.includes(user.email)) {
 
             await signOut(auth);
 
+            alert("❌ Je hebt geen toegang tot HV Novitas Beheer.");
+
+            loginButton.disabled = false;
+            loginButton.textContent = "🔐 Inloggen met Google";
+
+            return;
         }
+
+        // Gegevens opslaan voor dashboard
+        sessionStorage.setItem("displayName", user.displayName || "");
+        sessionStorage.setItem("email", user.email || "");
+        sessionStorage.setItem("photoURL", user.photoURL || "");
+
+        // Naar dashboard
+        window.location.replace("dashboard.html");
 
     } catch (error) {
 
-        alert(error.message);
+        console.error(error);
 
+        alert(
+            "Inloggen mislukt.\n\n" +
+            error.message
+        );
+
+        loginButton.disabled = false;
+        loginButton.textContent = "🔐 Inloggen met Google";
     }
 
-});
+}
