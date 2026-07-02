@@ -3,12 +3,12 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HV Novitas Beheer</title>
+    <title>HV Novitas Beheer</title>
 
-<link rel="stylesheet" href="beheer.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -16,7 +16,9 @@
 
 <div class="dashboard">
 
-    <div class="topbar">
+    <!-- Bovenbalk -->
+
+    <header class="topbar">
 
         <div class="logo">
             🧡 HV Novitas Beheer
@@ -24,7 +26,12 @@
 
         <div class="user">
 
-            👤 <span id="naam">...</span>
+            <img id="foto"
+                 src=""
+                 alt="Profielfoto"
+                 style="display:none;">
+
+            <span id="naam">Laden...</span>
 
             <button id="logout">
                 🚪 Uitloggen
@@ -32,86 +39,142 @@
 
         </div>
 
-    </div>
+    </header>
 
-    <div class="welkom">
+    <!-- Welkom -->
 
-        <h1>Welkom bij HV Novitas Beheer</h1>
+    <section class="welkom">
+
+        <h1>Welkom terug!</h1>
 
         <p>
+
             Vanuit dit dashboard beheer je de complete website van
-            HV Novitas.
+            <strong>HV Novitas</strong>.
+
         </p>
 
-        <div class="status">
+    </section>
 
-            <div class="statuskaart">
-                <span class="nummer">📰</span>
-                <span class="tekst">Nieuws</span>
-            </div>
+    <!-- Dashboard kaarten -->
 
-            <div class="statuskaart">
-                <span class="nummer">📅</span>
-                <span class="tekst">Wedstrijden</span>
-            </div>
+    <section class="menu">
 
-            <div class="statuskaart">
-                <span class="nummer">📸</span>
-                <span class="tekst">Foto's</span>
-            </div>
+        <a href="news.html" class="kaart">
 
-            <div class="statuskaart">
-                <span class="nummer">🤝</span>
-                <span class="tekst">Sponsors</span>
-            </div>
+            <h2>📰 Nieuws</h2>
+
+            <p>
+                Nieuws publiceren, wijzigen en verwijderen.
+            </p>
+
+        </a>
+
+        <a href="proeftrainingen.html" class="kaart">
+
+            <h2>🏃 Proeftrainingen</h2>
+
+            <p>
+                Nieuwe proeftrainingen bekijken en beheren.
+            </p>
+
+        </a>
+
+        <a href="inschrijvingen.html" class="kaart">
+
+            <h2>👥 Inschrijvingen</h2>
+
+            <p>
+                Digitale inschrijvingen en NHV-formulieren.
+            </p>
+
+        </a>
+
+        <a href="wedstrijden.html" class="kaart">
+
+            <h2>📅 Wedstrijden</h2>
+
+            <p>
+                Wedstrijden, uitslagen en verslagen beheren.
+            </p>
+
+        </a>
+
+        <a href="fotos.html" class="kaart">
+
+            <h2>📸 Foto's</h2>
+
+            <p>
+                Foto's beheren via Google Drive.
+            </p>
+
+        </a>
+
+        <a href="sponsors.html" class="kaart">
+
+            <h2>🤝 Sponsors</h2>
+
+            <p>
+                Sponsors en logo's beheren.
+            </p>
+
+        </a>
+
+        <a href="instellingen.html" class="kaart">
+
+            <h2>⚙️ Instellingen</h2>
+
+            <p>
+                Beheerders, Google Drive en Firebase.
+            </p>
+
+        </a>
+
+    </section>
+
+    <!-- Snelle informatie -->
+
+    <section class="info">
+
+        <div class="info-kaart">
+
+            <h3>📰 Nieuws</h3>
+
+            <p id="nieuwsAantal">...</p>
 
         </div>
 
-    </div>
+        <div class="info-kaart">
 
-    <div class="menu">
+            <h3>🏃 Proeftrainingen</h3>
 
-        <a class="kaart" href="news.html">
-            <h2>📰 Nieuws</h2>
-            <p>Nieuws publiceren, wijzigen en verwijderen.</p>
-        </a>
+            <p id="proefAantal">...</p>
 
-        <a class="kaart" href="#">
-            <h2>📅 Wedstrijden</h2>
-            <p>Wedstrijden, uitslagen en programma.</p>
-        </a>
+        </div>
 
-        <a class="kaart" href="#">
-            <h2>📸 Foto's</h2>
-            <p>Foto's beheren voor website en nieuws.</p>
-        </a>
+        <div class="info-kaart">
 
-        <a class="kaart" href="#">
-            <h2>🤝 Sponsoren</h2>
-            <p>Sponsors beheren.</p>
-        </a>
+            <h3>👥 Inschrijvingen</h3>
 
-        <a class="kaart" href="#">
-            <h2>🛍️ Clubshop</h2>
-            <p>Clubshop beheren.</p>
-        </a>
+            <p id="ledenAantal">...</p>
 
-        <a class="kaart" href="#">
-            <h2>📺 YouTube</h2>
-            <p>YouTube-kanaal beheren.</p>
-        </a>
+        </div>
 
-        <a class="kaart" href="#">
-            <h2>⚙️ Instellingen</h2>
-            <p>Instellingen van HV Novitas Beheer.</p>
-        </a>
+        <div class="info-kaart">
 
-        <a class="kaart" href="#">
-            <h2>ℹ️ Over</h2>
-            <p>Versie en systeeminformatie.</p>
-        </a>
+            <h3>📅 Wedstrijden</h3>
 
-    </div>
+            <p id="wedstrijdAantal">...</p>
+
+        </div>
+
+    </section>
+
+    <footer>
+
+        HV Novitas Beheer v1.0
+
+    </footer>
 
 </div>
 
