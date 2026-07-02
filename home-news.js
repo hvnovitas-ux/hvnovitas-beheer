@@ -8,49 +8,19 @@ import {
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("📰 Home News gestart");
+// =====================================
+// Laatste nieuws laden
+// =====================================
 
 const news = document.getElementById("news");
 
-if (!news) {
-
-    console.error("❌ Element #news niet gevonden.");
-
-} else {
-
-    console.log("✅ Element #news gevonden.");
-
-}
-
-const newsRef = query(
+const q = query(
     ref(db, "news"),
     orderByChild("created"),
     limitToLast(3)
 );
 
-onValue(newsRef, (snapshot) => {
-
-    console.log("🔥 Firebase verbonden");
-
-    console.log(snapshot.val());
-
-    if (!snapshot.exists()) {
-
-        news.innerHTML = `
-
-<div class="kaart">
-
-<h3>📰 Nog geen nieuws</h3>
-
-<p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
-
-</div>
-
-`;
-
-        return;
-
-    }
+onValue(q, (snapshot) => {
 
     let berichten = [];
 
@@ -65,40 +35,42 @@ onValue(newsRef, (snapshot) => {
 
     berichten.sort((a, b) => b.created - a.created);
 
+    if (berichten.length === 0) {
+
+        news.innerHTML = `
+            <div class="kaart">
+                <h3>Nog geen nieuws</h3>
+                <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
+            </div>
+        `;
+
+        return;
+    }
+
     let html = "";
 
-    berichten.forEach((bericht) => {
+    berichten.forEach((b) => {
 
-        let tekst = bericht.text || "";
+        let tekst = b.text || "";
 
         if (tekst.length > 180) {
-
             tekst = tekst.substring(0, 180) + "...";
-
         }
 
         html += `
-
 <div class="kaart">
 
-<h3>${bericht.title}</h3>
+    <h3>${b.title}</h3>
 
-<div class="datum">
+    <div class="datum">
+        📅 ${b.date} &nbsp; 🕒 ${b.time}
+    </div>
 
-📅 ${bericht.date}
-&nbsp;&nbsp;
-🕒 ${bericht.time}
-
-</div>
-
-<div class="tekst">
-
-${tekst}
+    <div class="tekst">
+        ${tekst}
+    </div>
 
 </div>
-
-</div>
-
 `;
 
     });
@@ -107,26 +79,13 @@ ${tekst}
 
 }, (error) => {
 
-    console.error("❌ Firebase fout", error);
+    console.error(error);
 
     news.innerHTML = `
-
-<div class="kaart">
-
-<h3>❌ Fout</h3>
-
-<p>${error.message}</p>
-
-</div>
-
-`;
+        <div class="kaart">
+            <h3>Fout</h3>
+            <p>${error.message}</p>
+        </div>
+    `;
 
 });
-Daarna
-Opslaan
-Commit
-Push
-Wacht ongeveer 1 minuut.
-Open:
-
-https://hvnovitas-ux.githu
