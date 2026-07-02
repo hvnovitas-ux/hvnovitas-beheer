@@ -8,19 +8,29 @@ import {
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-// =====================================
-// Laatste nieuws laden
-// =====================================
+// =====================================================
+// HV NOVITAS HOMEPAGE NIEUWS
+// =====================================================
 
 const news = document.getElementById("news");
 
-const q = query(
+if (!news) {
+
+    console.error("Element #news niet gevonden.");
+
+} else {
+
+    console.log("📰 Homepage Nieuws gestart.");
+
+}
+
+const newsQuery = query(
     ref(db, "news"),
     orderByChild("created"),
     limitToLast(3)
 );
 
-onValue(q, (snapshot) => {
+onValue(newsQuery, (snapshot) => {
 
     let berichten = [];
 
@@ -33,44 +43,91 @@ onValue(q, (snapshot) => {
 
     });
 
+    // Nieuwste bovenaan
     berichten.sort((a, b) => b.created - a.created);
 
+    // Geen nieuws
     if (berichten.length === 0) {
 
         news.innerHTML = `
-            <div class="kaart">
-                <h3>Nog geen nieuws</h3>
-                <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
-            </div>
-        `;
+
+<div class="kaart">
+
+    <h3>📰 Nog geen nieuws</h3>
+
+    <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
+
+</div>
+
+`;
 
         return;
+
     }
 
     let html = "";
 
-    berichten.forEach((b) => {
+    berichten.forEach((bericht) => {
 
-        let tekst = b.text || "";
+        let tekst = bericht.text || "";
 
+        // Tekst inkorten voor homepage
         if (tekst.length > 180) {
+
             tekst = tekst.substring(0, 180) + "...";
+
+        }
+
+        // Foto (voor later)
+        let foto = "";
+
+        if (bericht.image && bericht.image !== "") {
+
+            foto = `
+
+<img
+    src="${bericht.image}"
+    class="nieuwsfoto"
+    alt="${bericht.title}">
+
+`;
+
         }
 
         html += `
+
 <div class="kaart">
 
-    <h3>${b.title}</h3>
+    ${foto}
+
+    <h3>${bericht.title}</h3>
 
     <div class="datum">
-        📅 ${b.date} &nbsp; 🕒 ${b.time}
+
+        📅 ${bericht.date}
+        &nbsp;&nbsp;
+        🕒 ${bericht.time}
+
     </div>
 
     <div class="tekst">
+
         ${tekst}
+
+    </div>
+
+    <div class="leesverder">
+
+        <a href="#">
+
+            ➜ Lees verder
+
+        </a>
+
     </div>
 
 </div>
+
 `;
 
     });
@@ -82,10 +139,19 @@ onValue(q, (snapshot) => {
     console.error(error);
 
     news.innerHTML = `
-        <div class="kaart">
-            <h3>Fout</h3>
-            <p>${error.message}</p>
-        </div>
-    `;
+
+<div class="kaart">
+
+    <h3>❌ Fout</h3>
+
+    <p>
+
+        Het nieuws kon niet worden geladen.
+
+    </p>
+
+</div>
+
+`;
 
 });
