@@ -1,7 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { db } from "./firebase.js";
 
 import {
-    getDatabase,
     ref,
     query,
     orderByChild,
@@ -10,35 +9,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 // =====================================
-// Firebase
+// Laatste nieuws laden
 // =====================================
 
-const firebaseConfig = {
-
-    apiKey: "AIzaSyBCUZeWMIxIz__7TfNG_b0V47H_pYFPyQ",
-
-    authDomain: "hv-novitas-handbal-challenge.firebaseapp.com",
-
-    databaseURL: "https://hv-novitas-handbal-challenge-default-rtdb.europe-west1.firebasedatabase.app",
-
-    projectId: "hv-novitas-handbal-challenge",
-
-    storageBucket: "hv-novitas-handbal-challenge.firebasestorage.app",
-
-    messagingSenderId: "707710141199",
-
-    appId: "1:707710141199:web:ba304ce4e5f653d0afb47a"
-
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// =====================================
-// Nieuws laden
-// =====================================
-
-const nieuws = document.getElementById("news");
+const news = document.getElementById("news");
 
 const q = query(
     ref(db, "news"),
@@ -56,7 +30,19 @@ onValue(q, (snapshot) => {
 
     });
 
-    berichten.reverse();
+    berichten.sort((a, b) => b.created - a.created);
+
+    if (berichten.length === 0) {
+
+        news.innerHTML = `
+            <div class="kaart">
+                <h3>Nog geen nieuws</h3>
+                <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
+            </div>
+        `;
+
+        return;
+    }
 
     let html = "";
 
@@ -65,9 +51,7 @@ onValue(q, (snapshot) => {
         let tekst = b.text || "";
 
         if (tekst.length > 180) {
-
             tekst = tekst.substring(0, 180) + "...";
-
         }
 
         html += `
@@ -78,7 +62,9 @@ onValue(q, (snapshot) => {
 
     <div class="datum">
 
-        📅 ${b.date} &nbsp; 🕒 ${b.time}
+        📅 ${b.date}
+        &nbsp;&nbsp;
+        🕒 ${b.time}
 
     </div>
 
@@ -94,16 +80,4 @@ onValue(q, (snapshot) => {
 
     });
 
-    if (html === "") {
-
-        html = `
-        <div class="kaart">
-            <h3>Nog geen nieuws</h3>
-            <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
-        </div>
-        `;
-    }
-
-    nieuws.innerHTML = html;
-
-});
+    news.innerHTML = html;
