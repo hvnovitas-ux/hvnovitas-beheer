@@ -3,12 +3,12 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Nieuwsbeheer | HV Novitas</title>
+    <title>HV Novitas - Nieuwsbeheer</title>
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -16,7 +16,7 @@
 
 <div class="dashboard">
 
-    <div class="topbar">
+    <header class="topbar">
 
         <div class="logo">
             🧡 HV Novitas Beheer
@@ -24,7 +24,12 @@
 
         <div class="user">
 
-            👤 <span id="naam">...</span>
+            <img id="foto"
+                 src=""
+                 alt="Profielfoto"
+                 style="display:none;">
+
+            <span id="naam">Laden...</span>
 
             <button id="logout">
                 🚪 Uitloggen
@@ -32,71 +37,136 @@
 
         </div>
 
-    </div>
+    </header>
 
-    <div class="welkom">
+    <section class="welkom">
 
         <h1>📰 Nieuwsbeheer</h1>
 
         <p>
-            Publiceer nieuwsberichten voor de website.
+            Publiceer nieuws voor de website van HV Novitas.
         </p>
 
-    </div>
+    </section>
 
-    <div class="kaart">
+    <div class="news-layout">
 
-        <h2>➕ Nieuw bericht</h2>
+        <!-- Formulier -->
 
-        <br>
+        <div class="formulier">
 
-        <label>Titel</label>
+            <h2>Nieuw bericht</h2>
 
-        <input
-            type="text"
-            id="title"
-            placeholder="Titel">
+            <label>Titel</label>
 
-        <label>Bericht</label>
+            <input
+                type="text"
+                id="title"
+                placeholder="Titel van het nieuwsbericht">
 
-        <textarea
-            id="text"
-            placeholder="Typ hier het nieuwsbericht..."></textarea>
+            <label>Categorie</label>
 
-        <label>Foto (komt binnenkort)</label>
+            <select id="categorie">
 
-        <input
-            type="file"
-            id="image"
-            accept="image/*">
+                <option>Nieuws</option>
+                <option>Wedstrijd</option>
+                <option>Activiteit</option>
+                <option>Jeugd</option>
+                <option>Senioren</option>
 
-        <button id="publish">
+            </select>
 
-            📢 Publiceren
+            <label>Bericht</label>
 
-        </button>
+            <textarea
+                id="text"
+                rows="10"
+                placeholder="Typ hier het nieuwsbericht..."></textarea>
 
-        <br><br>
+            <label>Foto</label>
 
-        <div id="melding"></div>
+            <input
+                type="file"
+                id="fotoUpload"
+                accept="image/*">
 
-    </div>
+            <br><br>
 
-    <br>
+            <label>
 
-    <div class="kaart">
+                <input
+                    type="checkbox"
+                    id="vastzetten">
 
-        <h2>📰 Laatste berichten</h2>
+                Bericht vastzetten
 
-        <br>
+            </label>
 
-        <div id="newsList">
+            <br><br>
 
-            Nog geen nieuws geladen...
+            <button id="publish">
+
+                💾 Publiceren
+
+            </button>
+
+            <button id="reset">
+
+                ✖ Wissen
+
+            </button>
+
+            <p id="melding"></p>
+
+        </div>
+
+        <!-- Voorbeeld -->
+
+        <div class="voorbeeld">
+
+            <h2>Voorbeeld</h2>
+
+            <div class="voorbeeld-kaart">
+
+                <h2 id="voorbeeldTitel">
+
+                    Titel
+
+                </h2>
+
+                <small id="voorbeeldDatum">
+
+                    Vandaag
+
+                </small>
+
+                <img
+                    id="voorbeeldFoto"
+                    style="display:none;width:100%;border-radius:10px;">
+
+                <p id="voorbeeldTekst">
+
+                    Hier verschijnt een voorbeeld van je bericht.
+
+                </p>
+
+            </div>
 
         </div>
 
     </div>
+
+    <section class="nieuwslijst">
+
+        <h2>Laatste nieuws</h2>
+
+        <div id="newsList">
+
+            Nieuws wordt geladen...
+
+        </div>
+
+    </section>
 
 </div>
 
