@@ -5,163 +5,113 @@ import {
     push,
     onValue,
     remove,
-    update,
-    query,
-    orderByChild
+    update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-// ------------------------
+// ----------------------------
 // Elementen
-// ------------------------
+// ----------------------------
 
 const title = document.getElementById("title");
 const text = document.getElementById("text");
-const categorie = document.getElementById("categorie");
-const vastzetten = document.getElementById("vastzetten");
 const publish = document.getElementById("publish");
 const reset = document.getElementById("reset");
 const melding = document.getElementById("melding");
 const newsList = document.getElementById("newsList");
 
-// Voorbeeld
-
-const voorbeeldTitel = document.getElementById("voorbeeldTitel");
-const voorbeeldTekst = document.getElementById("voorbeeldTekst");
-const voorbeeldDatum = document.getElementById("voorbeeldDatum");
-
-// Bewerken
-
 let editID = null;
 
-// ------------------------
-// Live voorbeeld
-// ------------------------
-
-function updatePreview() {
-
-    voorbeeldTitel.textContent =
-        title.value || "Titel";
-
-    voorbeeldTekst.textContent =
-        text.value || "Hier verschijnt een voorbeeld.";
-
-    voorbeeldDatum.textContent =
-        new Date().toLocaleDateString("nl-NL");
-
-}
-
-title.addEventListener("input", updatePreview);
-text.addEventListener("input", updatePreview);
-
-updatePreview();
-
-// ------------------------
+// ----------------------------
 // Publiceren
-// ------------------------
+// ----------------------------
 
-publish.addEventListener("click", () => {
+publish.addEventListener("click", async () => {
 
-    if(title.value.trim()===""){
-
+    if (title.value.trim() === "") {
         alert("Vul een titel in.");
-
         return;
-
     }
 
-    if(text.value.trim()===""){
-
+    if (text.value.trim() === "") {
         alert("Vul een bericht in.");
-
         return;
-
     }
+
+    const nu = new Date();
 
     const bericht = {
 
-        title:title.value,
+        title: title.value,
 
-        text:text.value,
+        text: text.value,
 
-        categorie:categorie.value,
+        date: nu.toLocaleDateString("nl-NL"),
 
-        pinned:vastzetten.checked,
+        time: nu.toLocaleTimeString("nl-NL", {
+            hour: "2-digit",
+            minute: "2-digit"
+        }),
 
-        created:Date.now(),
-
-        date:new Date().toLocaleDateString("nl-NL"),
-
-        time:new Date().toLocaleTimeString("nl-NL",{
-
-            hour:"2-digit",
-
-            minute:"2-digit"
-
-        })
+        created: Date.now()
 
     };
 
-    if(editID){
+    try {
 
-        update(ref(db,"news/"+editID),bericht);
+        if (editID) {
 
-        melding.innerHTML="✅ Nieuws bijgewerkt.";
+            await update(ref(db, "news/" + editID), bericht);
 
-        editID=null;
+            melding.textContent = "✅ Nieuws bijgewerkt.";
 
-    }else{
+            editID = null;
 
-        push(ref(db,"news"),bericht);
+        } else {
 
-        melding.innerHTML="✅ Nieuws gepubliceerd.";
+            await push(ref(db, "news"), bericht);
+
+            melding.textContent = "✅ Nieuws gepubliceerd.";
+
+        }
+
+        leeg();
+
+    } catch (error) {
+
+        console.error(error);
+
+        melding.textContent = "❌ Fout bij opslaan.";
 
     }
 
-    leegmaken();
-
 });
 
-// ------------------------
+// ----------------------------
 // Wissen
-// ------------------------
+// ----------------------------
 
-reset.addEventListener("click",leegmaken);
+reset.addEventListener("click", leeg);
 
-function leegmaken(){
+function leeg() {
 
-    title.value="";
-
-    text.value="";
-
-    categorie.selectedIndex=0;
-
-    vastzetten.checked=false;
-
-    updatePreview();
+    title.value = "";
+    text.value = "";
 
 }
 
-// ------------------------
+// ----------------------------
 // Nieuws laden
-// ------------------------
+// ----------------------------
 
-const q=query(
+onValue(ref(db, "news"), (snapshot) => {
 
-    ref(db,"news"),
+    let berichten = [];
 
-    orderByChild("created")
-
-);
-
-onValue(q,(snapshot)=>{
-
-    let berichten=[];
-
-    snapshot.forEach(item=>{
+    snapshot.forEach((item) => {
 
         berichten.push({
 
-            id:item.key,
+            id: item.key,
 
             ...item.val()
 
@@ -169,21 +119,19 @@ onValue(q,(snapshot)=>{
 
     });
 
-    berichten.reverse();
+    berichten.sort((a, b) => b.created - a.created);
 
-    let html="";
+    let html = "";
 
-    berichten.forEach(b=>{
+    berichten.forEach((b) => {
 
-        html+=`
+        html += `
 
 <div class="bericht">
 
-<h2>${b.title}</h2>
+<h3>${b.title}</h3>
 
-<p><b>${b.date}</b> ${b.time}</p>
-
-<p><b>${b.categorie}</b></p>
+<small>📅 ${b.date} &nbsp; 🕒 ${b.time}</small>
 
 <p>${b.text}</p>
 
@@ -201,49 +149,51 @@ onValue(q,(snapshot)=>{
 
 </div>
 
-<hr>
-
 `;
 
     });
 
-    newsList.innerHTML=html;
+    if (html === "") {
+
+        html = "Nog geen nieuws geplaatst.";
+
+    }
+
+    newsList.innerHTML = html;
 
 });
 
-// ------------------------
-// Globale functies
-// ------------------------
+// ----------------------------
+// Verwijderen
+// ----------------------------
 
-window.verwijder=function(id){
+window.verwijder = async function(id){
 
     if(confirm("Nieuws verwijderen?")){
 
-        remove(ref(db,"news/"+id));
+        await remove(ref(db,"news/"+id));
 
     }
 
 }
 
-window.bewerk=function(id){
+// ----------------------------
+// Bewerken
+// ----------------------------
+
+window.bewerk = function(id){
 
     onValue(ref(db,"news/"+id),(snapshot)=>{
 
         const b=snapshot.val();
 
-        if(!b)return;
+        if(!b) return;
 
         editID=id;
 
         title.value=b.title;
 
         text.value=b.text;
-
-        categorie.value=b.categorie;
-
-        vastzetten.checked=b.pinned;
-
-        updatePreview();
 
         window.scrollTo({
 
