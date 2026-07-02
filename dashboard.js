@@ -5,13 +5,18 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
+console.log("dashboard.js geladen");
+
 const naam = document.getElementById("naam");
 const foto = document.getElementById("foto");
 const logout = document.getElementById("logout");
 
 onAuthStateChanged(auth, (user) => {
 
+    console.log("Auth state:", user);
+
     if (!user) {
+        console.log("Geen gebruiker, terug naar login");
         window.location.replace("index.html");
         return;
     }
@@ -30,6 +35,8 @@ onAuthStateChanged(auth, (user) => {
 });
 
 logout.addEventListener("click", async () => {
+
+    console.log("Uitloggen...");
 
     await signOut(auth);
 
