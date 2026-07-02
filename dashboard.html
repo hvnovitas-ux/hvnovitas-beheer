@@ -2,42 +2,82 @@
 <html lang="nl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HV Novitas Beheer</title>
 
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HV Novitas Beheer</title>
+
+<link rel="stylesheet" href="beheer.css">
+
 </head>
 
 <body>
 
 <div class="dashboard">
 
-    <h1>🧡 HV Novitas Beheer</h1>
+    <div class="topbar">
 
-    <p>Welkom!</p>
+        <div class="logo">
+            🧡 HV Novitas Beheer
+        </div>
+
+        <div class="user">
+
+            👤 <span id="naam">...</span>
+
+            <button id="logout">
+                🚪 Uitloggen
+            </button>
+
+        </div>
+
+    </div>
 
     <div class="menu">
 
-        <a href="#" class="kaart">📰 Nieuws</a>
+        <a class="kaart" href="news.html">
+            <h2>📰 Nieuws</h2>
+            <p>Nieuws publiceren en beheren.</p>
+        </a>
 
-        <a href="#" class="kaart">🏃 Proeftrainingen</a>
+        <a class="kaart" href="#">
+            <h2>📅 Wedstrijden</h2>
+            <p>Wedstrijden beheren.</p>
+        </a>
 
-        <a href="#" class="kaart">📝 Inschrijvingen</a>
+        <a class="kaart" href="#">
+            <h2>📸 Foto's</h2>
+            <p>Foto's beheren.</p>
+        </a>
 
-        <a href="#" class="kaart">📅 Wedstrijden</a>
+        <a class="kaart" href="#">
+            <h2>🤝 Sponsoren</h2>
+            <p>Sponsoren beheren.</p>
+        </a>
 
-        <a href="#" class="kaart">🤝 Sponsoren</a>
+        <a class="kaart" href="#">
+            <h2>🛍️ Clubshop</h2>
+            <p>Clubshop beheren.</p>
+        </a>
 
-        <a href="#" class="kaart">🛍️ Clubshop</a>
+        <a class="kaart" href="#">
+            <h2>📺 YouTube</h2>
+            <p>YouTube beheren.</p>
+        </a>
 
-        <a href="#" class="kaart">📺 YouTube</a>
-
-        <a href="#" class="kaart">⚙️ Instellingen</a>
+        <a class="kaart" href="#">
+            <h2>⚙️ Instellingen</h2>
+            <p>Systeeminstellingen.</p>
+        </a>
 
     </div>
 
 </div>
 
+<script type="module" src="firebase.js"></script>
+<script type="module" src="dashboard.js"></script>
+
 </body>
+
 </html>
