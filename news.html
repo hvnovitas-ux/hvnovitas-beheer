@@ -43,126 +43,51 @@
 
         <h1>📰 Nieuwsbeheer</h1>
 
-        <p>
-            Publiceer nieuws voor de website van HV Novitas.
-        </p>
+        <p>Plaats hier nieuws voor de website van HV Novitas.</p>
 
     </section>
 
-    <div class="news-layout">
+    <section class="formulier">
 
-        <!-- Formulier -->
+        <h2>Nieuw bericht</h2>
 
-        <div class="formulier">
+        <label for="title">Titel</label>
 
-            <h2>Nieuw bericht</h2>
+        <input
+            type="text"
+            id="title"
+            placeholder="Titel van het nieuwsbericht">
 
-            <label>Titel</label>
+        <label for="text">Bericht</label>
 
-            <input
-                type="text"
-                id="title"
-                placeholder="Titel van het nieuwsbericht">
+        <textarea
+            id="text"
+            rows="10"
+            placeholder="Typ hier het nieuwsbericht..."></textarea>
 
-            <label>Categorie</label>
-
-            <select id="categorie">
-
-                <option>Nieuws</option>
-                <option>Wedstrijd</option>
-                <option>Activiteit</option>
-                <option>Jeugd</option>
-                <option>Senioren</option>
-
-            </select>
-
-            <label>Bericht</label>
-
-            <textarea
-                id="text"
-                rows="10"
-                placeholder="Typ hier het nieuwsbericht..."></textarea>
-
-            <label>Foto</label>
-
-            <input
-                type="file"
-                id="fotoUpload"
-                accept="image/*">
-
-            <br><br>
-
-            <label>
-
-                <input
-                    type="checkbox"
-                    id="vastzetten">
-
-                Bericht vastzetten
-
-            </label>
-
-            <br><br>
+        <div class="knoppen">
 
             <button id="publish">
-
                 💾 Publiceren
-
             </button>
 
-            <button id="reset">
-
+            <button id="reset" type="button">
                 ✖ Wissen
-
             </button>
 
-            <p id="melding"></p>
-
         </div>
 
-        <!-- Voorbeeld -->
+        <p id="melding"></p>
 
-        <div class="voorbeeld">
-
-            <h2>Voorbeeld</h2>
-
-            <div class="voorbeeld-kaart">
-
-                <h2 id="voorbeeldTitel">
-
-                    Titel
-
-                </h2>
-
-                <small id="voorbeeldDatum">
-
-                    Vandaag
-
-                </small>
-
-                <img
-                    id="voorbeeldFoto"
-                    style="display:none;width:100%;border-radius:10px;">
-
-                <p id="voorbeeldTekst">
-
-                    Hier verschijnt een voorbeeld van je bericht.
-
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
+    </section>
 
     <section class="nieuwslijst">
 
-        <h2>Laatste nieuws</h2>
+        <h2>Geplaatste berichten</h2>
 
         <div id="newsList">
 
-            Nieuws wordt geladen...
+            Nog geen nieuws geplaatst.
 
         </div>
 
