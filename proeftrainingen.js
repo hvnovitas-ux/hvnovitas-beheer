@@ -1,118 +1,193 @@
-import { db } from "./firebase.js";
-
-import {
-    ref,
-    onValue,
-    remove,
-    update
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
 // ==========================================
-// Elementen
+// HV NOVITAS - GOOGLE SHEETS
 // ==========================================
 
-const lijst = document.getElementById("proeftrainingen");
+export const CLIENT_ID =
+"71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
-if (!lijst) {
-    console.error("Element #proeftrainingen niet gevonden.");
+export const API_KEY =
+"JOUW_GOOGLE_SHEETS_BROWSER_KEY";
+
+export const SPREADSHEET_ID =
+"1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM";
+
+export const RANGE =
+"Formulierreacties 1!A:H";
+
+export const SCOPES =
+"https://www.googleapis.com/auth/spreadsheets.readonly";
+
+let accessToken = null;
+let tokenClient = null;
+let initialized = false;
+
+// ==========================================
+// Initialiseren
+// ==========================================
+
+export async function initSheets() {
+
+    if (initialized) return;
+
+    await new Promise((resolve) => {
+
+        gapi.load("client", resolve);
+
+    });
+
+    await gapi.client.init({
+
+        apiKey: API_KEY,
+
+        discoveryDocs: [
+            "https://sheets.googleapis.com/$discovery/rest?version=v4"
+        ]
+
+    });
+
+    tokenClient = google.accounts.oauth2.initTokenClient({
+
+        client_id: CLIENT_ID,
+
+        scope: SCOPES,
+
+        callback: () => {}
+
+    });
+
+    initialized = true;
+
+    console.log("📄 Google Sheets geïnitialiseerd");
+
 }
 
 // ==========================================
-// Aanvragen laden
+// Aanmelden
 // ==========================================
 
-onValue(ref(db, "proeftrainingen"), (snapshot) => {
+export async function loginSheets() {
 
-    if (!lijst) return;
+    await initSheets();
 
-    let aanvragen = [];
+    if (accessToken) {
 
-    snapshot.forEach((item) => {
+        return accessToken;
 
-        aanvragen.push({
+    }
 
-            id: item.key,
+    return new Promise((resolve, reject) => {
 
-            ...item.val()
+        tokenClient.callback = (response) => {
+
+            if (response.error) {
+
+                reject(response);
+
+                return;
+
+            }
+
+            accessToken = response.access_token;
+
+            gapi.client.setToken({
+
+                access_token: accessToken
+
+            });
+
+            console.log("✅ Google Sheets aangemeld");
+
+            resolve(accessToken);
+
+        };
+
+        tokenClient.requestAccessToken({
+
+            prompt: "consent"
 
         });
 
     });
 
-    aanvragen.sort((a, b) => b.created - a.created);
+}
 
-    if (aanvragen.length === 0) {
+// ==========================================
+// Spreadsheet lezen
+// ==========================================
 
-        lijst.innerHTML = "Nog geen aanvragen.";
+export async function getProeftrainingen() {
 
-        return;
+    await loginSheets();
+
+    const response =
+        await gapi.client.sheets.spreadsheets.values.get({
+
+            spreadsheetId: SPREADSHEET_ID,
+
+            range: RANGE
+
+        });
+
+    const rows = response.result.values || [];
+
+    if (rows.length === 0) {
+
+        return [];
 
     }
 
-    let html = "";
+    const headers = rows.shift();
 
-    aanvragen.forEach((a) => {
+    return rows.map((row) => {
 
-        html += `
+        const item = {};
 
-<div class="bericht">
+        headers.forEach((header, index) => {
 
-<h3>${a.voornaam} ${a.achternaam}</h3>
+            item[header] = row[index] || "";
 
-<p><strong>Status:</strong> ${a.status}</p>
+        });
 
-<p><strong>Geslacht:</strong> ${a.geslacht}</p>
-
-<p><strong>Geboortedatum:</strong> ${a.geboortedatum}</p>
-
-<p><strong>Telefoon:</strong> ${a.telefoon}</p>
-
-<p><strong>E-mail:</strong> ${a.email}</p>
-
-<p><strong>Datum aanvraag:</strong> ${a.datum}</p>
-
-<p><strong>Opmerkingen:</strong><br>${a.opmerkingen || "-"}</p>
-
-<button onclick="status('${a.id}')">
-✅ Contact opgenomen
-</button>
-
-<button onclick="verwijder('${a.id}')">
-🗑️ Verwijderen
-</button>
-
-</div>
-
-`;
-
-    });
-
-    lijst.innerHTML = html;
-
-});
-
-// ==========================================
-// Status wijzigen
-// ==========================================
-
-window.status = async function(id) {
-
-    await update(ref(db, "proeftrainingen/" + id), {
-
-        status: "Contact opgenomen"
+        return item;
 
     });
 
 }
 
 // ==========================================
-// Verwijderen
+// Uitloggen
 // ==========================================
 
-window.verwijder = async function(id) {
+export function logoutSheets() {
 
-    if (!confirm("Aanvraag verwijderen?")) return;
+    if (!accessToken) return;
 
-    await remove(ref(db, "proeftrainingen/" + id));
+    google.accounts.oauth2.revoke(accessToken);
+
+    gapi.client.setToken(null);
+
+    accessToken = null;
+
+    console.log("🚪 Google Sheets afgemeld");
+
+}
+
+// ==========================================
+// Ingelogd?
+// ==========================================
+
+export function isSheetsLoggedIn() {
+
+    return accessToken !== null;
+
+}
+
+// ==========================================
+// Access Token
+// ==========================================
+
+export function getSheetsToken() {
+
+    return accessToken;
 
 }
