@@ -1,5 +1,6 @@
 // ==========================================
 // HV NOVITAS - GOOGLE SHEETS
+// Definitieve versie
 // ==========================================
 
 export const CLIENT_ID =
@@ -17,6 +18,7 @@ export const RANGE =
 const DISCOVERY_DOC =
 "https://sheets.googleapis.com/$discovery/rest?version=v4";
 
+
 const SCOPES =
 "https://www.googleapis.com/auth/spreadsheets";
 
@@ -25,7 +27,7 @@ let tokenClient = null;
 let initialized = false;
 
 // ==========================================
-// Initialiseren
+// INITIALISEREN
 // ==========================================
 
 export async function initSheets() {
@@ -45,13 +47,14 @@ export async function initSheets() {
         discoveryDocs: [DISCOVERY_DOC]
 
     });
+
     tokenClient = google.accounts.oauth2.initTokenClient({
 
         client_id: CLIENT_ID,
 
         scope: SCOPES,
 
-        callback: ""
+        callback: () => {}
 
     });
 
@@ -62,7 +65,7 @@ export async function initSheets() {
 }
 
 // ==========================================
-// Aanmelden
+// AANMELDEN
 // ==========================================
 
 export async function loginSheets() {
@@ -77,7 +80,7 @@ export async function loginSheets() {
 
     return new Promise((resolve, reject) => {
 
-        tokenClient.callback = (response) => {
+        tokenClient.callback = response => {
 
             if (response.error) {
 
@@ -114,7 +117,7 @@ export async function loginSheets() {
 }
 
 // ==========================================
-// Spreadsheet uitlezen
+// RIJEN OPHALEN
 // ==========================================
 
 export async function getRows() {
@@ -135,21 +138,27 @@ export async function getRows() {
 }
 
 // ==========================================
-// Omzetten naar objecten
+// PROEFTRAININGEN
 // ==========================================
 
 export async function getProeftrainingen() {
 
     const rows = await getRows();
 
-    if (!rows.length) return [];
+    if (!rows.length) {
+
+        return [];
+
+    }
 
     const headers = rows.shift();
 
     return rows.map((row, index) => {
 
         const item = {
+
             _row: index + 2
+
         };
 
         headers.forEach((header, i) => {
@@ -164,26 +173,52 @@ export async function getProeftrainingen() {
 
 }
 
-    const headers = rows.shift();
+// ==========================================
+// RIJ VERWIJDEREN
+// ==========================================
 
-    return rows.map(row => {
+export async function deleteRow(rowIndex) {
 
-        const item = {};
+    await loginSheets();
 
-        headers.forEach((header, index) => {
+    await gapi.client.sheets.spreadsheets.batchUpdate({
 
-            item[header] = row[index] || "";
+        spreadsheetId: SPREADSHEET_ID,
 
-        });
+        resource: {
 
-        return item;
+            requests: [
+
+                {
+
+                    deleteDimension: {
+
+                        range: {
+
+                            sheetId: 0,
+
+                            dimension: "ROWS",
+
+                            startIndex: rowIndex - 1,
+
+                            endIndex: rowIndex
+
+                        }
+
+                    }
+
+                }
+
+            ]
+
+        }
 
     });
 
 }
 
 // ==========================================
-// Vernieuwen
+// VERVERSEN
 // ==========================================
 
 export async function refreshSheets() {
@@ -193,7 +228,7 @@ export async function refreshSheets() {
 }
 
 // ==========================================
-// Uitloggen
+// UITLOGGEN
 // ==========================================
 
 export function logoutSheets() {
@@ -211,7 +246,7 @@ export function logoutSheets() {
 }
 
 // ==========================================
-// Status
+// STATUS
 // ==========================================
 
 export function isSheetsLoggedIn() {
