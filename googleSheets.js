@@ -6,7 +6,7 @@ export const CLIENT_ID =
 "71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
 export const API_KEY =
-"JOUW_GOOGLE_SHEETS_BROWSER_KEY";
+"JOUW_GOOGLE_SHEETS_API_KEY";
 
 export const SPREADSHEET_ID =
 "1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM";
@@ -32,7 +32,7 @@ export async function initSheets() {
 
     if (initialized) return;
 
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
 
         gapi.load("client", resolve);
 
@@ -46,16 +46,15 @@ export async function initSheets() {
 
     });
 
-    tokenClient =
-        google.accounts.oauth2.initTokenClient({
+    tokenClient = google.accounts.oauth2.initTokenClient({
 
-            client_id: CLIENT_ID,
+        client_id: CLIENT_ID,
 
-            scope: SCOPES,
+        scope: SCOPES,
 
-            callback: () => {}
+        callback: ""
 
-        });
+    });
 
     initialized = true;
 
@@ -82,6 +81,8 @@ export async function loginSheets() {
         tokenClient.callback = (response) => {
 
             if (response.error) {
+
+                console.error(response);
 
                 reject(response);
 
@@ -114,7 +115,7 @@ export async function loginSheets() {
 }
 
 // ==========================================
-// Spreadsheet ophalen
+// Spreadsheet uitlezen
 // ==========================================
 
 export async function getRows() {
@@ -142,7 +143,7 @@ export async function getProeftrainingen() {
 
     const rows = await getRows();
 
-    if (rows.length === 0) {
+    if (!rows.length) {
 
         return [];
 
@@ -150,7 +151,7 @@ export async function getProeftrainingen() {
 
     const headers = rows.shift();
 
-    return rows.map((row) => {
+    return rows.map(row => {
 
         const item = {};
 
@@ -167,6 +168,16 @@ export async function getProeftrainingen() {
 }
 
 // ==========================================
+// Vernieuwen
+// ==========================================
+
+export async function refreshSheets() {
+
+    return await getProeftrainingen();
+
+}
+
+// ==========================================
 // Uitloggen
 // ==========================================
 
@@ -179,6 +190,8 @@ export function logoutSheets() {
     gapi.client.setToken(null);
 
     accessToken = null;
+
+    console.log("🚪 Google Sheets afgemeld");
 
 }
 
