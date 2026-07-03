@@ -45,7 +45,6 @@ export async function initSheets() {
         discoveryDocs: [DISCOVERY_DOC]
 
     });
-
     tokenClient = google.accounts.oauth2.initTokenClient({
 
         client_id: CLIENT_ID,
