@@ -6,21 +6,19 @@ export const CLIENT_ID =
 "71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
 export const API_KEY =
-"JOUW_BROWSER_API_KEY";
+"JOUW_GOOGLE_SHEETS_BROWSER_KEY";
 
-const DISCOVERY_DOC =
-"https://sheets.googleapis.com/$discovery/rest?version=v4";
-
-const SCOPES =
-"https://www.googleapis.com/auth/spreadsheets.readonly";
-
-const SPREADSHEET_ID =
+export const SPREADSHEET_ID =
 "1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM";
 
-const RANGE =
+export const RANGE =
 "Formulierreacties 1!A:H";
 
-let tokenClient;
+export const SCOPES =
+"https://www.googleapis.com/auth/spreadsheets.readonly";
+
+let accessToken = null;
+let tokenClient = null;
 
 // ==========================================
 // Initialiseren
@@ -28,95 +26,46 @@ let tokenClient;
 
 export async function initSheets() {
 
-    await new Promise(resolve => {
+    return new Promise((resolve) => {
 
-        gapi.load("client", resolve);
+        gapi.load("client", async () => {
 
-    });
+            await gapi.client.init({
 
-    await gapi.client.init({
+                apiKey: API_KEY,
 
-        apiKey: API_KEY,
-
-        discoveryDocs: [DISCOVERY_DOC]
-
-    });
-
-    tokenClient = google.accounts.oauth2.initTokenClient({
-
-        client_id: CLIENT_ID,
-
-        scope: SCOPES,
-
-        callback: ""
-
-    });
-
-}
-
-// ==========================================
-// Inloggen
-// ==========================================
-
-export async function loginSheets() {
-
-    return new Promise((resolve, reject) => {
-
-        tokenClient.callback = (resp) => {
-
-            if (resp.error) {
-
-                reject(resp);
-
-                return;
-
-            }
-
-            resolve(resp);
-
-        };
-
-        tokenClient.requestAccessToken({
-            prompt: "consent"
-        });
-
-    });
-
-}
-
-// ==========================================
-// TEST
-// ==========================================
-
-export async function testSheets() {
-
-    try {
-
-        await loginSheets();
-
-        const response =
-            await gapi.client.sheets.spreadsheets.values.get({
-
-                spreadsheetId: SPREADSHEET_ID,
-
-                range: RANGE
+                discoveryDocs: [
+                    "https://sheets.googleapis.com/$discovery/rest?version=v4"
+                ]
 
             });
 
-        console.log("===== GOOGLE SHEETS =====");
+            tokenClient =
+                google.accounts.oauth2.initTokenClient({
 
-        console.table(response.result.values);
+                    client_id: CLIENT_ID,
 
-        alert("Google Sheets verbinding gelukt!");
+                    scope: SCOPES,
 
-        return response.result.values;
+                    callback: (tokenResponse) => {
 
-    } catch (error) {
+                        accessToken =
+                            tokenResponse.access_token;
 
-        console.error(error);
+                        gapi.client.setToken({
 
-        alert("Google Sheets verbinding mislukt.");
+                            access_token: accessToken
 
-    }
+                        });
+
+                        resolve();
+
+                    }
+
+                });
+
+        });
+
+    });
 
 }
