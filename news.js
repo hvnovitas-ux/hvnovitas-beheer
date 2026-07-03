@@ -1,5 +1,4 @@
 import { db } from "./firebase.js";
-import { uploadFile } from "./drive.js";
 
 import {
     ref,
@@ -9,25 +8,22 @@ import {
     update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-// ----------------------------
+// ==========================================
 // Elementen
-// ----------------------------
+// ==========================================
 
 const title = document.getElementById("title");
 const text = document.getElementById("text");
-const photo = document.getElementById("photo");
-
 const publish = document.getElementById("publish");
 const reset = document.getElementById("reset");
-
 const melding = document.getElementById("melding");
 const newsList = document.getElementById("newsList");
 
 let editID = null;
 
-// ----------------------------
+// ==========================================
 // Publiceren
-// ----------------------------
+// ==========================================
 
 publish.addEventListener("click", async () => {
 
@@ -41,47 +37,26 @@ publish.addEventListener("click", async () => {
         return;
     }
 
+    const nu = new Date();
+
+    const bericht = {
+
+        title: title.value.trim(),
+
+        text: text.value.trim(),
+
+        date: nu.toLocaleDateString("nl-NL"),
+
+        time: nu.toLocaleTimeString("nl-NL", {
+            hour: "2-digit",
+            minute: "2-digit"
+        }),
+
+        created: Date.now()
+
+    };
+
     try {
-
-        publish.disabled = true;
-        melding.textContent = "⏳ Bezig met uploaden...";
-
-        let imageId = "";
-        let imageUrl = "";
-
-        if (photo.files.length > 0) {
-
-            const result = await uploadFile(photo.files[0]);
-
-            imageId = result.id;
-
-            imageUrl =
-                `https://drive.google.com/thumbnail?id=${imageId}&sz=w1600`;
-
-        }
-
-        const nu = new Date();
-
-        const bericht = {
-
-            title: title.value,
-
-            text: text.value,
-
-            imageId,
-
-            imageUrl,
-
-            date: nu.toLocaleDateString("nl-NL"),
-
-            time: nu.toLocaleTimeString("nl-NL", {
-                hour: "2-digit",
-                minute: "2-digit"
-            }),
-
-            created: Date.now()
-
-        };
 
         if (editID) {
 
@@ -105,19 +80,15 @@ publish.addEventListener("click", async () => {
 
         console.error(error);
 
-        melding.textContent = "❌ " + error.message;
-
-    } finally {
-
-        publish.disabled = false;
+        melding.textContent = "❌ Fout bij opslaan.";
 
     }
 
 });
 
-// ----------------------------
+// ==========================================
 // Wissen
-// ----------------------------
+// ==========================================
 
 reset.addEventListener("click", leeg);
 
@@ -125,13 +96,12 @@ function leeg() {
 
     title.value = "";
     text.value = "";
-    photo.value = "";
 
 }
 
-// ----------------------------
+// ==========================================
 // Nieuws laden
-// ----------------------------
+// ==========================================
 
 onValue(ref(db, "news"), (snapshot) => {
 
@@ -140,13 +110,24 @@ onValue(ref(db, "news"), (snapshot) => {
     snapshot.forEach((item) => {
 
         berichten.push({
+
             id: item.key,
+
             ...item.val()
+
         });
 
     });
 
     berichten.sort((a, b) => b.created - a.created);
+
+    if (berichten.length === 0) {
+
+        newsList.innerHTML = "Nog geen nieuws geplaatst.";
+
+        return;
+
+    }
 
     let html = "";
 
@@ -155,11 +136,13 @@ onValue(ref(db, "news"), (snapshot) => {
         html += `
 <div class="bericht">
 
-${b.imageUrl ? `<img src="${b.imageUrl}" style="width:100%;max-width:300px;border-radius:8px;margin-bottom:10px;">` : ""}
-
 <h3>${b.title}</h3>
 
-<small>📅 ${b.date} &nbsp; 🕒 ${b.time}</small>
+<small>
+📅 ${b.date}
+&nbsp;&nbsp;
+🕒 ${b.time}
+</small>
 
 <p>${b.text}</p>
 
@@ -176,48 +159,51 @@ ${b.imageUrl ? `<img src="${b.imageUrl}" style="width:100%;max-width:300px;borde
 
     });
 
-    newsList.innerHTML = html || "Nog geen nieuws geplaatst.";
+    newsList.innerHTML = html;
 
 });
 
-// ----------------------------
+// ==========================================
 // Verwijderen
-// ----------------------------
+// ==========================================
 
-window.verwijder = async function(id){
+window.verwijder = async function (id) {
 
-    if(confirm("Nieuws verwijderen?")){
+    if (!confirm("Nieuws verwijderen?")) return;
 
-        await remove(ref(db,"news/"+id));
+    await remove(ref(db, "news/" + id));
 
-    }
+};
 
-}
-
-// ----------------------------
+// ==========================================
 // Bewerken
-// ----------------------------
+// ==========================================
 
-window.bewerk = function(id){
+window.bewerk = function (id) {
 
-    onValue(ref(db,"news/"+id),(snapshot)=>{
+    onValue(ref(db, "news/" + id), (snapshot) => {
 
-        const b=snapshot.val();
+        const b = snapshot.val();
 
-        if(!b) return;
+        if (!b) return;
 
-        editID=id;
+        editID = id;
 
-        title.value=b.title;
-        text.value=b.text;
+        title.value = b.title;
+        text.value = b.text;
 
         window.scrollTo({
-            top:0,
-            behavior:"smooth"
+
+            top: 0,
+
+            behavior: "smooth"
+
         });
 
-    },{
-        onlyOnce:true
+    }, {
+
+        onlyOnce: true
+
     });
 
-}
+};
