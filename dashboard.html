@@ -1,186 +1,267 @@
-<!DOCTYPE html>
-<html lang="nl">
+  <a href="contact.html" class="card">
 
-<head>
+        <div class="icon">📧</div>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <h2>Contact</h2>
 
-    <title>HV Novitas Beheer</title>
+        <p>Nieuwe berichten</p>
 
-    <link rel="stylesheet" href="style.css">
+        <span class="badge">1</span>
 
-</head>
+    </a>
 
-<body>
+    <a href="vrijwilligers.html" class="card">
 
-<div class="dashboard">
+        <div class="icon">🙋</div>
 
-    <!-- Bovenbalk -->
+        <h2>Vrijwilligers</h2>
 
-    <header class="topbar">
+        <p>Aanmeldingen</p>
 
-        <div class="logo">
-            🧡 HV Novitas Beheer
-        </div>
+    </a>
 
-        <div class="user">
+    <a href="agenda.html" class="card">
 
-            <img id="foto"
-                 src=""
-                 alt="Profielfoto"
-                 style="display:none;">
+        <div class="icon">📅</div>
 
-            <span id="naam">Laden...</span>
+        <h2>Agenda</h2>
 
-            <button id="logout">
-                🚪 Uitloggen
-            </button>
+        <p>Trainingen & wedstrijden</p>
 
-        </div>
+    </a>
 
-    </header>
+    <a href="sponsors.html" class="card">
 
-    <!-- Welkom -->
+        <div class="icon">💰</div>
 
-    <section class="welkom">
+        <h2>Sponsors</h2>
 
-        <h1>Welkom terug!</h1>
+        <p>Sponsorbeheer</p>
 
-        <p>
+    </a>
 
-            Vanuit dit dashboard beheer je de complete website van
-            <strong>HV Novitas</strong>.
+    <a href="drive.html" class="card">
 
-        </p>
+        <div class="icon">📸</div>
 
-    </section>
+        <h2>Foto's</h2>
 
-    <!-- Dashboard kaarten -->
+        <p>Google Drive</p>
 
-    <section class="menu">
+    </a>
 
-        <a href="news.html" class="kaart">
+    <a href="instellingen.html" class="card">
 
-            <h2>📰 Nieuws</h2>
+        <div class="icon">⚙️</div>
 
-            <p>
-                Nieuws publiceren, wijzigen en verwijderen.
-            </p>
+        <h2>Instellingen</h2>
 
-        </a>
+        <p>Systeeminstellingen</p>
 
-        <a href="proeftrainingen.html" class="kaart">
-
-            <h2>🏃 Proeftrainingen</h2>
-
-            <p>
-                Nieuwe proeftrainingen bekijken en beheren.
-            </p>
-
-        </a>
-
-        <a href="inschrijvingen.html" class="kaart">
-
-            <h2>👥 Inschrijvingen</h2>
-
-            <p>
-                Digitale inschrijvingen en NHV-formulieren.
-            </p>
-
-        </a>
-
-        <a href="wedstrijden.html" class="kaart">
-
-            <h2>📅 Wedstrijden</h2>
-
-            <p>
-                Wedstrijden, uitslagen en verslagen beheren.
-            </p>
-
-        </a>
-
-        <a href="fotos.html" class="kaart">
-
-            <h2>📸 Foto's</h2>
-
-            <p>
-                Foto's beheren via Google Drive.
-            </p>
-
-        </a>
-
-        <a href="sponsors.html" class="kaart">
-
-            <h2>🤝 Sponsors</h2>
-
-            <p>
-                Sponsors en logo's beheren.
-            </p>
-
-        </a>
-
-        <a href="instellingen.html" class="kaart">
-
-            <h2>⚙️ Instellingen</h2>
-
-            <p>
-                Beheerders, Google Drive en Firebase.
-            </p>
-
-        </a>
-
-    </section>
-
-    <!-- Snelle informatie -->
-
-    <section class="info">
-
-        <div class="info-kaart">
-
-            <h3>📰 Nieuws</h3>
-
-            <p id="nieuwsAantal">...</p>
-
-        </div>
-
-        <div class="info-kaart">
-
-            <h3>🏃 Proeftrainingen</h3>
-
-            <p id="proefAantal">...</p>
-
-        </div>
-
-        <div class="info-kaart">
-
-            <h3>👥 Inschrijvingen</h3>
-
-            <p id="ledenAantal">...</p>
-
-        </div>
-
-        <div class="info-kaart">
-
-            <h3>📅 Wedstrijden</h3>
-
-            <p id="wedstrijdAantal">...</p>
-
-        </div>
-
-    </section>
-
-    <footer>
-
-        HV Novitas Beheer v1.0
-
-    </footer>
+    </a>
 
 </div>
 
-<script type="module" src="firebase.js"></script>
+<div class="footer">
+
+    <span>🟢 Firebase</span>
+    <span>🟢 Google Drive</span>
+    <span>🟢 Google Sheets</span>
+
+</div>
+
 <script type="module" src="dashboard.js"></script>
 
 </body>
 
 </html>
+En vervang je style.css door dit moderne dashboard
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    background:#f4f4f4;
+
+    color:#333;
+
+}
+
+.header{
+
+    background:#f58220;
+
+    color:#fff;
+
+    padding:25px 40px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+
+}
+
+.header h1{
+
+    font-size:34px;
+
+}
+
+.header p{
+
+    margin-top:5px;
+
+    opacity:.9;
+
+}
+
+.header-right{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+.dashboard{
+
+    max-width:1400px;
+
+    margin:40px auto;
+
+    padding:0 30px;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+    gap:25px;
+
+}
+
+.card{
+
+    position:relative;
+
+    text-decoration:none;
+
+    color:#333;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+    transition:.25s;
+
+    border-top:8px solid #f58220;
+
+}
+
+.card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+
+}
+
+.icon{
+
+    font-size:54px;
+
+    margin-bottom:15px;
+
+}
+
+.card h2{
+
+    color:#f58220;
+
+    margin-bottom:10px;
+
+}
+
+.card p{
+
+    color:#666;
+
+}
+
+.badge{
+
+    position:absolute;
+
+    top:20px;
+
+    right:20px;
+
+    background:#f58220;
+
+    color:#fff;
+
+    width:36px;
+
+    height:36px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:bold;
+
+}
+
+.footer{
+
+    background:#2b2b2b;
+
+    color:#fff;
+
+    padding:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:50px;
+
+    margin-top:50px;
+
+}
+
+@media(max-width:700px){
+
+    .header{
+
+        flex-direction:column;
+
+        text-align:center;
+
+        gap:15px;
+
+    }
+
+    .dashboard{
+
+        padding:20px;
+
+    }
+
+}
