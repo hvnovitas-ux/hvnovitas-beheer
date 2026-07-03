@@ -1,36 +1,106 @@
-/* ==========================================
-   HV NOVITAS - NIEUWSBEHEER
-========================================== */
+/* ==========================================================
+   NIEUWS PAGINA
+========================================================== */
 
-.formulier{
+.page-title{
+
+    padding:35px 50px;
 
     background:white;
 
-    color:#222;
+    border-bottom:4px solid var(--orange);
+
+}
+
+.page-title h2{
+
+    font-size:34px;
+
+    color:var(--orange);
+
+    margin-bottom:10px;
+
+}
+
+.page-title p{
+
+    color:#666;
+
+    font-size:17px;
+
+}
+
+/* ==========================================================
+   LAYOUT
+========================================================== */
+
+.news-layout{
+
+    display:grid;
+
+    grid-template-columns:420px 1fr;
+
+    gap:35px;
+
+    padding:35px;
+
+    flex:1;
+
+}
+
+/* ==========================================================
+   PANELEN
+========================================================== */
+
+.news-editor,
+.news-overview{
+
+    background:white;
+
+    border-radius:18px;
+
+    box-shadow:var(--shadow);
 
     padding:30px;
 
-    border-radius:15px;
+}
 
-    margin-bottom:30px;
+.news-editor{
 
-    box-shadow:0 5px 15px rgba(0,0,0,.25);
+    border-top:10px solid var(--orange);
 
 }
 
-.formulier h2{
+.news-overview{
 
-    margin-top:0;
-
-    color:#ff7a00;
+    border-top:10px solid var(--orange);
 
 }
 
-.formulier label{
+/* ==========================================================
+   TITELS
+========================================================== */
+
+.news-editor h3,
+.news-overview h3{
+
+    font-size:28px;
+
+    color:var(--orange);
+
+    margin-bottom:25px;
+
+}
+
+/* ==========================================================
+   LABELS
+========================================================== */
+
+.news-editor label{
 
     display:block;
 
-    margin-top:20px;
+    margin-top:18px;
 
     margin-bottom:8px;
 
@@ -38,63 +108,103 @@
 
 }
 
-.formulier input[type=text]{
+/* ==========================================================
+   INPUTS
+========================================================== */
+
+.news-editor input[type=text],
+.news-editor textarea,
+#searchNews{
 
     width:100%;
 
-    padding:12px;
+    border:2px solid #ddd;
+
+    border-radius:10px;
+
+    padding:14px;
 
     font-size:16px;
-
-    border:1px solid #ccc;
-
-    border-radius:8px;
-
-    box-sizing:border-box;
 
 }
 
-.formulier textarea{
-
-    width:100%;
-
-    padding:12px;
-
-    font-size:16px;
-
-    border:1px solid #ccc;
-
-    border-radius:8px;
+.news-editor textarea{
 
     resize:vertical;
 
-    box-sizing:border-box;
+    min-height:220px;
 
 }
 
-.knoppen{
+.news-editor input:focus,
+.news-editor textarea:focus,
+#searchNews:focus{
 
-    margin-top:25px;
+    border-color:var(--orange);
+
+    outline:none;
+
+}
+
+/* ==========================================================
+   FOTO
+========================================================== */
+
+#photo{
+
+    margin-top:10px;
+
+}
+
+#photoPreview{
+
+    margin-top:20px;
+
+    min-height:120px;
+
+    border:2px dashed #ddd;
+
+    border-radius:12px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#fafafa;
+
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.editor-buttons{
 
     display:flex;
 
     gap:15px;
 
-    flex-wrap:wrap;
+    margin-top:25px;
 
 }
 
-.knoppen button{
+.editor-buttons button{
 
-    padding:14px 25px;
+    flex:1;
 
     border:none;
 
-    border-radius:8px;
+    border-radius:10px;
+
+    padding:14px;
+
+    font-size:16px;
 
     cursor:pointer;
 
-    font-size:16px;
+    transition:.25s;
 
     font-weight:bold;
 
@@ -102,7 +212,7 @@
 
 #publish{
 
-    background:#ff7a00;
+    background:var(--orange);
 
     color:white;
 
@@ -110,91 +220,141 @@
 
 #publish:hover{
 
-    background:#ff9500;
+    background:var(--orange-dark);
 
 }
 
 #reset{
 
-    background:#888;
-
-    color:white;
+    background:#e5e5e5;
 
 }
 
 #reset:hover{
 
-    background:#666;
+    background:#cfcfcf;
 
 }
 
-#melding{
+/* ==========================================================
+   OVERZICHT
+========================================================== */
 
-    margin-top:20px;
+.overview-header{
 
-    font-weight:bold;
+    display:flex;
 
-    color:green;
+    justify-content:space-between;
 
-}
-
-/* ==========================================
-   NIEUWSLIJST
-========================================== */
-
-.nieuwslijst{
-
-    margin-top:40px;
-
-}
-
-.bericht{
-
-    background:white;
-
-    color:#222;
-
-    padding:20px;
-
-    border-radius:12px;
+    align-items:center;
 
     margin-bottom:20px;
 
-    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+#refreshNews{
+
+    border:none;
+
+    background:var(--orange);
+
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    cursor:pointer;
 
 }
 
-.bericht h3{
+#refreshNews:hover{
 
-    margin-top:0;
-
-    color:#ff7a00;
+    background:var(--orange-dark);
 
 }
 
-.bericht small{
+#searchNews{
 
-    color:#666;
+    margin-bottom:25px;
 
 }
 
-.bericht p{
+/* ==========================================================
+   NIEUWSLIJST
+========================================================== */
+
+#newsList{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+    max-height:700px;
+
+    overflow-y:auto;
+
+    padding-right:10px;
+
+}
+
+/* Kaarten die news.js straks vult */
+
+.news-item{
+
+    background:#fafafa;
+
+    border-left:6px solid var(--orange);
+
+    border-radius:12px;
+
+    padding:20px;
+
+    transition:.25s;
+
+}
+
+.news-item:hover{
+
+    background:white;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.10);
+
+}
+
+.news-item h4{
+
+    color:var(--orange);
+
+    margin-bottom:10px;
+
+}
+
+.news-item p{
+
+    margin-bottom:12px;
 
     line-height:1.6;
 
 }
 
-.bericht button{
+.news-actions{
 
-    margin-right:10px;
+    display:flex;
 
-    margin-top:15px;
+    gap:10px;
 
-    padding:10px 15px;
+}
+
+.news-actions button{
 
     border:none;
 
-    border-radius:6px;
+    border-radius:8px;
+
+    padding:10px 16px;
 
     cursor:pointer;
 
@@ -202,49 +362,43 @@
 
 }
 
-.bericht button:first-of-type{
+.news-edit{
 
-    background:#2196F3;
-
-    color:white;
-
-}
-
-.bericht button:last-of-type{
-
-    background:#E53935;
+    background:#2d2d2d;
 
     color:white;
 
 }
 
-.bericht button:hover{
+.news-delete{
 
-    opacity:.9;
+    background:#d93025;
+
+    color:white;
 
 }
 
-/* ==========================================
-   MOBIEL
-========================================== */
+.empty-news{
 
-@media(max-width:768px){
+    padding:60px;
 
-    .formulier{
+    text-align:center;
 
-        padding:20px;
+    color:#888;
 
-    }
+    font-size:20px;
 
-    .knoppen{
+}
 
-        flex-direction:column;
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
 
-    }
+@media(max-width:1200px){
 
-    .knoppen button{
+    .news-layout{
 
-        width:100%;
+        grid-template-columns:1fr;
 
     }
 
