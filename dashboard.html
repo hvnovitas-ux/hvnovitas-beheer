@@ -1,267 +1,133 @@
-  <a href="contact.html" class="card">
+  <div class="aantal" id="contactAantal">0</div>
 
-        <div class="icon">📧</div>
+            <p>Nieuwe berichten</p>
 
-        <h2>Contact</h2>
+        </a>
 
-        <p>Nieuwe berichten</p>
+        <a href="vrijwilligers.html" class="card">
 
-        <span class="badge">1</span>
+            <div class="emoji">🙋</div>
 
-    </a>
+            <h3>Vrijwilligers</h3>
 
-    <a href="vrijwilligers.html" class="card">
+            <div class="aantal" id="vrijwilligersAantal">0</div>
 
-        <div class="icon">🙋</div>
+            <p>Aanmeldingen</p>
 
-        <h2>Vrijwilligers</h2>
+        </a>
 
-        <p>Aanmeldingen</p>
+        <a href="agenda.html" class="card">
 
-    </a>
+            <div class="emoji">📅</div>
 
-    <a href="agenda.html" class="card">
+            <h3>Agenda</h3>
 
-        <div class="icon">📅</div>
+            <div class="aantal">📅</div>
 
-        <h2>Agenda</h2>
+            <p>Trainingen & wedstrijden</p>
 
-        <p>Trainingen & wedstrijden</p>
+        </a>
 
-    </a>
+        <a href="sponsors.html" class="card">
 
-    <a href="sponsors.html" class="card">
+            <div class="emoji">💰</div>
 
-        <div class="icon">💰</div>
+            <h3>Sponsors</h3>
 
-        <h2>Sponsors</h2>
+            <div class="aantal" id="sponsorAantal">0</div>
 
-        <p>Sponsorbeheer</p>
+            <p>Sponsors beheren</p>
 
-    </a>
+        </a>
 
-    <a href="drive.html" class="card">
+        <a href="drive.html" class="card">
 
-        <div class="icon">📸</div>
+            <div class="emoji">📸</div>
 
-        <h2>Foto's</h2>
+            <h3>Foto's</h3>
 
-        <p>Google Drive</p>
+            <div class="aantal">📷</div>
 
-    </a>
+            <p>Google Drive</p>
 
-    <a href="instellingen.html" class="card">
+        </a>
 
-        <div class="icon">⚙️</div>
+        <a href="instellingen.html" class="card">
 
-        <h2>Instellingen</h2>
+            <div class="emoji">⚙️</div>
 
-        <p>Systeeminstellingen</p>
+            <h3>Instellingen</h3>
 
-    </a>
+            <div class="aantal">⚙️</div>
 
-</div>
+            <p>Systeeminstellingen</p>
 
-<div class="footer">
+        </a>
 
-    <span>🟢 Firebase</span>
-    <span>🟢 Google Drive</span>
-    <span>🟢 Google Sheets</span>
+    </div>
 
-</div>
+</section>
+
+<section class="activiteiten">
+
+    <h2>Laatste activiteit</h2>
+
+    <div id="activiteiten">
+
+        <div class="activity">
+
+            Welkom bij HV Novitas Beheer.
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="status">
+
+    <h2>Systeemstatus</h2>
+
+    <div class="status-grid">
+
+        <div class="status-card">
+
+            🟢 Firebase
+
+        </div>
+
+        <div class="status-card">
+
+            🟢 Google Drive
+
+        </div>
+
+        <div class="status-card">
+
+            🟢 Google Sheets
+
+        </div>
+
+        <div class="status-card">
+
+            🟢 Website Online
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+
+© 2026 HV Novitas - Beheersysteem
+
+</footer>
 
 <script type="module" src="dashboard.js"></script>
 
 </body>
 
 </html>
-En vervang je style.css door dit moderne dashboard
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-
-    font-family:Arial,Helvetica,sans-serif;
-
-    background:#f4f4f4;
-
-    color:#333;
-
-}
-
-.header{
-
-    background:#f58220;
-
-    color:#fff;
-
-    padding:25px 40px;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    box-shadow:0 3px 12px rgba(0,0,0,.15);
-
-}
-
-.header h1{
-
-    font-size:34px;
-
-}
-
-.header p{
-
-    margin-top:5px;
-
-    opacity:.9;
-
-}
-
-.header-right{
-
-    font-size:18px;
-
-    font-weight:bold;
-
-}
-
-.dashboard{
-
-    max-width:1400px;
-
-    margin:40px auto;
-
-    padding:0 30px;
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-
-    gap:25px;
-
-}
-
-.card{
-
-    position:relative;
-
-    text-decoration:none;
-
-    color:#333;
-
-    background:#fff;
-
-    border-radius:18px;
-
-    padding:30px;
-
-    box-shadow:0 6px 18px rgba(0,0,0,.08);
-
-    transition:.25s;
-
-    border-top:8px solid #f58220;
-
-}
-
-.card:hover{
-
-    transform:translateY(-8px);
-
-    box-shadow:0 12px 30px rgba(0,0,0,.18);
-
-}
-
-.icon{
-
-    font-size:54px;
-
-    margin-bottom:15px;
-
-}
-
-.card h2{
-
-    color:#f58220;
-
-    margin-bottom:10px;
-
-}
-
-.card p{
-
-    color:#666;
-
-}
-
-.badge{
-
-    position:absolute;
-
-    top:20px;
-
-    right:20px;
-
-    background:#f58220;
-
-    color:#fff;
-
-    width:36px;
-
-    height:36px;
-
-    border-radius:50%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-weight:bold;
-
-}
-
-.footer{
-
-    background:#2b2b2b;
-
-    color:#fff;
-
-    padding:18px;
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:50px;
-
-    margin-top:50px;
-
-}
-
-@media(max-width:700px){
-
-    .header{
-
-        flex-direction:column;
-
-        text-align:center;
-
-        gap:15px;
-
-    }
-
-    .dashboard{
-
-        padding:20px;
-
-    }
-
-}
