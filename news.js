@@ -1,211 +1,76 @@
-import { db } from "./firebase.js";
+// ==========================================
+// HV NOVITAS - GOOGLE DRIVE
+// ==========================================
 
-import {
-    ref,
-    push,
-    onValue,
-    remove,
-    update
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+export const CLIENT_ID =
+"71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
-// ----------------------------
-// Elementen
-// ----------------------------
+export const API_KEY =
+"VUL_HIER_JE_BROWSER_API_KEY_IN";
 
-const title = document.getElementById("title");
-const text = document.getElementById("text");
-const publish = document.getElementById("publish");
-const reset = document.getElementById("reset");
-const melding = document.getElementById("melding");
-const newsList = document.getElementById("newsList");
+export const NEWS_FOLDER_ID =
+"1RMn8cqcO-TQBiEHkoAeLBbJTDZApx2uG";
 
-let editID = null;
+export const SCOPES =
+"https://www.googleapis.com/auth/drive.file";
 
-// ----------------------------
-// Publiceren
-// ----------------------------
+let tokenClient;
+let accessToken = null;
 
-publish.addEventListener("click", async () => {
+export async function initDrive() {
 
-    if (title.value.trim() === "") {
-        alert("Vul een titel in.");
-        return;
-    }
+    return new Promise((resolve) => {
 
-    if (text.value.trim() === "") {
-        alert("Vul een bericht in.");
-        return;
-    }
+        gapi.load("client", async () => {
 
-    const nu = new Date();
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [
+                    "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
+                ]
+            });
 
-    const bericht = {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: (response) => {
 
-        title: title.value,
+                    accessToken = response.access_token;
 
-        text: text.value,
+                    gapi.client.setToken({
+                        access_token: accessToken
+                    });
 
-        date: nu.toLocaleDateString("nl-NL"),
+                    resolve();
 
-        time: nu.toLocaleTimeString("nl-NL", {
-            hour: "2-digit",
-            minute: "2-digit"
-        }),
-
-        created: Date.now()
-
-    };
-
-    try {
-
-        if (editID) {
-
-            await update(ref(db, "news/" + editID), bericht);
-
-            melding.textContent = "✅ Nieuws bijgewerkt.";
-
-            editID = null;
-
-        } else {
-
-            await push(ref(db, "news"), bericht);
-
-            melding.textContent = "✅ Nieuws gepubliceerd.";
-
-        }
-
-        leeg();
-
-    } catch (error) {
-
-        console.error(error);
-
-        melding.textContent = "❌ Fout bij opslaan.";
-
-    }
-
-});
-
-// ----------------------------
-// Wissen
-// ----------------------------
-
-reset.addEventListener("click", leeg);
-
-function leeg() {
-
-    title.value = "";
-    text.value = "";
-
-}
-
-// ----------------------------
-// Nieuws laden
-// ----------------------------
-
-onValue(ref(db, "news"), (snapshot) => {
-
-    let berichten = [];
-
-    snapshot.forEach((item) => {
-
-        berichten.push({
-
-            id: item.key,
-
-            ...item.val()
+                }
+            });
 
         });
 
     });
 
-    berichten.sort((a, b) => b.created - a.created);
-
-    let html = "";
-
-    berichten.forEach((b) => {
-
-        html += `
-
-<div class="bericht">
-
-<h3>${b.title}</h3>
-
-<small>📅 ${b.date} &nbsp; 🕒 ${b.time}</small>
-
-<p>${b.text}</p>
-
-<button onclick="bewerk('${b.id}')">
-
-✏️ Bewerken
-
-</button>
-
-<button onclick="verwijder('${b.id}')">
-
-🗑️ Verwijderen
-
-</button>
-
-</div>
-
-`;
-
-    });
-
-    if (html === "") {
-
-        html = "Nog geen nieuws geplaatst.";
-
-    }
-
-    newsList.innerHTML = html;
-
-});
-
-// ----------------------------
-// Verwijderen
-// ----------------------------
-
-window.verwijder = async function(id){
-
-    if(confirm("Nieuws verwijderen?")){
-
-        await remove(ref(db,"news/"+id));
-
-    }
-
 }
 
-// ----------------------------
-// Bewerken
-// ----------------------------
+export async function loginDrive() {
 
-window.bewerk = function(id){
+    if (accessToken) return;
 
-    onValue(ref(db,"news/"+id),(snapshot)=>{
+    return new Promise((resolve) => {
 
-        const b=snapshot.val();
+        tokenClient.callback = (response) => {
 
-        if(!b) return;
+            accessToken = response.access_token;
 
-        editID=id;
+            gapi.client.setToken({
+                access_token: accessToken
+            });
 
-        title.value=b.title;
+            resolve();
 
-        text.value=b.text;
+        };
 
-        window.scrollTo({
-
-            top:0,
-
-            behavior:"smooth"
-
-        });
-
-    },{
-
-        onlyOnce:true
+        tokenClient.requestAccessToken();
 
     });
 
