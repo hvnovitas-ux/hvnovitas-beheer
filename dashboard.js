@@ -1,45 +1,99 @@
-import { auth } from "./firebase.js";
+// ==========================================
+// HV NOVITAS - DASHBOARD
+// ==========================================
 
-import {
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+const dashboard = {
 
-console.log("dashboard.js geladen");
+    nieuws: 0,
+    proeftrainingen: 0,
+    contact: 0,
+    vrijwilligers: 0,
+    agenda: 0,
+    sponsors: 0
 
-const naam = document.getElementById("naam");
-const foto = document.getElementById("foto");
-const logout = document.getElementById("logout");
+};
 
-onAuthStateChanged(auth, (user) => {
+// ==========================================
+// Initialiseren
+// ==========================================
 
-    console.log("Auth state:", user);
+document.addEventListener("DOMContentLoaded", async () => {
 
-    if (!user) {
-        console.log("Geen gebruiker, terug naar login");
-        window.location.replace("index.html");
-        return;
-    }
-
-    console.log("Ingelogd als:", user.email);
-
-    if (naam) {
-        naam.textContent = user.displayName || user.email;
-    }
-
-    if (foto && user.photoURL) {
-        foto.src = user.photoURL;
-        foto.style.display = "block";
-    }
+    await laadDashboard();
 
 });
 
-logout.addEventListener("click", async () => {
+// ==========================================
+// Dashboard laden
+// ==========================================
 
-    console.log("Uitloggen...");
+async function laadDashboard() {
 
-    await signOut(auth);
+    try {
 
-    window.location.replace("index.html");
+        updateKaarten();
 
-});
+        console.log("🧡 Dashboard geladen");
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+// ==========================================
+// Kaarten bijwerken
+// ==========================================
+
+function updateKaarten(){
+
+    setBadge("nieuws", dashboard.nieuws);
+
+    setBadge("proeftrainingen", dashboard.proeftrainingen);
+
+    setBadge("contact", dashboard.contact);
+
+    setBadge("vrijwilligers", dashboard.vrijwilligers);
+
+    setBadge("agenda", dashboard.agenda);
+
+    setBadge("sponsors", dashboard.sponsors);
+
+}
+
+// ==========================================
+// Badge aanpassen
+// ==========================================
+
+function setBadge(id, waarde){
+
+    const badge = document.querySelector(
+
+        `[data-badge="${id}"]`
+
+    );
+
+    if(!badge) return;
+
+    badge.textContent = waarde;
+
+}
+Kleine aanpassing in dashboard.html
+
+Vervang de badges door deze versie:
+
+<span class="badge" data-badge="nieuws">0</span>
+
+<span class="badge" data-badge="proeftrainingen">0</span>
+
+<span class="badge" data-badge="contact">0</span>
+
+<span class="badge" data-badge="vrijwilligers">0</span>
+
+<span class="badge" data-badge="agenda">0</span>
+
+<span class="badge" data-badge="sponsors">0</span>
