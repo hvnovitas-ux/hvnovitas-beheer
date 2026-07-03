@@ -1,4 +1,5 @@
 import { db } from "./firebase.js";
+import { uploadFile } from "./drive.js";
 
 import {
     ref,
@@ -14,8 +15,11 @@ import {
 
 const title = document.getElementById("title");
 const text = document.getElementById("text");
+const photo = document.getElementById("photo");
+
 const publish = document.getElementById("publish");
 const reset = document.getElementById("reset");
+
 const melding = document.getElementById("melding");
 const newsList = document.getElementById("newsList");
 
@@ -37,26 +41,47 @@ publish.addEventListener("click", async () => {
         return;
     }
 
-    const nu = new Date();
-
-    const bericht = {
-
-        title: title.value,
-
-        text: text.value,
-
-        date: nu.toLocaleDateString("nl-NL"),
-
-        time: nu.toLocaleTimeString("nl-NL", {
-            hour: "2-digit",
-            minute: "2-digit"
-        }),
-
-        created: Date.now()
-
-    };
-
     try {
+
+        publish.disabled = true;
+        melding.textContent = "⏳ Bezig met uploaden...";
+
+        let imageId = "";
+        let imageUrl = "";
+
+        if (photo.files.length > 0) {
+
+            const result = await uploadFile(photo.files[0]);
+
+            imageId = result.id;
+
+            imageUrl =
+                `https://drive.google.com/thumbnail?id=${imageId}&sz=w1600`;
+
+        }
+
+        const nu = new Date();
+
+        const bericht = {
+
+            title: title.value,
+
+            text: text.value,
+
+            imageId,
+
+            imageUrl,
+
+            date: nu.toLocaleDateString("nl-NL"),
+
+            time: nu.toLocaleTimeString("nl-NL", {
+                hour: "2-digit",
+                minute: "2-digit"
+            }),
+
+            created: Date.now()
+
+        };
 
         if (editID) {
 
@@ -80,7 +105,11 @@ publish.addEventListener("click", async () => {
 
         console.error(error);
 
-        melding.textContent = "❌ Fout bij opslaan.";
+        melding.textContent = "❌ " + error.message;
+
+    } finally {
+
+        publish.disabled = false;
 
     }
 
@@ -96,6 +125,7 @@ function leeg() {
 
     title.value = "";
     text.value = "";
+    photo.value = "";
 
 }
 
@@ -110,11 +140,8 @@ onValue(ref(db, "news"), (snapshot) => {
     snapshot.forEach((item) => {
 
         berichten.push({
-
             id: item.key,
-
             ...item.val()
-
         });
 
     });
@@ -126,8 +153,9 @@ onValue(ref(db, "news"), (snapshot) => {
     berichten.forEach((b) => {
 
         html += `
-
 <div class="bericht">
+
+${b.imageUrl ? `<img src="${b.imageUrl}" style="width:100%;max-width:300px;border-radius:8px;margin-bottom:10px;">` : ""}
 
 <h3>${b.title}</h3>
 
@@ -136,30 +164,19 @@ onValue(ref(db, "news"), (snapshot) => {
 <p>${b.text}</p>
 
 <button onclick="bewerk('${b.id}')">
-
 ✏️ Bewerken
-
 </button>
 
 <button onclick="verwijder('${b.id}')">
-
 🗑️ Verwijderen
-
 </button>
 
 </div>
-
 `;
 
     });
 
-    if (html === "") {
-
-        html = "Nog geen nieuws geplaatst.";
-
-    }
-
-    newsList.innerHTML = html;
+    newsList.innerHTML = html || "Nog geen nieuws geplaatst.";
 
 });
 
@@ -192,23 +209,15 @@ window.bewerk = function(id){
         editID=id;
 
         title.value=b.title;
-
         text.value=b.text;
 
         window.scrollTo({
-
             top:0,
-
             behavior:"smooth"
-
         });
 
     },{
-
         onlyOnce:true
-
     });
 
 }
-
-Ik zie één belangrijk punt: deze versie bevat nog geen enkele koppeling met Google Drive. Er wordt geen foto geselecteerd, gee
