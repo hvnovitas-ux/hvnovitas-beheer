@@ -1,25 +1,61 @@
-</p>
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HV Novitas Beheer - Proeftrainingen</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <h1>🏃 Proeftrainingen</h1>
+
+    <nav>
+
+        <a href="dashboard.html">Dashboard</a>
+        <a href="news.html">Nieuws</a>
+        <a href="proeftrainingen.html" class="active">Proeftrainingen</a>
+
+    </nav>
 
 </header>
 
 <main>
 
-<div id="proeftrainingen">
+    <section class="content">
 
-<p>
-⏳ Proeftrainingen laden...
-</p>
+        <h2>Nieuwe aanvragen</h2>
 
-</div>
+        <div id="status">
+            Verbinding maken...
+        </div>
+
+        <div id="proeftrainingen">
+
+            <div class="loading">
+
+                Gegevens worden geladen...
+
+            </div>
+
+        </div>
+
+    </section>
 
 </main>
 
 <script src="https://apis.google.com/js/api.js"></script>
-
 <script src="https://accounts.google.com/gsi/client"></script>
 
 <script type="module" src="googleSheets.js"></script>
-
 <script type="module" src="proeftrainingen.js"></script>
 
 </body>
