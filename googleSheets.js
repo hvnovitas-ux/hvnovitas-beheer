@@ -142,11 +142,27 @@ export async function getProeftrainingen() {
 
     const rows = await getRows();
 
-    if (!rows.length) {
+    if (!rows.length) return [];
 
-        return [];
+    const headers = rows.shift();
 
-    }
+    return rows.map((row, index) => {
+
+        const item = {
+            _row: index + 2
+        };
+
+        headers.forEach((header, i) => {
+
+            item[header] = row[i] || "";
+
+        });
+
+        return item;
+
+    });
+
+}
 
     const headers = rows.shift();
 
