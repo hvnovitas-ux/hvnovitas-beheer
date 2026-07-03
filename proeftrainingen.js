@@ -1,37 +1,45 @@
+// ==========================================
+// HV NOVITAS - PROEFTRAININGEN
+// ==========================================
+
 import {
     initSheets,
     getProeftrainingen
 } from "./googleSheets.js";
 
-// ==========================================
-// HV NOVITAS - PROEFTRAININGEN
-// ==========================================
-
+const status = document.getElementById("status");
 const container = document.getElementById("proeftrainingen");
 
 // ==========================================
-// Laden
+// Pagina laden
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    await laadProeftrainingen();
+
+});
+
+// ==========================================
+// Proeftrainingen laden
 // ==========================================
 
 async function laadProeftrainingen() {
 
-    if (!container) {
-
-        console.error("Container #proeftrainingen niet gevonden.");
-
-        return;
-
-    }
-
-    container.innerHTML = "<p>⏳ Proeftrainingen laden...</p>";
-
     try {
 
+        status.textContent = "Google Sheets verbinden...";
+
         await initSheets();
+
+        status.textContent = "Proeftrainingen ophalen...";
 
         const aanvragen = await getProeftrainingen();
 
         toonProeftrainingen(aanvragen);
+
+        status.textContent =
+            `${aanvragen.length} proeftraining(en) gevonden`;
 
     }
 
@@ -39,25 +47,19 @@ async function laadProeftrainingen() {
 
         console.error(error);
 
+        status.textContent = "Fout bij laden.";
+
         container.innerHTML = `
 
-<div class="bericht">
+        <div class="bericht">
 
-<h3>❌ Fout</h3>
+            <h3>❌ Fout</h3>
 
-<p>
+            <p>${error.message || error}</p>
 
-De proeftrainingen konden niet worden geladen.
+        </div>
 
-</p>
-
-<pre style="white-space:pre-wrap;">
-${error.message || error}
-</pre>
-
-</div>
-
-`;
+        `;
 
     }
 
@@ -73,13 +75,13 @@ function toonProeftrainingen(data) {
 
         container.innerHTML = `
 
-<div class="bericht">
+        <div class="bericht">
 
-Nog geen proeftrainingen gevonden.
+            Geen proeftrainingen gevonden.
 
-</div>
+        </div>
 
-`;
+        `;
 
         return;
 
@@ -87,68 +89,85 @@ Nog geen proeftrainingen gevonden.
 
     let html = "";
 
-    data.forEach((p) => {
-
-        const naam =
-            `${p.voornaam || ""} ${p.Achternaam || p.achternaam || ""}`.trim();
+    data.forEach((persoon) => {
 
         html += `
 
-<div class="bericht">
+        <div class="bericht">
 
-<h3>${naam}</h3>
+            <h3>
 
-<p>
+                ${persoon.voornaam || ""}
 
-<strong>Geslacht</strong><br>
-${p.Geslacht || p.geslacht || "-"}
+                ${persoon.Achternaam || ""}
 
-</p>
+            </h3>
 
-<p>
+            <p>
 
-<strong>Geboortedatum</strong><br>
-${formatDatum(
-    p.Geboortedatum ||
-    p.geboortedatum
-)}
+                <strong>Geslacht:</strong><br>
 
-</p>
+                ${persoon.Geslacht || "-"}
 
-<p>
+            </p>
 
-<strong>Telefoon</strong><br>
-${p.Telefoonnummer || p.telefoonnummer || "-"}
+            <p>
 
-</p>
+                <strong>Geboortedatum:</strong><br>
 
-<p>
+                ${formatDatum(persoon.Geboortedatum)}
 
-<strong>E-mail</strong><br>
-${p["E-mail"] || p.email || "-"}
+            </p>
 
-</p>
+            <p>
 
-<p>
+                <strong>Telefoon:</strong><br>
 
-<strong>Opmerkingen</strong><br>
-${p.Opmerkingen || "-"}
+                ${persoon.Telefoonnummer || "-"}
 
-</p>
+            </p>
 
-<p>
+            <p>
 
-<strong>Aangevraagd</strong><br>
-${formatDatum(
-    p.Tijdstempel ||
-    p.tijdstempel
-)}
+                <strong>E-mail:</strong><br>
 
-</p>
+                <a href="mailto:${persoon["E-mail"] || ""}">
+                    ${persoon["E-mail"] || "-"}
+                </a>
 
-</div>
+            </p>
 
-`;
+            <p>
+
+                <strong>Opmerkingen:</strong><br>
+
+                ${persoon.Opmerkingen || "-"}
+
+            </p>
+
+            <p>
+
+                <strong>Aanvraag:</strong><br>
+
+                ${formatDatum(persoon.Tijdstempel)}
+
+            </p>
+
+            <div class="knoppen">
+
+                <button onclick="window.location.href='tel:${persoon.Telefoonnummer || ""}'">
+                    📞 Bellen
+                </button>
+
+                <button onclick="window.location.href='mailto:${persoon["E-mail"] || ""}'">
+                    📧 Mail
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
 
     });
 
@@ -160,22 +179,18 @@ ${formatDatum(
 // Datum formatteren
 // ==========================================
 
-function formatDatum(waarde) {
+function formatDatum(datum) {
 
-    if (!waarde) return "-";
+    if (!datum) return "-";
 
-    const datum = new Date(waarde);
+    const d = new Date(datum);
 
-    if (isNaN(datum)) {
+    if (isNaN(d)) {
 
-        return waarde;
+        return datum;
 
     }
 
-    return datum.toLocaleDateString("nl-NL");
+    return d.toLocaleDateString("nl-NL");
 
 }
-
-// ==========================================
-
-laadProeftrainingen();
