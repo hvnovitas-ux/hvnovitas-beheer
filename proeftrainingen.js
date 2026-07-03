@@ -1,64 +1,113 @@
-const API =
-"https://script.google.com/macros/s/AKfycbxxwdYKvrzfr4hEbBru0zQUz2om9dqcCitiQF6ieV_PGnMyOf-UFK2SBKITUAYthMMdeg/exec";
+import { db } from "./firebase.js";
 
-const lijst = document.getElementById("proeftrainingen");
+import {
+    ref,
+    push
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-async function laadProeftrainingen() {
+// ==========================================
+// Elementen
+// ==========================================
 
-    lijst.innerHTML = "Laden...";
+const voornaam = document.getElementById("voornaam");
+const achternaam = document.getElementById("achternaam");
+const geslacht = document.getElementById("geslacht");
+const geboortedatum = document.getElementById("geboortedatum");
+const telefoon = document.getElementById("telefoon");
+const email = document.getElementById("email");
+const opmerkingen = document.getElementById("opmerkingen");
+
+const verstuur = document.getElementById("verstuur");
+const melding = document.getElementById("melding");
+
+// ==========================================
+// Versturen
+// ==========================================
+
+verstuur.addEventListener("click", async () => {
+
+    if (voornaam.value.trim() === "") {
+        alert("Vul je voornaam in.");
+        return;
+    }
+
+    if (achternaam.value.trim() === "") {
+        alert("Vul je achternaam in.");
+        return;
+    }
+
+    if (geslacht.value === "") {
+        alert("Kies een geslacht.");
+        return;
+    }
+
+    if (geboortedatum.value === "") {
+        alert("Vul je geboortedatum in.");
+        return;
+    }
+
+    if (telefoon.value.trim() === "") {
+        alert("Vul je telefoonnummer in.");
+        return;
+    }
+
+    if (email.value.trim() === "") {
+        alert("Vul je e-mailadres in.");
+        return;
+    }
+
+    verstuur.disabled = true;
+
+    melding.textContent = "⏳ Aanvraag versturen...";
 
     try {
 
-        const response = await fetch(API);
+        const aanvraag = {
 
-        const data = await response.json();
+            voornaam: voornaam.value.trim(),
 
-        if (data.length === 0) {
+            achternaam: achternaam.value.trim(),
 
-            lijst.innerHTML = "Geen aanvragen.";
+            geslacht: geslacht.value,
 
-            return;
+            geboortedatum: geboortedatum.value,
 
-        }
+            telefoon: telefoon.value.trim(),
 
-        let html = "";
+            email: email.value.trim(),
 
-        data.reverse();
+            opmerkingen: opmerkingen.value.trim(),
 
-        data.forEach(item => {
+            status: "Nieuw",
 
-            html += `
+            datum: new Date().toLocaleDateString("nl-NL"),
 
-<div class="bericht">
+            created: Date.now()
 
-<h3>${item.voornaam} ${item.Achternaam}</h3>
+        };
 
-<p><strong>Geslacht:</strong> ${item.Geslacht}</p>
+        await push(ref(db, "proeftrainingen"), aanvraag);
 
-<p><strong>Geboortedatum:</strong> ${item.Geboortedatum.substring(0,10)}</p>
+        melding.textContent =
+            "✅ Je aanvraag is verzonden. We nemen zo snel mogelijk contact met je op.";
 
-<p><strong>Telefoon:</strong> ${item.Telefoonnummer}</p>
-
-<p><strong>E-mail:</strong> ${item["E-mail"]}</p>
-
-<p><strong>Opmerking:</strong><br>${item.Opmerkingen}</p>
-
-</div>
-
-`;
-
-        });
-
-        lijst.innerHTML = html;
+        voornaam.value = "";
+        achternaam.value = "";
+        geslacht.value = "";
+        geboortedatum.value = "";
+        telefoon.value = "";
+        email.value = "";
+        opmerkingen.value = "";
 
     } catch (error) {
 
         console.error(error);
 
-        lijst.innerHTML = "Fout bij laden.";
+        melding.textContent =
+            "❌ Er is iets misgegaan. Probeer het later opnieuw.";
 
     }
 
-}
+    verstuur.disabled = false;
 
-laadProeftrainingen();
+});
