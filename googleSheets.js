@@ -1,38 +1,44 @@
-// ==========================================
-// HV NOVITAS - GOOGLE SHEETS
-// Definitieve versie
-// ==========================================
+// =====================================================
+// HV NOVITAS CMS
+// Google Sheets - Deel 1
+// =====================================================
+
+// ---------- CONFIGURATIE ----------
 
 export const CLIENT_ID =
 "71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
 export const API_KEY =
-"AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE";
+"JOUW_API_KEY";
 
 export const SPREADSHEET_ID =
 "1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM";
 
-export const RANGE =
-"Formulierreacties 1!A:H";
-
-const DISCOVERY_DOC =
+export const DISCOVERY_DOC =
 "https://sheets.googleapis.com/$discovery/rest?version=v4";
 
-
-const SCOPES =
+export const SCOPES =
 "https://www.googleapis.com/auth/spreadsheets";
 
-let accessToken = null;
-let tokenClient = null;
+// ---------- VARIABELEN ----------
+
 let initialized = false;
 
-// ==========================================
+let tokenClient = null;
+
+let accessToken = null;
+
+// =====================================================
 // INITIALISEREN
-// ==========================================
+// =====================================================
 
 export async function initSheets() {
 
-    if (initialized) return;
+    if (initialized) {
+
+        return;
+
+    }
 
     await new Promise(resolve => {
 
@@ -45,6 +51,7 @@ export async function initSheets() {
         apiKey: API_KEY,
 
         discoveryDocs: [DISCOVERY_DOC]
+
     });
 
     tokenClient = google.accounts.oauth2.initTokenClient({
@@ -59,13 +66,13 @@ export async function initSheets() {
 
     initialized = true;
 
-    console.log("📄 Google Sheets geïnitialiseerd");
+    console.log("✅ Google Sheets geïnitialiseerd");
 
 }
 
-// ==========================================
-// AANMELDEN
-// ==========================================
+// =====================================================
+// LOGIN
+// =====================================================
 
 export async function loginSheets() {
 
@@ -83,8 +90,6 @@ export async function loginSheets() {
 
             if (response.error) {
 
-                console.error(response);
-
                 reject(response);
 
                 return;
@@ -99,7 +104,7 @@ export async function loginSheets() {
 
             });
 
-            console.log("✅ Google Sheets aangemeld");
+            console.log("✅ Google Login voltooid");
 
             resolve(accessToken);
 
@@ -115,11 +120,60 @@ export async function loginSheets() {
 
 }
 
-// ==========================================
-// RIJEN OPHALEN
-// ==========================================
+// =====================================================
+// UITLOGGEN
+// =====================================================
 
-export async function getRows() {
+export function logoutSheets() {
+
+    if (!accessToken) return;
+
+    google.accounts.oauth2.revoke(accessToken);
+
+    gapi.client.setToken(null);
+
+    accessToken = null;
+
+    console.log("🚪 Uitgelogd");
+
+}
+
+// =====================================================
+// STATUS
+// =====================================================
+
+export function isLoggedIn() {
+
+    return accessToken !== null;
+
+}
+
+export function getAccessToken() {
+
+    return accessToken;
+
+}
+
+// =====================================================
+// SPREADSHEET TEST
+// =====================================================
+
+export async function testConnection() {
+
+    await loginSheets();
+
+    return await gapi.client.sheets.spreadsheets.get({
+
+        spreadsheetId: SPREADSHEET_ID
+
+    });
+
+}
+// =====================================================
+// RIJEN OPHALEN
+// =====================================================
+
+export async function getRows(range) {
 
     await loginSheets();
 
@@ -128,7 +182,7 @@ export async function getRows() {
 
             spreadsheetId: SPREADSHEET_ID,
 
-            range: RANGE
+            range: range
 
         });
 
@@ -136,13 +190,13 @@ export async function getRows() {
 
 }
 
-// ==========================================
+// =====================================================
 // PROEFTRAININGEN
-// ==========================================
+// =====================================================
 
 export async function getProeftrainingen() {
 
-    const rows = await getRows();
+    const rows = await getRows("Formulierreacties 1!A:H");
 
     if (!rows.length) {
 
@@ -172,15 +226,67 @@ export async function getProeftrainingen() {
 
 }
 
-// ==========================================
-// RIJ VERWIJDEREN
-// ==========================================
+// =====================================================
+// RIJ TOEVOEGEN
+// =====================================================
 
-export async function deleteRow(rowIndex) {
+export async function appendRow(range, values) {
 
     await loginSheets();
 
-    await gapi.client.sheets.spreadsheets.batchUpdate({
+    return await gapi.client.sheets.spreadsheets.values.append({
+
+        spreadsheetId: SPREADSHEET_ID,
+
+        range: range,
+
+        valueInputOption: "USER_ENTERED",
+
+        resource: {
+
+            values: [values]
+
+        }
+
+    });
+
+}
+
+// =====================================================
+// RIJ BIJWERKEN
+// =====================================================
+
+export async function updateRow(range, values) {
+
+    await loginSheets();
+
+    return await gapi.client.sheets.spreadsheets.values.update({
+
+        spreadsheetId: SPREADSHEET_ID,
+
+        range: range,
+
+        valueInputOption: "USER_ENTERED",
+
+        resource: {
+
+            values: [values]
+
+        }
+
+    });
+
+}
+
+// =====================================================
+// RIJ VERWIJDEREN
+// =====================================================
+
+export async function deleteRow(rowNumber, sheetId = 0) {
+
+    await loginSheets();
+
+    return await gapi.client.sheets.spreadsheets.batchUpdate({
 
         spreadsheetId: SPREADSHEET_ID,
 
@@ -194,13 +300,13 @@ export async function deleteRow(rowIndex) {
 
                         range: {
 
-                            sheetId: 0,
+                            sheetId: sheetId,
 
                             dimension: "ROWS",
 
-                            startIndex: rowIndex - 1,
+                            startIndex: rowNumber - 1,
 
-                            endIndex: rowIndex
+                            endIndex: rowNumber
 
                         }
 
@@ -216,9 +322,9 @@ export async function deleteRow(rowIndex) {
 
 }
 
-// ==========================================
+// =====================================================
 // VERVERSEN
-// ==========================================
+// =====================================================
 
 export async function refreshSheets() {
 
@@ -226,36 +332,27 @@ export async function refreshSheets() {
 
 }
 
-// ==========================================
-// UITLOGGEN
-// ==========================================
+// =====================================================
+// SPREADSHEET INFO
+// =====================================================
 
-export function logoutSheets() {
+export async function getSpreadsheetInfo() {
 
-    if (!accessToken) return;
+    await loginSheets();
 
-    google.accounts.oauth2.revoke(accessToken);
+    const response =
+        await gapi.client.sheets.spreadsheets.get({
 
-    gapi.client.setToken(null);
+            spreadsheetId: SPREADSHEET_ID
 
-    accessToken = null;
+        });
 
-    console.log("🚪 Google Sheets afgemeld");
-
-}
-
-// ==========================================
-// STATUS
-// ==========================================
-
-export function isSheetsLoggedIn() {
-
-    return accessToken !== null;
+    return response.result;
 
 }
 
-export function getSheetsToken() {
+// =====================================================
+// EINDE
+// =====================================================
 
-    return accessToken;
-
-}
+console.log("🧡 HV Novitas Google Sheets gereed");
