@@ -1,147 +1,214 @@
-// ==========================================
-// HV NOVITAS - GOOGLE DRIVE
-// ==========================================
+import { db } from "./firebase.js";
 
-export const CLIENT_ID =
-"71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
+import {
+    ref,
+    push,
+    onValue,
+    remove,
+    update
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-export const API_KEY =
-"AIzaSyC7OnJi3Z5BCaktePTrjb94nZgKMWSwapQ";
+// ----------------------------
+// Elementen
+// ----------------------------
 
-export const NEWS_FOLDER_ID =
-"1RMn8cqcO-TQBiEHkoAeLBbJTDZApx2uG";
+const title = document.getElementById("title");
+const text = document.getElementById("text");
+const publish = document.getElementById("publish");
+const reset = document.getElementById("reset");
+const melding = document.getElementById("melding");
+const newsList = document.getElementById("newsList");
 
-export const SCOPES =
-"https://www.googleapis.com/auth/drive.file";
+let editID = null;
 
-let tokenClient = null;
-let accessToken = null;
+// ----------------------------
+// Publiceren
+// ----------------------------
 
-// ------------------------------------------
-// Initialiseren
-// ------------------------------------------
+publish.addEventListener("click", async () => {
 
-export async function initDrive() {
+    if (title.value.trim() === "") {
+        alert("Vul een titel in.");
+        return;
+    }
 
-    return new Promise((resolve) => {
+    if (text.value.trim() === "") {
+        alert("Vul een bericht in.");
+        return;
+    }
 
-        gapi.load("client", async () => {
+    const nu = new Date();
 
-            await gapi.client.init({
+    const bericht = {
 
-                apiKey: API_KEY,
+        title: title.value,
 
-                discoveryDocs: [
-                    "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
-                ]
+        text: text.value,
 
-            });
+        date: nu.toLocaleDateString("nl-NL"),
 
-            tokenClient = google.accounts.oauth2.initTokenClient({
+        time: nu.toLocaleTimeString("nl-NL", {
+            hour: "2-digit",
+            minute: "2-digit"
+        }),
 
-                client_id: CLIENT_ID,
-
-                scope: SCOPES,
-
-                callback: (response) => {
-
-                    accessToken = response.access_token;
-
-                    gapi.client.setToken({
-                        access_token: accessToken
-                    });
-
-                    resolve();
-
-                }
-
-            });
-
-        });
-
-    });
-
-}
-
-// ------------------------------------------
-// Inloggen
-// ------------------------------------------
-
-export async function loginDrive() {
-
-    if (accessToken) return;
-
-    return new Promise((resolve) => {
-
-        tokenClient.callback = (response) => {
-
-            accessToken = response.access_token;
-
-            gapi.client.setToken({
-                access_token: accessToken
-            });
-
-            resolve();
-
-        };
-
-        tokenClient.requestAccessToken({
-            prompt: "consent"
-        });
-
-    });
-
-}
-
-// ------------------------------------------
-// Upload afbeelding
-// ------------------------------------------
-
-export async function uploadNewsImage(file) {
-
-    await loginDrive();
-
-    const metadata = {
-
-        name: file.name,
-
-        mimeType: file.type,
-
-        parents: [NEWS_FOLDER_ID]
+        created: Date.now()
 
     };
 
-    const form = new FormData();
+    try {
 
-    form.append(
-        "metadata",
-        new Blob(
-            [JSON.stringify(metadata)],
-            { type: "application/json" }
-        )
-    );
+        if (editID) {
 
-    form.append("file", file);
+            await update(ref(db, "news/" + editID), bericht);
 
-    const response = await fetch(
-        "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            },
-            body: form
+            melding.textContent = "✅ Nieuws bijgewerkt.";
+
+            editID = null;
+
+        } else {
+
+            await push(ref(db, "news"), bericht);
+
+            melding.textContent = "✅ Nieuws gepubliceerd.";
+
         }
-    );
 
-    if (!response.ok) {
+        leeg();
 
-        throw new Error(await response.text());
+    } catch (error) {
+
+        console.error(error);
+
+        melding.textContent = "❌ Fout bij opslaan.";
 
     }
 
-    const data = await response.json();
+});
 
-    return data.id;
+// ----------------------------
+// Wissen
+// ----------------------------
+
+reset.addEventListener("click", leeg);
+
+function leeg() {
+
+    title.value = "";
+    text.value = "";
 
 }
+
+// ----------------------------
+// Nieuws laden
+// ----------------------------
+
+onValue(ref(db, "news"), (snapshot) => {
+
+    let berichten = [];
+
+    snapshot.forEach((item) => {
+
+        berichten.push({
+
+            id: item.key,
+
+            ...item.val()
+
+        });
+
+    });
+
+    berichten.sort((a, b) => b.created - a.created);
+
+    let html = "";
+
+    berichten.forEach((b) => {
+
+        html += `
+
+<div class="bericht">
+
+<h3>${b.title}</h3>
+
+<small>📅 ${b.date} &nbsp; 🕒 ${b.time}</small>
+
+<p>${b.text}</p>
+
+<button onclick="bewerk('${b.id}')">
+
+✏️ Bewerken
+
+</button>
+
+<button onclick="verwijder('${b.id}')">
+
+🗑️ Verwijderen
+
+</button>
+
+</div>
+
+`;
+
+    });
+
+    if (html === "") {
+
+        html = "Nog geen nieuws geplaatst.";
+
+    }
+
+    newsList.innerHTML = html;
+
+});
+
+// ----------------------------
+// Verwijderen
+// ----------------------------
+
+window.verwijder = async function(id){
+
+    if(confirm("Nieuws verwijderen?")){
+
+        await remove(ref(db,"news/"+id));
+
+    }
+
+}
+
+// ----------------------------
+// Bewerken
+// ----------------------------
+
+window.bewerk = function(id){
+
+    onValue(ref(db,"news/"+id),(snapshot)=>{
+
+        const b=snapshot.val();
+
+        if(!b) return;
+
+        editID=id;
+
+        title.value=b.title;
+
+        text.value=b.text;
+
+        window.scrollTo({
+
+            top:0,
+
+            behavior:"smooth"
+
+        });
+
+    },{
+
+        onlyOnce:true
+
+    });
+
+}
+
+Ik zie één belangrijk punt: deze versie bevat nog geen enkele koppeling met Google Drive. Er wordt geen foto geselecteerd, gee
