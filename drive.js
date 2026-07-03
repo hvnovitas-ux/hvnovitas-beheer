@@ -16,57 +16,64 @@ export const SCOPES =
 
 let accessToken = null;
 let tokenClient = null;
+let initialized = false;
+
+// ------------------------------------------
+// Initialiseren
+// ------------------------------------------
 
 export async function initDrive() {
 
-    return new Promise((resolve) => {
+    if (initialized) return;
 
-        gapi.load("client", async () => {
+    await new Promise((resolve) => gapi.load("client", resolve));
 
-            await gapi.client.init({
-                apiKey: API_KEY,
-                discoveryDocs: [
-                    "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
-                ]
-            });
-
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: SCOPES,
-                callback: (tokenResponse) => {
-
-                    accessToken = tokenResponse.access_token;
-
-                    gapi.client.setToken({
-                        access_token: accessToken
-                    });
-
-                    resolve();
-
-                }
-            });
-
-        });
-
+    await gapi.client.init({
+        apiKey: API_KEY,
+        discoveryDocs: [
+            "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
+        ]
     });
 
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: () => {}
+    });
+
+    initialized = true;
+
+    console.log("📷 Google Drive geïnitialiseerd");
 }
+
+// ------------------------------------------
+// Aanmelden
+// ------------------------------------------
 
 export async function loginDrive() {
 
-    if (accessToken) return;
+    await initDrive();
 
-    return new Promise((resolve) => {
+    if (accessToken) {
+        return accessToken;
+    }
 
-        tokenClient.callback = (tokenResponse) => {
+    return new Promise((resolve, reject) => {
 
-            accessToken = tokenResponse.access_token;
+        tokenClient.callback = (response) => {
+
+            if (response.error) {
+                reject(response);
+                return;
+            }
+
+            accessToken = response.access_token;
 
             gapi.client.setToken({
                 access_token: accessToken
             });
 
-            resolve();
+            resolve(accessToken);
 
         };
 
@@ -77,6 +84,10 @@ export async function loginDrive() {
     });
 
 }
+
+// ------------------------------------------
+// Upload bestand
+// ------------------------------------------
 
 export async function uploadFile(file) {
 
@@ -117,6 +128,8 @@ export async function uploadFile(file) {
 
     const data = await response.json();
 
-    return data.id;
+    console.log("✅ Upload gelukt:", data);
+
+    return data;
 
 }
