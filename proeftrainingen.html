@@ -1,20 +1,43 @@
-<section class="nieuwslijst">
+<label>Achternaam</label>
+<input type="text" id="achternaam">
 
-<h2>Aanvragen</h2>
+<label>Geslacht</label>
 
-<div id="proeftrainingen">
+<select id="geslacht">
 
-Laden...
+<option value="">Kies...</option>
+<option>Man</option>
+<option>Vrouw</option>
 
-</div>
+</select>
 
-</section>
+<label>Geboortedatum</label>
+<input type="date" id="geboortedatum">
+
+<label>Telefoonnummer</label>
+<input type="tel" id="telefoon">
+
+<label>E-mailadres</label>
+<input type="email" id="email">
+
+<label>Opmerkingen</label>
+
+<textarea
+id="opmerkingen"
+rows="6"></textarea>
+
+<button id="verstuur">
+
+🏃 Proeftraining aanvragen
+
+</button>
+
+<p id="melding"></p>
 
 </div>
 
 <script type="module" src="firebase.js"></script>
-<script type="module" src="dashboard.js"></script>
-<script type="module" src="proeftrainingen.js"></script>
+<script type="module" src="proeftraining.js"></script>
 
 </body>
 
