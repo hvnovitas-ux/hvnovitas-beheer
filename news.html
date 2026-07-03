@@ -4,9 +4,11 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>HV Novitas - Nieuwsbeheer</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>HV Novitas CMS - Nieuws</title>
 
     <link rel="stylesheet" href="style.css">
 
@@ -16,95 +18,205 @@
 
 <div class="dashboard">
 
+    <!-- =======================================
+         HEADER
+    ======================================== -->
+
     <header class="topbar">
 
-        <div class="logo">
-            🧡 HV Novitas Beheer
+        <div class="logo-area">
+
+            <img
+                src="images/logo.png"
+                class="logo"
+                alt="HV Novitas">
+
+            <div>
+
+                <h1>HV NOVITAS CMS</h1>
+
+                <p>Nieuwsbeheer</p>
+
+            </div>
+
         </div>
 
-        <div class="user">
+        <div class="user-area">
 
-            <img id="foto"
-                 src=""
-                 alt="Profielfoto"
-                 style="display:none;">
+            <div class="status">
 
-            <span id="naam">Laden...</span>
+                <span class="online"></span>
 
-            <button id="logout">
-                🚪 Uitloggen
+                Ingelogd
+
+            </div>
+
+            <div id="naam">
+
+                Laden...
+
+            </div>
+
+            <div id="email">
+
+            </div>
+
+            <button id="logoutButton">
+
+                Uitloggen
+
             </button>
 
         </div>
 
     </header>
 
-    <section class="welkom">
+    <!-- =======================================
+         PAGINA TITEL
+    ======================================== -->
 
-        <h1>📰 Nieuwsbeheer</h1>
+    <section class="page-title">
 
-        <p>Plaats hier nieuws voor de website van HV Novitas.</p>
+        <h2>Nieuwsbeheer</h2>
+
+        <p>
+            Voeg nieuws toe, wijzig bestaande berichten of verwijder oude berichten.
+        </p>
 
     </section>
 
-    <section class="formulier">
+    <!-- =======================================
+         TWEE KOLOMMEN
+    ======================================== -->
 
-        <h2>Nieuw bericht</h2>
+    <main class="news-layout">
 
-        <label for="title">Titel</label>
+        <!-- ===============================
+             LINKER KOLOM
+        ================================ -->
 
-        <input
-            type="text"
-            id="title"
-            placeholder="Titel van het nieuwsbericht">
+        <section class="news-editor">
 
-        <label for="text">Bericht</label>
+            <h3>Nieuw bericht</h3>
 
-        <textarea
-            id="text"
-            rows="10"
-            placeholder="Typ hier het nieuwsbericht..."></textarea>
+            <label>Titel</label>
 
-        <!-- FOTO -->
+            <input
+                type="text"
+                id="title"
+                placeholder="Titel van het nieuwsbericht">
 
-        <label for="photo">
-            📷 Foto
-        </label>
+            <label>Bericht</label>
 
-        <input
-            type="file"
-            id="photo"
-            accept="image/*">
+            <textarea
+                id="text"
+                rows="12"
+                placeholder="Typ hier het nieuwsbericht..."></textarea>
 
-        <div id="photoPreview"></div>
+            <label>Foto</label>
 
-        <div class="knoppen">
+            <input
+                type="file"
+                id="photo"
+                accept="image/*">
 
-            <button id="publish">
-                💾 Publiceren
-            </button>
+            <div id="photoPreview"></div>
 
-            <button id="reset" type="button">
-                ✖ Wissen
-            </button>
+            <div class="editor-buttons">
+
+                <button id="publish">
+
+                    Publiceren
+
+                </button>
+
+                <button id="reset">
+
+                    Wissen
+
+                </button>
+
+            </div>
+
+            <p id="melding"></p>
+
+        </section>
+
+        <!-- ===============================
+             RECHTER KOLOM
+        ================================ -->
+
+        <section class="news-overview">
+
+            <div class="overview-header">
+
+                <h3>Nieuwsberichten</h3>
+
+                <button id="refreshNews">
+
+                    Vernieuwen
+
+                </button>
+
+            </div>
+
+            <input
+                type="text"
+                id="searchNews"
+                placeholder="Zoek een nieuwsbericht...">
+
+            <div id="newsList">
+
+                <div class="empty-news">
+
+                    Nog geen nieuws geplaatst.
+
+                </div>
+                  </div>
+
+        </section>
+
+    </main>
+
+    <!-- =======================================
+         FOOTER
+    ======================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-left">
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                Google Drive
+
+            </div>
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                Firebase
+
+            </div>
 
         </div>
 
-        <p id="melding"></p>
+        <div class="footer-center">
 
-    </section>
-
-    <section class="nieuwslijst">
-
-        <h2>Geplaatste berichten</h2>
-
-        <div id="newsList">
-
-            Nog geen nieuws geplaatst.
+            HV Novitas CMS
 
         </div>
 
-    </section>
+        <div class="footer-right">
+
+            Versie 1.0
+
+        </div>
+
+    </footer>
 
 </div>
 
