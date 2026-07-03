@@ -1,103 +1,258 @@
-<main class="dashboard-container">
+<!DOCTYPE html>
+<html lang="nl">
 
-    <section class="hero">
+<head>
 
-        <h2>Welkom bij HV Novitas Beheer</h2>
+<meta charset="UTF-8">
 
-        <p>Beheer eenvoudig nieuws, proeftrainingen, foto's en alle clubgegevens.</p>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-    </section>
+<title>HV NOVITAS CMS</title>
 
-    <section class="tiles">
+<link rel="stylesheet" href="style.css">
 
-        <a class="tile" href="news.html">
-            <div class="tile-icon">📰</div>
-            <h3>Nieuws</h3>
-            <span class="counter" id="nieuwsAantal">12</span>
-            <small>Nieuws beheren</small>
-        </a>
+</head>
 
-        <a class="tile" href="proeftrainingen.html">
-            <div class="tile-icon">🏃</div>
-            <h3>Proeftrainingen</h3>
-            <span class="counter" id="proefAantal">3</span>
-            <small>Nieuwe aanvragen</small>
-        </a>
+<body>
 
-        <a class="tile" href="contact.html">
-            <div class="tile-icon">📧</div>
-            <h3>Contact</h3>
-            <span class="counter" id="contactAantal">1</span>
-            <small>Nieuwe berichten</small>
-        </a>
+<div class="dashboard">
 
-        <a class="tile" href="vrijwilligers.html">
-            <div class="tile-icon">🙋</div>
-            <h3>Vrijwilligers</h3>
-            <span class="counter" id="vrijwilligersAantal">2</span>
-            <small>Aanmeldingen</small>
-        </a>
+    <!-- ===========================
+         HEADER
+    ============================ -->
 
-        <a class="tile" href="agenda.html">
-            <div class="tile-icon">📅</div>
-            <h3>Agenda</h3>
-            <small>Trainingen & wedstrijden</small>
-        </a>
+    <header class="topbar">
 
-        <a class="tile" href="sponsors.html">
-            <div class="tile-icon">💰</div>
-            <h3>Sponsors</h3>
-            <small>Sponsorbeheer</small>
-        </a>
+        <div class="logo-area">
 
-        <a class="tile" href="drive.html">
-            <div class="tile-icon">📷</div>
-            <h3>Foto's</h3>
-            <small>Google Drive</small>
-        </a>
+            <img src="images/logo.png"
+                 class="logo"
+                 alt="HV Novitas">
 
-        <a class="tile" href="instellingen.html">
-            <div class="tile-icon">⚙️</div>
-            <h3>Instellingen</h3>
-            <small>Systeeminstellingen</small>
-        </a>
+            <div>
 
-    </section>
+                <h1>HV NOVITAS CMS</h1>
 
-    <section class="bottom-row">
+                <p>Club Management System</p>
 
-        <div class="panel">
-
-            <h3>Laatste activiteit</h3>
-
-            <ul>
-
-                <li>🟢 Nieuws bijgewerkt</li>
-
-                <li>🟢 Nieuwe proeftraining ontvangen</li>
-
-                <li>🟢 Google Drive verbonden</li>
-
-            </ul>
+            </div>
 
         </div>
 
-        <div class="panel">
+        <div class="user-area">
 
-            <h3>Systeemstatus</h3>
+            <div class="status">
 
-            <ul>
+                <span class="online"></span>
 
-                <li>🟢 Firebase Online</li>
+                Ingelogd
 
-                <li>🟢 Google Drive Online</li>
+            </div>
 
-                <li>🟢 Google Sheets Online</li>
+            <div id="userName">
 
-            </ul>
+                Erwin Bel
+
+            </div>
+
+            <div id="userEmail">
+
+                hvnovitas@gmail.com
+
+            </div>
+
+            <button id="logoutButton">
+
+                Uitloggen
+
+            </button>
 
         </div>
 
-    </section>
+    </header>
 
-</main>
+    <!-- ===========================
+         DASHBOARD
+    ============================ -->
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-grid">
+
+            <a
+            href="news.html"
+            class="dashboard-card">
+
+                <div class="card-icon">
+
+                    📰
+
+                </div>
+
+                <h2>
+
+                    Nieuws
+
+                </h2>
+
+            </a>
+
+            <a
+            href="proeftrainingen.html"
+            class="dashboard-card">
+
+                <div class="card-icon">
+
+                    🏃
+
+                </div>
+
+                <h2>
+
+                    Proeftrainingen
+
+                </h2>
+
+            </a>
+
+            <a
+            href="inschrijvingen.html"
+            class="dashboard-card">
+
+                <div class="card-icon">
+
+                    📝
+
+                </div>
+
+                <h2>
+
+                    Inschrijvingen
+
+                </h2>
+
+            </a>
+
+            <a
+            href="agenda.html"
+            class="dashboard-card">
+
+                <div class="card-icon">
+
+                    📅
+
+                </div>
+
+                <h2>
+
+                    Agenda
+
+                </h2>
+
+            </a>
+
+            <a
+            href="sponsors.html"
+            class="dashboard-card">
+
+                <div class="card-icon">
+
+                    🤝
+
+                </div>
+
+                <h2>
+
+                    Sponsors
+
+                </h2>
+
+            </a>
+
+            <a
+            href="drive.html"
+            class="dashboard-card">
+
+                <div class="card-icon">
+
+                    📸
+
+                </div>
+
+                <h2>
+
+                    Foto's
+
+                </h2>
+
+            </a>
+
+            <a
+            href="instellingen.html"
+            class="dashboard-card">
+
+                <div class="card-icon">
+
+                    ⚙️
+
+                </div>
+
+                <h2>
+
+                    Instellingen
+
+                </h2>
+
+            </a>
+              </div>
+
+    </main>
+
+    <!-- ===========================
+         FOOTER
+    ============================ -->
+
+    <footer class="footer">
+
+        <div class="footer-left">
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                Google Drive
+
+            </div>
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                Google Sheets
+
+            </div>
+
+        </div>
+
+        <div class="footer-center">
+
+            HV Novitas CMS
+
+        </div>
+
+        <div class="footer-right">
+
+            Versie 1.0
+
+        </div>
+
+    </footer>
+
+</div>
+
+<script type="module" src="dashboard.js"></script>
+
+</body>
+
+</html>
