@@ -9,7 +9,7 @@ export const CLIENT_ID =
 "71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
 export const API_KEY =
-"AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE";
+"AIzaSyDWixNBUuq50W6yULQxXiiAMYjr4Fv9J-Y";
 
 export const SPREADSHEET_ID =
 "1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM";
