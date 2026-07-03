@@ -14,11 +14,15 @@ export const SPREADSHEET_ID =
 export const RANGE =
 "Formulierreacties 1!A:H";
 
-export const SCOPES =
+const DISCOVERY_DOC =
+"https://sheets.googleapis.com/$discovery/rest?version=v4";
+
+const SCOPES =
 "https://www.googleapis.com/auth/spreadsheets.readonly";
 
 let accessToken = null;
 let tokenClient = null;
+let initialized = false;
 
 // ==========================================
 // Initialiseren
@@ -26,46 +30,170 @@ let tokenClient = null;
 
 export async function initSheets() {
 
-    return new Promise((resolve) => {
+    if (initialized) return;
 
-        gapi.load("client", async () => {
+    await new Promise((resolve) => {
 
-            await gapi.client.init({
+        gapi.load("client", resolve);
 
-                apiKey: API_KEY,
+    });
 
-                discoveryDocs: [
-                    "https://sheets.googleapis.com/$discovery/rest?version=v4"
-                ]
+    await gapi.client.init({
+
+        apiKey: API_KEY,
+
+        discoveryDocs: [DISCOVERY_DOC]
+
+    });
+
+    tokenClient =
+        google.accounts.oauth2.initTokenClient({
+
+            client_id: CLIENT_ID,
+
+            scope: SCOPES,
+
+            callback: () => {}
+
+        });
+
+    initialized = true;
+
+    console.log("📄 Google Sheets geïnitialiseerd");
+
+}
+
+// ==========================================
+// Aanmelden
+// ==========================================
+
+export async function loginSheets() {
+
+    await initSheets();
+
+    if (accessToken) {
+
+        return accessToken;
+
+    }
+
+    return new Promise((resolve, reject) => {
+
+        tokenClient.callback = (response) => {
+
+            if (response.error) {
+
+                reject(response);
+
+                return;
+
+            }
+
+            accessToken = response.access_token;
+
+            gapi.client.setToken({
+
+                access_token: accessToken
 
             });
 
-            tokenClient =
-                google.accounts.oauth2.initTokenClient({
+            console.log("✅ Google Sheets aangemeld");
 
-                    client_id: CLIENT_ID,
+            resolve(accessToken);
 
-                    scope: SCOPES,
+        };
 
-                    callback: (tokenResponse) => {
+        tokenClient.requestAccessToken({
 
-                        accessToken =
-                            tokenResponse.access_token;
-
-                        gapi.client.setToken({
-
-                            access_token: accessToken
-
-                        });
-
-                        resolve();
-
-                    }
-
-                });
+            prompt: "consent"
 
         });
 
     });
+
+}
+
+// ==========================================
+// Spreadsheet ophalen
+// ==========================================
+
+export async function getRows() {
+
+    await loginSheets();
+
+    const response =
+        await gapi.client.sheets.spreadsheets.values.get({
+
+            spreadsheetId: SPREADSHEET_ID,
+
+            range: RANGE
+
+        });
+
+    return response.result.values || [];
+
+}
+
+// ==========================================
+// Omzetten naar objecten
+// ==========================================
+
+export async function getProeftrainingen() {
+
+    const rows = await getRows();
+
+    if (rows.length === 0) {
+
+        return [];
+
+    }
+
+    const headers = rows.shift();
+
+    return rows.map((row) => {
+
+        const item = {};
+
+        headers.forEach((header, index) => {
+
+            item[header] = row[index] || "";
+
+        });
+
+        return item;
+
+    });
+
+}
+
+// ==========================================
+// Uitloggen
+// ==========================================
+
+export function logoutSheets() {
+
+    if (!accessToken) return;
+
+    google.accounts.oauth2.revoke(accessToken);
+
+    gapi.client.setToken(null);
+
+    accessToken = null;
+
+}
+
+// ==========================================
+// Status
+// ==========================================
+
+export function isSheetsLoggedIn() {
+
+    return accessToken !== null;
+
+}
+
+export function getSheetsToken() {
+
+    return accessToken;
 
 }
