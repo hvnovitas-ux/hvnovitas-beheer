@@ -1,3 +1,8 @@
+
+// ==========================================
+// HV NOVITAS - HOME NEWS (CLEAN)
+// ==========================================
+
 import { db } from "./firebase.js";
 
 import {
@@ -8,391 +13,148 @@ import {
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-/* ==========================================
-   HV NOVITAS
-   HOME NEWS
-========================================== */
+// ==========================================
+// CONTAINER
+// ==========================================
 
 const newsContainer = document.getElementById("news");
 
 if (!newsContainer) {
-
-    console.error("Nieuwscontainer (#news) niet gevonden.");
-
-    throw new Error("Container ontbreekt.");
-
+    console.error("❌ #news container niet gevonden");
+    throw new Error("Container ontbreekt");
 }
 
-/* ==========================================
-   FIREBASE QUERY
-========================================== */
+// ==========================================
+// QUERY
+// ==========================================
 
 const newsQuery = query(
-
     ref(db, "news"),
-
     orderByChild("timestamp"),
-
     limitToLast(3)
-
 );
 
-/* ==========================================
-   HELPERS
-========================================== */
+// ==========================================
+// HELPERS
+// ==========================================
 
 function escapeHTML(text = "") {
-
     return String(text)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
+        .replace(/>/g, "&gt;");
 }
 
 function formatText(text = "") {
-
     return escapeHTML(text).replace(/\n/g, "<br>");
-
 }
 
 function createSummary(text = "", max = 180) {
-
     const value = text.trim();
-
     return value.length <= max
         ? value
         : value.substring(0, max).trim() + "...";
-
 }
-/* ==========================================
-   AFBEELDING
-========================================== */
+
+// ==========================================
+// IMAGE
+// ==========================================
 
 function createImage(item) {
 
-    if (!item.image) {
-
-        return "";
-
-    }
+    if (!item.image) return "";
 
     return `
-
-<img
-    class="nieuwsfoto"
-    src="${item.image}"
-    alt="${escapeHTML(item.title)}"
-    loading="lazy">
-
-`;
-
+        <img
+            class="nieuwsfoto"
+            src="${item.image}"
+            alt="${escapeHTML(item.title)}"
+            loading="lazy">
+    `;
 }
 
-/* ==========================================
-   NIEUWSKAART
-========================================== */
+// ==========================================
+// CARD
+// ==========================================
 
 function createCard(item) {
 
     return `
+        <article class="kaart">
 
-<article class="kaart">
+            ${createImage(item)}
 
-    ${createImage(item)}
+            <h3>${escapeHTML(item.title)}</h3>
 
-    <h3>${escapeHTML(item.title)}</h3>
+            <div class="datum">
+                📅 ${item.date || ""} &nbsp;&nbsp; 🕒 ${item.time || ""}
+            </div>
 
-    <div class="datum">
+            <div class="tekst">
+                ${formatText(createSummary(item.text || ""))}
+            </div>
 
-        📅 ${item.date || ""}
-
-        &nbsp;&nbsp;
-
-        🕒 ${item.time || ""}
-
-    </div>
-
-    <div
-        id="short-${item.id}"
-        class="tekst">
-
-        ${formatText(createSummary(item.text || ""))}
-
-    </div>
-
-    <div
-        id="full-${item.id}"
-        class="tekst extraTekst">
-
-        ${formatText(item.text || "")}
-
-    </div>
-
-    <div class="leesverder">
-
-        <button
-            type="button"
-            class="leesButton"
-            data-id="${item.id}"
-            data-open="false">
-
-            ➜ Lees verder
-
-        </button>
-
-    </div>
-
-</article>
-
-`;
-
+        </article>
+    `;
 }
-/* ==========================================
-   NIEUWS LADEN
-========================================== */
+
+// ==========================================
+// LOAD NEWS (SINGLE LISTENER - FIXED)
+// ==========================================
 
 onValue(newsQuery, (snapshot) => {
 
     const newsItems = [];
 
     snapshot.forEach((item) => {
-
         newsItems.push({
-
             id: item.key,
-
             ...item.val()
-
         });
-
     });
 
-    /* Nieuwste eerst */
-
     newsItems.sort((a, b) =>
-
         (b.timestamp || 0) - (a.timestamp || 0)
-
     );
-
-    /* Geen nieuws */
 
     if (newsItems.length === 0) {
 
         newsContainer.innerHTML = `
-
-<article class="kaart">
-
-    <h3>📰 Nog geen nieuws</h3>
-
-    <div class="tekst">
-
-        Er zijn momenteel nog geen nieuwsberichten.
-
-    </div>
-
-</article>
-
-`;
+            <article class="kaart">
+                <h3>📰 Nog geen nieuws</h3>
+                <div class="tekst">
+                    Er zijn momenteel nog geen nieuwsberichten.
+                </div>
+            </article>
+        `;
 
         return;
-
     }
-
-    /* HTML opbouwen */
 
     let html = "";
 
     newsItems.forEach((item) => {
-
         html += createCard(item);
-
     });
 
     newsContainer.innerHTML = html;
 
-    initReadMore();
-
 }, (error) => {
 
-    console.error("Nieuws laden mislukt:", error);
+    console.error("❌ Nieuws fout:", error);
 
     newsContainer.innerHTML = `
-
-<article class="kaart">
-
-    <h3>❌ Fout</h3>
-
-    <div class="tekst">
-
-        Het nieuws kon niet worden geladen.
-
-    </div>
-
-</article>
-
-`;
-
-});
-/* ==========================================
-   NIEUWS LADEN
-========================================== */
-
-onValue(newsQuery, (snapshot) => {
-
-    const newsItems = [];
-
-    snapshot.forEach((item) => {
-
-        newsItems.push({
-
-            id: item.key,
-
-            ...item.val()
-
-        });
-
-    });
-
-    /* Nieuwste eerst */
-
-    newsItems.sort((a, b) =>
-
-        (b.timestamp || 0) - (a.timestamp || 0)
-
-    );
-
-    /* Geen nieuws */
-
-    if (newsItems.length === 0) {
-
-        newsContainer.innerHTML = `
-
-<article class="kaart">
-
-    <h3>📰 Nog geen nieuws</h3>
-
-    <div class="tekst">
-
-        Er zijn momenteel nog geen nieuwsberichten.
-
-    </div>
-
-</article>
-
-`;
-
-        return;
-
-    }
-
-    /* HTML opbouwen */
-
-    let html = "";
-
-    newsItems.forEach((item) => {
-
-        html += createCard(item);
-
-    });
-
-    newsContainer.innerHTML = html;
-
-    initReadMore();
-
-}, (error) => {
-
-    console.error("Nieuws laden mislukt:", error);
-
-    newsContainer.innerHTML = `
-
-<article class="kaart">
-
-    <h3>❌ Fout</h3>
-
-    <div class="tekst">
-
-        Het nieuws kon niet worden geladen.
-
-    </div>
-
-</article>
-
-`;
-
-});
-/* ==========================================
-   HV NOVITAS
-   HOME NEWS
-   Segment 5
-========================================== */
-
-/*
-    Controleer afbeeldingen
-*/
-
-function optimizeImages() {
-
-    const images = newsContainer.querySelectorAll(".nieuwsfoto");
-
-    images.forEach((img) => {
-
-        img.loading = "lazy";
-
-        img.decoding = "async";
-
-    });
-
-}
-
-/*
-    Pagina opnieuw laten berekenen
-    (handig voor Google Sites iframe)
-*/
-
-function refreshLayout() {
-
-    requestAnimationFrame(() => {
-
-        window.dispatchEvent(new Event("resize"));
-
-    });
-
-}
-
-/*
-    Initialiseren nadat nieuws is geladen
-*/
-
-function initializeNews() {
-
-    optimizeImages();
-
-    refreshLayout();
-
-}
-
-/*
-    Fouten loggen
-*/
-
-window.addEventListener("error", (event) => {
-
-    console.error(
-
-        "Home News:",
-
-        event.message
-
-    );
-
+        <article class="kaart">
+            <h3>❌ Fout</h3>
+            <div class="tekst">
+                Nieuws kon niet worden geladen.
+            </div>
+        </article>
+    `;
 });
 
-/*
-    Klaar
-*/
+// ==========================================
+// LOG
+// ==========================================
 
-console.log("🧡 HV Novitas Home News geladen.");
+console.log("🧡 HV Novitas Home News geladen");
