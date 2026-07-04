@@ -1,7 +1,7 @@
-// ==========================================
+// ======================================================
 // HV NOVITAS CMS
 // PROEFTRAININGEN
-// ==========================================
+// ======================================================
 
 import {
 
@@ -9,6 +9,10 @@ import {
     deleteRow
 
 } from "./googleSheets.js";
+
+// ======================================================
+// ELEMENTEN
+// ======================================================
 
 const container =
 document.getElementById("aanvragen");
@@ -28,19 +32,40 @@ document.getElementById("nieuw");
 const gelezen =
 document.getElementById("gelezen");
 
+// ======================================================
+// DATA
+// ======================================================
+
 let aanvragen = [];
+
+let gelezenItems =
+JSON.parse(
+
+    localStorage.getItem(
+        "novitas_gelezen"
+    ) || "[]"
+
+);
+
+// ======================================================
+// START
+// ======================================================
 
 document.addEventListener(
 
     "DOMContentLoaded",
 
-    laadAanvragen
+    async()=>{
+
+        await laadAanvragen();
+
+    }
 
 );
 
-// ==========================================
+// ======================================================
 // LADEN
-// ==========================================
+// ======================================================
 
 async function laadAanvragen(){
 
@@ -49,7 +74,14 @@ async function laadAanvragen(){
         aanvragen =
         await getProeftrainingen();
 
-        laadStatus();
+        aanvragen.forEach(item=>{
+
+            item.gelezen =
+            gelezenItems.includes(item._row);
+
+        });
+
+        updateStatus();
 
         toonAanvragen();
 
@@ -59,35 +91,55 @@ async function laadAanvragen(){
 
         console.error(error);
 
-        container.innerHTML =
+        container.innerHTML=
 
-        "<h2>Fout bij laden.</h2>";
+        `
+        <div class="melding error">
+
+            <h3>❌ Fout</h3>
+
+            <p>
+
+                Kon proeftrainingen niet laden.
+
+            </p>
+
+        </div>
+        `;
 
     }
 
 }
-// ==========================================
+
+// ======================================================
 // STATUS
-// ==========================================
+// ======================================================
 
-function laadStatus(){
+function updateStatus(){
 
-    totaal.textContent = aanvragen.length;
+    totaal.textContent =
+    aanvragen.length;
 
     const nieuwe =
-    aanvragen.filter(a => !a.gelezen);
+
+    aanvragen.filter(
+
+        a=>!a.gelezen
+
+    );
 
     nieuw.textContent =
     nieuwe.length;
 
     gelezen.textContent =
-    aanvragen.length - nieuwe.length;
+    aanvragen.length-
+    nieuwe.length;
 
 }
 
-// ==========================================
+// ======================================================
 // FILTER
-// ==========================================
+// ======================================================
 
 zoekveld.addEventListener(
 
@@ -104,66 +156,368 @@ alleenNieuw.addEventListener(
     toonAanvragen
 
 );
-
-// ==========================================
+// ======================================================
 // TONEN
-// ==========================================
+// ======================================================
 
 function toonAanvragen(){
 
     let lijst = [...aanvragen];
 
+    // ----------------------------
+    // Zoeken
+    // ----------------------------
+
     const zoek =
-    zoekveld.value.toLowerCase();
+    zoekveld.value
+    .trim()
+    .toLowerCase();
 
     if(zoek){
 
-        lijst = lijst.filter(a =>
+        lijst = lijst.filter(item=>{
 
-            (a.voornaam || "")
-            .toLowerCase()
-            .includes(zoek)
+            return (
 
-            ||
+                (item.voornaam || "")
+                .toLowerCase()
+                .includes(zoek)
 
-            (a.Achternaam || "")
-            .toLowerCase()
-            .includes(zoek)
+                ||
 
-            ||
+                (item.Achternaam || "")
+                .toLowerCase()
+                .includes(zoek)
 
-            (a["E-mail"] || "")
-            .toLowerCase()
-            .includes(zoek)
+                ||
 
-            ||
+                (item.Telefoonnummer || "")
+                .includes(zoek)
 
-            (a.Telefoonnummer || "")
-            .includes(zoek)
+                ||
+
+                (item["E-mail"] || "")
+                .toLowerCase()
+                .includes(zoek)
+
+            );
+
+        });
+
+    }
+
+    // ----------------------------
+    // Alleen nieuwe
+    // ----------------------------
+
+    if(alleenNieuw.checked){
+
+        lijst =
+        lijst.filter(
+
+            item=>!item.gelezen
 
         );
 
     }
 
-    if(alleenNieuw.checked){
-
-        lijst =
-        lijst.filter(a => !a.gelezen);
-
-    }
+    // ----------------------------
+    // Sorteer
+    // ----------------------------
 
     lijst.sort((a,b)=>{
 
-        return (a.gelezen===b.gelezen)
+        if(a.gelezen===b.gelezen){
 
-            ?0
+            return b._row-a._row;
 
-            :a.gelezen?1:-1;
+        }
+
+        return a.gelezen?1:-1;
 
     });
 
-    container.innerHTML = "";
+    container.innerHTML="";
 
-    lijst.forEach(maakKaart);
+    if(lijst.length===0){
+
+        container.innerHTML=`
+
+        <div class="content-card">
+
+            <h2>
+
+                Geen proeftrainingen gevonden.
+
+            </h2>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+    lijst.forEach(item=>{
+
+        container.appendChild(
+
+            maakKaart(item)
+
+        );
+
+    });
 
 }
+
+// ======================================================
+// KAART
+// ======================================================
+
+function maakKaart(item){
+
+    const kaart =
+    document.createElement("div");
+
+    kaart.className="proef-card";
+
+    if(!item.gelezen){
+
+        kaart.style.borderLeft=
+        "8px solid #f58220";
+
+    }
+
+    kaart.innerHTML=`
+
+        <h3>
+
+            ${item.voornaam}
+            ${item.Achternaam}
+
+        </h3>
+
+        <div class="proef-info">
+
+            <div class="proef-label">
+
+                📅 Aanmelding
+
+            </div>
+
+            <div>
+
+                ${item.Tijdstempel || "-"}
+
+            </div>
+
+            <div class="proef-label">
+
+                🎂 Geboren
+
+            </div>
+
+            <div>
+
+                ${item.Geboortedatum || "-"}
+
+            </div>
+
+            <div class="proef-label">
+
+                🚻 Geslacht
+
+            </div>
+
+            <div>
+
+                ${item.Geslacht || "-"}
+
+            </div>
+
+            <div class="proef-label">
+
+                📞 Telefoon
+
+            </div>
+
+            <div>
+
+                ${item.Telefoonnummer || "-"}
+
+            </div>
+
+            <div class="proef-label">
+
+                📧 E-mail
+
+            </div>
+
+            <div>
+
+                ${item["E-mail"] || "-"}
+
+            </div>
+
+            <div class="proef-label">
+
+                📝 Opmerkingen
+
+            </div>
+
+            <div>
+
+                ${item.Opmerkingen || "-"}
+
+            </div>
+
+        </div>
+
+        <div class="knoppen">
+
+            <button
+                class="btn-green"
+                onclick="window.location.href='tel:${item.Telefoonnummer}'">
+
+                📞 Bellen
+
+            </button>
+
+            <button
+                class="btn-orange"
+                onclick="window.location.href='mailto:${item["E-mail"]}'">
+
+                📧 Mail
+
+            </button>
+
+            <button
+                class="btn-black"
+                onclick="markeerGelezen(${item._row})">
+
+                ✔ Gelezen
+
+            </button>
+
+            <button
+                class="btn-red"
+                onclick="verwijderAanvraag(${item._row})">
+
+                🗑 Verwijderen
+
+            </button>
+
+        </div>
+
+    `;
+
+    return kaart;
+
+}
+// ======================================================
+// GELEZEN
+// ======================================================
+
+window.markeerGelezen = function(rij){
+
+    if(!gelezenItems.includes(rij)){
+
+        gelezenItems.push(rij);
+
+    }
+
+    localStorage.setItem(
+
+        "novitas_gelezen",
+
+        JSON.stringify(gelezenItems)
+
+    );
+
+    laadAanvragen();
+
+};
+
+// ======================================================
+// VERWIJDEREN
+// ======================================================
+
+window.verwijderAanvraag = async function(rij){
+
+    const antwoord = confirm(
+
+        "Weet je zeker dat je deze proeftraining wilt verwijderen?"
+
+    );
+
+    if(!antwoord){
+
+        return;
+
+    }
+
+    try{
+
+        await deleteRow(rij);
+
+        gelezenItems =
+        gelezenItems.filter(
+
+            item=>item!==rij
+
+        );
+
+        localStorage.setItem(
+
+            "novitas_gelezen",
+
+            JSON.stringify(gelezenItems)
+
+        );
+
+        await laadAanvragen();
+
+        alert(
+
+            "✅ Aanmelding verwijderd."
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+
+            "❌ Verwijderen mislukt."
+
+        );
+
+    }
+
+};
+
+// ======================================================
+// AUTOMATISCH VERVERSEN
+// ======================================================
+
+setInterval(
+
+    laadAanvragen,
+
+    60000
+
+);
+
+// ======================================================
+// EINDE
+// ======================================================
+
+console.log(
+
+    "🧡 HV Novitas Proeftrainingen geladen"
+
+);
