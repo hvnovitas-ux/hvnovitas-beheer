@@ -56,7 +56,7 @@ const newsList = document.getElementById("newsList");
 
 const submitButton = document.getElementById("submitButton");
 
-const cancelButton = document.getElementById("cancelEdit");
+const cancelButton = document.getElementById("cancelButton");
 
 /* ==========================================================
    Bewerken
