@@ -1,7 +1,7 @@
 /* ==========================================================
-   HV NOVITAS NIEUWS
-   home-news.css
-   Deel 1 van 2
+   HV NOVITAS
+   HOME NEWS
+   Deel 1
 ========================================================== */
 
 /* ==========================================
@@ -13,18 +13,14 @@ body{
 
     margin:0;
     padding:0;
-    background:#ffffff !important;
-    color:#222222 !important;
+
+    background:#ffffff;
+
+    color:#222222;
+
     font-family:Arial, Helvetica, sans-serif;
+
     line-height:1.6;
-
-}
-
-/* Google Sites */
-
-body{
-
-    overflow-x:hidden;
 
 }
 
@@ -40,19 +36,13 @@ body{
 
     padding:25px;
 
-    background:#ffffff !important;
-
-    color:#222222 !important;
-
-    box-sizing:border-box;
+    background:#ffffff;
 
 }
 
-#nieuws *{
-
-    box-sizing:border-box;
-
-}
+/* ==========================================
+   TITEL
+========================================== */
 
 #nieuws h2{
 
@@ -60,9 +50,9 @@ body{
 
     text-align:center;
 
-    color:#ff7b00;
-
     font-size:2rem;
+
+    color:#ff6600;
 
     font-weight:700;
 
@@ -76,39 +66,30 @@ body{
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    grid-template-columns:
+        repeat(auto-fit,minmax(320px,1fr));
 
     gap:25px;
-
-    background:#ffffff !important;
 
 }
 
 /* ==========================================
-   NIEUWSKAART
+   KAART
 ========================================== */
 
 .kaart{
 
-    display:flex;
+    background:#ffffff;
 
-    flex-direction:column;
-
-    background:#ffffff !important;
-
-    color:#222222 !important;
+    border:1px solid #e7e7e7;
 
     border-radius:14px;
 
     overflow:hidden;
 
-    border:1px solid #ececec;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
 
-    box-shadow:0 4px 18px rgba(0,0,0,.08);
-
-    transition:
-        transform .25s,
-        box-shadow .25s;
+    transition:.25s;
 
 }
 
@@ -116,9 +97,15 @@ body{
 
     transform:translateY(-4px);
 
-    box-shadow:0 8px 24px rgba(0,0,0,.12);
+    box-shadow:0 8px 22px rgba(0,0,0,.12);
 
 }
+/* ==========================================================
+   HV NOVITAS
+   HOME NEWS
+   Deel 2
+   Foto, titel en tekst
+========================================================== */
 
 /* ==========================================
    FOTO
@@ -134,7 +121,7 @@ body{
 
     object-fit:cover;
 
-    background:#ffffff;
+    background:#f5f5f5;
 
 }
 
@@ -152,7 +139,7 @@ body{
 
     font-weight:700;
 
-    color:#ff6600 !important;
+    color:#ff6600;
 
 }
 
@@ -162,11 +149,11 @@ body{
 
 .datum{
 
-    padding:0 18px;
-
-    color:#666666 !important;
+    padding:0 18px 15px;
 
     font-size:.9rem;
+
+    color:#666666;
 
 }
 
@@ -176,39 +163,35 @@ body{
 
 .tekst{
 
-    padding:18px;
+    padding:0 18px 18px;
 
-    color:#222222 !important;
+    color:#222222;
 
     line-height:1.7;
+
+    font-size:16px;
+
+    word-wrap:break-word;
 
 }
 
 .tekst p{
 
-    margin:0 0 16px;
-
-    color:#222222 !important;
+    margin:0 0 15px;
 
 }
 
 .tekst strong{
 
-    color:#111111;
+    font-weight:700;
 
 }
 
-.tekst img{
+.tekst em{
 
-    max-width:100%;
-
-    height:auto;
+    font-style:italic;
 
 }
-
-/* ==========================================
-   LINKS
-========================================== */
 
 .tekst a{
 
@@ -223,9 +206,46 @@ body{
     text-decoration:underline;
 
 }
+
+/* ==========================================
+   AFBEELDINGEN IN TEKST
+========================================== */
+
+.tekst img{
+
+    max-width:100%;
+
+    height:auto;
+
+    border-radius:8px;
+
+    margin:10px 0;
+
+}
+
+/* ==========================================
+   ALGEMENE AFBEELDINGEN
+========================================== */
+
+img{
+
+    display:block;
+
+    max-width:100%;
+
+    height:auto;
+
+}
 /* ==========================================================
-   LEES VERDER / LEES MINDER
+   HV NOVITAS
+   HOME NEWS
+   Deel 3
+   Lees verder / Lees minder
 ========================================================== */
+
+/* ==========================================
+   KNOP CONTAINER
+========================================== */
 
 .leesverder{
 
@@ -233,21 +253,26 @@ body{
 
 }
 
+/* ==========================================
+   LEES VERDER KNOP
+========================================== */
+
 .leesButton{
 
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+    display:inline-block;
 
     padding:10px 18px;
 
+    background:#ff6600;
+
+    color:#ffffff;
+
     border:none;
+
     border-radius:8px;
 
-    background:#ff6600;
-    color:#ffffff !important;
-
     font-size:15px;
+
     font-weight:600;
 
     cursor:pointer;
@@ -272,15 +297,21 @@ body{
 
 }
 
+/* ==========================================
+   VERBORGEN TEKST
+========================================== */
+
+.hidden{
+
+    display:none !important;
+
+}
+
 .extraTekst{
 
     display:none;
 
-    margin-top:15px;
-
-    color:#222222 !important;
-
-    line-height:1.7;
+    animation:fadeIn .25s ease;
 
 }
 
@@ -291,148 +322,24 @@ body{
 }
 
 /* ==========================================
-   AFBEELDINGEN
+   ANIMATIE
 ========================================== */
 
-img{
+@keyframes fadeIn{
 
-    display:block;
+    from{
 
-    max-width:100%;
+        opacity:0;
 
-    height:auto;
-
-    background:#ffffff;
-
-    border:0;
-
-}
-
-/* ==========================================
-   GOOGLE SITES FIXES
-========================================== */
-
-iframe,
-html,
-body,
-#nieuws,
-#news,
-.kaart{
-
-    background:#ffffff !important;
-
-}
-
-#nieuws *,
-#news *,
-.kaart *{
-
-    color:inherit;
-
-}
-
-.kaart h3{
-
-    color:#ff6600 !important;
-
-}
-
-.datum{
-
-    color:#666666 !important;
-
-}
-
-.tekst,
-.extraTekst{
-
-    color:#222222 !important;
-
-}
-
-/* ==========================================
-   MOBIEL
-========================================== */
-
-@media (max-width:900px){
-
-    #news{
-
-        grid-template-columns:1fr;
+        transform:translateY(-6px);
 
     }
 
-}
+    to{
 
-@media (max-width:700px){
+        opacity:1;
 
-    #nieuws{
-
-        padding:15px;
-
-    }
-
-    #nieuws h2{
-
-        font-size:1.7rem;
-
-    }
-
-    .nieuwsfoto{
-
-        height:200px;
-
-    }
-
-    .kaart h3{
-
-        font-size:1.2rem;
-
-    }
-
-    .tekst{
-
-        font-size:15px;
-
-        padding:16px;
-
-    }
-
-    .leesverder{
-
-        padding:0 16px 16px;
-
-    }
-
-    .leesButton{
-
-        width:100%;
-
-    }
-
-}
-
-/* ==========================================
-   KLEINE TELEFOONS
-========================================== */
-
-@media (max-width:420px){
-
-    #nieuws{
-
-        padding:12px;
-
-    }
-
-    .nieuwsfoto{
-
-        height:180px;
-
-    }
-
-    .kaart{
-
-        border-radius:10px;
+        transform:translateY(0);
 
     }
 
