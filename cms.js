@@ -1,3 +1,4 @@
+console.log("🔥 CMS FILE IS GELOADED");
 import { db } from "./firebase.js";
 import { uploadFile } from "./drive.js";
 
