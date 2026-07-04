@@ -1,5 +1,5 @@
 // ==========================================
-// HV NOVITAS - GOOGLE DRIVE UPLOADER
+// HV NOVITAS - GOOGLE DRIVE UPLOADER (CLEAN)
 // ==========================================
 
 export const CLIENT_ID =
@@ -19,16 +19,14 @@ let tokenClient = null;
 let initialized = false;
 
 // ==========================================
-// INIT
+// INIT DRIVE
 // ==========================================
 
 export async function initDrive() {
 
     if (initialized) return;
 
-    await new Promise((resolve) => {
-        gapi.load("client", resolve);
-    });
+    await new Promise((resolve) => gapi.load("client", resolve));
 
     await gapi.client.init({
         apiKey: API_KEY,
@@ -40,16 +38,30 @@ export async function initDrive() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
-        callback: () => {}
+        callback: (res) => {
+
+            if (res.error) {
+                console.error("❌ LOGIN ERROR:", res);
+                return;
+            }
+
+            accessToken = res.access_token;
+
+            gapi.client.setToken({
+                access_token: accessToken
+            });
+
+            console.log("✅ DRIVE LOGIN OK");
+        }
     });
 
     initialized = true;
 
-    console.log("📷 Google Drive geïnitialiseerd");
+    console.log("📷 Drive initialized");
 }
 
 // ==========================================
-// LOGIN
+// LOGIN DRIVE
 // ==========================================
 
 export async function loginDrive() {
@@ -60,20 +72,21 @@ export async function loginDrive() {
 
     return new Promise((resolve, reject) => {
 
-        tokenClient.callback = (response) => {
+        tokenClient.callback = (res) => {
 
-            if (response.error) {
-                reject(response);
+            if (!res || res.error) {
+                console.error("❌ LOGIN FAILED:", res);
+                reject(res);
                 return;
             }
 
-            accessToken = response.access_token;
+            accessToken = res.access_token;
 
             gapi.client.setToken({
                 access_token: accessToken
             });
 
-            console.log("✅ Google Drive aangemeld");
+            console.log("✅ DRIVE LOGIN SUCCESS");
 
             resolve(accessToken);
         };
@@ -85,12 +98,20 @@ export async function loginDrive() {
 }
 
 // ==========================================
-// UPLOAD FOTO
+// UPLOAD FILE
 // ==========================================
 
 export async function uploadFile(file) {
 
-    await loginDrive();
+    console.log("🚀 DRIVE UPLOAD START");
+
+    const token = await loginDrive();
+
+    if (!token) {
+        throw new Error("❌ Geen access token");
+    }
+
+    console.log("🔑 TOKEN OK");
 
     const metadata = {
         name: file.name,
@@ -114,20 +135,26 @@ export async function uploadFile(file) {
         {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${token}`
             },
             body: form
         }
     );
 
+    console.log("📡 STATUS:", response.status);
+
     if (!response.ok) {
-        throw new Error(await response.text());
+        const err = await response.text();
+        console.error("❌ UPLOAD ERROR:", err);
+        throw new Error(err);
     }
 
     const data = await response.json();
 
+    console.log("📦 DRIVE FILE:", data);
+
     // ==========================================
-    // BESTAND OPENBAAR MAKEN
+    // PUBLIC ACCESS
     // ==========================================
 
     await fetch(
@@ -135,7 +162,7 @@ export async function uploadFile(file) {
         {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -146,13 +173,12 @@ export async function uploadFile(file) {
     );
 
     // ==========================================
-    // DIRECTE IMAGE URL
+    // IMAGE URL
     // ==========================================
 
-    const imageUrl =
-        `https://drive.google.com/uc?export=view&id=${data.id}`;
+    const imageUrl = `https://drive.google.com/uc?export=view&id=${data.id}`;
 
-    console.log("✅ Upload klaar:", imageUrl);
+    console.log("🖼️ IMAGE URL:", imageUrl);
 
     return {
         id: data.id,
@@ -166,31 +192,25 @@ export async function uploadFile(file) {
 
 export function logoutDrive() {
 
-    if (!accessToken) return;
-
-    google.accounts.oauth2.revoke(accessToken);
-
-    gapi.client.setToken(null);
+    if (accessToken) {
+        google.accounts.oauth2.revoke(accessToken);
+    }
 
     accessToken = null;
 
-    console.log("🚪 Google Drive afgemeld");
+    gapi.client.setToken(null);
+
+    console.log("🚪 DRIVE LOGOUT");
 }
 
 // ==========================================
-// CHECK LOGIN
+// STATUS
 // ==========================================
 
 export function isDriveLoggedIn() {
-
     return accessToken !== null;
 }
 
-// ==========================================
-// TOKEN
-// ==========================================
-
 export function getDriveToken() {
-
     return accessToken;
 }
