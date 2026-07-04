@@ -1,3 +1,6 @@
+console.log("🔥 CMS START");
+
+console.log("FORM CHECK:", document.getElementById("newsForm"));
 // ==========================================
 // IMPORTS (ALTIJD BOVENAAN)
 // ==========================================
