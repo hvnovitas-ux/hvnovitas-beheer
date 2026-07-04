@@ -1,66 +1,47 @@
-  <!-- =====================================================
-         NIEUWS
-    ====================================================== -->
+<!DOCTYPE html>
+<html lang="nl">
 
-    <section id="nieuws">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HV Novitas Nieuws</title>
+
+    <link rel="stylesheet" href="home-news.css">
+
+</head>
+
+<body>
+
+    <!-- ==========================================
+         NIEUWS
+    =========================================== -->
+
+    <main id="nieuws">
 
         <h2>📰 Laatste Nieuws</h2>
 
         <div id="news">
 
-            <div class="kaart">
+            <article class="kaart">
 
-                Nieuws wordt geladen...
+                <div class="tekst">
 
-            </div>
+                    Nieuws wordt geladen...
 
-        </div>
+                </div>
 
-    </section>
-
-
-    <!-- =====================================================
-         POPUP
-    ====================================================== -->
-
-    <div id="newsPopup" class="news-popup">
-
-        <div class="news-popup-content" id="popupContent">
-
-            <button
-                id="popupClose"
-                class="popup-close"
-                aria-label="Sluiten">
-
-                ✕
-
-            </button>
-
-            <h2 id="popupTitle"></h2>
-
-            <div id="popupDate" class="popup-date"></div>
-
-            <img
-                id="popupImage"
-                class="popup-image"
-                src=""
-                alt="Nieuwsfoto"
-                loading="lazy">
-
-            <div
-                id="popupText"
-                class="popup-text">
-
-            </div>
+            </article>
 
         </div>
 
-    </div>
+    </main>
 
-
-    <!-- =====================================================
+    <!-- ==========================================
          JAVASCRIPT
-    ====================================================== -->
+    =========================================== -->
 
     <script type="module" src="home-news.js"></script>
 
