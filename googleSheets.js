@@ -26,7 +26,6 @@ const DISCOVERY_DOC =
 // GOOGLE
 // ==========================================
 
-
 const SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets"
 ].join(" ");
