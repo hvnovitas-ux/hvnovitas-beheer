@@ -126,7 +126,9 @@ console.log("🧡 CMS Segment 1 geladen");
    Segment 2
    Firebase Storage
 ========================================================== */
-
+console.log("BESTAND:", file);
+const upload = await uploadFile(file);
+console.log("UPLOAD RESULT:", upload);
 /* ==========================================
    Unieke bestandsnaam
 ========================================== */
