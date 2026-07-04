@@ -405,7 +405,7 @@ function notifyResize() {
 
 function initializeNews() {
 
-    initializeReadMore();
+    initializeNews();
 
     optimizeImages();
 
