@@ -1,196 +1,169 @@
 // ==========================================
-// HV NOVITAS - PROEFTRAININGEN
+// HV NOVITAS CMS
+// PROEFTRAININGEN
 // ==========================================
 
 import {
-    initSheets,
-    getProeftrainingen
+
+    getProeftrainingen,
+    deleteRow
+
 } from "./googleSheets.js";
 
-const status = document.getElementById("status");
-const container = document.getElementById("proeftrainingen");
+const container =
+document.getElementById("aanvragen");
+
+const zoekveld =
+document.getElementById("zoeken");
+
+const alleenNieuw =
+document.getElementById("alleenNieuw");
+
+const totaal =
+document.getElementById("totaal");
+
+const nieuw =
+document.getElementById("nieuw");
+
+const gelezen =
+document.getElementById("gelezen");
+
+let aanvragen = [];
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    laadAanvragen
+
+);
 
 // ==========================================
-// Pagina laden
+// LADEN
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function laadAanvragen(){
 
-    await laadProeftrainingen();
+    try{
 
-});
+        aanvragen =
+        await getProeftrainingen();
 
-// ==========================================
-// Proeftrainingen laden
-// ==========================================
+        laadStatus();
 
-async function laadProeftrainingen() {
-
-    try {
-
-        status.textContent = "Google Sheets verbinden...";
-
-        await initSheets();
-
-        status.textContent = "Proeftrainingen ophalen...";
-
-        const aanvragen = await getProeftrainingen();
-
-        toonProeftrainingen(aanvragen);
-
-        status.textContent =
-            `${aanvragen.length} proeftraining(en) gevonden`;
+        toonAanvragen();
 
     }
 
-    catch (error) {
+    catch(error){
 
         console.error(error);
 
-        status.textContent = "Fout bij laden.";
+        container.innerHTML =
 
-        container.innerHTML = `
-
-        <div class="bericht">
-
-            <h3>❌ Fout</h3>
-
-            <p>${error.message || error}</p>
-
-        </div>
-
-        `;
+        "<h2>Fout bij laden.</h2>";
 
     }
 
 }
+// ==========================================
+// STATUS
+// ==========================================
+
+function laadStatus(){
+
+    totaal.textContent = aanvragen.length;
+
+    const nieuwe =
+    aanvragen.filter(a => !a.gelezen);
+
+    nieuw.textContent =
+    nieuwe.length;
+
+    gelezen.textContent =
+    aanvragen.length - nieuwe.length;
+
+}
 
 // ==========================================
-// Tonen
+// FILTER
 // ==========================================
 
-function toonProeftrainingen(data) {
+zoekveld.addEventListener(
 
-    if (!data || data.length === 0) {
+    "input",
 
-        container.innerHTML = `
+    toonAanvragen
 
-        <div class="bericht">
+);
 
-            Geen proeftrainingen gevonden.
+alleenNieuw.addEventListener(
 
-        </div>
+    "change",
 
-        `;
+    toonAanvragen
 
-        return;
+);
+
+// ==========================================
+// TONEN
+// ==========================================
+
+function toonAanvragen(){
+
+    let lijst = [...aanvragen];
+
+    const zoek =
+    zoekveld.value.toLowerCase();
+
+    if(zoek){
+
+        lijst = lijst.filter(a =>
+
+            (a.voornaam || "")
+            .toLowerCase()
+            .includes(zoek)
+
+            ||
+
+            (a.Achternaam || "")
+            .toLowerCase()
+            .includes(zoek)
+
+            ||
+
+            (a["E-mail"] || "")
+            .toLowerCase()
+            .includes(zoek)
+
+            ||
+
+            (a.Telefoonnummer || "")
+            .includes(zoek)
+
+        );
 
     }
 
-    let html = "";
+    if(alleenNieuw.checked){
 
-    data.forEach((persoon) => {
+        lijst =
+        lijst.filter(a => !a.gelezen);
 
-        html += `
+    }
 
-        <div class="bericht">
+    lijst.sort((a,b)=>{
 
-            <h3>
+        return (a.gelezen===b.gelezen)
 
-                ${persoon.voornaam || ""}
+            ?0
 
-                ${persoon.Achternaam || ""}
-
-            </h3>
-
-            <p>
-
-                <strong>Geslacht:</strong><br>
-
-                ${persoon.Geslacht || "-"}
-
-            </p>
-
-            <p>
-
-                <strong>Geboortedatum:</strong><br>
-
-                ${formatDatum(persoon.Geboortedatum)}
-
-            </p>
-
-            <p>
-
-                <strong>Telefoon:</strong><br>
-
-                ${persoon.Telefoonnummer || "-"}
-
-            </p>
-
-            <p>
-
-                <strong>E-mail:</strong><br>
-
-                <a href="mailto:${persoon["E-mail"] || ""}">
-                    ${persoon["E-mail"] || "-"}
-                </a>
-
-            </p>
-
-            <p>
-
-                <strong>Opmerkingen:</strong><br>
-
-                ${persoon.Opmerkingen || "-"}
-
-            </p>
-
-            <p>
-
-                <strong>Aanvraag:</strong><br>
-
-                ${formatDatum(persoon.Tijdstempel)}
-
-            </p>
-
-            <div class="knoppen">
-
-                <button onclick="window.location.href='tel:${persoon.Telefoonnummer || ""}'">
-                    📞 Bellen
-                </button>
-
-                <button onclick="window.location.href='mailto:${persoon["E-mail"] || ""}'">
-                    📧 Mail
-                </button>
-
-            </div>
-
-        </div>
-
-        `;
+            :a.gelezen?1:-1;
 
     });
 
-    container.innerHTML = html;
+    container.innerHTML = "";
 
-}
-
-// ==========================================
-// Datum formatteren
-// ==========================================
-
-function formatDatum(datum) {
-
-    if (!datum) return "-";
-
-    const d = new Date(datum);
-
-    if (isNaN(d)) {
-
-        return datum;
-
-    }
-
-    return d.toLocaleDateString("nl-NL");
+    lijst.forEach(maakKaart);
 
 }
