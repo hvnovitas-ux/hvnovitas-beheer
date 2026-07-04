@@ -1,42 +1,68 @@
-<!DOCTYPE html>
-<html lang="nl">
+  <!-- =====================================================
+         NIEUWS
+    ====================================================== -->
 
-<head>
+    <section id="nieuws">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <h2>📰 Laatste Nieuws</h2>
 
-<title>HV Novitas Nieuws</title>
+        <div id="news">
 
-<link rel="stylesheet" href="home-news.css">
+            <div class="kaart">
 
-</head>
+                Nieuws wordt geladen...
 
-<body>
+            </div>
 
-<div class="news-home">
+        </div>
 
-<h2>📰 Laatste Nieuws</h2>
+    </section>
 
-<div id="news">
 
-<div class="loading">
+    <!-- =====================================================
+         POPUP
+    ====================================================== -->
 
-Nieuws laden...
+    <div id="newsPopup" class="news-popup">
 
-</div>
+        <div class="news-popup-content" id="popupContent">
 
-</div>
+            <button
+                id="popupClose"
+                class="popup-close"
+                aria-label="Sluiten">
 
-<div class="meer">
+                ✕
 
-<a href="#">➡ Bekijk al het nieuws</a>
+            </button>
 
-</div>
+            <h2 id="popupTitle"></h2>
 
-</div>
+            <div id="popupDate" class="popup-date"></div>
 
-<script type="module" src="home-news.js"></script>
+            <img
+                id="popupImage"
+                class="popup-image"
+                src=""
+                alt="Nieuwsfoto"
+                loading="lazy">
+
+            <div
+                id="popupText"
+                class="popup-text">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script type="module" src="home-news.js"></script>
 
 </body>
 
