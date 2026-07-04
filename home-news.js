@@ -8,24 +8,24 @@ import {
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-/* ==========================================================
+/* ==========================================
    HV NOVITAS
-   Homepage Nieuws
-========================================================== */
+   HOME NEWS
+========================================== */
 
 const newsContainer = document.getElementById("news");
 
 if (!newsContainer) {
 
-    console.error("Element #news niet gevonden.");
+    console.error("Nieuwscontainer (#news) niet gevonden.");
 
-    throw new Error("Nieuwscontainer ontbreekt.");
+    throw new Error("Container ontbreekt.");
 
 }
 
-/* ==========================================================
-   Firebase Query
-========================================================== */
+/* ==========================================
+   FIREBASE QUERY
+========================================== */
 
 const newsQuery = query(
 
@@ -37,14 +37,13 @@ const newsQuery = query(
 
 );
 
-/* ==========================================================
-   HTML veilig maken
-========================================================== */
+/* ==========================================
+   HELPERS
+========================================== */
 
 function escapeHTML(text = "") {
 
     return String(text)
-
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -53,39 +52,24 @@ function escapeHTML(text = "") {
 
 }
 
-/* ==========================================================
-   Regelafbrekingen behouden
-========================================================== */
-
 function formatText(text = "") {
 
-    return escapeHTML(text)
-
-        .replace(/\n/g, "<br>");
+    return escapeHTML(text).replace(/\n/g, "<br>");
 
 }
-
-/* ==========================================================
-   Samenvatting
-========================================================== */
 
 function createSummary(text = "", max = 180) {
 
     const value = text.trim();
 
-    if (value.length <= max) {
-
-        return value;
-
-    }
-
-    return value.substring(0, max).trim() + "...";
+    return value.length <= max
+        ? value
+        : value.substring(0, max).trim() + "...";
 
 }
-
-/* ==========================================================
-   Afbeelding
-========================================================== */
+/* ==========================================
+   AFBEELDING
+========================================== */
 
 function createImage(item) {
 
@@ -97,25 +81,19 @@ function createImage(item) {
 
     return `
 
-        <img
+<img
+    class="nieuwsfoto"
+    src="${item.image}"
+    alt="${escapeHTML(item.title)}"
+    loading="lazy">
 
-            class="nieuwsfoto"
-
-            src="${item.image}"
-
-            alt="${escapeHTML(item.title)}"
-
-            loading="lazy"
-
-        >
-
-    `;
+`;
 
 }
 
-/* ==========================================================
-   Nieuwskaart
-========================================================== */
+/* ==========================================
+   NIEUWSKAART
+========================================== */
 
 function createCard(item) {
 
@@ -156,13 +134,9 @@ function createCard(item) {
     <div class="leesverder">
 
         <button
-
             type="button"
-
             class="leesButton"
-
             data-id="${item.id}"
-
             data-open="false">
 
             ➜ Lees verder
@@ -176,9 +150,9 @@ function createCard(item) {
 `;
 
 }
-/* ==========================================================
+/* ==========================================
    NIEUWS LADEN
-========================================================== */
+========================================== */
 
 onValue(newsQuery, (snapshot) => {
 
@@ -196,9 +170,7 @@ onValue(newsQuery, (snapshot) => {
 
     });
 
-    /* ==========================================
-       Nieuwste eerst
-    ========================================== */
+    /* Nieuwste eerst */
 
     newsItems.sort((a, b) =>
 
@@ -206,9 +178,7 @@ onValue(newsQuery, (snapshot) => {
 
     );
 
-    /* ==========================================
-       Geen nieuws gevonden
-    ========================================== */
+    /* Geen nieuws */
 
     if (newsItems.length === 0) {
 
@@ -216,16 +186,11 @@ onValue(newsQuery, (snapshot) => {
 
 <article class="kaart">
 
+    <h3>📰 Nog geen nieuws</h3>
+
     <div class="tekst">
 
-        <h3>📰 Nog geen nieuws</h3>
-
-        <p>
-
-            Er zijn momenteel nog geen
-            nieuwsberichten beschikbaar.
-
-        </p>
+        Er zijn momenteel nog geen nieuwsberichten.
 
     </div>
 
@@ -237,9 +202,7 @@ onValue(newsQuery, (snapshot) => {
 
     }
 
-    /* ==========================================
-       HTML opbouwen
-    ========================================== */
+    /* HTML opbouwen */
 
     let html = "";
 
@@ -251,9 +214,7 @@ onValue(newsQuery, (snapshot) => {
 
     newsContainer.innerHTML = html;
 
-    /* ==========================================
-       Lees verder wordt in Deel 3 toegevoegd
-    ========================================== */
+    initReadMore();
 
 }, (error) => {
 
@@ -263,15 +224,11 @@ onValue(newsQuery, (snapshot) => {
 
 <article class="kaart">
 
+    <h3>❌ Fout</h3>
+
     <div class="tekst">
 
-        <h3>❌ Fout</h3>
-
-        <p>
-
-            Het nieuws kon niet worden geladen.
-
-        </p>
+        Het nieuws kon niet worden geladen.
 
     </div>
 
@@ -280,161 +237,3 @@ onValue(newsQuery, (snapshot) => {
 `;
 
 });
-/* ==========================================================
-   LEES VERDER / LEES MINDER
-========================================================== */
-
-function initializeReadMore() {
-
-    const buttons = newsContainer.querySelectorAll(".leesButton");
-
-    buttons.forEach((button) => {
-
-        button.addEventListener("click", () => {
-
-            const id = button.dataset.id;
-
-            const isOpen = button.dataset.open === "true";
-
-            /* --------------------------------------
-               Eerst alle kaarten sluiten
-            -------------------------------------- */
-
-            newsContainer.querySelectorAll(".leesButton").forEach((btn) => {
-
-                btn.dataset.open = "false";
-
-                btn.textContent = "➜ Lees verder";
-
-            });
-
-            newsContainer.querySelectorAll(".extraTekst").forEach((div) => {
-
-                div.classList.remove("open");
-
-            });
-
-            newsContainer.querySelectorAll(".tekst[id^='short-']").forEach((div) => {
-
-                div.classList.remove("hidden");
-
-            });
-
-            /* --------------------------------------
-               Was deze kaart al open?
-            -------------------------------------- */
-
-            if (isOpen) {
-
-                return;
-
-            }
-
-            /* --------------------------------------
-               Gekozen kaart openen
-            -------------------------------------- */
-
-            const shortText = document.getElementById(`short-${id}`);
-            const fullText = document.getElementById(`full-${id}`);
-
-            if (!shortText || !fullText) {
-
-                return;
-
-            }
-
-            shortText.classList.add("hidden");
-
-            fullText.classList.add("open");
-
-            button.dataset.open = "true";
-
-            button.textContent = "▲ Lees minder";
-
-        });
-
-    });
-
-}
-/* ==========================================================
-   HV NOVITAS
-   HOME NEWS
-   Deel 4
-   Definitieve afronding
-========================================================== */
-
-/* ==========================================
-   Afbeeldingen optimaliseren
-========================================== */
-
-function optimizeImages() {
-
-    const images = newsContainer.querySelectorAll(".nieuwsfoto");
-
-    images.forEach((image) => {
-
-        image.decoding = "async";
-
-        image.loading = "lazy";
-
-        image.referrerPolicy = "no-referrer";
-
-    });
-
-}
-
-/* ==========================================
-   Google Sites iframe
-========================================== */
-
-function notifyResize() {
-
-    requestAnimationFrame(() => {
-
-        window.dispatchEvent(
-            new Event("resize")
-        );
-
-    });
-
-}
-
-/* ==========================================
-   Initialiseren
-========================================== */
-
-function initializeNews() {
-
-    initializeNews();
-
-    optimizeImages();
-
-    notifyResize();
-
-}
-
-/* ==========================================
-   Extra beveiliging
-========================================== */
-
-window.addEventListener("error", (event) => {
-
-    console.error(
-
-        "Nieuws fout:",
-
-        event.message
-
-    );
-
-});
-
-/* ==========================================
-   Einde
-========================================== */
-
-console.log(
-
-    "🧡 HV Novitas Home News geladen."
-
-);
