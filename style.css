@@ -1,716 +1,154 @@
 /* ==========================================================
-   HV NOVITAS CMS
+   ALGEMEEN
 ========================================================== */
 
 *{
-    margin:0;
-    padding:0;
     box-sizing:border-box;
 }
 
-:root{
-
-    --orange:#f58220;
-    --orange-dark:#d86d13;
-    --white:#ffffff;
-    --black:#2d2d2d;
-    --grey:#ececec;
-    --shadow:0 8px 20px rgba(0,0,0,.15);
-
-}
-
-html{
-
-    height:100%;
-
-}
-
-body{
-
-    font-family:Arial,Helvetica,sans-serif;
-
-    background:#f3f3f3;
-
-    color:#333;
-
-    min-height:100vh;
-
-}
-
-/* ==========================================================
-   DASHBOARD
-========================================================== */
-
-.dashboard{
-
-    width:100%;
-
-    min-height:100vh;
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-
-/* ==========================================================
-   HEADER
-========================================================== */
-
-.topbar{
-
-    height:120px;
-
-    background:var(--orange);
-
-    color:white;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:25px 50px;
-
-    box-shadow:var(--shadow);
-
-}
-
-.logo-area{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:25px;
-
-}
-
-.logo{
-
-    width:80px;
-
-    height:80px;
-
-    object-fit:contain;
-
-}
-
-.logo-area h1{
-
-    font-size:36px;
-
-    letter-spacing:2px;
-
-}
-
-.logo-area p{
-
-    margin-top:6px;
-
-    opacity:.9;
-
-}
-
-/* ==========================================================
-   GEBRUIKER
-========================================================== */
-
-.user-area{
-
-    text-align:right;
-
-}
-
-.status{
-
-    font-weight:bold;
-
-    margin-bottom:8px;
-
-}
-
-.online{
-
-    width:12px;
-
-    height:12px;
-
-    display:inline-block;
-
-    background:#22c55e;
-
-    border-radius:50%;
-
-    margin-right:8px;
-
-}
-
-#userName{
-
-    font-size:22px;
-
-    margin-bottom:4px;
-
-}
-
-#userEmail{
-
-    opacity:.9;
-
-    margin-bottom:15px;
-
-}
-
-#logoutButton{
-
-    background:white;
-
-    color:var(--orange);
-
-    border:none;
-
-    padding:10px 22px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    font-weight:bold;
-
-    transition:.25s;
-
-}
-
-#logoutButton:hover{
-
-    background:#2d2d2d;
-
-    color:white;
-
-}
-
-/* ==========================================================
-   MIDDEN
-========================================================== */
-
-.dashboard-main{
-
-    flex:1;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:60px;
-
-}
-
-/* ==========================================================
-   GRID
-========================================================== */
-
-.dashboard-grid{
-
-    width:100%;
-
-    max-width:1500px;
-
-    display:grid;
-
-    grid-template-columns:repeat(3,340px);
-
-    justify-content:center;
-
-    gap:40px;
-
-}
-
-/* ==========================================================
-   TEGELS
-========================================================== */
-
-.dashboard-card{
-
-    height:190px;
-
-    background:white;
-
-    border-top:12px solid var(--orange);
-
-    border-radius:18px;
-
-    box-shadow:var(--shadow);
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    align-items:center;
-
-    text-decoration:none;
-
-    color:#333;
-
-    transition:.25s;
-
-}
-
-.dashboard-card:hover{
-
-    transform:translateY(-10px);
-
-    box-shadow:0 18px 30px rgba(0,0,0,.18);
-
-}
-
-.card-icon{
-
-    font-size:58px;
-
-    margin-bottom:18px;
-
-}
-
-.dashboard-card h2{
-
-    font-size:28px;
-
-    letter-spacing:1px;
-
-}
-/* ==========================================================
-   LAATSTE TEGEL (INSTELLINGEN)
-========================================================== */
-
-.dashboard-card:last-child{
-
-    grid-column:2;
-
-}
-
-/* ==========================================================
-   FOOTER
-========================================================== */
-
-.footer{
-
-    height:60px;
-
-    background:#2d2d2d;
-
-    color:#ffffff;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:0 40px;
-
-    font-size:15px;
-
-}
-
-.footer-left,
-.footer-center,
-.footer-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:25px;
-
-}
-
-.system-status{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-}
-
-.status-dot{
-
-    width:10px;
-
-    height:10px;
-
-    border-radius:50%;
-
-    background:#22c55e;
-
-}
-
-/* ==========================================================
-   KNOP ANIMATIES
-========================================================== */
-
-.dashboard-card:active{
-
-    transform:scale(.98);
-
-}
-
-#logoutButton:active{
-
-    transform:scale(.96);
-
-}
-
-/* ==========================================================
-   RESPONSIVE
-========================================================== */
-
-@media(max-width:1400px){
-
-    .dashboard-grid{
-
-        grid-template-columns:repeat(2,340px);
-
-    }
-
-    .dashboard-card:last-child{
-
-        grid-column:1 / span 2;
-
-        width:340px;
-
-        justify-self:center;
-
-    }
-
-}
-
-@media(max-width:900px){
-
-    .topbar{
-
-        flex-direction:column;
-
-        height:auto;
-
-        text-align:center;
-
-        gap:25px;
-
-        padding:30px;
-
-    }
-
-    .logo-area{
-
-        flex-direction:column;
-
-    }
-
-    .user-area{
-
-        text-align:center;
-
-    }
-
-    .dashboard-main{
-
-        padding:30px;
-
-    }
-
-    .dashboard-grid{
-
-        grid-template-columns:1fr;
-
-        max-width:400px;
-
-    }
-
-    .dashboard-card{
-
-        width:100%;
-
-    }
-
-    .dashboard-card:last-child{
-
-        grid-column:auto;
-
-        width:100%;
-
-    }
-
-    .footer{
-
-        flex-direction:column;
-
-        height:auto;
-
-        gap:12px;
-
-        padding:20px;
-
-        text-align:center;
-
-    }
-
-}
-
-@media(max-width:500px){
-
-    .logo{
-
-        width:65px;
-
-        height:65px;
-
-    }
-
-    .logo-area h1{
-
-        font-size:28px;
-
-    }
-
-    .dashboard-card{
-
-        height:170px;
-
-    }
-
-    .dashboard-card h2{
-
-        font-size:22px;
-
-    }
-
-    .card-icon{
-
-        font-size:48px;
-
-    }
-
-}
 /* ==========================================================
    PROEFTRAININGEN
 ========================================================== */
 
 .proeftraining-grid{
-
     display:grid;
-
     grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-
     gap:30px;
-
     margin:35px 0;
-
 }
 
 .proef-card{
-
     background:linear-gradient(135deg,#ff7a00,#ff9f1c);
-
-    color:white;
-
+    color:#fff;
     border-radius:20px;
-
     padding:35px;
-
     cursor:pointer;
-
-    transition:.35s;
-
-    box-shadow:0 12px 30px rgba(0,0,0,.18);
-
     text-align:center;
-
+    transition:transform .35s ease, box-shadow .35s ease;
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
 }
 
-.proef-card:hover{
-
-    transform:translateY(-8px);
-
-    box-shadow:0 20px 40px rgba(0,0,0,.25);
-
+@media (hover:hover){
+    .proef-card:hover{
+        transform:translateY(-8px);
+        box-shadow:0 20px 40px rgba(0,0,0,.25);
+    }
 }
 
 .proef-card .icon{
-
     font-size:60px;
-
     margin-bottom:20px;
-
 }
 
 .proef-card h2{
-
     margin:0;
-
     font-size:28px;
-
     font-weight:700;
-
 }
 
 .proef-card p{
-
     margin-top:15px;
-
     font-size:17px;
-
     line-height:1.6;
-
     opacity:.95;
-
 }
 
-/* ======================================= */
+/* ==========================================================
+   PAGINA'S
+========================================================== */
 
 .pagina{
-
     display:none;
-
     margin-top:35px;
-
 }
 
 .pagina.actief{
-
     display:block;
-
 }
 
-/* ======================================= */
+/* ==========================================================
+   CONTENT CARD
+========================================================== */
 
 .content-card{
-
-    background:#ffffff;
-
+    background:#fff;
     border-radius:20px;
-
     padding:30px;
-
     box-shadow:0 10px 30px rgba(0,0,0,.12);
-
     animation:fadeIn .35s ease;
-
 }
 
 .content-card h2{
-
-    margin-top:0;
-
-    margin-bottom:25px;
-
+    margin:0 0 25px;
     color:#ff7a00;
-
     font-size:30px;
-
     border-bottom:3px solid #ff7a00;
-
     padding-bottom:15px;
-
 }
 
 .content-card iframe{
-
+    display:block;
     width:100%;
-
     border:none;
-
     border-radius:15px;
-
-    background:white;
-
+    background:#fff;
 }
 
-/* ======================================= */
-
-#formulier iframe{
-
-    height:1650px;
-
-}
-
-#reacties iframe{
-
-    height:900px;
-
-}
-
-/* ======================================= */
-
-@keyframes fadeIn{
-
-    from{
-
-        opacity:0;
-
-        transform:translateY(15px);
-
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:translateY(0);
-
-    }
-
-}
-
-/* ======================================= */
-
-@media(max-width:900px){
-
-.proeftraining-grid{
-
-    grid-template-columns:1fr;
-
-}
-
-.proef-card{
-
-    padding:25px;
-
-}
-
-.proef-card .icon{
-
-    font-size:46px;
-
-}
-
-.content-card{
-
-    padding:20px;
-
-}
-
-#formulier iframe{
-
-    height:1800px;
-
-}
-
-#reacties iframe{
-
-    height:700px;
-
-}
-
-}
 /* ==========================================================
-   EINDE STYLE.CSS
+   IFRAME HOOGTES
 ========================================================== */
 
+#formulier iframe{
+    height:1650px;
+}
+
+#reacties iframe{
+    height:900px;
+}
+
+/* ==========================================================
+   ANIMATIE
+========================================================== */
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ==========================================================
+   MOBIEL
+========================================================== */
+
+@media (max-width:900px){
+
+    .proeftraining-grid{
+        grid-template-columns:1fr;
+    }
+
+    .proef-card{
+        padding:25px;
+    }
+
+    .proef-card .icon{
+        font-size:46px;
+    }
+
+    .content-card{
+        padding:20px;
+    }
+
+    #formulier iframe{
+        height:1800px;
+    }
+
+    #reacties iframe{
+        height:700px;
+    }
+
+}
