@@ -1,19 +1,128 @@
-<div class="content-card">
+<!DOCTYPE html>
+<html lang="nl">
 
-    <div class="card-header">
-        <h2>📝 Nieuwe proeftraining aanmelden</h2>
-        <p>Vul hieronder het formulier in.</p>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>HV Novitas - Proeftrainingen</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <header class="topbar">
+
+        <div class="logo">
+            🧡 HV Novitas Beheer
+        </div>
+
+        <div class="user">
+
+            <button onclick="location.href='dashboard.html'">
+                ⬅ Dashboard
+            </button>
+
+        </div>
+
+    </header>
+
+    <section class="welkom">
+
+        <h1>📝 Proeftrainingen</h1>
+
+        <p>
+            Nieuwe proeftrainingen aanmelden en reacties bekijken.
+        </p>
+
+    </section>
+
+    <div class="tabs">
+
+        <button class="tab active"
+                onclick="toonTab('formulier')">
+
+            📝 Nieuw formulier
+
+        </button>
+
+        <button class="tab"
+                onclick="toonTab('antwoorden')">
+
+            📋 Aanmeldingen
+
+        </button>
+
     </div>
 
-    <iframe
+    <section
+        id="formulier"
+        class="tabContent">
+
+        <iframe
+
         src="https://docs.google.com/forms/d/e/1FAIpQLScnRN3u145StDAvKPQcMOWHixETPDne39URm_S4-bAH-hpXKQ/viewform?embedded=true"
+
         width="100%"
-        height="1600"
+
+        height="1500"
+
         frameborder="0"
-        marginheight="0"
-        marginwidth="0"
-        style="border:none;border-radius:16px;background:#fff;">
-        Laden...
-    </iframe>
+
+        loading="lazy">
+
+        </iframe>
+
+    </section>
+
+    <section
+        id="antwoorden"
+        class="tabContent"
+        style="display:none;">
+
+        <iframe
+
+        src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing"
+
+        width="100%"
+
+        height="900"
+
+        frameborder="0">
+
+        </iframe>
+
+    </section>
 
 </div>
+
+<script>
+
+function toonTab(tab){
+
+    document
+    .querySelectorAll(".tabContent")
+    .forEach(e=>e.style.display="none");
+
+    document
+    .querySelectorAll(".tab")
+    .forEach(e=>e.classList.remove("active"));
+
+    document
+    .getElementById(tab)
+    .style.display="block";
+
+    event.target.classList.add("active");
+
+}
+
+</script>
+
+</body>
+
+</html>
