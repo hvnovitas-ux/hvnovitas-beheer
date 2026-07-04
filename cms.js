@@ -1,3 +1,4 @@
+console.log("🔥 CMS JS IS GELADEN");
 import { db } from "./firebase.js";
 import { uploadFile } from "./drive.js";
 
