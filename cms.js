@@ -130,7 +130,12 @@ console.log("BESTAND:", file);
 console.log("👉 file input:", imageInput.files);
 console.log("👉 file:", file);
 console.log("👉 DRIVE MODULE GEBRUIKT");
+console.log("👉 START UPLOAD");
+console.log("FILE:", file);
+
 const upload = await uploadFile(file);
+
+console.log("👉 UPLOAD RESULT:", upload);
 console.log("UPLOAD RESULT:", upload);
 console.log("👉 upload start");
 console.log("👉 upload result:", upload);
