@@ -180,5 +180,117 @@ async function deleteImage(path) {
         );
 
     }
+    /* ==========================================
+   Formulier opslaan
+========================================== */
+
+form.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+    const file = imageInput.files[0];
+
+    if (!title || !content) {
+
+        alert("Vul een titel en bericht in.");
+
+        return;
+
+    }
+
+    submitButton.disabled = true;
+
+    try {
+
+        const dateInfo = createDateTime();
+
+        let image = currentImage;
+        let imagePath = currentImagePath;
+
+        /* Nieuwe foto gekozen */
+
+        if (file) {
+
+            if (editingId && currentImagePath) {
+
+                await deleteImage(currentImagePath);
+
+            }
+
+            const upload = await uploadImage(file);
+
+            image = upload.image;
+
+            imagePath = upload.imagePath;
+
+        }
+
+        const newsData = {
+
+            title,
+            content,
+
+            summary: createSummary(content),
+
+            image,
+            imagePath,
+
+            date: dateInfo.date,
+            time: dateInfo.time,
+            timestamp: dateInfo.timestamp
+
+        };
+
+        /* Bewerken */
+
+        if (editingId) {
+
+            await update(
+
+                ref(db, `${NEWS_PATH}/${editingId}`),
+
+                newsData
+
+            );
+
+        }
+
+        /* Nieuw bericht */
+
+        else {
+
+            await push(
+
+                ref(db, NEWS_PATH),
+
+                newsData
+
+            );
+
+        }
+
+        resetForm();
+
+        loadNews();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert("Opslaan mislukt.");
+
+    }
+
+    finally {
+
+        submitButton.disabled = false;
+
+    }
+
+});
 
 }
