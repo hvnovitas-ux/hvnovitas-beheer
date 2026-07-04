@@ -1,3 +1,4 @@
+console.log("🔥 CMS IS GELADEN");
 // ==========================================
 // HV NOVITAS CMS - CLEAN FIXED VERSION
 // ==========================================
