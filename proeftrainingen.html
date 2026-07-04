@@ -3,13 +3,12 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>HV Novitas CMS - Proeftrainingen</title>
+<title>HV Novitas CMS - Proeftrainingen</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -17,16 +16,13 @@
 
 <div class="dashboard">
 
-    <!-- ======================================================
-         HEADER
-    ======================================================= -->
+    <!-- HEADER -->
 
     <header class="topbar">
 
         <div class="logo">
 
-            <img src="images/logo.png"
-                 alt="HV Novitas">
+            <img src="images/logo.png" alt="HV Novitas">
 
             <div class="logo-info">
 
@@ -51,180 +47,42 @@
 
     </header>
 
-    <!-- ======================================================
-         HERO
-    ======================================================= -->
+    <!-- PAGINA -->
 
     <section class="hero">
 
-        <h2>
-
-            📝 Proeftrainingen
-
-        </h2>
+        <h2>📝 Proeftrainingen</h2>
 
         <p>
 
-            Beheer alle ontvangen proeftrainingen.
+            Bekijk alle ontvangen proeftrainingen.
 
         </p>
 
     </section>
 
-    <!-- ======================================================
-         FILTER
-    ======================================================= -->
+    <!-- CONTENT -->
 
     <section class="content-card">
 
-        <div class="form-row">
+        <h2>📋 Ontvangen proeftrainingen</h2>
 
-            <div>
+        <iframe
 
-                <label>
+        src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing"
 
-                    🔍 Zoeken
+        width="100%"
 
-                </label>
+        height="900"
 
-                <input
-                    id="zoeken"
-                    type="text"
-                    placeholder="Zoek op naam, telefoon of e-mail">
+        frameborder="0">
 
-            </div>
-
-            <div>
-
-                <label>
-
-                    Weergave
-
-                </label>
-
-                <div
-                    style="display:flex;
-                           align-items:center;
-                           gap:12px;
-                           height:54px;">
-
-                    <input
-                        id="alleenNieuw"
-                        type="checkbox">
-
-                    <label
-                        for="alleenNieuw">
-
-                        Alleen nieuwe aanvragen
-
-                    </label>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="status-overview">
-
-            <div class="status-box">
-
-                <h3>
-
-                    📊 Totaal
-
-                </h3>
-
-                <div
-                    id="totaal"
-                    class="number">
-
-                    0
-
-                </div>
-
-            </div>
-
-            <div class="status-box">
-
-                <h3>
-
-                    🟠 Nieuw
-
-                </h3>
-
-                <div
-                    id="nieuw"
-                    class="number">
-
-                    0
-
-                </div>
-
-            </div>
-
-            <div class="status-box">
-
-                <h3>
-
-                    ✔ Gelezen
-
-                </h3>
-
-                <div
-                    id="gelezen"
-                    class="number">
-
-                    0
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- ======================================================
-         AANVRAGEN
-    ======================================================= -->
-
-    <section
-        id="aanvragen"
-        class="proeftraining-grid">
-
-        <div class="content-card">
-
-            <h2>
-
-                Proeftrainingen worden geladen...
-
-            </h2>
-
-        </div>
+        </iframe>
 
     </section>
 
 </div>
 
-<!-- ======================================================
-     GOOGLE API
-======================================================= -->
-
-<script src="https://apis.google.com/js/api.js"></script>
-
-<script src="https://accounts.google.com/gsi/client"
-        async
-        defer></script>
-
-<!-- ======================================================
-     JAVASCRIPT
-======================================================= -->
-
-<script type="module"
-        src="proeftrainingen.js"></script>
-
 </body>
 
 </html>
-Maar ik zie een groter pr
