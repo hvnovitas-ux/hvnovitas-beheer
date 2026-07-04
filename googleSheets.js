@@ -12,11 +12,16 @@ export const CLIENT_ID =
 "71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
 export const API_KEY =
-"AIzaSyDWixNBUuq50W6yULQxXiiAMYjr4Fv9J-Y";
+"AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE";
 
 export const SPREADSHEET_ID =
 "1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM";
 
+export const RANGE =
+"Formulierreacties 1!A:H";
+
+const DISCOVERY_DOC =
+"https://sheets.googleapis.com/$discovery/rest?version=v4";
 // ==========================================
 // GOOGLE
 // ==========================================
