@@ -1,6 +1,6 @@
 /* ==========================================================
    HV NOVITAS CMS
-   STYLE.CSS
+   STYLE V1.0
 ========================================================== */
 
 /* ==========================================================
@@ -9,28 +9,29 @@
 
 :root{
 
-    --orange:#ff7a00;
-    --orange-dark:#e46800;
-    --orange-light:#ffb04d;
+    --orange:#f58220;
+    --orange-dark:#d96d0f;
+    --orange-light:#ffb55a;
+
+    --black:#1b1b1b;
+    --dark:#333333;
 
     --white:#ffffff;
+    --light:#f5f6fa;
 
-    --background:#eef2f7;
+    --grey:#777777;
 
-    --text:#222;
-    --text-light:#666;
-
-    --green:#28a745;
-    --red:#dc3545;
-    --blue:#0d6efd;
+    --success:#28a745;
+    --danger:#dc3545;
+    --warning:#ffc107;
 
     --radius:18px;
 
     --shadow:
-        0 8px 20px rgba(0,0,0,.08);
+        0 10px 25px rgba(0,0,0,.10);
 
     --shadow-hover:
-        0 20px 40px rgba(0,0,0,.15);
+        0 20px 40px rgba(0,0,0,.18);
 
 }
 
@@ -55,13 +56,14 @@ html{
 
 body{
 
-    background:var(--background);
+    background:var(--light);
 
-    color:var(--text);
+    color:var(--dark);
 
     font-family:
         "Segoe UI",
         Arial,
+        Helvetica,
         sans-serif;
 
     line-height:1.6;
@@ -69,50 +71,62 @@ body{
 }
 
 /* ==========================================================
-   LINKS
+   ALGEMEEN
 ========================================================== */
 
-a{
+img{
 
-    color:var(--orange);
+    max-width:100%;
 
-    text-decoration:none;
+    display:block;
 
 }
 
-a:hover{
+a{
 
-    color:var(--orange-dark);
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
+button{
+
+    font-family:inherit;
 
 }
 
 /* ==========================================================
-   LAYOUT
+   CMS
 ========================================================== */
 
 .dashboard{
 
-    width:min(1500px,96%);
+    width:min(1600px,96%);
 
-    margin:35px auto;
-
-}
-
-.page{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:30px;
+    margin:30px auto;
 
 }
 
 /* ==========================================================
-   TOPBAR
+   HEADER
 ========================================================== */
 
 .topbar{
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #1b1b1b,
+            #333333
+        );
+
+    color:white;
+
+    border-radius:25px;
+
+    padding:30px 40px;
 
     display:flex;
 
@@ -120,27 +134,69 @@ a:hover{
 
     align-items:center;
 
-    gap:25px;
-
-    background:white;
-
-    padding:25px 35px;
-
-    border-radius:20px;
+    gap:30px;
 
     box-shadow:var(--shadow);
 
 }
 
+/* ==========================================================
+   LOGO
+========================================================== */
+
 .logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.logo img{
+
+    width:90px;
+
+    height:90px;
+
+    background:white;
+
+    padding:10px;
+
+    border-radius:18px;
+
+}
+
+.logo-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.logo-info h1{
 
     font-size:34px;
 
-    font-weight:700;
-
-    color:var(--orange);
+    letter-spacing:1px;
 
 }
+
+.logo-info p{
+
+    color:#cccccc;
+
+    margin-top:6px;
+
+    font-size:17px;
+
+}
+
+/* ==========================================================
+   GEBRUIKER
+========================================================== */
 
 .user{
 
@@ -148,7 +204,7 @@ a:hover{
 
     align-items:center;
 
-    gap:15px;
+    gap:18px;
 
 }
 
@@ -159,8 +215,6 @@ a:hover{
     height:55px;
 
     border-radius:50%;
-
-    object-fit:cover;
 
     border:3px solid var(--orange);
 
@@ -175,54 +229,113 @@ a:hover{
 }
 
 /* ==========================================================
-   HEADER
+   HERO
 ========================================================== */
 
-.welkom{
+.hero{
+
+    margin-top:35px;
 
     background:white;
 
-    border-radius:20px;
+    border-radius:22px;
 
-    padding:40px;
-
-    box-shadow:var(--shadow);
+    padding:45px;
 
     text-align:center;
 
+    box-shadow:var(--shadow);
+
 }
 
-.welkom h1{
+.hero h2{
 
-    font-size:46px;
+    font-size:44px;
 
     color:var(--orange);
+
+    margin-bottom:12px;
+
+}
+
+.hero p{
+
+    color:#666;
+
+    font-size:20px;
+
+}
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+.status-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+    margin-top:35px;
+
+}
+
+.status-card{
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--orange),
+            var(--orange-light)
+        );
+
+    color:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+    transition:.30s;
+
+}
+
+.status-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:var(--shadow-hover);
+
+}
+
+.status-icon{
+
+    font-size:46px;
 
     margin-bottom:15px;
 
 }
 
-.welkom p{
+.status-title{
 
-    font-size:20px;
+    font-size:18px;
 
-    color:#666;
+    margin-bottom:10px;
 
 }
 
-/* ==========================================================
-   GRID
-========================================================== */
+.status-value{
 
-.card-grid{
+    font-size:28px;
 
-    display:grid;
-
-    grid-template-columns:
-
-        repeat(auto-fit,minmax(330px,1fr));
-
-    gap:30px;
+    font-weight:bold;
 
 }
 
@@ -230,31 +343,36 @@ a:hover{
    TEGELS
 ========================================================== */
 
+.card-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(320px,1fr));
+
+    gap:30px;
+
+    margin-top:35px;
+
+}
+
 .card{
 
     background:white;
 
     border-radius:22px;
 
-    padding:35px;
+    padding:40px;
+
+    min-height:240px;
+
+    text-align:center;
 
     box-shadow:var(--shadow);
 
-    transition:.35s;
+    transition:.30s;
 
     cursor:pointer;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    align-items:center;
-
-    min-height:250px;
-
-    text-align:center;
 
 }
 
@@ -268,17 +386,17 @@ a:hover{
 
 .card-icon{
 
-    font-size:68px;
+    font-size:62px;
 
     margin-bottom:20px;
 
 }
 
-.card h2{
-
-    font-size:28px;
+.card h3{
 
     color:var(--orange);
+
+    font-size:28px;
 
     margin-bottom:15px;
 
@@ -291,45 +409,32 @@ a:hover{
     font-size:17px;
 
 }
-
-/* ==========================================================
-   STATUS KLEUREN
-========================================================== */
-
-.online{
-
-    color:#28a745;
-
-}
-
-.offline{
-
-    color:#dc3545;
-
-}
-
-.warning{
-
-    color:#ff9800;
-
-}
 /* ==========================================================
    BUTTONS
 ========================================================== */
 
+.btn,
 button{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:14px 28px;
 
     border:none;
 
-    border-radius:12px;
+    border-radius:14px;
 
-    padding:14px 24px;
+    cursor:pointer;
 
     font-size:16px;
 
     font-weight:600;
-
-    cursor:pointer;
 
     transition:.25s;
 
@@ -351,23 +456,23 @@ button{
 
 }
 
-.btn-dark{
+.btn-black{
 
-    background:#222;
+    background:var(--black);
 
     color:white;
 
 }
 
-.btn-dark:hover{
+.btn-black:hover{
 
-    background:#111;
+    background:#000;
 
 }
 
 .btn-green{
 
-    background:#28a745;
+    background:var(--success);
 
     color:white;
 
@@ -375,13 +480,13 @@ button{
 
 .btn-green:hover{
 
-    background:#218838;
+    filter:brightness(.92);
 
 }
 
 .btn-red{
 
-    background:#dc3545;
+    background:var(--danger);
 
     color:white;
 
@@ -389,15 +494,17 @@ button{
 
 .btn-red:hover{
 
-    background:#b52a37;
+    filter:brightness(.92);
 
 }
 
 /* ==========================================================
-   CONTENT CARDS
+   CONTENT CARD
 ========================================================== */
 
 .content-card{
+
+    margin-top:35px;
 
     background:white;
 
@@ -406,8 +513,6 @@ button{
     padding:35px;
 
     box-shadow:var(--shadow);
-
-    margin-top:30px;
 
 }
 
@@ -419,9 +524,9 @@ button{
 
     margin-bottom:25px;
 
-    border-bottom:3px solid var(--orange);
-
     padding-bottom:15px;
+
+    border-bottom:3px solid var(--orange);
 
 }
 
@@ -439,11 +544,25 @@ button{
 
 }
 
+.form-row{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
 label{
+
+    display:block;
+
+    font-size:15px;
 
     font-weight:600;
 
-    color:#444;
+    color:#555;
 
     margin-bottom:8px;
 
@@ -455,17 +574,17 @@ select{
 
     width:100%;
 
-    padding:15px;
-
-    font-size:16px;
+    padding:15px 18px;
 
     border:2px solid #ddd;
 
-    border-radius:12px;
-
-    transition:.25s;
+    border-radius:14px;
 
     background:white;
+
+    font-size:16px;
+
+    transition:.25s;
 
 }
 
@@ -477,21 +596,23 @@ select:focus{
 
     border-color:var(--orange);
 
-    box-shadow:0 0 12px rgba(255,122,0,.20);
+    box-shadow:0 0 0 4px rgba(245,130,32,.15);
 
 }
 
 textarea{
 
-    resize:vertical;
-
     min-height:180px;
+
+    resize:vertical;
 
 }
 
 input[type=file]{
 
     padding:12px;
+
+    background:#fafafa;
 
 }
 
@@ -503,29 +624,35 @@ input[type=file]{
 
     margin-top:15px;
 
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:20px;
+
 }
 
 #photoPreview img{
 
     width:220px;
 
-    border-radius:15px;
+    border-radius:18px;
 
     box-shadow:var(--shadow);
 
 }
 
 /* ==========================================================
-   KNOPPEN RIJ
+   KNOPPENBALK
 ========================================================== */
 
 .knoppen{
 
     display:flex;
 
-    gap:15px;
-
     flex-wrap:wrap;
+
+    gap:15px;
 
     margin-top:15px;
 
@@ -543,34 +670,41 @@ input[type=file]{
    MELDINGEN
 ========================================================== */
 
+.melding,
 #melding{
 
     margin-top:20px;
 
-    padding:18px;
+    padding:18px 20px;
 
-    border-radius:12px;
+    border-radius:14px;
 
-    background:#fff8f2;
+    font-size:15px;
 
-    border-left:5px solid var(--orange);
+    background:#fff8ef;
 
-}
-
-.success{
-
-    border-left-color:#28a745;
+    border-left:6px solid var(--orange);
 
 }
 
-.error{
+.melding.success{
 
-    border-left-color:#dc3545;
+    background:#eefaf1;
+
+    border-left-color:var(--success);
+
+}
+
+.melding.error{
+
+    background:#fdeeee;
+
+    border-left-color:var(--danger);
 
 }
 
 /* ==========================================================
-   IFRAME
+   IFRAMES
 ========================================================== */
 
 iframe{
@@ -585,22 +719,34 @@ iframe{
 
 }
 
-#formulier iframe{
+iframe.formulier{
 
     height:1700px;
 
 }
 
-#reacties iframe{
+iframe.sheet{
 
     height:900px;
 
 }
- margin-top:35px;
+/* ==========================================================
+   NIEUWS
+========================================================== */
+
+.nieuwslijst{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
+
+    gap:30px;
+
+    margin-top:35px;
 
 }
 
-.news-item{
+.news-card{
 
     background:white;
 
@@ -614,21 +760,23 @@ iframe{
 
 }
 
-.news-item:hover{
+.news-card:hover{
 
-    transform:translateY(-8px);
+    transform:translateY(-6px);
 
     box-shadow:var(--shadow-hover);
 
 }
 
-.news-item img{
+.news-image{
 
     width:100%;
 
     height:260px;
 
     object-fit:cover;
+
+    background:#ddd;
 
 }
 
@@ -638,17 +786,27 @@ iframe{
 
 }
 
-.news-item h3{
+.news-title{
+
+    font-size:28px;
 
     color:var(--orange);
 
     margin-bottom:15px;
 
-    font-size:28px;
+}
+
+.news-date{
+
+    color:#999;
+
+    font-size:14px;
+
+    margin-bottom:20px;
 
 }
 
-.news-item p{
+.news-text{
 
     color:#555;
 
@@ -656,15 +814,133 @@ iframe{
 
 }
 
-.news-footer{
+.news-buttons{
 
     display:flex;
 
-    justify-content:space-between;
-
-    align-items:center;
+    gap:15px;
 
     margin-top:25px;
+
+}
+
+/* ==========================================================
+   PROEFTRAININGEN
+========================================================== */
+
+.proeftraining-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(380px,1fr));
+
+    gap:30px;
+
+    margin-top:35px;
+
+}
+
+.proef-card{
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:35px;
+
+    box-shadow:var(--shadow);
+
+    transition:.30s;
+
+}
+
+.proef-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:var(--shadow-hover);
+
+}
+
+.proef-card h3{
+
+    color:var(--orange);
+
+    font-size:26px;
+
+    margin-bottom:20px;
+
+}
+
+.proef-info{
+
+    display:grid;
+
+    grid-template-columns:150px 1fr;
+
+    gap:12px;
+
+    margin-bottom:12px;
+
+}
+
+.proef-label{
+
+    font-weight:700;
+
+    color:#444;
+
+}
+
+.proef-value{
+
+    color:#666;
+
+}
+
+/* ==========================================================
+   STATUS BLOKKEN
+========================================================== */
+
+.status-overview{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:25px;
+
+    margin:35px 0;
+
+}
+
+.status-box{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+}
+
+.status-box h3{
+
+    color:var(--orange);
+
+    margin-bottom:15px;
+
+}
+
+.status-box .number{
+
+    font-size:42px;
+
+    font-weight:bold;
 
 }
 
@@ -676,11 +952,13 @@ iframe{
 
     background:white;
 
-    border-radius:20px;
+    border-radius:22px;
+
+    overflow:hidden;
 
     box-shadow:var(--shadow);
 
-    overflow:hidden;
+    margin-top:35px;
 
 }
 
@@ -706,7 +984,7 @@ th{
 
     text-align:left;
 
-    font-size:16px;
+    font-size:15px;
 
 }
 
@@ -731,56 +1009,46 @@ tbody tr:hover{
 }
 
 /* ==========================================================
-   STATUS
+   FOTO'S
 ========================================================== */
 
-.status-grid{
+.photo-grid{
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 
     gap:25px;
 
-    margin:35px 0;
-
 }
 
-.status-card{
+.photo-card{
 
     background:white;
 
     border-radius:20px;
 
-    padding:30px;
-
-    text-align:center;
+    overflow:hidden;
 
     box-shadow:var(--shadow);
 
 }
 
-.status-icon{
+.photo-card img{
 
-    font-size:55px;
+    width:100%;
 
-    margin-bottom:15px;
+    height:220px;
 
-}
+    object-fit:cover;
 
-.status-card h3{
-
-    color:var(--orange);
-
-    margin-bottom:10px;
+    transition:.30s;
 
 }
 
-.status-value{
+.photo-card:hover img{
 
-    font-size:42px;
-
-    font-weight:bold;
+    transform:scale(1.05);
 
 }
 
@@ -794,7 +1062,7 @@ tbody tr:hover{
 
     grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
 
-    gap:30px;
+    gap:25px;
 
 }
 
@@ -802,7 +1070,7 @@ tbody tr:hover{
 
     background:white;
 
-    border-radius:20px;
+    border-radius:22px;
 
     padding:30px;
 
@@ -812,7 +1080,7 @@ tbody tr:hover{
 
 }
 
-.sponsor-card img{
+.sponsor-logo{
 
     width:180px;
 
@@ -826,7 +1094,9 @@ tbody tr:hover{
 
 }
 
-.sponsor-card h3{
+.sponsor-name{
+
+    font-size:24px;
 
     color:var(--orange);
 
@@ -834,121 +1104,13 @@ tbody tr:hover{
 
 }
 
-/* ==========================================================
-   FOTO'S
-========================================================== */
+.sponsor-buttons{
 
-.photo-grid{
+    display:flex;
 
-    display:grid;
+    gap:15px;
 
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-
-    gap:25px;
-
-}
-
-.photo{
-
-    overflow:hidden;
-
-    border-radius:18px;
-
-    box-shadow:var(--shadow);
-
-    background:white;
-
-}
-
-.photo img{
-
-    width:100%;
-
-    height:240px;
-
-    object-fit:cover;
-
-    transition:.30s;
-
-}
-
-.photo:hover img{
-
-    transform:scale(1.05);
-
-}
-
-/* ==========================================================
-   INSTELLINGEN
-========================================================== */
-
-.setting-card{
-
-    background:white;
-
-    border-radius:20px;
-
-    padding:35px;
-
-    box-shadow:var(--shadow);
-
-    margin-bottom:30px;
-
-}
-
-.setting-card h3{
-
-    color:var(--orange);
-
-    margin-bottom:20px;
-
-}
-
-.setting-group{
-
-    margin-bottom:30px;
-
-}
-
-/* ==========================================================
-   BADGES
-========================================================== */
-
-.badge{
-
-    display:inline-block;
-
-    padding:6px 14px;
-
-    border-radius:30px;
-
-    font-size:14px;
-
-    font-weight:bold;
-
-}
-
-.badge-green{
-
-    background:#d4edda;
-
-    color:#155724;
-
-}
-
-.badge-orange{
-
-    background:#fff3cd;
-
-    color:#856404;
-
-}
-
-.badge-red{
-
-    background:#f8d7da;
-
-    color:#721c24;
+    margin-top:25px;
 
 }
 /* ==========================================================
@@ -965,13 +1127,21 @@ tbody tr:hover{
 
 }
 
-@media (max-width:900px){
+@media (max-width:992px){
 
     .topbar{
 
         flex-direction:column;
 
         text-align:center;
+
+        gap:25px;
+
+    }
+
+    .logo{
+
+        justify-content:center;
 
     }
 
@@ -983,25 +1153,51 @@ tbody tr:hover{
 
     }
 
-    .welkom{
+}
 
-        padding:30px;
+@media (max-width:768px){
+
+    .hero{
+
+        padding:30px 20px;
 
     }
 
-    .welkom h1{
+    .hero h2{
 
         font-size:34px;
 
     }
 
+    .hero p{
+
+        font-size:18px;
+
+    }
+
     .card-grid,
     .nieuwslijst,
+    .proeftraining-grid,
     .status-grid,
+    .status-overview,
     .photo-grid,
     .sponsor-grid{
 
         grid-template-columns:1fr;
+
+    }
+
+    .form-row{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .proef-info{
+
+        grid-template-columns:1fr;
+
+        gap:5px;
 
     }
 
@@ -1017,25 +1213,64 @@ tbody tr:hover{
 
     }
 
+    .news-buttons,
+    .sponsor-buttons{
+
+        flex-direction:column;
+
+    }
+
+    table{
+
+        display:block;
+
+        overflow-x:auto;
+
+        white-space:nowrap;
+
+    }
+
 }
 
 /* ==========================================================
    ANIMATIES
 ========================================================== */
 
-.fadeIn{
+.fade{
 
-    animation:fadeIn .35s ease;
+    animation:fade .35s ease;
 
 }
 
-@keyframes fadeIn{
+@keyframes fade{
 
     from{
 
         opacity:0;
 
-        transform:translateY(15px);
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+.slideUp{
+
+    animation:slideUp .35s ease;
+
+}
+
+@keyframes slideUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
 
     }
 
@@ -1061,20 +1296,6 @@ tbody tr:hover{
 
 }
 
-.lift{
-
-    transition:.30s;
-
-}
-
-.lift:hover{
-
-    transform:translateY(-8px);
-
-    box-shadow:var(--shadow-hover);
-
-}
-
 /* ==========================================================
    SCROLLBAR
 ========================================================== */
@@ -1087,7 +1308,7 @@ tbody tr:hover{
 
 ::-webkit-scrollbar-track{
 
-    background:#ececec;
+    background:#ededed;
 
 }
 
@@ -1095,7 +1316,7 @@ tbody tr:hover{
 
     background:var(--orange);
 
-    border-radius:20px;
+    border-radius:30px;
 
 }
 
@@ -1121,6 +1342,24 @@ tbody tr:hover{
 
 }
 
+.text-orange{
+
+    color:var(--orange);
+
+}
+
+.text-success{
+
+    color:var(--success);
+
+}
+
+.text-danger{
+
+    color:var(--danger);
+
+}
+
 .mt-10{margin-top:10px;}
 .mt-20{margin-top:20px;}
 .mt-30{margin-top:30px;}
@@ -1139,39 +1378,7 @@ tbody tr:hover{
 
 .hidden{
 
-    display:none;
-
-}
-
-.flex{
-
-    display:flex;
-
-}
-
-.flex-center{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-}
-
-.flex-between{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-}
-
-.round{
-
-    border-radius:20px;
+    display:none !important;
 
 }
 
@@ -1181,13 +1388,19 @@ tbody tr:hover{
 
 }
 
+.round{
+
+    border-radius:20px;
+
+}
+
 /* ==========================================================
    FOOTER
 ========================================================== */
 
 .footer{
 
-    margin-top:50px;
+    margin-top:60px;
 
     padding:25px;
 
@@ -1212,6 +1425,7 @@ tbody tr:hover{
     }
 
     .topbar,
+    .footer,
     button{
 
         display:none;
