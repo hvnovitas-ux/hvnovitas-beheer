@@ -82,9 +82,7 @@ function setBadge(id, waarde){
     badge.textContent = waarde;
 
 }
-Kleine aanpassing in dashboard.html
 
-Vervang de badges door deze versie:
 
 <span class="badge" data-badge="nieuws">0</span>
 
