@@ -324,3 +324,75 @@ onValue(newsQuery, (snapshot) => {
 `;
 
 });
+/* ==========================================
+   HV NOVITAS
+   HOME NEWS
+   Segment 5
+========================================== */
+
+/*
+    Controleer afbeeldingen
+*/
+
+function optimizeImages() {
+
+    const images = newsContainer.querySelectorAll(".nieuwsfoto");
+
+    images.forEach((img) => {
+
+        img.loading = "lazy";
+
+        img.decoding = "async";
+
+    });
+
+}
+
+/*
+    Pagina opnieuw laten berekenen
+    (handig voor Google Sites iframe)
+*/
+
+function refreshLayout() {
+
+    requestAnimationFrame(() => {
+
+        window.dispatchEvent(new Event("resize"));
+
+    });
+
+}
+
+/*
+    Initialiseren nadat nieuws is geladen
+*/
+
+function initializeNews() {
+
+    optimizeImages();
+
+    refreshLayout();
+
+}
+
+/*
+    Fouten loggen
+*/
+
+window.addEventListener("error", (event) => {
+
+    console.error(
+
+        "Home News:",
+
+        event.message
+
+    );
+
+});
+
+/*
+    Klaar
+*/
+
+console.log("🧡 HV Novitas Home News geladen.");
