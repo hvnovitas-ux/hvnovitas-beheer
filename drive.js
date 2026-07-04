@@ -1,5 +1,5 @@
 // ==========================================
-// HV NOVITAS - GOOGLE DRIVE UPLOADER (CLEAN)
+// HV NOVITAS - DRIVE UPLOADER (STABLE)
 // ==========================================
 
 export const CLIENT_ID =
@@ -14,12 +14,16 @@ export const FOLDER_ID =
 export const SCOPES =
 "https://www.googleapis.com/auth/drive.file";
 
+// ==========================================
+// STATE
+// ==========================================
+
 let accessToken = null;
 let tokenClient = null;
 let initialized = false;
 
 // ==========================================
-// INIT DRIVE
+// INIT DRIVE (NO CALLBACK HERE!)
 // ==========================================
 
 export async function initDrive() {
@@ -37,31 +41,16 @@ export async function initDrive() {
 
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: (res) => {
-
-            if (res.error) {
-                console.error("❌ LOGIN ERROR:", res);
-                return;
-            }
-
-            accessToken = res.access_token;
-
-            gapi.client.setToken({
-                access_token: accessToken
-            });
-
-            console.log("✅ DRIVE LOGIN OK");
-        }
+        scope: SCOPES
     });
 
     initialized = true;
 
-    console.log("📷 Drive initialized");
+    console.log("📷 DRIVE INITIALIZED");
 }
 
 // ==========================================
-// LOGIN DRIVE
+// LOGIN (ONLY ONE CALLBACK SYSTEM)
 // ==========================================
 
 export async function loginDrive() {
@@ -82,14 +71,12 @@ export async function loginDrive() {
 
             accessToken = res.access_token;
 
-            gapi.client.setToken({
-                access_token: accessToken
-            });
-
-            console.log("✅ DRIVE LOGIN SUCCESS");
+            console.log("🔐 LOGIN SUCCESS");
 
             resolve(accessToken);
         };
+
+        console.log("🚀 OPEN GOOGLE LOGIN");
 
         tokenClient.requestAccessToken({
             prompt: "consent"
@@ -103,19 +90,18 @@ export async function loginDrive() {
 
 export async function uploadFile(file) {
 
-    console.log("🚀 DRIVE UPLOAD START");
+    console.log("🚀 UPLOAD START");
 
     const token = await loginDrive();
 
     if (!token) {
-        throw new Error("❌ Geen access token");
+        throw new Error("❌ NO ACCESS TOKEN");
     }
 
     console.log("🔑 TOKEN OK");
 
     const metadata = {
         name: file.name,
-        mimeType: file.type,
         parents: [FOLDER_ID]
     };
 
@@ -135,7 +121,7 @@ export async function uploadFile(file) {
         {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: "Bearer " + token
             },
             body: form
         }
@@ -151,7 +137,7 @@ export async function uploadFile(file) {
 
     const data = await response.json();
 
-    console.log("📦 DRIVE FILE:", data);
+    console.log("📦 FILE:", data);
 
     // ==========================================
     // PUBLIC ACCESS
@@ -162,7 +148,7 @@ export async function uploadFile(file) {
         {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: "Bearer " + token,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -176,7 +162,8 @@ export async function uploadFile(file) {
     // IMAGE URL
     // ==========================================
 
-    const imageUrl = `https://drive.google.com/uc?export=view&id=${data.id}`;
+    const imageUrl =
+        "https://drive.google.com/uc?export=view&id=" + data.id;
 
     console.log("🖼️ IMAGE URL:", imageUrl);
 
@@ -192,15 +179,13 @@ export async function uploadFile(file) {
 
 export function logoutDrive() {
 
-    if (accessToken) {
+    accessToken = null;
+
+    if (google?.accounts?.oauth2) {
         google.accounts.oauth2.revoke(accessToken);
     }
 
-    accessToken = null;
-
-    gapi.client.setToken(null);
-
-    console.log("🚪 DRIVE LOGOUT");
+    console.log("🚪 LOGOUT");
 }
 
 // ==========================================
