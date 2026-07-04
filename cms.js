@@ -294,3 +294,129 @@ form.addEventListener("submit", async (event) => {
 });
 
 }
+/* ==========================================
+   Bewerken starten
+========================================== */
+
+async function startEdit(id) {
+
+    try {
+
+        const snapshot = await get(ref(db, `${NEWS_PATH}/${id}`));
+
+        if (!snapshot.exists()) return;
+
+        const item = snapshot.val();
+
+        editingId = id;
+
+        currentImage = item.image || "";
+        currentImagePath = item.imagePath || "";
+
+        titleInput.value = item.title || "";
+        contentInput.value = item.content || "";
+
+        submitButton.textContent = "Wijzigingen opslaan";
+
+        cancelButton.style.display = "inline-block";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    } catch (error) {
+
+        console.error("Bewerken mislukt:", error);
+
+    }
+
+}
+
+/* ==========================================
+   Nieuws verwijderen
+========================================== */
+
+async function deleteNews(id) {
+
+    if (!confirm("Weet je zeker dat je dit nieuwsbericht wilt verwijderen?")) {
+        return;
+    }
+
+    try {
+
+        const snapshot = await get(ref(db, `${NEWS_PATH}/${id}`));
+
+        if (snapshot.exists()) {
+
+            const item = snapshot.val();
+
+            if (item.imagePath) {
+
+                await deleteImage(item.imagePath);
+
+            }
+
+        }
+
+        await remove(ref(db, `${NEWS_PATH}/${id}`));
+
+        if (editingId === id) {
+
+            resetForm();
+
+        }
+
+        await loadNews();
+
+    } catch (error) {
+
+        console.error("Verwijderen mislukt:", error);
+
+        alert("Het nieuwsbericht kon niet worden verwijderd.");
+
+    }
+
+}
+
+/* ==========================================
+   Annuleren
+========================================== */
+
+cancelButton.addEventListener("click", () => {
+
+    resetForm();
+
+});
+
+/* ==========================================
+   Event delegation
+========================================== */
+
+newsList.addEventListener("click", (event) => {
+
+    const editButton = event.target.closest(".editButton");
+
+    if (editButton) {
+
+        startEdit(editButton.dataset.id);
+
+        return;
+
+    }
+
+    const deleteButton = event.target.closest(".deleteButton");
+
+    if (deleteButton) {
+
+        deleteNews(deleteButton.dataset.id);
+
+    }
+
+});
+
+/* ==========================================
+   Gereed
+========================================== */
+
+console.log("🧡 HV Novitas CMS geladen.");
