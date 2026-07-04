@@ -1,31 +1,329 @@
-</div>
+/* ==========================================================
+   HV NOVITAS CMS
+   cms.js
+   Deel 1A - Segment 1
 
-<script type="module" src="cms.js"></script>
+   Basis:
+   - Firebase
+   - Configuratie
+   - DOM
+   - Hulpfuncties
 
-<script>
+   Gebruikt:
+   - Firebase Realtime Database
+   - Firebase Storage
 
-const image = document.getElementById("image");
-const preview = document.getElementById("preview");
+   Firebase.js wordt NIET aangepast.
+========================================================== */
 
-image.addEventListener("change", () => {
+import { db, storage } from "./firebase.js";
 
-    const bestand = image.files[0];
+import {
+    ref,
+    push,
+    update,
+    remove,
+    get,
+    child
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-    if (!bestand) {
+import {
+    ref as storageRef,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
-        preview.style.display = "none";
-        preview.removeAttribute("src");
+/* ==========================================================
+   DATABASE PAD
+========================================================== */
+
+const NEWS_PATH = "news";
+
+/* ==========================================================
+   DOM
+========================================================== */
+
+const form = document.getElementById("newsForm");
+
+const titleInput = document.getElementById("title");
+
+const contentInput = document.getElementById("content");
+
+const imageInput = document.getElementById("image");
+
+const newsList = document.getElementById("newsList");
+
+const submitButton = document.getElementById("submitButton");
+
+const cancelButton = document.getElementById("cancelEdit");
+
+/* ==========================================================
+   Bewerken
+========================================================== */
+
+let editingId = null;
+
+let currentImage = "";
+
+let currentImagePath = "";
+
+/* ==========================================================
+   Datum en tijd
+========================================================== */
+
+function createDateTime() {
+
+    const now = new Date();
+
+    return {
+
+        timestamp: now.getTime(),
+
+        date: now.toLocaleDateString("nl-NL", {
+
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+
+        }),
+
+        time: now.toLocaleTimeString("nl-NL", {
+
+            hour: "2-digit",
+            minute: "2-digit"
+
+        })
+
+    };
+
+}
+
+/* ==========================================================
+   Samenvatting (180 tekens)
+========================================================== */
+
+function createSummary(text) {
+
+    const value = text.trim();
+
+    if (value.length <= 180) {
+
+        return value;
+
+    }
+
+    return value.substring(0, 180).trim() + "...";
+
+}
+/* ==========================================================
+   HTML veilig weergeven
+========================================================== */
+
+function escapeHtml(text = "") {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+/* ==========================================================
+   Bestandsnaam voor Storage maken
+========================================================== */
+
+function createImageName(file) {
+
+    const extension = file.name.split(".").pop().toLowerCase();
+
+    return `news/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+}
+
+/* ==========================================================
+   Eén nieuwskaart maken
+========================================================== */
+
+function createNewsCard(id, news) {
+
+    const article = document.createElement("article");
+
+    article.className = "news-card";
+
+    article.dataset.id = id;
+
+    const imageHtml = news.image
+        ? `
+            <div class="news-image">
+                <img
+                    src="${news.image}"
+                    alt="${escapeHtml(news.title)}"
+                    loading="lazy">
+            </div>
+        `
+        : "";
+
+    article.innerHTML = `
+
+        ${imageHtml}
+
+        <div class="news-content">
+
+            <h3>${escapeHtml(news.title)}</h3>
+
+            <div class="news-meta">
+
+                <span>${news.date ?? ""}</span>
+
+                <span>${news.time ?? ""}</span>
+
+            </div>
+
+            <p>
+
+                ${escapeHtml(news.summary ?? "")}
+
+            </p>
+
+            <div class="news-actions">
+
+                <button
+                    type="button"
+                    class="edit-news"
+                    data-id="${id}">
+
+                    Bewerken
+
+                </button>
+
+                <button
+                    type="button"
+                    class="delete-news"
+                    data-id="${id}">
+
+                    Verwijderen
+
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+    return article;
+
+}
+
+/* ==========================================================
+   Lege lijst tonen
+========================================================== */
+
+function showEmptyMessage(message) {
+
+    newsList.innerHTML = `
+
+        <div class="news-empty">
+
+            ${message}
+
+        </div>
+
+    `;
+
+}    
+        /* ==========================================================
+   Nieuws laden uit Firebase
+========================================================== */
+
+async function loadNews() {
+
+    newsList.innerHTML = "";
+
+    try {
+
+        const snapshot = await get(
+            child(ref(db), NEWS_PATH)
+        );
+
+        if (!snapshot.exists()) {
+
+            showEmptyMessage("Nog geen nieuws geplaatst.");
+
+            return;
+
+        }
+
+        const newsItems = [];
+
+        snapshot.forEach(item => {
+
+            newsItems.push({
+
+                id: item.key,
+
+                ...item.val()
+
+            });
+
+        });
+
+        /* Nieuwste eerst */
+
+        newsItems.sort((a, b) => b.timestamp - a.timestamp);
+
+        /* Weergeven */
+
+        newsItems.forEach(news => {
+
+            newsList.appendChild(
+
+                createNewsCard(news.id, news)
+
+            );
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error("Nieuws laden mislukt:", error);
+
+        showEmptyMessage("Fout bij laden van nieuws.");
+
+    }
+
+}
+       /* ==========================================================
+   Event delegation
+========================================================== */
+
+newsList.addEventListener("click", (event) => {
+
+    const editButton = event.target.closest(".edit-news");
+
+    if (editButton) {
+
+        const id = editButton.dataset.id;
+
+        startEdit(id);
+
         return;
 
     }
 
-    preview.src = URL.createObjectURL(bestand);
-    preview.style.display = "block";
+    const deleteButton = event.target.closest(".delete-news");
 
-});
+    if (deleteButton) {
 
-</script>
+        const id = deleteButton.dataset.id;
 
-</body>
+        deleteNews(id);
 
-</html>
+    }
+
+}); 
