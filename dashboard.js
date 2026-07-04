@@ -84,7 +84,6 @@ function setBadge(id, waarde){
 }
 
 
-<span class="badge" data-badge="nieuws">0</span>
 
 <span class="badge" data-badge="proeftrainingen">0</span>
 
