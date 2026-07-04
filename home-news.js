@@ -14,32 +14,33 @@ import {
 
 const news = document.getElementById("news");
 
-// Popup elementen
-const popup = document.getElementById("newsPopup");
-const popupContent = document.getElementById("popupContent");
-const popupTitle = document.getElementById("popupTitle");
-const popupDate = document.getElementById("popupDate");
-const popupImage = document.getElementById("popupImage");
-const popupText = document.getElementById("popupText");
-const popupClose = document.getElementById("popupClose");
-
-// -----------------------------------------------------
-// Controle
-// -----------------------------------------------------
-
 if (!news) {
 
     console.error("Element #news niet gevonden.");
 
-} else {
-
-    console.log("📰 Homepage Nieuws gestart.");
+    throw new Error("Nieuwscontainer ontbreekt.");
 
 }
 
-// -----------------------------------------------------
-// Helpers
-// -----------------------------------------------------
+console.log("📰 Homepage Nieuws gestart.");
+
+// =====================================================
+// FIREBASE QUERY
+// =====================================================
+
+const newsQuery = query(
+
+    ref(db, "news"),
+
+    orderByChild("created"),
+
+    limitToLast(3)
+
+);
+
+// =====================================================
+// HELPERS
+// =====================================================
 
 function escapeHTML(text = "") {
 
@@ -52,97 +53,116 @@ function escapeHTML(text = "") {
 
 }
 
-function inkorten(text = "", lengte = 180) {
+function maakSamenvatting(text = "", lengte = 180) {
 
-    if (text.length <= lengte) return text;
+    if (text.length <= lengte) {
+
+        return text;
+
+    }
 
     return text.substring(0, lengte).trim() + "...";
 
 }
 
-// -----------------------------------------------------
-// Popup openen
-// -----------------------------------------------------
+function formatTekst(text = "") {
 
-function openNieuws(bericht) {
-
-    popupTitle.textContent = bericht.title || "";
-
-    popupDate.textContent =
-        `📅 ${bericht.date || ""}   🕒 ${bericht.time || ""}`;
-
-    popupText.innerHTML =
-        escapeHTML(bericht.text || "").replace(/\n/g, "<br>");
-
-    if (bericht.image) {
-
-        popupImage.src = bericht.image;
-        popupImage.style.display = "block";
-
-    } else {
-
-        popupImage.removeAttribute("src");
-        popupImage.style.display = "none";
-
-    }
-
-    popup.classList.add("open");
-
-    document.body.style.overflow = "hidden";
+    return escapeHTML(text).replace(/\n/g, "<br>");
 
 }
 
-// -----------------------------------------------------
-// Popup sluiten
-// -----------------------------------------------------
+function maakFoto(bericht) {
 
-function sluitNieuws() {
+    if (!bericht.image || bericht.image === "") {
 
-    popup.classList.remove("open");
-
-    document.body.style.overflow = "";
-
-}
-
-if (popupClose) {
-
-    popupClose.addEventListener("click", sluitNieuws);
-
-}
-
-window.addEventListener("click", (e) => {
-
-    if (e.target === popup) {
-
-        sluitNieuws();
+        return "";
 
     }
 
-});
+    return `
 
-window.addEventListener("keydown", (e) => {
+<img
+    src="${bericht.image}"
+    class="nieuwsfoto"
+    alt="${escapeHTML(bericht.title)}"
+    loading="lazy">
 
-    if (e.key === "Escape") {
+`;
 
-        sluitNieuws();
+}
 
-    }
+// =====================================================
+// HTML VAN ÉÉN BERICHT
+// =====================================================
 
-});
+function maakKaart(bericht) {
 
-// -----------------------------------------------------
-// Firebase query
-// -----------------------------------------------------
+    const korteTekst = formatTekst(
 
-const newsQuery = query(
-    ref(db, "news"),
-    orderByChild("created"),
-    limitToLast(3)
-);
+        maakSamenvatting(bericht.text || "")
 
-// -----------------------------------------------------
-// Vanaf hier gaat Deel 2 verder...
-// -----------------------------------------------------
+    );
+
+    const langeTekst = formatTekst(
+
+        bericht.text || ""
+
+    );
+
+    return `
+
+<div class="kaart">
+
+    ${maakFoto(bericht)}
+
+    <h3>
+
+        ${escapeHTML(bericht.title)}
+
+    </h3>
+
+    <div class="datum">
+
+        📅 ${bericht.date}
+        &nbsp;&nbsp;
+        🕒 ${bericht.time}
+
+    </div>
+
+    <div
+        id="kort-${bericht.id}"
+        class="tekst">
+
+        ${korteTekst}
+
+    </div>
+
+    <div
+        id="lang-${bericht.id}"
+        class="tekst volledig"
+        style="display:none;">
+
+        ${langeTekst}
+
+    </div>
+
+    <button
+        class="leesButton"
+        data-id="${bericht.id}">
+
+        ➜ Lees verder
+
+    </button>
+
+</div>
+
+`;
+
+}
+
+// =====================================================
+// DEEL 2 GAAT HIER VERDER...
+// =====================================================
 // =====================================================
 // NIEUWS LADEN
 // =====================================================
@@ -163,9 +183,11 @@ onValue(newsQuery, (snapshot) => {
     });
 
     // Nieuwste eerst
+
     berichten.sort((a, b) => b.created - a.created);
 
     // Geen nieuws
+
     if (berichten.length === 0) {
 
         news.innerHTML = `
@@ -174,7 +196,11 @@ onValue(newsQuery, (snapshot) => {
 
     <h3>📰 Nog geen nieuws</h3>
 
-    <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
+    <p>
+
+        Er zijn nog geen nieuwsberichten gepubliceerd.
+
+    </p>
 
 </div>
 
@@ -184,95 +210,51 @@ onValue(newsQuery, (snapshot) => {
 
     }
 
+    // HTML opbouwen
+
     let html = "";
 
     berichten.forEach((bericht) => {
 
-        const titel = escapeHTML(bericht.title || "");
-
-        const datum = bericht.date || "";
-
-        const tijd = bericht.time || "";
-
-        const tekst = escapeHTML(
-            inkorten(bericht.text || "")
-        ).replace(/\n/g, "<br>");
-
-        let foto = "";
-
-        if (bericht.image && bericht.image !== "") {
-
-            foto = `
-
-<img
-    src="${bericht.image}"
-    class="nieuwsfoto"
-    alt="${titel}"
-    loading="lazy">
-
-`;
-
-        }
-
-        html += `
-
-<div class="kaart">
-
-    ${foto}
-
-    <h3>${titel}</h3>
-
-    <div class="datum">
-
-        📅 ${datum}
-        &nbsp;&nbsp;
-        🕒 ${tijd}
-
-    </div>
-
-    <div class="tekst">
-
-        ${tekst}
-
-    </div>
-
-    <div class="leesverder">
-
-        <button
-            class="leesButton"
-            data-id="${bericht.id}">
-
-            ➜ Lees verder
-
-        </button>
-
-    </div>
-
-</div>
-
-`;
+        html += maakKaart(bericht);
 
     });
 
     news.innerHTML = html;
 
-    // -----------------------------------------
-    // Knoppen koppelen
-    // -----------------------------------------
+    // ============================================
+    // LEES VERDER / LEES MINDER
+    // ============================================
 
-    document.querySelectorAll(".leesButton").forEach((knop) => {
+    const knoppen = document.querySelectorAll(".leesButton");
 
-        knop.addEventListener("click", () => {
+    knoppen.forEach((button) => {
 
-            const id = knop.dataset.id;
+        button.addEventListener("click", () => {
 
-            const bericht = berichten.find(
-                b => b.id === id
-            );
+            const id = button.dataset.id;
 
-            if (bericht) {
+            const kort = document.getElementById("kort-" + id);
 
-                openNieuws(bericht);
+            const lang = document.getElementById("lang-" + id);
+
+            if (!kort || !lang) return;
+
+            if (lang.style.display === "none") {
+
+                kort.style.display = "none";
+
+                lang.style.display = "block";
+
+                button.innerHTML = "▲ Lees minder";
+
+            } else {
+
+                kort.style.display = "block";
+
+                lang.style.display = "none";
+
+                button.innerHTML = "➜ Lees verder";
 
             }
 
@@ -282,7 +264,7 @@ onValue(newsQuery, (snapshot) => {
 
 }, (error) => {
 
-    console.error(error);
+    console.error("Nieuws laden mislukt:", error);
 
     news.innerHTML = `
 
@@ -301,3 +283,7 @@ onValue(newsQuery, (snapshot) => {
 `;
 
 });
+
+// =====================================================
+// EINDE home-news.js
+// =====================================================
