@@ -1,4 +1,3 @@
-console.log("🔥 CMS JS IS GELADEN");
 import { db } from "./firebase.js";
 import { uploadFile } from "./drive.js";
 
@@ -6,7 +5,6 @@ import {
     ref,
     push,
     update,
-    remove,
     get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
@@ -37,51 +35,7 @@ let currentImage = "";
 let currentImagePath = "";
 
 /* ==========================================
-   DATUM
-========================================== */
-
-function createDateTime() {
-
-    const now = new Date();
-
-    return {
-        created: now.getTime(),
-        date: now.toLocaleDateString("nl-NL"),
-        time: now.toLocaleTimeString("nl-NL", {
-            hour: "2-digit",
-            minute: "2-digit"
-        })
-    };
-}
-
-/* ==========================================
-   SAFE TEXT
-========================================== */
-
-function escapeHTML(text = "") {
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-}
-
-/* ==========================================
-   RESET FORM
-========================================== */
-
-function resetForm() {
-
-    form.reset();
-    editingId = null;
-    currentImage = "";
-    currentImagePath = "";
-
-    submitButton.textContent = "Publiceren";
-    cancelButton.style.display = "none";
-}
-
-/* ==========================================
-   UPLOAD + SAVE
+   FORM SUBMIT
 ========================================== */
 
 form.addEventListener("submit", async (e) => {
@@ -101,29 +55,43 @@ form.addEventListener("submit", async (e) => {
 
     try {
 
+        /* ==========================================
+           FOTO UPLOAD (DRIVE)
+        ========================================== */
+
         let image = currentImage;
         let imagePath = currentImagePath;
 
-        /* FOTO UPLOAD */
         if (file) {
 
             const upload = await uploadFile(file);
 
-            image = upload.image;
-            imagePath = upload.id;
+            console.log("📷 DRIVE UPLOAD RESULT:", upload);
+
+            image = upload.image;     // <-- URL
+            imagePath = upload.id;    // <-- Drive file ID
         }
 
-        const dateInfo = createDateTime();
+        /* ==========================================
+           DATA OPBOUW
+        ========================================== */
 
         const data = {
             title,
             text,
             image,
             imagePath,
-            created: dateInfo.created,
-            date: dateInfo.date,
-            time: dateInfo.time
+            created: Date.now(),
+            date: new Date().toLocaleDateString("nl-NL"),
+            time: new Date().toLocaleTimeString("nl-NL", {
+                hour: "2-digit",
+                minute: "2-digit"
+            })
         };
+
+        /* ==========================================
+           FIREBASE SAVE
+        ========================================== */
 
         if (editingId) {
 
@@ -134,12 +102,14 @@ form.addEventListener("submit", async (e) => {
             await push(ref(db, NEWS_PATH), data);
         }
 
-        resetForm();
+        form.reset();
+
         await loadNews();
 
-    } catch (err) {
+    } catch (error) {
 
-        console.error(err);
+        console.error("❌ ERROR:", error);
+
         alert("Opslaan mislukt");
     }
 
@@ -147,7 +117,7 @@ form.addEventListener("submit", async (e) => {
 });
 
 /* ==========================================
-   LOAD NEWS
+   NEWS LOAD
 ========================================== */
 
 async function loadNews() {
@@ -170,9 +140,9 @@ async function loadNews() {
         div.className = "news-item";
 
         div.innerHTML = `
-            ${data.image ? `<img src="${data.image}" width="100">` : ""}
-            <h3>${escapeHTML(data.title)}</h3>
-            <p>${escapeHTML(data.text)}</p>
+            ${data.image ? `<img src="${data.image}" width="120">` : ""}
+            <h3>${data.title}</h3>
+            <p>${data.text}</p>
             <small>${data.date} ${data.time}</small>
         `;
 
@@ -186,5 +156,5 @@ async function loadNews() {
 
 document.addEventListener("DOMContentLoaded", () => {
     loadNews();
-    console.log("🧡 CMS CLEAN VERSION LOADED");
+    console.log("🧡 CMS CLEAN + DRIVE READY");
 });
