@@ -129,6 +129,7 @@ console.log("🧡 CMS Segment 1 geladen");
 console.log("BESTAND:", file);
 console.log("👉 file input:", imageInput.files);
 console.log("👉 file:", file);
+console.log("👉 DRIVE MODULE GEBRUIKT");
 const upload = await uploadFile(file);
 console.log("UPLOAD RESULT:", upload);
 console.log("👉 upload start");
