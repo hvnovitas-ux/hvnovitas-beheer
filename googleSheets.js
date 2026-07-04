@@ -26,8 +26,6 @@ const DISCOVERY_DOC =
 // GOOGLE
 // ==========================================
 
-const DISCOVERY_DOC =
-"https://sheets.googleapis.com/$discovery/rest?version=v4";
 
 const SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets"
