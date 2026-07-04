@@ -17,7 +17,7 @@ import {
 const container =
 document.getElementById("aanvragen");
 
-const zoekveld =
+const zoeken =
 document.getElementById("zoeken");
 
 const alleenNieuw =
@@ -38,8 +38,7 @@ document.getElementById("gelezen");
 
 let aanvragen = [];
 
-let gelezenItems =
-JSON.parse(
+let gelezenItems = JSON.parse(
 
     localStorage.getItem(
         "novitas_gelezen"
@@ -55,35 +54,15 @@ document.addEventListener(
 
     "DOMContentLoaded",
 
-    async()=>{
-
-        await laadAanvragen();
-
-    }
+    start
 
 );
 
-// ======================================================
-// LADEN
-// ======================================================
-
-async function laadAanvragen(){
+async function start(){
 
     try{
 
-        aanvragen =
-        await getProeftrainingen();
-
-        aanvragen.forEach(item=>{
-
-            item.gelezen =
-            gelezenItems.includes(item._row);
-
-        });
-
-        updateStatus();
-
-        toonAanvragen();
+        await laadAanvragen();
 
     }
 
@@ -91,23 +70,45 @@ async function laadAanvragen(){
 
         console.error(error);
 
-        container.innerHTML=
+        container.innerHTML = `
 
-        `
-        <div class="melding error">
+        <div class="content-card">
 
-            <h3>❌ Fout</h3>
+            <h2>❌ Fout</h2>
 
             <p>
 
-                Kon proeftrainingen niet laden.
+                ${error.message || error}
 
             </p>
 
         </div>
+
         `;
 
     }
+
+}
+
+// ======================================================
+// GOOGLE SHEETS LADEN
+// ======================================================
+
+async function laadAanvragen(){
+
+    aanvragen =
+    await getProeftrainingen();
+
+    aanvragen.forEach(item=>{
+
+        item.gelezen =
+        gelezenItems.includes(item._row);
+
+    });
+
+    updateStatus();
+
+    toonAanvragen();
 
 }
 
@@ -141,7 +142,7 @@ function updateStatus(){
 // FILTER
 // ======================================================
 
-zoekveld.addEventListener(
+zoeken.addEventListener(
 
     "input",
 
@@ -164,12 +165,12 @@ function toonAanvragen(){
 
     let lijst = [...aanvragen];
 
-    // ----------------------------
-    // Zoeken
-    // ----------------------------
+    // ----------------------------------
+    // ZOEKEN
+    // ----------------------------------
 
     const zoek =
-    zoekveld.value
+    zoeken.value
     .trim()
     .toLowerCase();
 
@@ -177,7 +178,7 @@ function toonAanvragen(){
 
         lijst = lijst.filter(item=>{
 
-            return (
+            return(
 
                 (item.voornaam || "")
                 .toLowerCase()
@@ -206,9 +207,9 @@ function toonAanvragen(){
 
     }
 
-    // ----------------------------
-    // Alleen nieuwe
-    // ----------------------------
+    // ----------------------------------
+    // ALLEEN NIEUW
+    // ----------------------------------
 
     if(alleenNieuw.checked){
 
@@ -221,9 +222,9 @@ function toonAanvragen(){
 
     }
 
-    // ----------------------------
-    // Sorteer
-    // ----------------------------
+    // ----------------------------------
+    // NIEUW BOVENAAN
+    // ----------------------------------
 
     lijst.sort((a,b)=>{
 
@@ -285,7 +286,7 @@ function maakKaart(item){
     if(!item.gelezen){
 
         kaart.style.borderLeft=
-        "8px solid #f58220";
+        "8px solid var(--orange)";
 
     }
 
@@ -293,7 +294,7 @@ function maakKaart(item){
 
         <h3>
 
-            ${item.voornaam}
+            👤 ${item.voornaam}
             ${item.Achternaam}
 
         </h3>
@@ -314,7 +315,7 @@ function maakKaart(item){
 
             <div class="proef-label">
 
-                🎂 Geboren
+                🎂 Geboortedatum
 
             </div>
 
@@ -425,17 +426,29 @@ window.markeerGelezen = function(rij){
 
         gelezenItems.push(rij);
 
+        localStorage.setItem(
+
+            "novitas_gelezen",
+
+            JSON.stringify(gelezenItems)
+
+        );
+
     }
 
-    localStorage.setItem(
+    aanvragen.forEach(item=>{
 
-        "novitas_gelezen",
+        if(item._row===rij){
 
-        JSON.stringify(gelezenItems)
+            item.gelezen=true;
 
-    );
+        }
 
-    laadAanvragen();
+    });
+
+    updateStatus();
+
+    toonAanvragen();
 
 };
 
@@ -447,7 +460,7 @@ window.verwijderAanvraag = async function(rij){
 
     const antwoord = confirm(
 
-        "Weet je zeker dat je deze proeftraining wilt verwijderen?"
+        "Weet je zeker dat je deze aanmelding wilt verwijderen?"
 
     );
 
@@ -460,6 +473,13 @@ window.verwijderAanvraag = async function(rij){
     try{
 
         await deleteRow(rij);
+
+        aanvragen =
+        aanvragen.filter(
+
+            item=>item._row!==rij
+
+        );
 
         gelezenItems =
         gelezenItems.filter(
@@ -476,7 +496,9 @@ window.verwijderAanvraag = async function(rij){
 
         );
 
-        await laadAanvragen();
+        updateStatus();
+
+        toonAanvragen();
 
         alert(
 
@@ -506,7 +528,21 @@ window.verwijderAanvraag = async function(rij){
 
 setInterval(
 
-    laadAanvragen,
+    async()=>{
+
+        try{
+
+            await laadAanvragen();
+
+        }
+
+        catch(error){
+
+            console.error(error);
+
+        }
+
+    },
 
     60000
 
