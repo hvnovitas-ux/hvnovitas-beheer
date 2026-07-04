@@ -8,34 +8,43 @@ import {
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-// =====================================================
-// HV NOVITAS HOMEPAGE NIEUWS
-// =====================================================
+/* ==========================================================
+   HV NOVITAS
+   Homepage Nieuws
+========================================================== */
 
-const news = document.getElementById("news");
+const newsContainer = document.getElementById("news");
 
-if (!news) {
+if (!newsContainer) {
+
     console.error("Element #news niet gevonden.");
+
     throw new Error("Nieuwscontainer ontbreekt.");
+
 }
 
-// =====================================================
-// FIREBASE
-// =====================================================
+/* ==========================================================
+   Firebase Query
+========================================================== */
 
 const newsQuery = query(
+
     ref(db, "news"),
-    orderByChild("created"),
+
+    orderByChild("timestamp"),
+
     limitToLast(3)
+
 );
 
-// =====================================================
-// HELPERS
-// =====================================================
+/* ==========================================================
+   HTML veilig maken
+========================================================== */
 
 function escapeHTML(text = "") {
 
-    return text
+    return String(text)
+
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -44,125 +53,183 @@ function escapeHTML(text = "") {
 
 }
 
+/* ==========================================================
+   Regelafbrekingen behouden
+========================================================== */
+
 function formatText(text = "") {
 
-    return escapeHTML(text).replace(/\n/g, "<br>");
+    return escapeHTML(text)
+
+        .replace(/\n/g, "<br>");
 
 }
 
-function shortText(text = "", max = 180) {
+/* ==========================================================
+   Samenvatting
+========================================================== */
 
-    if (text.length <= max) return text;
+function createSummary(text = "", max = 180) {
 
-    return text.substring(0, max).trim() + "...";
+    const value = text.trim();
+
+    if (value.length <= max) {
+
+        return value;
+
+    }
+
+    return value.substring(0, max).trim() + "...";
 
 }
 
-function createImage(newsItem) {
+/* ==========================================================
+   Afbeelding
+========================================================== */
 
-    if (!newsItem.image) return "";
+function createImage(item) {
+
+    if (!item.image) {
+
+        return "";
+
+    }
 
     return `
+
         <img
-            src="${newsItem.image}"
+
             class="nieuwsfoto"
-            alt="${escapeHTML(newsItem.title)}"
-            loading="lazy">
+
+            src="${item.image}"
+
+            alt="${escapeHTML(item.title)}"
+
+            loading="lazy"
+
+        >
+
     `;
 
 }
 
-// =====================================================
-// HTML
-// =====================================================
+/* ==========================================================
+   Nieuwskaart
+========================================================== */
 
-function createCard(newsItem) {
-
-    const shortVersion = formatText(shortText(newsItem.text || ""));
-    const fullVersion = formatText(newsItem.text || "");
+function createCard(item) {
 
     return `
 
-<div class="kaart">
+<article class="kaart">
 
-    ${createImage(newsItem)}
+    ${createImage(item)}
 
-    <h3>${escapeHTML(newsItem.title)}</h3>
+    <h3>${escapeHTML(item.title)}</h3>
 
     <div class="datum">
 
-        📅 ${newsItem.date}
+        📅 ${item.date || ""}
+
         &nbsp;&nbsp;
-        🕒 ${newsItem.time}
+
+        🕒 ${item.time || ""}
 
     </div>
 
     <div
-        id="short-${newsItem.id}"
+        id="short-${item.id}"
         class="tekst">
 
-        ${shortVersion}
+        ${formatText(createSummary(item.text || ""))}
 
     </div>
 
     <div
-        id="full-${newsItem.id}"
-        class="tekst"
-        style="display:none;">
+        id="full-${item.id}"
+        class="tekst extraTekst">
 
-        ${fullVersion}
+        ${formatText(item.text || "")}
 
     </div>
 
-    <button
-        class="leesButton"
-        data-id="${newsItem.id}">
+    <div class="leesverder">
 
-        ➜ Lees verder
+        <button
 
-    </button>
+            type="button"
 
-</div>
+            class="leesButton"
+
+            data-id="${item.id}"
+
+            data-open="false">
+
+            ➜ Lees verder
+
+        </button>
+
+    </div>
+
+</article>
 
 `;
 
 }
-
-// =====================================================
-// DEEL 2 START HIER
-// =====================================================
-// =====================================================
-// NIEUWS LADEN
-// =====================================================
+/* ==========================================================
+   NIEUWS LADEN
+========================================================== */
 
 onValue(newsQuery, (snapshot) => {
 
-    const berichten = [];
+    const newsItems = [];
 
     snapshot.forEach((item) => {
 
-        berichten.push({
+        newsItems.push({
+
             id: item.key,
+
             ...item.val()
+
         });
 
     });
 
-    // Nieuwste eerst
-    berichten.sort((a, b) => b.created - a.created);
+    /* ==========================================
+       Nieuwste eerst
+    ========================================== */
 
-    // Geen nieuws
-    if (berichten.length === 0) {
+    newsItems.sort((a, b) =>
 
-        news.innerHTML = `
+        (b.timestamp || 0) - (a.timestamp || 0)
 
-<div class="kaart">
+    );
 
-    <h3>📰 Nog geen nieuws</h3>
+    /* ==========================================
+       Geen nieuws gevonden
+    ========================================== */
 
-    <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
+    if (newsItems.length === 0) {
 
-</div>
+        newsContainer.innerHTML = `
+
+<article class="kaart">
+
+    <div class="tekst">
+
+        <h3>📰 Nog geen nieuws</h3>
+
+        <p>
+
+            Er zijn momenteel nog geen
+            nieuwsberichten beschikbaar.
+
+        </p>
+
+    </div>
+
+</article>
 
 `;
 
@@ -170,23 +237,56 @@ onValue(newsQuery, (snapshot) => {
 
     }
 
-    // HTML opbouwen
+    /* ==========================================
+       HTML opbouwen
+    ========================================== */
 
     let html = "";
 
-    berichten.forEach((bericht) => {
+    newsItems.forEach((item) => {
 
-        html += createCard(bericht);
+        html += createCard(item);
 
     });
 
-    news.innerHTML = html;
+    newsContainer.innerHTML = html;
 
-    // ==========================================
-    // LEES VERDER
-    // ==========================================
+    /* ==========================================
+       Lees verder wordt in Deel 3 toegevoegd
+    ========================================== */
 
-    const buttons = document.querySelectorAll(".leesButton");
+}, (error) => {
+
+    console.error("Nieuws laden mislukt:", error);
+
+    newsContainer.innerHTML = `
+
+<article class="kaart">
+
+    <div class="tekst">
+
+        <h3>❌ Fout</h3>
+
+        <p>
+
+            Het nieuws kon niet worden geladen.
+
+        </p>
+
+    </div>
+
+</article>
+
+`;
+
+});
+/* ==========================================================
+   LEES VERDER / LEES MINDER
+========================================================== */
+
+function initializeReadMore() {
+
+    const buttons = newsContainer.querySelectorAll(".leesButton");
 
     buttons.forEach((button) => {
 
@@ -194,77 +294,147 @@ onValue(newsQuery, (snapshot) => {
 
             const id = button.dataset.id;
 
-            // Eerst alle berichten sluiten
+            const isOpen = button.dataset.open === "true";
 
-            berichten.forEach((b) => {
+            /* --------------------------------------
+               Eerst alle kaarten sluiten
+            -------------------------------------- */
 
-                const shortDiv = document.getElementById("short-" + b.id);
-                const fullDiv = document.getElementById("full-" + b.id);
-                const btn = document.querySelector(
-                    `.leesButton[data-id="${b.id}"]`
-                );
+            newsContainer.querySelectorAll(".leesButton").forEach((btn) => {
 
-                if (!shortDiv || !fullDiv || !btn) return;
-
-                shortDiv.style.display = "block";
-                fullDiv.style.display = "none";
+                btn.dataset.open = "false";
 
                 btn.textContent = "➜ Lees verder";
 
             });
 
-            const shortDiv = document.getElementById("short-" + id);
-            const fullDiv = document.getElementById("full-" + id);
+            newsContainer.querySelectorAll(".extraTekst").forEach((div) => {
 
-            // Was dit bericht al open?
+                div.classList.remove("open");
 
-            if (button.dataset.open === "true") {
+            });
 
-                button.dataset.open = "false";
+            newsContainer.querySelectorAll(".tekst[id^='short-']").forEach((div) => {
+
+                div.classList.remove("hidden");
+
+            });
+
+            /* --------------------------------------
+               Was deze kaart al open?
+            -------------------------------------- */
+
+            if (isOpen) {
 
                 return;
 
             }
 
-            // Alles resetten
+            /* --------------------------------------
+               Gekozen kaart openen
+            -------------------------------------- */
 
-            buttons.forEach((b) => b.dataset.open = "false");
+            const shortText = document.getElementById(`short-${id}`);
+            const fullText = document.getElementById(`full-${id}`);
 
-            // Gekozen bericht openen
+            if (!shortText || !fullText) {
 
-            shortDiv.style.display = "none";
-            fullDiv.style.display = "block";
+                return;
 
-            button.textContent = "▲ Lees minder";
+            }
+
+            shortText.classList.add("hidden");
+
+            fullText.classList.add("open");
 
             button.dataset.open = "true";
+
+            button.textContent = "▲ Lees minder";
 
         });
 
     });
 
-}, (error) => {
+}
+/* ==========================================================
+   HV NOVITAS
+   HOME NEWS
+   Deel 4
+   Definitieve afronding
+========================================================== */
 
-    console.error(error);
+/* ==========================================
+   Afbeeldingen optimaliseren
+========================================== */
 
-    news.innerHTML = `
+function optimizeImages() {
 
-<div class="kaart">
+    const images = newsContainer.querySelectorAll(".nieuwsfoto");
 
-    <h3>❌ Fout</h3>
+    images.forEach((image) => {
 
-    <p>
+        image.decoding = "async";
 
-        Het nieuws kon niet worden geladen.
+        image.loading = "lazy";
 
-    </p>
+        image.referrerPolicy = "no-referrer";
 
-</div>
+    });
 
-`;
+}
+
+/* ==========================================
+   Google Sites iframe
+========================================== */
+
+function notifyResize() {
+
+    requestAnimationFrame(() => {
+
+        window.dispatchEvent(
+            new Event("resize")
+        );
+
+    });
+
+}
+
+/* ==========================================
+   Initialiseren
+========================================== */
+
+function initializeNews() {
+
+    initializeReadMore();
+
+    optimizeImages();
+
+    notifyResize();
+
+}
+
+/* ==========================================
+   Extra beveiliging
+========================================== */
+
+window.addEventListener("error", (event) => {
+
+    console.error(
+
+        "Nieuws fout:",
+
+        event.message
+
+    );
 
 });
 
-// =====================================================
-// EINDE home-news.js
-// =====================================================
+/* ==========================================
+   Einde
+========================================== */
+
+console.log(
+
+    "🧡 HV Novitas Home News geladen."
+
+);
