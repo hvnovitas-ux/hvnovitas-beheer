@@ -1,6 +1,5 @@
-console.log("🔥 CMS IS GELADEN");
 // ==========================================
-// HV NOVITAS CMS - CLEAN FIXED VERSION
+// HV NOVITAS CMS - STABLE VERSION
 // ==========================================
 
 import { db } from "./firebase.js";
@@ -15,10 +14,10 @@ import {
 // START
 // ==========================================
 
-console.log("🔥 CMS LOADED");
+console.log("🔥 CMS JS GELADEN");
 
 // ==========================================
-// WAIT FOR DOM
+// DOM READY
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -37,14 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ FORM READY");
 
     // ======================================
-    // SUBMIT HANDLER
+    // SUBMIT
     // ======================================
 
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
 
-        console.log("🚀 SUBMIT START");
+        console.log("🚀 SUBMIT CLICKED");
 
         const title = titleInput.value.trim();
         const text = textInput.value.trim();
@@ -57,27 +56,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            status.innerText = "Uploaden...";
+            status.innerText = "⏳ Uploaden...";
 
             let imageUrl = "";
 
             // ==================================
-            // 1. UPLOAD NAAR DRIVE
+            // DRIVE UPLOAD (APPS SCRIPT)
             // ==================================
 
             if (file) {
 
-                console.log("📷 Upload naar Drive...");
+                console.log("📷 Upload start...");
 
                 const upload = await uploadFile(file);
 
-                console.log("📦 DRIVE RESULT:", upload);
+                console.log("📦 Upload result:", upload);
 
                 imageUrl = upload.image;
             }
 
             // ==================================
-            // 2. SAVE NAAR FIREBASE
+            // FIREBASE SAVE
             // ==================================
 
             const data = {
@@ -96,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             console.log("🔥 SAVED TO FIREBASE");
 
-            status.innerText = "✅ Nieuws gepubliceerd";
+            status.innerText = "✅ Gepubliceerd!";
 
             form.reset();
 
@@ -104,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             console.error("❌ ERROR:", error);
 
-            status.innerText = "❌ Fout bij publiceren";
+            status.innerText = "❌ Fout bij upload";
         }
 
     });
