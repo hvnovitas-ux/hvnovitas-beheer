@@ -499,7 +499,218 @@ body{
     }
 
 }
+/* ==========================================================
+   PROEFTRAININGEN
+========================================================== */
 
+.proeftraining-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+    gap:30px;
+
+    margin:35px 0;
+
+}
+
+.proef-card{
+
+    background:linear-gradient(135deg,#ff7a00,#ff9f1c);
+
+    color:white;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+
+    text-align:center;
+
+}
+
+.proef-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+
+}
+
+.proef-card .icon{
+
+    font-size:60px;
+
+    margin-bottom:20px;
+
+}
+
+.proef-card h2{
+
+    margin:0;
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+.proef-card p{
+
+    margin-top:15px;
+
+    font-size:17px;
+
+    line-height:1.6;
+
+    opacity:.95;
+
+}
+
+/* ======================================= */
+
+.pagina{
+
+    display:none;
+
+    margin-top:35px;
+
+}
+
+.pagina.actief{
+
+    display:block;
+
+}
+
+/* ======================================= */
+
+.content-card{
+
+    background:#ffffff;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+    animation:fadeIn .35s ease;
+
+}
+
+.content-card h2{
+
+    margin-top:0;
+
+    margin-bottom:25px;
+
+    color:#ff7a00;
+
+    font-size:30px;
+
+    border-bottom:3px solid #ff7a00;
+
+    padding-bottom:15px;
+
+}
+
+.content-card iframe{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:white;
+
+}
+
+/* ======================================= */
+
+#formulier iframe{
+
+    height:1650px;
+
+}
+
+#reacties iframe{
+
+    height:900px;
+
+}
+
+/* ======================================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ======================================= */
+
+@media(max-width:900px){
+
+.proeftraining-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.proef-card{
+
+    padding:25px;
+
+}
+
+.proef-card .icon{
+
+    font-size:46px;
+
+}
+
+.content-card{
+
+    padding:20px;
+
+}
+
+#formulier iframe{
+
+    height:1800px;
+
+}
+
+#reacties iframe{
+
+    height:700px;
+
+}
+
+}
 /* ==========================================================
    EINDE STYLE.CSS
 ========================================================== */
+
