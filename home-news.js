@@ -237,3 +237,90 @@ onValue(newsQuery, (snapshot) => {
 `;
 
 });
+/* ==========================================
+   NIEUWS LADEN
+========================================== */
+
+onValue(newsQuery, (snapshot) => {
+
+    const newsItems = [];
+
+    snapshot.forEach((item) => {
+
+        newsItems.push({
+
+            id: item.key,
+
+            ...item.val()
+
+        });
+
+    });
+
+    /* Nieuwste eerst */
+
+    newsItems.sort((a, b) =>
+
+        (b.timestamp || 0) - (a.timestamp || 0)
+
+    );
+
+    /* Geen nieuws */
+
+    if (newsItems.length === 0) {
+
+        newsContainer.innerHTML = `
+
+<article class="kaart">
+
+    <h3>📰 Nog geen nieuws</h3>
+
+    <div class="tekst">
+
+        Er zijn momenteel nog geen nieuwsberichten.
+
+    </div>
+
+</article>
+
+`;
+
+        return;
+
+    }
+
+    /* HTML opbouwen */
+
+    let html = "";
+
+    newsItems.forEach((item) => {
+
+        html += createCard(item);
+
+    });
+
+    newsContainer.innerHTML = html;
+
+    initReadMore();
+
+}, (error) => {
+
+    console.error("Nieuws laden mislukt:", error);
+
+    newsContainer.innerHTML = `
+
+<article class="kaart">
+
+    <h3>❌ Fout</h3>
+
+    <div class="tekst">
+
+        Het nieuws kon niet worden geladen.
+
+    </div>
+
+</article>
+
+`;
+
+});
