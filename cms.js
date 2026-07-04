@@ -127,8 +127,13 @@ console.log("🧡 CMS Segment 1 geladen");
    Firebase Storage
 ========================================================== */
 console.log("BESTAND:", file);
+console.log("👉 file input:", imageInput.files);
+console.log("👉 file:", file);
 const upload = await uploadFile(file);
 console.log("UPLOAD RESULT:", upload);
+console.log("👉 upload start");
+console.log("👉 upload result:", upload);
+
 /* ==========================================
    Unieke bestandsnaam
 ========================================== */
