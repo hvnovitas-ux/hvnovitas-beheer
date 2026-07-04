@@ -1,19 +1,7 @@
 /* ==========================================================
    HV NOVITAS CMS
-   cms.js
-   Deel 1A - Segment 1
-
-   Basis:
-   - Firebase
-   - Configuratie
-   - DOM
-   - Hulpfuncties
-
-   Gebruikt:
-   - Firebase Realtime Database
-   - Firebase Storage
-
-   Firebase.js wordt NIET aangepast.
+   Segment 1
+   Basis
 ========================================================== */
 
 import { db, storage } from "./firebase.js";
@@ -35,7 +23,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 /* ==========================================================
-   DATABASE PAD
+   DATABASE
 ========================================================== */
 
 const NEWS_PATH = "news";
@@ -52,11 +40,11 @@ const textInput = document.getElementById("text");
 
 const imageInput = document.getElementById("image");
 
-const newsList = document.getElementById("newsList");
-
 const submitButton = document.getElementById("submitButton");
 
 const cancelButton = document.getElementById("cancelButton");
+
+const newsList = document.getElementById("newsList");
 
 /* ==========================================================
    Bewerken
@@ -78,19 +66,14 @@ function createDateTime() {
 
     return {
 
-        timestamp: now.getTime(),
+        created: now.getTime(),
 
-        date: now.toLocaleDateString("nl-NL", {
-
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
-
-        }),
+        date: now.toLocaleDateString("nl-NL"),
 
         time: now.toLocaleTimeString("nl-NL", {
 
             hour: "2-digit",
+
             minute: "2-digit"
 
         })
@@ -100,10 +83,30 @@ function createDateTime() {
 }
 
 /* ==========================================================
-   Samenvatting (180 tekens)
+   HTML veilig maken
 ========================================================== */
 
-function createSummary(text) {
+function escapeHTML(text = "") {
+
+    return String(text)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+/* ==========================================================
+   Samenvatting
+========================================================== */
+
+function createSummary(text = "") {
 
     const value = text.trim();
 
@@ -113,226 +116,495 @@ function createSummary(text) {
 
     }
 
-    return value.substring(0, 180).trim() + "...";
-
-}
-/* ==========================================================
-   HTML veilig weergeven
-========================================================== */
-
-function escapeHtml(text = "") {
-
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    return value.substring(0,180).trim() + "...";
 
 }
 
+console.log("🧡 CMS Segment 1 geladen");
 /* ==========================================================
-   Bestandsnaam voor Storage maken
+   HV NOVITAS CMS
+   Segment 2
+   Firebase Storage
 ========================================================== */
 
-function createImageName(file) {
+/* ==========================================
+   Unieke bestandsnaam
+========================================== */
 
-    const extension = file.name.split(".").pop().toLowerCase();
+function createImagePath(file) {
+
+    const extension = file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
 
     return `news/${Date.now()}-${crypto.randomUUID()}.${extension}`;
 
 }
 
-/* ==========================================================
-   Eén nieuwskaart maken
-========================================================== */
+/* ==========================================
+   Foto uploaden
+========================================== */
 
-function createNewsCard(id, news) {
+async function uploadImage(file) {
 
-    const article = document.createElement("article");
+    if (!file) {
 
-    article.className = "news-card";
+        return {
 
-    article.dataset.id = id;
+            image: "",
 
-    const imageHtml = news.image
-        ? `
-            <div class="news-image">
-                <img
-                    src="${news.image}"
-                    alt="${escapeHtml(news.title)}"
-                    loading="lazy">
-            </div>
-        `
-        : "";
+            imagePath: ""
 
-    article.innerHTML = `
+        };
 
-        ${imageHtml}
+    }
 
-        <div class="news-content">
+    const path = createImagePath(file);
 
-            <h3>${escapeHtml(news.title)}</h3>
+    const imageRef = storageRef(storage, path);
 
-            <div class="news-meta">
+    await uploadBytes(imageRef, file);
 
-                <span>${news.date ?? ""}</span>
+    const image = await getDownloadURL(imageRef);
 
-                <span>${news.time ?? ""}</span>
+    return {
 
-            </div>
+        image,
 
-            <p>
+        imagePath: path
 
-                ${escapeHtml(timestamp ?? "")}
-
-            </p>
-
-            <div class="news-actions">
-
-                <button
-                    type="button"
-                    class="edit-news"
-                    data-id="${id}">
-
-                    Bewerken
-
-                </button>
-
-                <button
-                    type="button"
-                    class="delete-news"
-                    data-id="${id}">
-
-                    Verwijderen
-
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
-    return article;
+    };
 
 }
 
-/* ==========================================================
-   Lege lijst tonen
-========================================================== */
+/* ==========================================
+   Foto verwijderen
+========================================== */
 
-function showEmptyMessage(message) {
+async function deleteImage(imagePath) {
 
-    newsList.innerHTML = `
-
-        <div class="news-empty">
-
-            ${message}
-
-        </div>
-
-    `;
-
-}    
-        /* ==========================================================
-   Nieuws laden uit Firebase
-========================================================== */
-
-async function loadNews() {
-
-    newsList.innerHTML = "";
+    if (!imagePath) return;
 
     try {
 
-        const snapshot = await get(
-            child(ref(db), NEWS_PATH)
+        await deleteObject(
+
+            storageRef(storage, imagePath)
+
         );
-
-        if (!snapshot.exists()) {
-
-            showEmptyMessage("Nog geen nieuws geplaatst.");
-
-            return;
-
-        }
-
-        const newsItems = [];
-
-        snapshot.forEach(item => {
-
-            newsItems.push({
-
-                id: item.key,
-
-                ...item.val()
-
-            });
-
-        });
-
-        /* Nieuwste eerst */
-
-        newsItems.sort((a, b) => b.timestamp - a.timestamp);
-
-        /* Weergeven */
-
-        newsItems.forEach(news => {
-
-            newsList.appendChild(
-
-                createNewsCard(news.id, news)
-
-            );
-
-        });
 
     }
 
     catch (error) {
 
-        console.error("Nieuws laden mislukt:", error);
+        console.warn(
 
-        showEmptyMessage("Fout bij laden van nieuws.");
+            "Foto niet gevonden:",
+
+            imagePath
+
+        );
 
     }
 
 }
-       /* ==========================================================
-   Event delegation
+
+console.log("🧡 CMS Segment 2 geladen");
+/* ==========================================================
+   HV NOVITAS CMS
+   Segment 3
+   Nieuws opslaan
 ========================================================== */
 
-newsList.addEventListener("click", (event) => {
+form.addEventListener("submit", async (event) => {
 
-    const editButton = event.target.closest(".edit-news");
+    event.preventDefault();
 
-    if (editButton) {
+    const title = titleInput.value.trim();
 
-        const id = editButton.dataset.id;
+    const text = textInput.value.trim();
 
-        startEdit(id);
+    const file = imageInput.files[0];
+
+    if (!title || !text) {
+
+        alert("Vul een titel en nieuwsbericht in.");
 
         return;
 
     }
 
-    const deleteButton = event.target.closest(".delete-news");
+    submitButton.disabled = true;
 
-    if (deleteButton) {
+    try {
 
-        const id = deleteButton.dataset.id;
+        let image = currentImage;
 
-        deleteNews(id);
+        let imagePath = currentImagePath;
+
+        /* Nieuwe foto uploaden */
+
+        if (file) {
+
+            if (editingId && currentImagePath) {
+
+                await deleteImage(currentImagePath);
+
+            }
+
+            const upload = await uploadImage(file);
+
+            image = upload.image;
+
+            imagePath = upload.imagePath;
+
+        }
+
+        const dateInfo = createDateTime();
+
+        const newsData = {
+
+            title,
+
+            text,
+
+            created: editingId
+                ? dateInfo.created
+                : dateInfo.created,
+
+            date: dateInfo.date,
+
+            time: dateInfo.time,
+
+            image,
+
+            imagePath
+
+        };
+
+        if (editingId) {
+
+            await update(
+
+                ref(db, `${NEWS_PATH}/${editingId}`),
+
+                newsData
+
+            );
+
+        }
+
+        else {
+
+            await push(
+
+                ref(db, NEWS_PATH),
+
+                newsData
+
+            );
+
+        }
+
+        alert("Nieuws opgeslagen.");
 
     }
 
-}); 
-       /* ==========================================================
-   CMS starten
+    catch (error) {
+
+        console.error(error);
+
+        alert("Opslaan mislukt.");
+
+    }
+
+    finally {
+
+        submitButton.disabled = false;
+
+    }
+
+});
+
+console.log("🧡 CMS Segment 3 geladen");
+/* ==========================================================
+   HV NOVITAS CMS
+   Segment 4
+   Formulier en nieuws laden
 ========================================================== */
 
+/* ==========================================
+   Formulier leegmaken
+========================================== */
+
+function resetForm() {
+
+    form.reset();
+
+    editingId = null;
+
+    currentImage = "";
+
+    currentImagePath = "";
+
+    submitButton.disabled = false;
+
+    submitButton.textContent = "💾 Nieuws opslaan";
+
+    cancelButton.style.display = "none";
+
+}
+
+/* ==========================================
+   Nieuwskaart maken
+========================================== */
+
+function createNewsCard(id, item) {
+
+    return `
+
+<article class="news-card">
+
+    ${item.image
+        ? `<img class="news-image" src="${item.image}" alt="${escapeHTML(item.title)}">`
+        : ""}
+
+    <div class="news-content">
+
+        <h3>${escapeHTML(item.title)}</h3>
+
+        <div class="news-meta">
+
+            📅 ${item.date} &nbsp;&nbsp; 🕒 ${item.time}
+
+        </div>
+
+        <p>
+
+            ${escapeHTML(item.text)}
+
+        </p>
+
+        <div class="news-actions">
+
+            <button
+                class="editButton"
+                data-id="${id}">
+
+                Bewerken
+
+            </button>
+
+            <button
+                class="deleteButton"
+                data-id="${id}">
+
+                Verwijderen
+
+            </button>
+
+        </div>
+
+    </div>
+
+</article>
+
+`;
+
+}
+
+/* ==========================================
+   Nieuws laden
+========================================== */
+
+async function loadNews() {
+
+    newsList.innerHTML = "";
+
+    const snapshot = await get(ref(db, NEWS_PATH));
+
+    if (!snapshot.exists()) {
+
+        newsList.innerHTML = "<p>Nog geen nieuws.</p>";
+
+        return;
+
+    }
+
+    const items = [];
+
+    snapshot.forEach((child) => {
+
+        items.push({
+
+            id: child.key,
+
+            ...child.val()
+
+        });
+
+    });
+
+    items.sort((a, b) => (b.created || 0) - (a.created || 0));
+
+    items.forEach((item) => {
+
+        newsList.insertAdjacentHTML(
+
+            "beforeend",
+
+            createNewsCard(item.id, item)
+
+        );
+
+    });
+
+}
+
+console.log("🧡 CMS Segment 4 geladen");
+/* ==========================================================
+   HV NOVITAS CMS
+   Segment 5
+   Bewerken - Verwijderen - Starten
+========================================================== */
+
+/* ==========================================
+   Bewerken
+========================================== */
+
+async function startEdit(id) {
+
+    const snapshot = await get(ref(db, `${NEWS_PATH}/${id}`));
+
+    if (!snapshot.exists()) return;
+
+    const item = snapshot.val();
+
+    editingId = id;
+
+    titleInput.value = item.title || "";
+
+    textInput.value = item.text || "";
+
+    currentImage = item.image || "";
+
+    currentImagePath = item.imagePath || "";
+
+    submitButton.textContent = "💾 Wijzigingen opslaan";
+
+    cancelButton.style.display = "inline-block";
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+/* ==========================================
+   Verwijderen
+========================================== */
+
+async function deleteNews(id) {
+
+    if (!confirm("Nieuwsbericht verwijderen?")) {
+
+        return;
+
+    }
+
+    const snapshot = await get(ref(db, `${NEWS_PATH}/${id}`));
+
+    if (snapshot.exists()) {
+
+        const item = snapshot.val();
+
+        if (item.imagePath) {
+
+            await deleteImage(item.imagePath);
+
+        }
+
+    }
+
+    await remove(ref(db, `${NEWS_PATH}/${id}`));
+
+    if (editingId === id) {
+
+        resetForm();
+
+    }
+
+    await loadNews();
+
+}
+
+/* ==========================================
+   Annuleren
+========================================== */
+
+cancelButton.addEventListener("click", () => {
+
+    resetForm();
+
+});
+
+/* ==========================================
+   Knoppen
+========================================== */
+
+newsList.addEventListener("click", (event) => {
+
+    const edit = event.target.closest(".editButton");
+
+    if (edit) {
+
+        startEdit(edit.dataset.id);
+
+        return;
+
+    }
+
+    const del = event.target.closest(".deleteButton");
+
+    if (del) {
+
+        deleteNews(del.dataset.id);
+
+    }
+
+});
+
+/* ==========================================
+   Na opslaan
+========================================== */
+
+form.addEventListener("submit", async () => {
+
+    setTimeout(async () => {
+
+        resetForm();
+
+        await loadNews();
+
+    }, 300);
+
+});
+
+/* ==========================================
+   Start
+========================================== */
+
 document.addEventListener("DOMContentLoaded", () => {
+
+    resetForm();
 
     loadNews();
 
 });
+
+console.log("🧡 HV Novitas CMS gereed.");
