@@ -16,112 +16,162 @@
 
 <div class="dashboard">
 
+    <!-- HEADER -->
+
     <header class="topbar">
 
         <div class="logo">
+
             🧡 HV Novitas Beheer
+
         </div>
 
         <div class="user">
 
             <button onclick="location.href='dashboard.html'">
+
                 ⬅ Dashboard
+
             </button>
 
         </div>
 
     </header>
 
+    <!-- PAGINA -->
+
     <section class="welkom">
 
         <h1>📝 Proeftrainingen</h1>
 
         <p>
-            Nieuwe proeftrainingen aanmelden en reacties bekijken.
+
+            Nieuwe spelers aanmelden en alle proeftrainingen beheren.
+
         </p>
 
     </section>
 
-    <div class="tabs">
+    <!-- KAARTEN -->
 
-        <button class="tab active"
-                onclick="toonTab('formulier')">
+    <div class="proeftraining-grid">
 
-            📝 Nieuw formulier
+        <div class="proef-card"
 
-        </button>
+             onclick="openPagina('formulier')">
 
-        <button class="tab"
-                onclick="toonTab('antwoorden')">
+            <div class="icon">
 
-            📋 Aanmeldingen
+                📝
 
-        </button>
+            </div>
+
+            <h2>
+
+                Nieuw formulier
+
+            </h2>
+
+            <p>
+
+                Vul direct een nieuwe proeftraining in.
+
+            </p>
+
+        </div>
+
+        <div class="proef-card"
+
+             onclick="openPagina('reacties')">
+
+            <div class="icon">
+
+                📋
+
+            </div>
+
+            <h2>
+
+                Aanmeldingen
+
+            </h2>
+
+            <p>
+
+                Bekijk alle ontvangen reacties.
+
+            </p>
+
+        </div>
 
     </div>
 
+    <!-- FORMULIER -->
+
     <section
         id="formulier"
-        class="tabContent">
+        class="pagina actief">
 
-        <iframe
+        <div class="content-card">
 
-        src="https://docs.google.com/forms/d/e/1FAIpQLScnRN3u145StDAvKPQcMOWHixETPDne39URm_S4-bAH-hpXKQ/viewform?embedded=true"
+            <h2>
 
-        width="100%"
+                📝 Nieuw proeftrainingformulier
 
-        height="1500"
+            </h2>
 
-        frameborder="0"
+            <iframe
 
-        loading="lazy">
+            src="https://docs.google.com/forms/d/e/1FAIpQLScnRN3u145StDAvKPQcMOWHixETPDne39URm_S4-bAH-hpXKQ/viewform?embedded=true"
 
-        </iframe>
+            loading="lazy">
+
+            </iframe>
+
+        </div>
 
     </section>
+
+    <!-- REACTIES -->
 
     <section
-        id="antwoorden"
-        class="tabContent"
-        style="display:none;">
+        id="reacties"
+        class="pagina">
 
-        <iframe
+        <div class="content-card">
 
-        src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing"
+            <h2>
 
-        width="100%"
+                📋 Ontvangen proeftrainingen
 
-        height="900"
+            </h2>
 
-        frameborder="0">
+            <iframe
 
-        </iframe>
+            src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing">
+
+            </iframe>
+
+        </div>
 
     </section>
+     document
+            .getElementById(pagina)
+            .classList.add("actief");
+
+        window.scrollTo({
+
+            top:320,
+
+            behavior:"smooth"
+
+        });
+
+    }
+
+    </script>
 
 </div>
-
-<script>
-
-function toonTab(tab){
-
-    document
-    .querySelectorAll(".tabContent")
-    .forEach(e=>e.style.display="none");
-
-    document
-    .querySelectorAll(".tab")
-    .forEach(e=>e.classList.remove("active"));
-
-    document
-    .getElementById(tab)
-    .style.display="block";
-
-    event.target.classList.add("active");
-
-}
-
-</script>
 
 </body>
 
