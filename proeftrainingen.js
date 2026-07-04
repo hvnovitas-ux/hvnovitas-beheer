@@ -91,7 +91,7 @@ async function start(){
 }
 
 // ======================================================
-// GOOGLE SHEETS LADEN
+// AANVRAGEN LADEN
 // ======================================================
 
 async function laadAanvragen(){
@@ -102,7 +102,12 @@ async function laadAanvragen(){
     aanvragen.forEach(item=>{
 
         item.gelezen =
-        gelezenItems.includes(item._row);
+
+        gelezenItems.includes(
+
+            item._row
+
+        );
 
     });
 
@@ -125,7 +130,7 @@ function updateStatus(){
 
     aanvragen.filter(
 
-        a=>!a.gelezen
+        item => !item.gelezen
 
     );
 
@@ -133,13 +138,13 @@ function updateStatus(){
     nieuwe.length;
 
     gelezen.textContent =
-    aanvragen.length-
+    aanvragen.length -
     nieuwe.length;
 
 }
 
 // ======================================================
-// FILTER
+// FILTERS
 // ======================================================
 
 zoeken.addEventListener(
@@ -158,73 +163,67 @@ alleenNieuw.addEventListener(
 
 );
 // ======================================================
-// TONEN
+// AANVRAGEN TONEN
 // ======================================================
 
 function toonAanvragen(){
 
     let lijst = [...aanvragen];
 
-    // ----------------------------------
+    // ==========================================
     // ZOEKEN
-    // ----------------------------------
+    // ==========================================
 
-    const zoek =
-    zoeken.value
-    .trim()
-    .toLowerCase();
+    const zoek = zoeken.value
+        .trim()
+        .toLowerCase();
 
     if(zoek){
 
-        lijst = lijst.filter(item=>{
+        lijst = lijst.filter(item =>
 
-            return(
+            (item.voornaam || "")
+            .toLowerCase()
+            .includes(zoek)
 
-                (item.voornaam || "")
-                .toLowerCase()
-                .includes(zoek)
+            ||
 
-                ||
+            (item.Achternaam || "")
+            .toLowerCase()
+            .includes(zoek)
 
-                (item.Achternaam || "")
-                .toLowerCase()
-                .includes(zoek)
+            ||
 
-                ||
+            (item.Telefoonnummer || "")
+            .includes(zoek)
 
-                (item.Telefoonnummer || "")
-                .includes(zoek)
+            ||
 
-                ||
-
-                (item["E-mail"] || "")
-                .toLowerCase()
-                .includes(zoek)
-
-            );
-
-        });
-
-    }
-
-    // ----------------------------------
-    // ALLEEN NIEUW
-    // ----------------------------------
-
-    if(alleenNieuw.checked){
-
-        lijst =
-        lijst.filter(
-
-            item=>!item.gelezen
+            (item["E-mail"] || "")
+            .toLowerCase()
+            .includes(zoek)
 
         );
 
     }
 
-    // ----------------------------------
-    // NIEUW BOVENAAN
-    // ----------------------------------
+    // ==========================================
+    // ALLEEN NIEUW
+    // ==========================================
+
+    if(alleenNieuw.checked){
+
+        lijst = lijst.filter(
+
+            item => !item.gelezen
+
+        );
+
+    }
+
+    // ==========================================
+    // SORTEER
+    // ==========================================
 
     lijst.sort((a,b)=>{
 
@@ -262,18 +261,16 @@ function toonAanvragen(){
 
     lijst.forEach(item=>{
 
-        container.appendChild(
+        const kaart = maakKaart(item);
 
-            maakKaart(item)
-
-        );
+        container.appendChild(kaart);
 
     });
 
 }
 
 // ======================================================
-// KAART
+// KAART MAKEN
 // ======================================================
 
 function maakKaart(item){
@@ -285,8 +282,7 @@ function maakKaart(item){
 
     if(!item.gelezen){
 
-        kaart.style.borderLeft=
-        "8px solid var(--orange)";
+        kaart.classList.add("nieuw");
 
     }
 
@@ -301,77 +297,23 @@ function maakKaart(item){
 
         <div class="proef-info">
 
-            <div class="proef-label">
+            <div><strong>📅 Aanmelding</strong></div>
+            <div>${item.Tijdstempel || "-"}</div>
 
-                📅 Aanmelding
+            <div><strong>🎂 Geboortedatum</strong></div>
+            <div>${item.Geboortedatum || "-"}</div>
 
-            </div>
+            <div><strong>🚻 Geslacht</strong></div>
+            <div>${item.Geslacht || "-"}</div>
 
-            <div>
+            <div><strong>📞 Telefoon</strong></div>
+            <div>${item.Telefoonnummer || "-"}</div>
 
-                ${item.Tijdstempel || "-"}
+            <div><strong>📧 E-mail</strong></div>
+            <div>${item["E-mail"] || "-"}</div>
 
-            </div>
-
-            <div class="proef-label">
-
-                🎂 Geboortedatum
-
-            </div>
-
-            <div>
-
-                ${item.Geboortedatum || "-"}
-
-            </div>
-
-            <div class="proef-label">
-
-                🚻 Geslacht
-
-            </div>
-
-            <div>
-
-                ${item.Geslacht || "-"}
-
-            </div>
-
-            <div class="proef-label">
-
-                📞 Telefoon
-
-            </div>
-
-            <div>
-
-                ${item.Telefoonnummer || "-"}
-
-            </div>
-
-            <div class="proef-label">
-
-                📧 E-mail
-
-            </div>
-
-            <div>
-
-                ${item["E-mail"] || "-"}
-
-            </div>
-
-            <div class="proef-label">
-
-                📝 Opmerkingen
-
-            </div>
-
-            <div>
-
-                ${item.Opmerkingen || "-"}
-
-            </div>
+            <div><strong>📝 Opmerkingen</strong></div>
+            <div>${item.Opmerkingen || "-"}</div>
 
         </div>
 
@@ -436,15 +378,17 @@ window.markeerGelezen = function(rij){
 
     }
 
-    aanvragen.forEach(item=>{
+    const aanvraag = aanvragen.find(
 
-        if(item._row===rij){
+        item => item._row === rij
 
-            item.gelezen=true;
+    );
 
-        }
+    if(aanvraag){
 
-    });
+        aanvraag.gelezen = true;
+
+    }
 
     updateStatus();
 
@@ -458,13 +402,11 @@ window.markeerGelezen = function(rij){
 
 window.verwijderAanvraag = async function(rij){
 
-    const antwoord = confirm(
+    if(!confirm(
 
-        "Weet je zeker dat je deze aanmelding wilt verwijderen?"
+        "Weet je zeker dat je deze proeftraining wilt verwijderen?"
 
-    );
-
-    if(!antwoord){
+    )){
 
         return;
 
@@ -474,17 +416,15 @@ window.verwijderAanvraag = async function(rij){
 
         await deleteRow(rij);
 
-        aanvragen =
-        aanvragen.filter(
+        aanvragen = aanvragen.filter(
 
-            item=>item._row!==rij
+            item => item._row !== rij
 
         );
 
-        gelezenItems =
-        gelezenItems.filter(
+        gelezenItems = gelezenItems.filter(
 
-            item=>item!==rij
+            item => item !== rij
 
         );
 
@@ -523,37 +463,160 @@ window.verwijderAanvraag = async function(rij){
 };
 
 // ======================================================
-// AUTOMATISCH VERVERSEN
+// DATUM OPMAKEN
+// ======================================================
+
+function formatDatum(waarde){
+
+    if(!waarde){
+
+        return "-";
+
+    }
+
+    const datum = new Date(waarde);
+
+    if(isNaN(datum)){
+
+        return waarde;
+
+    }
+
+    return datum.toLocaleDateString(
+
+        "nl-NL"
+
+    );
+
+}
+
+// ======================================================
+// TELEFOON
+// ======================================================
+
+function belNummer(nummer){
+
+    if(!nummer){
+
+        return;
+
+    }
+
+    window.location.href =
+
+    "tel:" + nummer;
+
+}
+
+// ======================================================
+// MAIL
+// ======================================================
+
+function mailPersoon(mail){
+
+    if(!mail){
+
+        return;
+
+    }
+
+    window.location.href =
+
+    "mailto:" + mail;
+
+}
+
+// ======================================================
+// AUTO REFRESH
 // ======================================================
 
 setInterval(
 
-    async()=>{
-
-        try{
-
-            await laadAanvragen();
-
-        }
-
-        catch(error){
-
-            console.error(error);
-
-        }
-
-    },
+    laadAanvragen,
 
     60000
 
 );
-
-// ======================================================
-// EINDE
-// ======================================================
 
 console.log(
 
     "🧡 HV Novitas Proeftrainingen geladen"
 
 );
+// ======================================================
+// HULPFUNCTIES
+// ======================================================
+
+function escapeHtml(tekst){
+
+    if(!tekst){
+
+        return "";
+
+    }
+
+    return String(tekst)
+
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+// ======================================================
+// OPNIEUW LADEN
+// ======================================================
+
+window.verversAanvragen = async function(){
+
+    try{
+
+        await laadAanvragen();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+};
+
+// ======================================================
+// ELKE MINUUT CONTROLEREN
+// ======================================================
+
+setInterval(
+
+    verversAanvragen,
+
+    60000
+
+);
+
+// ======================================================
+// PAGINA KLAAR
+// ======================================================
+
+window.addEventListener(
+
+    "load",
+
+    ()=>{
+
+        console.log(
+
+            "🧡 HV Novitas Proeftrainingen actief"
+
+        );
+
+    }
+
+);
+
+// ======================================================
+// EINDE
+// ======================================================
