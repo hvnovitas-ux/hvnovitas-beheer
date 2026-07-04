@@ -3,12 +3,14 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
 
-<title>HV Novitas - Proeftrainingen</title>
+    <title>HV Novitas - Proeftrainingen</title>
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="style.css">
 
 </head>
 
@@ -22,13 +24,23 @@
 
         <div class="logo">
 
-            🧡 HV Novitas Beheer
+            <img src="images/logo.png"
+                 alt="HV Novitas">
+
+            <div class="logo-info">
+
+                <h1>HV NOVITAS CMS</h1>
+
+                <p>Beheeromgeving</p>
+
+            </div>
 
         </div>
 
         <div class="user">
 
-            <button onclick="location.href='dashboard.html'">
+            <button class="btn-black"
+                    onclick="location.href='dashboard.html'">
 
                 ⬅ Dashboard
 
@@ -40,138 +52,145 @@
 
     <!-- PAGINA -->
 
-    <section class="welkom">
+    <section class="hero">
 
-        <h1>📝 Proeftrainingen</h1>
+        <h2>
+
+            📝 Proeftrainingen
+
+        </h2>
 
         <p>
 
-            Nieuwe spelers aanmelden en alle proeftrainingen beheren.
+            Beheer alle ontvangen proeftrainingen.
 
         </p>
 
     </section>
 
-    <!-- KAARTEN -->
+    <!-- FILTER -->
 
-    <div class="proeftraining-grid">
+    <section class="content-card">
 
-        <div class="proef-card"
+        <div class="form-row">
 
-             onclick="openPagina('formulier')">
+            <div>
 
-            <div class="icon">
+                <label>
 
-                📝
+                    🔍 Zoeken
 
-            </div>
+                </label>
 
-            <h2>
-
-                Nieuw formulier
-
-            </h2>
-
-            <p>
-
-                Vul direct een nieuwe proeftraining in.
-
-            </p>
-
-        </div>
-
-        <div class="proef-card"
-
-             onclick="openPagina('reacties')">
-
-            <div class="icon">
-
-                📋
+                <input
+                    type="text"
+                    id="zoeken"
+                    placeholder="Zoek op naam, telefoon of e-mail...">
 
             </div>
 
-            <h2>
+            <div>
 
-                Aanmeldingen
+                <label>
 
-            </h2>
+                    &nbsp;
 
-            <p>
+                </label>
 
-                Bekijk alle ontvangen reacties.
+                <div style="display:flex;align-items:center;height:54px;">
 
-            </p>
+                    <input
+                        type="checkbox"
+                        id="alleenNieuw">
+
+                    <label
+                        for="alleenNieuw"
+                        style="margin-left:12px;cursor:pointer;">
+
+                        Alleen nieuwe aanvragen
+
+                    </label>
+
+                </div>
+
+            </div>
 
         </div>
 
-    </div>
+        <div class="status-overview">
 
-    <!-- FORMULIER -->
+            <div class="status-box">
 
-    <section
-        id="formulier"
-        class="pagina actief">
+                <h3>
 
-        <div class="content-card">
+                    📊 Totaal
 
-            <h2>
+                </h3>
 
-                📝 Nieuw proeftrainingformulier
+                <div
+                    class="number"
+                    id="totaal">
 
-            </h2>
+                    0
 
-            <iframe
+                </div>
 
-            src="https://docs.google.com/forms/d/e/1FAIpQLScnRN3u145StDAvKPQcMOWHixETPDne39URm_S4-bAH-hpXKQ/viewform?embedded=true"
+            </div>
 
-            loading="lazy">
+            <div class="status-box">
 
-            </iframe>
+                <h3>
+
+                    🟠 Nieuw
+
+                </h3>
+
+                <div
+                    class="number"
+                    id="nieuw">
+
+                    0
+
+                </div>
+
+            </div>
+
+            <div class="status-box">
+
+                <h3>
+
+                    ✔ Gelezen
+
+                </h3>
+
+                <div
+                    class="number"
+                    id="gelezen">
+
+                    0
+
+                </div>
+
+            </div>
 
         </div>
 
     </section>
 
-    <!-- REACTIES -->
+    <!-- AANVRAGEN -->
 
     <section
-        id="reacties"
-        class="pagina">
+        id="aanvragen"
+        class="proeftraining-grid">
 
-        <div class="content-card">
-
-            <h2>
-
-                📋 Ontvangen proeftrainingen
-
-            </h2>
-
-            <iframe
-
-            src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing">
-
-            </iframe>
-
-        </div>
+        <!-- JavaScript vult dit -->
 
     </section>
-     document
-            .getElementById(pagina)
-            .classList.add("actief");
-
-        window.scrollTo({
-
-            top:320,
-
-            behavior:"smooth"
-
-        });
-
-    }
-
-    </script>
 
 </div>
+
+<script type="module"
+        src="proeftrainingen.js"></script>
 
 </body>
 
