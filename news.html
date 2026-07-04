@@ -1,71 +1,9 @@
-<!DOCTYPE html>
-<html lang="nl">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>HV Novitas CMS - Nieuws</title>
-
-    <link rel="stylesheet" href="style.css">
-
-</head>
-
-<body>
-
-<div class="dashboard">
-
-    <!-- =======================================
-         HEADER
-    ======================================== -->
-
-    <header class="topbar">
-
-        <div class="logo-area">
-
-            <img
-                src="images/logo.png"
-                class="logo"
-                alt="HV Novitas">
+  <img src="images/logo.png" class="logo" alt="HV Novitas">
 
             <div>
-
                 <h1>HV NOVITAS CMS</h1>
-
                 <p>Nieuwsbeheer</p>
-
             </div>
-
-        </div>
-
-        <div class="user-area">
-
-            <div class="status">
-
-                <span class="online"></span>
-
-                Ingelogd
-
-            </div>
-
-            <div id="naam">
-
-                Laden...
-
-            </div>
-
-            <div id="email">
-
-            </div>
-
-            <button id="logoutButton">
-
-                Uitloggen
-
-            </button>
 
         </div>
 
@@ -79,100 +17,61 @@
 
         <h2>Nieuwsbeheer</h2>
 
-        <p>
-            Voeg nieuws toe, wijzig bestaande berichten of verwijder oude berichten.
-        </p>
+        <p>Voeg nieuws toe, wijzig of verwijder berichten.</p>
 
     </section>
 
     <!-- =======================================
-         TWEE KOLOMMEN
+         FORM (BELANGRIJK FIX)
     ======================================== -->
 
     <main class="news-layout">
-
-        <!-- ===============================
-             LINKER KOLOM
-        ================================ -->
 
         <section class="news-editor">
 
             <h3>Nieuw bericht</h3>
 
-            <label>Titel</label>
+            <!-- 🔥 FORM IS NU CORRECT -->
+            <form id="newsForm">
 
-            <input
-                type="text"
-                id="title"
-                placeholder="Titel van het nieuwsbericht">
+                <label>Titel</label>
+                <input type="text" id="title" placeholder="Titel" required>
 
-            <label>Bericht</label>
+                <label>Bericht</label>
+                <textarea id="text" rows="10" placeholder="Typ hier..." required></textarea>
 
-            <textarea
-                id="text"
-                rows="12"
-                placeholder="Typ hier het nieuwsbericht..."></textarea>
+                <label>Foto</label>
+                <input type="file" id="image" accept="image/*">
 
-            <label>Foto</label>
+                <div class="editor-buttons">
 
-            <input
-                type="file"
-                id="photo"
-                accept="image/*">
+                    <button type="submit" id="publish">
+                        Publiceren
+                    </button>
 
-            <div id="photoPreview"></div>
+                    <button type="reset">
+                        Wissen
+                    </button>
 
-            <div class="editor-buttons">
+                </div>
 
-                <button id="publish">
+                <p id="status"></p>
 
-                    Publiceren
-
-                </button>
-
-                <button id="reset">
-
-                    Wissen
-
-                </button>
-
-            </div>
-
-            <p id="melding"></p>
+            </form>
 
         </section>
 
-        <!-- ===============================
-             RECHTER KOLOM
-        ================================ -->
+        <!-- =======================================
+             OVERVIEW
+        ======================================== -->
 
         <section class="news-overview">
 
-            <div class="overview-header">
-
-                <h3>Nieuwsberichten</h3>
-
-                <button id="refreshNews">
-
-                    Vernieuwen
-
-                </button>
-
-            </div>
-
-            <input
-                type="text"
-                id="searchNews"
-                placeholder="Zoek een nieuwsbericht...">
+            <h3>Nieuwsberichten</h3>
 
             <div id="newsList">
-
-                <div class="empty-news">
-
-                    Nog geen nieuws geplaatst.
-
-                </div>
-                  </div>
+                <p>Geen nieuws...</p>
+            </div>
 
         </section>
 
@@ -184,54 +83,24 @@
 
     <footer class="footer">
 
-        <div class="footer-left">
-
-            <div class="system-status">
-
-                <span class="status-dot"></span>
-
-                Google Drive
-
-            </div>
-
-            <div class="system-status">
-
-                <span class="status-dot"></span>
-
-                Firebase
-
-            </div>
-
-        </div>
-
-        <div class="footer-center">
-
-            HV Novitas CMS
-
-        </div>
-
-        <div class="footer-right">
-
-            Versie 1.0
-
-        </div>
+        <div>Firebase</div>
+        <div>Google Drive</div>
+        <div>HV Novitas CMS</div>
 
     </footer>
 
 </div>
 
-<!-- Google Identity -->
+<!-- =======================================
+     SCRIPTS
+======================================= -->
 
 <script src="https://accounts.google.com/gsi/client"></script>
-
-<!-- Google API -->
-
 <script src="https://apis.google.com/js/api.js"></script>
 
 <script type="module" src="firebase.js"></script>
-<script type="module" src="dashboard.js"></script>
 <script type="module" src="drive.js"></script>
-<script type="module" src="news.js"></script>
+<script type="module" src="cms.js"></script>
 
 </body>
 
