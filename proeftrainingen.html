@@ -7,10 +7,9 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
 
-    <title>HV Novitas - Proeftrainingen</title>
+    <title>HV Novitas CMS - Proeftrainingen</title>
 
-    <link rel="stylesheet"
-          href="style.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -18,7 +17,9 @@
 
 <div class="dashboard">
 
-    <!-- HEADER -->
+    <!-- ======================================================
+         HEADER
+    ======================================================= -->
 
     <header class="topbar">
 
@@ -50,7 +51,9 @@
 
     </header>
 
-    <!-- PAGINA -->
+    <!-- ======================================================
+         HERO
+    ======================================================= -->
 
     <section class="hero">
 
@@ -68,7 +71,9 @@
 
     </section>
 
-    <!-- FILTER -->
+    <!-- ======================================================
+         FILTER
+    ======================================================= -->
 
     <section class="content-card">
 
@@ -83,9 +88,9 @@
                 </label>
 
                 <input
-                    type="text"
                     id="zoeken"
-                    placeholder="Zoek op naam, telefoon of e-mail...">
+                    type="text"
+                    placeholder="Zoek op naam, telefoon of e-mail">
 
             </div>
 
@@ -93,19 +98,22 @@
 
                 <label>
 
-                    &nbsp;
+                    Weergave
 
                 </label>
 
-                <div style="display:flex;align-items:center;height:54px;">
+                <div
+                    style="display:flex;
+                           align-items:center;
+                           gap:12px;
+                           height:54px;">
 
                     <input
-                        type="checkbox"
-                        id="alleenNieuw">
+                        id="alleenNieuw"
+                        type="checkbox">
 
                     <label
-                        for="alleenNieuw"
-                        style="margin-left:12px;cursor:pointer;">
+                        for="alleenNieuw">
 
                         Alleen nieuwe aanvragen
 
@@ -128,8 +136,8 @@
                 </h3>
 
                 <div
-                    class="number"
-                    id="totaal">
+                    id="totaal"
+                    class="number">
 
                     0
 
@@ -146,8 +154,8 @@
                 </h3>
 
                 <div
-                    class="number"
-                    id="nieuw">
+                    id="nieuw"
+                    class="number">
 
                     0
 
@@ -164,8 +172,8 @@
                 </h3>
 
                 <div
-                    class="number"
-                    id="gelezen">
+                    id="gelezen"
+                    class="number">
 
                     0
 
@@ -177,24 +185,46 @@
 
     </section>
 
-    <!-- AANVRAGEN -->
+    <!-- ======================================================
+         AANVRAGEN
+    ======================================================= -->
 
     <section
         id="aanvragen"
         class="proeftraining-grid">
 
-        <!-- JavaScript vult dit -->
+        <div class="content-card">
+
+            <h2>
+
+                Proeftrainingen worden geladen...
+
+            </h2>
+
+        </div>
 
     </section>
 
 </div>
 
+<!-- ======================================================
+     GOOGLE API
+======================================================= -->
+
 <script src="https://apis.google.com/js/api.js"></script>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client"
+        async
+        defer></script>
 
-<script type="module" src="proeftrainingen.js"></script>
+<!-- ======================================================
+     JAVASCRIPT
+======================================================= -->
+
+<script type="module"
+        src="proeftrainingen.js"></script>
 
 </body>
 
 </html>
+Maar ik zie een groter pr
