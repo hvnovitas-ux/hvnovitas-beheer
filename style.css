@@ -1,9 +1,530 @@
+ STYLE.CSS
+========================================================== */
+
 /* ==========================================================
-   ALGEMEEN
+   KLEUREN
+========================================================== */
+
+:root{
+
+    --orange:#ff7a00;
+    --orange-dark:#e86d00;
+    --orange-light:#ffb347;
+
+    --white:#ffffff;
+
+    --bg:#f4f6f9;
+
+    --dark:#222;
+    --dark2:#444;
+
+    --green:#28a745;
+    --red:#dc3545;
+    --blue:#0d6efd;
+
+    --shadow:0 10px 25px rgba(0,0,0,.12);
+
+    --radius:18px;
+
+}
+
+/* ==========================================================
+   RESET
 ========================================================== */
 
 *{
+
+    margin:0;
+    padding:0;
+
     box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    background:var(--bg);
+
+    color:var(--dark);
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+/* ==========================================================
+   DASHBOARD
+========================================================== */
+
+.dashboard{
+
+    width:100%;
+
+    max-width:1450px;
+
+    margin:auto;
+
+    padding:30px;
+
+}
+
+/* ==========================================================
+   TOPBAR
+========================================================== */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    background:white;
+
+    padding:20px 30px;
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:35px;
+
+}
+
+.logo{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:var(--orange);
+
+}
+
+.user{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.user img{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid var(--orange);
+
+}
+
+.user span{
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+/* ==========================================================
+   PAGINA TITEL
+========================================================== */
+
+.welkom{
+
+    background:white;
+
+    border-radius:var(--radius);
+
+    padding:30px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:35px;
+
+}
+
+.welkom h1{
+
+    color:var(--orange);
+
+    font-size:42px;
+
+    margin-bottom:10px;
+
+}
+
+.welkom p{
+
+    font-size:19px;
+
+    color:#666;
+
+}
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.card-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(300px,1fr));
+
+    gap:30px;
+
+}
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    box-shadow:var(--shadow);
+
+    transition:.30s;
+
+    cursor:pointer;
+
+    text-align:center;
+
+}
+
+.card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 20px 35px rgba(0,0,0,.18);
+
+}
+
+.card-icon{
+
+    font-size:65px;
+
+    margin-bottom:20px;
+
+}
+
+.card h2{
+
+    color:var(--orange);
+
+    font-size:28px;
+
+    margin-bottom:15px;
+
+}
+
+.card p{
+
+    color:#666;
+
+    line-height:1.6;
+
+    font-size:17px;
+
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+button{
+
+    border:none;
+
+    border-radius:12px;
+
+    padding:14px 24px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.btn-orange{
+
+    background:var(--orange);
+
+    color:white;
+
+}
+
+.btn-orange:hover{
+
+    background:var(--orange-dark);
+
+}
+
+.btn-dark{
+
+    background:#222;
+
+    color:white;
+
+}
+
+.btn-dark:hover{
+
+    background:#111;
+
+}
+
+.btn-green{
+
+    background:var(--green);
+
+    color:white;
+
+}
+
+.btn-red{
+
+    background:var(--red);
+
+    color:white;
+
+}
+/* ==========================================================
+   FORMULIEREN
+========================================================== */
+
+.formulier,
+.content-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:35px;
+
+}
+
+.formulier h2,
+.content-card h2{
+
+    color:var(--orange);
+
+    font-size:30px;
+
+    margin-bottom:25px;
+
+    padding-bottom:15px;
+
+    border-bottom:3px solid var(--orange);
+
+}
+
+label{
+
+    display:block;
+
+    margin-top:20px;
+
+    margin-bottom:8px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:#444;
+
+}
+
+input,
+select,
+textarea{
+
+    width:100%;
+
+    padding:15px;
+
+    border:2px solid #ddd;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    background:#fff;
+
+    transition:.25s;
+
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    outline:none;
+
+    border-color:var(--orange);
+
+    box-shadow:0 0 12px rgba(255,122,0,.25);
+
+}
+
+textarea{
+
+    resize:vertical;
+
+    min-height:180px;
+
+}
+
+input[type=file]{
+
+    background:#f7f7f7;
+
+    cursor:pointer;
+
+}
+
+/* ==========================================================
+   KNOPPEN
+========================================================== */
+
+.knoppen{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    margin-top:30px;
+
+}
+
+.knoppen button{
+
+    flex:1;
+
+    min-width:180px;
+
+}
+
+/* ==========================================================
+   MELDINGEN
+========================================================== */
+
+#melding,
+.status,
+.bericht{
+
+    margin-top:20px;
+
+    padding:18px;
+
+    border-radius:12px;
+
+    background:#f4f6f9;
+
+    border-left:6px solid var(--orange);
+
+    font-size:16px;
+
+}
+
+.success{
+
+    border-left-color:var(--green);
+
+}
+
+.error{
+
+    border-left-color:var(--red);
+
+}
+
+/* ==========================================================
+   NIEUWS
+========================================================== */
+
+.nieuwslijst{
+
+    margin-top:40px;
+
+}
+
+.news-item{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.news-item h3{
+
+    color:var(--orange);
+
+    margin-bottom:15px;
+
+    font-size:24px;
+
+}
+
+.news-item img{
+
+    width:100%;
+
+    border-radius:15px;
+
+    margin:20px 0;
+
+}
+
+.news-item p{
+
+    line-height:1.7;
+
+    color:#444;
+
 }
 
 /* ==========================================================
@@ -11,144 +532,890 @@
 ========================================================== */
 
 .proeftraining-grid{
+
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+
     gap:30px;
-    margin:35px 0;
+
+    margin-bottom:35px;
+
 }
 
 .proef-card{
-    background:linear-gradient(135deg,#ff7a00,#ff9f1c);
+
+    background:linear-gradient(135deg,var(--orange),var(--orange-light));
+
     color:#fff;
+
     border-radius:20px;
+
     padding:35px;
-    cursor:pointer;
+
     text-align:center;
-    transition:transform .35s ease, box-shadow .35s ease;
-    box-shadow:0 12px 30px rgba(0,0,0,.18);
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:var(--shadow);
+
 }
 
-@media (hover:hover){
-    .proef-card:hover{
-        transform:translateY(-8px);
-        box-shadow:0 20px 40px rgba(0,0,0,.25);
-    }
+.proef-card:hover{
+
+    transform:translateY(-8px);
+
 }
 
 .proef-card .icon{
+
     font-size:60px;
+
     margin-bottom:20px;
+
 }
 
 .proef-card h2{
-    margin:0;
-    font-size:28px;
-    font-weight:700;
+
+    color:#fff;
+
+    margin-bottom:15px;
+
 }
 
 .proef-card p{
-    margin-top:15px;
-    font-size:17px;
-    line-height:1.6;
+
+    color:#fff;
+
     opacity:.95;
+
 }
 
-/* ==========================================================
-   PAGINA'S
-========================================================== */
-
 .pagina{
+
     display:none;
-    margin-top:35px;
+
 }
 
 .pagina.actief{
+
     display:block;
+
 }
 
 /* ==========================================================
-   CONTENT CARD
+   IFRAME
 ========================================================== */
 
-.content-card{
-    background:#fff;
-    border-radius:20px;
-    padding:30px;
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
-    animation:fadeIn .35s ease;
-}
+iframe{
 
-.content-card h2{
-    margin:0 0 25px;
-    color:#ff7a00;
-    font-size:30px;
-    border-bottom:3px solid #ff7a00;
-    padding-bottom:15px;
-}
-
-.content-card iframe{
-    display:block;
     width:100%;
-    border:none;
-    border-radius:15px;
-    background:#fff;
-}
 
-/* ==========================================================
-   IFRAME HOOGTES
-========================================================== */
+    border:none;
+
+    border-radius:15px;
+
+    background:#fff;
+
+}
 
 #formulier iframe{
-    height:1650px;
+
+    height:1600px;
+
 }
 
 #reacties iframe{
+
     height:900px;
+
+}
+/* ==========================================================
+   TABELLEN
+========================================================== */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:25px;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:var(--shadow);
+
+}
+
+thead{
+
+    background:var(--orange);
+
+    color:#fff;
+
+}
+
+th{
+
+    padding:18px;
+
+    text-align:left;
+
+    font-size:16px;
+
+}
+
+td{
+
+    padding:16px 18px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+tbody tr{
+
+    transition:.25s;
+
+}
+
+tbody tr:hover{
+
+    background:#fff8f2;
+
 }
 
 /* ==========================================================
-   ANIMATIE
+   STATUS BLOKKEN
 ========================================================== */
 
-@keyframes fadeIn{
+.status-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:25px;
+
+    margin:35px 0;
+
+}
+
+.status-card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:var(--shadow);
+
+    text-align:center;
+
+}
+
+.status-card h3{
+
+    color:var(--orange);
+
+    margin-bottom:12px;
+
+    font-size:22px;
+
+}
+
+.status-card .waarde{
+
+    font-size:38px;
+
+    font-weight:bold;
+
+    color:#222;
+
+}
+
+/* ==========================================================
+   FOTO'S
+========================================================== */
+
+.foto-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:25px;
+
+}
+
+.foto-grid img{
+
+    width:100%;
+
+    aspect-ratio:1;
+
+    object-fit:cover;
+
+    border-radius:18px;
+
+    box-shadow:var(--shadow);
+
+    transition:.3s;
+
+}
+
+.foto-grid img:hover{
+
+    transform:scale(1.03);
+
+}
+
+/* ==========================================================
+   SPONSORS
+========================================================== */
+
+.sponsor-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+    gap:25px;
+
+}
+
+.sponsor-card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+}
+
+.sponsor-card img{
+
+    max-width:180px;
+
+    max-height:90px;
+
+    object-fit:contain;
+
+    margin-bottom:20px;
+
+}
+
+.sponsor-card h3{
+
+    color:var(--orange);
+
+    margin-bottom:10px;
+
+}
+
+/* ==========================================================
+   INSTELLINGEN
+========================================================== */
+
+.settings-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+
+    gap:30px;
+
+}
+
+.setting-card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.setting-card h3{
+
+    color:var(--orange);
+
+    margin-bottom:20px;
+
+}
+
+/* ==========================================================
+   BADGES
+========================================================== */
+
+.badge{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:30px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.badge-success{
+
+    background:#d4edda;
+
+    color:#155724;
+
+}
+
+.badge-warning{
+
+    background:#fff3cd;
+
+    color:#856404;
+
+}
+
+.badge-danger{
+
+    background:#f8d7da;
+
+    color:#721c24;
+
+}
+
+/* ==========================================================
+   LOADER
+========================================================== */
+
+.loader{
+
+    width:50px;
+
+    height:50px;
+
+    border:5px solid #eee;
+
+    border-top:5px solid var(--orange);
+
+    border-radius:50%;
+
+    animation:loader .8s linear infinite;
+
+    margin:40px auto;
+
+}
+
+@keyframes loader{
+
     from{
-        opacity:0;
-        transform:translateY(15px);
+
+        transform:rotate(0deg);
+
     }
+
     to{
-        opacity:1;
-        transform:translateY(0);
+
+        transform:rotate(360deg);
+
     }
+
 }
 
 /* ==========================================================
-   MOBIEL
+   RESPONSIVE
 ========================================================== */
 
-@media (max-width:900px){
+@media(max-width:1100px){
 
-    .proeftraining-grid{
-        grid-template-columns:1fr;
-    }
+    .dashboard{
 
-    .proef-card{
-        padding:25px;
-    }
-
-    .proef-card .icon{
-        font-size:46px;
-    }
-
-    .content-card{
         padding:20px;
+
+    }
+
+    .topbar{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .user{
+
+        justify-content:center;
+
+        flex-wrap:wrap;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .card-grid,
+    .status-grid,
+    .sponsor-grid,
+    .settings-grid,
+    .foto-grid,
+    .proeftraining-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .welkom h1{
+
+        font-size:32px;
+
+    }
+
+    .logo{
+
+        font-size:26px;
+
+    }
+
+    .card{
+
+        padding:25px;
+
+    }
+
+    .formulier,
+    .content-card{
+
+        padding:20px;
+
+    }
+
+    .knoppen{
+
+        flex-direction:column;
+
+    }
+
+    .knoppen button{
+
+        width:100%;
+
+    }
+
+    table{
+
+        display:block;
+
+        overflow-x:auto;
+
     }
 
     #formulier iframe{
+
         height:1800px;
+
     }
 
     #reacties iframe{
+
         height:700px;
+
     }
 
 }
+
+/* ==========================================================
+   DEEL 4 - AFWERKING
+========================================================== */
+
+/* Scrollbar */
+
+::-webkit-scrollbar{
+
+    width:12px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#ececec;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:var(--orange);
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:var(--orange-dark);
+
+}
+
+/* Selectie */
+
+::selection{
+
+    background:var(--orange);
+
+    color:white;
+
+}
+
+/* Links */
+
+a{
+
+    color:var(--orange);
+
+    text-decoration:none;
+
+    transition:.25s;
+
+}
+
+a:hover{
+
+    color:var(--orange-dark);
+
+}
+
+/* Horizontale lijn */
+
+hr{
+
+    border:none;
+
+    height:2px;
+
+    background:#ececec;
+
+    margin:35px 0;
+
+}
+
+/* Afbeeldingen */
+
+img{
+
+    max-width:100%;
+
+    display:block;
+
+}
+
+/* Schaduw helpers */
+
+.shadow{
+
+    box-shadow:var(--shadow);
+
+}
+
+.rounded{
+
+    border-radius:20px;
+
+}
+
+/* Flex helpers */
+
+.flex{
+
+    display:flex;
+
+}
+
+.flex-center{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.flex-between{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.flex-column{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+/* Grid helpers */
+
+.grid-2{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:25px;
+
+}
+
+.grid-3{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:25px;
+
+}
+
+.grid-4{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:25px;
+
+}
+
+/* Ruimte */
+
+.mt-10{margin-top:10px;}
+.mt-20{margin-top:20px;}
+.mt-30{margin-top:30px;}
+.mt-40{margin-top:40px;}
+
+.mb-10{margin-bottom:10px;}
+.mb-20{margin-bottom:20px;}
+.mb-30{margin-bottom:30px;}
+.mb-40{margin-bottom:40px;}
+
+.p-10{padding:10px;}
+.p-20{padding:20px;}
+.p-30{padding:30px;}
+
+/* Tekst */
+
+.text-center{
+
+    text-align:center;
+
+}
+
+.text-right{
+
+    text-align:right;
+
+}
+
+.text-orange{
+
+    color:var(--orange);
+
+}
+
+.text-green{
+
+    color:var(--green);
+
+}
+
+.text-red{
+
+    color:var(--red);
+
+}
+
+.text-grey{
+
+    color:#777;
+
+}
+
+/* Animaties */
+
+.fade{
+
+    animation:fade .4s ease;
+
+}
+
+@keyframes fade{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+.slideUp{
+
+    animation:slideUp .35s ease;
+
+}
+
+@keyframes slideUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* Hover */
+
+.hover{
+
+    transition:.25s;
+
+}
+
+.hover:hover{
+
+    transform:translateY(-5px);
+
+}
+
+/* Footer */
+
+.footer{
+
+    margin-top:60px;
+
+    padding:25px;
+
+    text-align:center;
+
+    color:#888;
+
+    font-size:15px;
+
+}
+
+/* Desktop */
+
+@media(min-width:1600px){
+
+.dashboard{
+
+    max-width:1650px;
+
+}
+
+}
+
+/* Tablet */
+
+@media(max-width:1000px){
+
+.grid-4{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.grid-3{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+/* Mobiel */
+
+@media(max-width:700px){
+
+.grid-2,
+.grid-3,
+.grid-4{
+
+    grid-template-columns:1fr;
+
+}
+
+.topbar{
+
+    padding:20px;
+
+}
+
+.logo{
+
+    font-size:24px;
+
+}
+
+.welkom{
+
+    padding:20px;
+
+}
+
+.card{
+
+    padding:25px;
+
+}
+
+.content-card{
+
+    padding:20px;
+
+}
+
+}
+
+/* ==========================================================
+   EINDE HV NOVITAS STYLE
+========================================================== */
