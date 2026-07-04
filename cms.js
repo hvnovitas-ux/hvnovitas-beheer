@@ -1,4 +1,5 @@
 console.log("🔥 CMS FILE IS GELOADED");
+console.log("FORM:", document.getElementById("newsForm"));
 import { db } from "./firebase.js";
 import { uploadFile } from "./drive.js";
 
