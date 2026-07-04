@@ -15,27 +15,18 @@ import {
 const news = document.getElementById("news");
 
 if (!news) {
-
     console.error("Element #news niet gevonden.");
-
     throw new Error("Nieuwscontainer ontbreekt.");
-
 }
 
-console.log("📰 Homepage Nieuws gestart.");
-
 // =====================================================
-// FIREBASE QUERY
+// FIREBASE
 // =====================================================
 
 const newsQuery = query(
-
     ref(db, "news"),
-
     orderByChild("created"),
-
     limitToLast(3)
-
 );
 
 // =====================================================
@@ -53,102 +44,79 @@ function escapeHTML(text = "") {
 
 }
 
-function maakSamenvatting(text = "", lengte = 180) {
-
-    if (text.length <= lengte) {
-
-        return text;
-
-    }
-
-    return text.substring(0, lengte).trim() + "...";
-
-}
-
-function formatTekst(text = "") {
+function formatText(text = "") {
 
     return escapeHTML(text).replace(/\n/g, "<br>");
 
 }
 
-function maakFoto(bericht) {
+function shortText(text = "", max = 180) {
 
-    if (!bericht.image || bericht.image === "") {
+    if (text.length <= max) return text;
 
-        return "";
+    return text.substring(0, max).trim() + "...";
 
-    }
+}
+
+function createImage(newsItem) {
+
+    if (!newsItem.image) return "";
 
     return `
-
-<img
-    src="${bericht.image}"
-    class="nieuwsfoto"
-    alt="${escapeHTML(bericht.title)}"
-    loading="lazy">
-
-`;
+        <img
+            src="${newsItem.image}"
+            class="nieuwsfoto"
+            alt="${escapeHTML(newsItem.title)}"
+            loading="lazy">
+    `;
 
 }
 
 // =====================================================
-// HTML VAN ÉÉN BERICHT
+// HTML
 // =====================================================
 
-function maakKaart(bericht) {
+function createCard(newsItem) {
 
-    const korteTekst = formatTekst(
-
-        maakSamenvatting(bericht.text || "")
-
-    );
-
-    const langeTekst = formatTekst(
-
-        bericht.text || ""
-
-    );
+    const shortVersion = formatText(shortText(newsItem.text || ""));
+    const fullVersion = formatText(newsItem.text || "");
 
     return `
 
 <div class="kaart">
 
-    ${maakFoto(bericht)}
+    ${createImage(newsItem)}
 
-    <h3>
-
-        ${escapeHTML(bericht.title)}
-
-    </h3>
+    <h3>${escapeHTML(newsItem.title)}</h3>
 
     <div class="datum">
 
-        📅 ${bericht.date}
+        📅 ${newsItem.date}
         &nbsp;&nbsp;
-        🕒 ${bericht.time}
+        🕒 ${newsItem.time}
 
     </div>
 
     <div
-        id="kort-${bericht.id}"
+        id="short-${newsItem.id}"
         class="tekst">
 
-        ${korteTekst}
+        ${shortVersion}
 
     </div>
 
     <div
-        id="lang-${bericht.id}"
-        class="tekst volledig"
+        id="full-${newsItem.id}"
+        class="tekst"
         style="display:none;">
 
-        ${langeTekst}
+        ${fullVersion}
 
     </div>
 
     <button
         class="leesButton"
-        data-id="${bericht.id}">
+        data-id="${newsItem.id}">
 
         ➜ Lees verder
 
@@ -161,7 +129,7 @@ function maakKaart(bericht) {
 }
 
 // =====================================================
-// DEEL 2 GAAT HIER VERDER...
+// DEEL 2 START HIER
 // =====================================================
 // =====================================================
 // NIEUWS LADEN
@@ -174,20 +142,16 @@ onValue(newsQuery, (snapshot) => {
     snapshot.forEach((item) => {
 
         berichten.push({
-
             id: item.key,
             ...item.val()
-
         });
 
     });
 
     // Nieuwste eerst
-
     berichten.sort((a, b) => b.created - a.created);
 
     // Geen nieuws
-
     if (berichten.length === 0) {
 
         news.innerHTML = `
@@ -196,11 +160,7 @@ onValue(newsQuery, (snapshot) => {
 
     <h3>📰 Nog geen nieuws</h3>
 
-    <p>
-
-        Er zijn nog geen nieuwsberichten gepubliceerd.
-
-    </p>
+    <p>Er zijn nog geen nieuwsberichten gepubliceerd.</p>
 
 </div>
 
@@ -216,47 +176,68 @@ onValue(newsQuery, (snapshot) => {
 
     berichten.forEach((bericht) => {
 
-        html += maakKaart(bericht);
+        html += createCard(bericht);
 
     });
 
     news.innerHTML = html;
 
-    // ============================================
-    // LEES VERDER / LEES MINDER
-    // ============================================
+    // ==========================================
+    // LEES VERDER
+    // ==========================================
 
-    const knoppen = document.querySelectorAll(".leesButton");
+    const buttons = document.querySelectorAll(".leesButton");
 
-    knoppen.forEach((button) => {
+    buttons.forEach((button) => {
 
         button.addEventListener("click", () => {
 
             const id = button.dataset.id;
 
-            const kort = document.getElementById("kort-" + id);
+            // Eerst alle berichten sluiten
 
-            const lang = document.getElementById("lang-" + id);
+            berichten.forEach((b) => {
 
-            if (!kort || !lang) return;
+                const shortDiv = document.getElementById("short-" + b.id);
+                const fullDiv = document.getElementById("full-" + b.id);
+                const btn = document.querySelector(
+                    `.leesButton[data-id="${b.id}"]`
+                );
 
-            if (lang.style.display === "none") {
+                if (!shortDiv || !fullDiv || !btn) return;
 
-                kort.style.display = "none";
+                shortDiv.style.display = "block";
+                fullDiv.style.display = "none";
 
-                lang.style.display = "block";
+                btn.textContent = "➜ Lees verder";
 
-                button.innerHTML = "▲ Lees minder";
+            });
 
-            } else {
+            const shortDiv = document.getElementById("short-" + id);
+            const fullDiv = document.getElementById("full-" + id);
 
-                kort.style.display = "block";
+            // Was dit bericht al open?
 
-                lang.style.display = "none";
+            if (button.dataset.open === "true") {
 
-                button.innerHTML = "➜ Lees verder";
+                button.dataset.open = "false";
+
+                return;
 
             }
+
+            // Alles resetten
+
+            buttons.forEach((b) => b.dataset.open = "false");
+
+            // Gekozen bericht openen
+
+            shortDiv.style.display = "none";
+            fullDiv.style.display = "block";
+
+            button.textContent = "▲ Lees minder";
+
+            button.dataset.open = "true";
 
         });
 
@@ -264,7 +245,7 @@ onValue(newsQuery, (snapshot) => {
 
 }, (error) => {
 
-    console.error("Nieuws laden mislukt:", error);
+    console.error(error);
 
     news.innerHTML = `
 
