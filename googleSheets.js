@@ -1,44 +1,50 @@
-// =====================================================
+// ======================================================
 // HV NOVITAS CMS
-// Google Sheets - Deel 1
-// =====================================================
+// GOOGLE SHEETS
+// DEEL 1
+// ======================================================
 
-// ---------- CONFIGURATIE ----------
+// ==========================================
+// CONFIGURATIE
+// ==========================================
 
 export const CLIENT_ID =
 "71716605241-4kgftcmjlen6jakrl7s8mfq2i4dud02r.apps.googleusercontent.com";
 
 export const API_KEY =
-"AIzaSyC7OnJi3Z5BCaktePTrjb94nZgKMWSwapQ";
+"AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE";
 
 export const SPREADSHEET_ID =
 "1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM";
 
-export const DISCOVERY_DOC =
+// ==========================================
+// GOOGLE
+// ==========================================
+
+const DISCOVERY_DOC =
 "https://sheets.googleapis.com/$discovery/rest?version=v4";
 
-export const SCOPES =
-"https://www.googleapis.com/auth/spreadsheets";
+const SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets"
+].join(" ");
 
-// ---------- VARIABELEN ----------
+// ==========================================
+// VARIABELEN
+// ==========================================
 
-let initialized = false;
+let gapiLoaded = false;
+let gisLoaded = false;
 
 let tokenClient = null;
-
 let accessToken = null;
 
-// =====================================================
-// INITIALISEREN
-// =====================================================
+// ==========================================
+// GAPI LADEN
+// ==========================================
 
-export async function initSheets() {
+export async function loadGapi() {
 
-    if (initialized) {
-
-        return;
-
-    }
+    if (gapiLoaded) return;
 
     await new Promise(resolve => {
 
@@ -46,33 +52,72 @@ export async function initSheets() {
 
     });
 
+    gapiLoaded = true;
+
+}
+
+// ==========================================
+// GOOGLE CLIENT
+// ==========================================
+
+export async function initGoogleClient() {
+
+    await loadGapi();
+
     await gapi.client.init({
 
         apiKey: API_KEY,
 
-        discoveryDocs: [DISCOVERY_DOC]
+        discoveryDocs: [
+
+            DISCOVERY_DOC
+
+        ]
 
     });
-
-    tokenClient = google.accounts.oauth2.initTokenClient({
-
-        client_id: CLIENT_ID,
-
-        scope: SCOPES,
-
-        callback: () => {}
-
-    });
-
-    initialized = true;
-
-    console.log("✅ Google Sheets geïnitialiseerd");
 
 }
 
-// =====================================================
+// ==========================================
+// GOOGLE IDENTITY
+// ==========================================
+
+export function initGoogleIdentity() {
+
+    if (gisLoaded) return;
+
+    tokenClient =
+        google.accounts.oauth2.initTokenClient({
+
+            client_id: CLIENT_ID,
+
+            scope: SCOPES,
+
+            callback: ""
+
+        });
+
+    gisLoaded = true;
+
+}
+
+// ==========================================
+// INITIALISEREN
+// ==========================================
+
+export async function initSheets() {
+
+    await initGoogleClient();
+
+    initGoogleIdentity();
+
+    console.log("✅ Google geladen");
+
+}
+
+// ==========================================
 // LOGIN
-// =====================================================
+// ==========================================
 
 export async function loginSheets() {
 
@@ -104,7 +149,7 @@ export async function loginSheets() {
 
             });
 
-            console.log("✅ Google Login voltooid");
+            console.log("✅ Ingelogd");
 
             resolve(accessToken);
 
@@ -120,9 +165,25 @@ export async function loginSheets() {
 
 }
 
-// =====================================================
+// ==========================================
+// STATUS
+// ==========================================
+
+export function isLoggedIn() {
+
+    return accessToken !== null;
+
+}
+
+export function getAccessToken() {
+
+    return accessToken;
+
+}
+
+// ==========================================
 // UITLOGGEN
-// =====================================================
+// ==========================================
 
 export function logoutSheets() {
 
@@ -137,41 +198,9 @@ export function logoutSheets() {
     console.log("🚪 Uitgelogd");
 
 }
-
-// =====================================================
-// STATUS
-// =====================================================
-
-export function isLoggedIn() {
-
-    return accessToken !== null;
-
-}
-
-export function getAccessToken() {
-
-    return accessToken;
-
-}
-
-// =====================================================
-// SPREADSHEET TEST
-// =====================================================
-
-export async function testConnection() {
-
-    await loginSheets();
-
-    return await gapi.client.sheets.spreadsheets.get({
-
-        spreadsheetId: SPREADSHEET_ID
-
-    });
-
-}
-// =====================================================
-// RIJEN OPHALEN
-// =====================================================
+// ==========================================
+// SPREADSHEET LEZEN
+// ==========================================
 
 export async function getRows(range) {
 
@@ -186,19 +215,26 @@ export async function getRows(range) {
 
         });
 
-    return response.result.values || [];
+    if (!response.result.values) {
+
+        return [];
+
+    }
+
+    return response.result.values;
 
 }
 
-// =====================================================
+// ==========================================
 // PROEFTRAININGEN
-// =====================================================
+// ==========================================
 
 export async function getProeftrainingen() {
 
-    const rows = await getRows("Formulierreacties 1!A:H");
+    const rows =
+        await getRows("Formulierreacties 1!A:H");
 
-    if (!rows.length) {
+    if (rows.length === 0) {
 
         return [];
 
@@ -226,61 +262,149 @@ export async function getProeftrainingen() {
 
 }
 
-// =====================================================
+// ==========================================
 // RIJ TOEVOEGEN
-// =====================================================
+// ==========================================
 
 export async function appendRow(range, values) {
 
     await loginSheets();
 
-    return await gapi.client.sheets.spreadsheets.values.append({
+    return await gapi.client
+        .sheets.spreadsheets.values.append({
 
-        spreadsheetId: SPREADSHEET_ID,
+            spreadsheetId: SPREADSHEET_ID,
 
-        range: range,
+            range: range,
 
-        valueInputOption: "USER_ENTERED",
+            valueInputOption: "USER_ENTERED",
 
-        resource: {
+            resource: {
 
-            values: [values]
+                values: [
 
-        }
+                    values
 
-    });
+                ]
+
+            }
+
+        });
 
 }
 
-// =====================================================
-// RIJ BIJWERKEN
-// =====================================================
+// ==========================================
+// RIJ WIJZIGEN
+// ==========================================
 
 export async function updateRow(range, values) {
 
     await loginSheets();
 
-    return await gapi.client.sheets.spreadsheets.values.update({
+    return await gapi.client
+        .sheets.spreadsheets.values.update({
 
-        spreadsheetId: SPREADSHEET_ID,
+            spreadsheetId: SPREADSHEET_ID,
 
-        range: range,
+            range: range,
 
-        valueInputOption: "USER_ENTERED",
+            valueInputOption: "USER_ENTERED",
 
-        resource: {
+            resource: {
 
-            values: [values]
+                values: [
 
-        }
+                    values
 
-    });
+                ]
+
+            }
+
+        });
 
 }
 
-// =====================================================
+// ==========================================
+// CEL LEZEN
+// ==========================================
+
+export async function getCell(range) {
+
+    const rows =
+        await getRows(range);
+
+    if (rows.length === 0) {
+
+        return "";
+
+    }
+
+    if (rows[0].length === 0) {
+
+        return "";
+
+    }
+
+    return rows[0][0];
+
+}
+
+// ==========================================
+// CEL SCHRIJVEN
+// ==========================================
+
+export async function setCell(range, value) {
+
+    await loginSheets();
+
+    return await gapi.client
+        .sheets.spreadsheets.values.update({
+
+            spreadsheetId: SPREADSHEET_ID,
+
+            range: range,
+
+            valueInputOption: "USER_ENTERED",
+
+            resource: {
+
+                values: [
+
+                    [
+
+                        value
+
+                    ]
+
+                ]
+
+            }
+
+        });
+
+}
+
+// ==========================================
+// ALLE BLADEN
+// ==========================================
+
+export async function getSpreadsheet() {
+
+    await loginSheets();
+
+    const response =
+        await gapi.client.sheets.spreadsheets.get({
+
+            spreadsheetId: SPREADSHEET_ID
+
+        });
+
+    return response.result;
+
+}
+// ==========================================
 // RIJ VERWIJDEREN
-// =====================================================
+// ==========================================
 
 export async function deleteRow(rowNumber, sheetId = 0) {
 
@@ -322,9 +446,9 @@ export async function deleteRow(rowNumber, sheetId = 0) {
 
 }
 
-// =====================================================
-// VERVERSEN
-// =====================================================
+// ==========================================
+// BLAD VERVERSEN
+// ==========================================
 
 export async function refreshSheets() {
 
@@ -332,27 +456,122 @@ export async function refreshSheets() {
 
 }
 
-// =====================================================
-// SPREADSHEET INFO
-// =====================================================
+// ==========================================
+// SHEET ID OPHALEN
+// ==========================================
 
-export async function getSpreadsheetInfo() {
+export async function getSheetId(sheetName) {
 
-    await loginSheets();
+    const spreadsheet =
+        await getSpreadsheet();
 
-    const response =
-        await gapi.client.sheets.spreadsheets.get({
+    const sheet =
+        spreadsheet.sheets.find(
 
-            spreadsheetId: SPREADSHEET_ID
+            s => s.properties.title === sheetName
 
-        });
+        );
 
-    return response.result;
+    if (!sheet) {
+
+        throw new Error(
+
+            "Werkblad niet gevonden: " + sheetName
+
+        );
+
+    }
+
+    return sheet.properties.sheetId;
 
 }
 
-// =====================================================
-// EINDE
-// =====================================================
+// ==========================================
+// CONTROLE VERBINDING
+// ==========================================
 
-console.log("🧡 HV Novitas Google Sheets gereed");
+export async function testConnection() {
+
+    try {
+
+        await loginSheets();
+
+        const spreadsheet =
+            await getSpreadsheet();
+
+        console.log(
+            "✅ Verbonden met:",
+            spreadsheet.properties.title
+        );
+
+        return true;
+
+    }
+    catch (err) {
+
+        console.error(
+            "❌ Geen verbinding",
+            err
+        );
+
+        return false;
+
+    }
+
+}
+
+// ==========================================
+// HULPFUNCTIES
+// ==========================================
+
+export function formatDate(date) {
+
+    const d = new Date(date);
+
+    if (isNaN(d)) {
+
+        return date;
+
+    }
+
+    return d.toLocaleDateString("nl-NL");
+
+}
+
+export function formatDateTime(date) {
+
+    const d = new Date(date);
+
+    if (isNaN(d)) {
+
+        return date;
+
+    }
+
+    return d.toLocaleString("nl-NL");
+
+}
+
+export function isEmpty(value) {
+
+    return value === undefined ||
+           value === null ||
+           value === "";
+
+}
+
+export function sleep(ms) {
+
+    return new Promise(resolve => {
+
+        setTimeout(resolve, ms);
+
+    });
+
+}
+
+// ==========================================
+// EINDE
+// ==========================================
+
+console.log("🧡 HV Novitas Google Sheets geladen");
