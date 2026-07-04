@@ -1,0 +1,31 @@
+</div>
+
+<script type="module" src="cms.js"></script>
+
+<script>
+
+const image = document.getElementById("image");
+const preview = document.getElementById("preview");
+
+image.addEventListener("change", () => {
+
+    const bestand = image.files[0];
+
+    if (!bestand) {
+
+        preview.style.display = "none";
+        preview.removeAttribute("src");
+        return;
+
+    }
+
+    preview.src = URL.createObjectURL(bestand);
+    preview.style.display = "block";
+
+});
+
+</script>
+
+</body>
+
+</html>
