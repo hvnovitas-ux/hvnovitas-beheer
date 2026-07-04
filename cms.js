@@ -184,7 +184,7 @@ function createNewsCard(id, news) {
 
             <p>
 
-                ${escapeHtml(news.summary ?? "")}
+                ${escapeHtml(timestamp ?? "")}
 
             </p>
 
