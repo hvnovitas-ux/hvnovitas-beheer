@@ -1,6 +1,13 @@
 // ==========================================
 // IMPORTS (ALTIJD BOVENAAN)
 // ==========================================
+form.addEventListener("submit", (e) => {
+
+    e.preventDefault();
+
+    alert("SUBMIT WERKT");
+
+});
 
 import { db } from "./firebase.js";
 import { uploadFile } from "./drive.js";
