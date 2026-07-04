@@ -1,5 +1,7 @@
-console.log("🔥 CMS FILE IS GELOADED");
-console.log("FORM:", document.getElementById("newsForm"));
+// ==========================================
+// IMPORTS (ALTIJD BOVENAAN)
+// ==========================================
+
 import { db } from "./firebase.js";
 import { uploadFile } from "./drive.js";
 
@@ -10,15 +12,21 @@ import {
     get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-/* ==========================================
-   CONFIG
-========================================== */
+// ==========================================
+// DEBUG
+// ==========================================
+
+console.log("🔥 CMS JS GELADEN");
+
+// ==========================================
+// CONFIG
+// ==========================================
 
 const NEWS_PATH = "news";
 
-/* ==========================================
-   DOM
-========================================== */
+// ==========================================
+// DOM
+// ==========================================
 
 const form = document.getElementById("newsForm");
 const titleInput = document.getElementById("title");
@@ -28,17 +36,17 @@ const newsList = document.getElementById("newsList");
 const submitButton = document.getElementById("submitButton");
 const cancelButton = document.getElementById("cancelButton");
 
-/* ==========================================
-   STATE
-========================================== */
+// ==========================================
+// STATE
+// ==========================================
 
 let editingId = null;
 let currentImage = "";
 let currentImagePath = "";
 
-/* ==========================================
-   FORM SUBMIT
-========================================== */
+// ==========================================
+// FORM SUBMIT
+// ==========================================
 
 form.addEventListener("submit", async (e) => {
 
@@ -57,26 +65,28 @@ form.addEventListener("submit", async (e) => {
 
     try {
 
-        /* ==========================================
-           FOTO UPLOAD (DRIVE)
-        ========================================== */
+        // ==========================================
+        // UPLOAD FOTO NAAR DRIVE
+        // ==========================================
 
         let image = currentImage;
         let imagePath = currentImagePath;
 
         if (file) {
 
+            console.log("📷 Upload gestart");
+
             const upload = await uploadFile(file);
 
-            console.log("📷 DRIVE UPLOAD RESULT:", upload);
+            console.log("📷 Upload result:", upload);
 
-            image = upload.image;     // <-- URL
-            imagePath = upload.id;    // <-- Drive file ID
+            image = upload.image;
+            imagePath = upload.id;
         }
 
-        /* ==========================================
-           DATA OPBOUW
-        ========================================== */
+        // ==========================================
+        // DATA OPBOUW
+        // ==========================================
 
         const data = {
             title,
@@ -91,9 +101,9 @@ form.addEventListener("submit", async (e) => {
             })
         };
 
-        /* ==========================================
-           FIREBASE SAVE
-        ========================================== */
+        // ==========================================
+        // SAVE FIREBASE
+        // ==========================================
 
         if (editingId) {
 
@@ -118,9 +128,9 @@ form.addEventListener("submit", async (e) => {
     submitButton.disabled = false;
 });
 
-/* ==========================================
-   NEWS LOAD
-========================================== */
+// ==========================================
+// LOAD NEWS
+// ==========================================
 
 async function loadNews() {
 
@@ -152,11 +162,13 @@ async function loadNews() {
     });
 }
 
-/* ==========================================
-   START
-========================================== */
+// ==========================================
+// START
+// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
+
     loadNews();
-    console.log("🧡 CMS CLEAN + DRIVE READY");
+
+    console.log("🧡 CMS READY");
 });
