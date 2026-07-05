@@ -1,27 +1,38 @@
-newsList.innerHTML = items.map(n => {
+import { db } from "./firebase.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-    let img = "";
+const newsList = document.getElementById("newsList");
 
-    if (n.image) {
-        img = `<img src="${n.image}" style="width:100%; border-radius:10px; margin-top:10px;">`;
-    }
+onValue(ref(db, "news"), (snapshot) => {
 
-    return `
-        <div class="news-item">
+    const data = snapshot.val();
 
-            <h3>${n.title}</h3>
+    const items = Object.entries(data || {}).map(([id, value]) => ({
+        id,
+        ...value
+    }));
 
-            ${img}
+    newsList.innerHTML = items.reverse().map(n => {
 
-            <p>${n.text}</p>
+        return `
+            <div class="news-item">
 
-            <small>📅 ${n.date} 🕒 ${n.time}</small>
+                <h3>${n.title}</h3>
 
-            <div class="actions">
-                <button onclick="editNews('${n.id}', '${n.title}', '${n.text}')">Edit</button>
-                <button onclick="deleteNews('${n.id}')" style="background:red;">Delete</button>
+                ${n.image ? `<img src="${n.image}" style="width:100%; border-radius:10px;">` : ""}
+
+                <p>${n.text}</p>
+
+                <small>📅 ${n.date} 🕒 ${n.time}</small>
+
+                <div class="actions">
+                    <button onclick="editNews('${n.id}', '${n.title}', '${n.text}', '${n.image}')">Edit</button>
+                    <button onclick="deleteNews('${n.id}')" style="background:red;">Delete</button>
+                </div>
+
             </div>
+        `;
 
-        </div>
-    `;
-}).join("");
+    }).join("");
+
+});
