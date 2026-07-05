@@ -1,32 +1,16 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { db } from "./firebase.js";
+import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS SYSTEM START");
+import {
+    images,
+    addImage,
+    resetImages,
+    render
+} from "./images.js";
 
-// =========================
-// FIREBASE INIT
-// =========================
-const firebaseConfig = {
-    apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
-    authDomain: "hv-novitas-beheer.firebaseapp.com",
-    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "hv-novitas-beheer",
-    storageBucket: "hv-novitas-beheer.appspot.com",
-    messagingSenderId: "71716605241",
-    appId: "1:71716605241:web:b7e87d680b7499421a6ce8"
-};
+console.log("🧡 PRO CMS LOADED");
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-console.log("🧡 FIREBASE READY");
-
-// =========================
-// START CMS
-// =========================
 document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("🟢 CMS READY");
 
     const form = document.getElementById("newsForm");
     const status = document.getElementById("status");
@@ -42,39 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =========================
-    // IMAGE SYSTEM (MAX 3)
+    // IMAGE HANDLING
     // =========================
-    let images = [];
-
-    function updateUI() {
-        preview.innerHTML = "";
-
-        images.forEach(img => {
-            const el = document.createElement("img");
-            el.src = img;
-            el.style.width = "100%";
-            el.style.marginTop = "10px";
-            el.style.borderRadius = "10px";
-            preview.appendChild(el);
-        });
-
-        imgStatus.textContent = `${images.length} / 3 foto's`;
-    }
-
-    function toBase64(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.readAsDataURL(file);
-        });
-    }
-
-    addBtn?.addEventListener("click", async () => {
-
-        if (images.length >= 3) {
-            alert("Max 3 foto's toegestaan");
-            return;
-        }
+    addBtn?.addEventListener("click", () => {
 
         const file = imgInput.files[0];
 
@@ -83,12 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const base64 = await toBase64(file);
-
-        images.push(base64);
-
-        updateUI();
-
+        addImage(file, preview, imgStatus);
         imgInput.value = "";
     });
 
@@ -103,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const text = document.getElementById("text").value.trim();
 
         if (!title || !text) {
-            alert("Vul titel en tekst in");
+            alert("Vul alles in");
             return;
         }
 
@@ -120,19 +69,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 time: new Date().toLocaleTimeString("nl-NL")
             });
 
-            console.log("✅ SAVED");
-
             status.textContent = "✅ Opgeslagen!";
 
             form.reset();
-            images = [];
-            preview.innerHTML = "";
-            imgStatus.textContent = "0 / 3 foto's";
+            resetImages();
+            render(preview, imgStatus);
 
         } catch (err) {
 
-            console.error("❌ ERROR:", err);
-            status.textContent = "❌ Opslaan mislukt";
+            console.error("FIREBASE ERROR:", err);
+            status.textContent = "❌ Fout bij opslaan";
         }
 
     });
