@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, push, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS RESET LOADED");
+console.log("🧡 CMS LOADED");
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let imageData = "";
     window.editingId = null;
 
-    // =====================
-    // IMAGE LOAD
-    // =====================
+    // ======================
+    // IMAGE
+    // ======================
     imgInput?.addEventListener("change", (e) => {
 
         const file = e.target.files[0];
@@ -29,9 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
         reader.readAsDataURL(file);
     });
 
-    // =====================
-    // CREATE / UPDATE
-    // =====================
+    // ======================
+    // SUBMIT (CREATE + EDIT)
+    // ======================
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             status.textContent = "⏳ Opslaan...";
 
+            // EDIT MODE
             if (window.editingId) {
 
                 await update(ref(db, "news/" + window.editingId), {
@@ -58,7 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 window.editingId = null;
 
-            } else {
+            } 
+            // CREATE MODE
+            else {
 
                 await push(ref(db, "news"), {
                     title,
@@ -83,19 +86,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-// =====================
+// ======================
 // DELETE
-// =====================
+// ======================
 window.deleteNews = async (id) => {
 
-    if (!confirm("Verwijderen?")) return;
+    if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
 
     await remove(ref(db, "news/" + id));
 };
 
-// =====================
+// ======================
 // EDIT
-// =====================
+// ======================
 window.editNews = (id, title, text, image) => {
 
     document.getElementById("title").value = title;
