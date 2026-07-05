@@ -7,15 +7,37 @@ export async function uploadFile(file) {
 
     try {
 
-        const base64 = await new Promise((resolve) => {
+        if (!file) {
+            return { image: "" };
+        }
+
+        // =========================
+        // FILE → BASE64
+        // =========================
+        const base64 = await new Promise((resolve, reject) => {
 
             const reader = new FileReader();
-            reader.onload = () => resolve(reader.result.split(",")[1]);
+
+            reader.onload = () => {
+                const result = reader.result;
+                if (!result) return reject("No file data");
+                resolve(result.split(",")[1]);
+            };
+
+            reader.onerror = () => reject("FileReader error");
+
             reader.readAsDataURL(file);
         });
 
+        // =========================
+        // TIMEOUT FIX (BELANGRIJK)
+        // =========================
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+
         const res = await fetch(SCRIPT_URL, {
             method: "POST",
+            signal: controller.signal,
             headers: {
                 "Content-Type": "application/json"
             },
@@ -26,23 +48,34 @@ export async function uploadFile(file) {
             })
         });
 
+        clearTimeout(timeout);
+
         console.log("📡 STATUS:", res.status);
 
+        // =========================
+        // SAFE TEXT READ
+        // =========================
         const text = await res.text();
 
         console.log("📦 RAW:", text);
 
-        let data;
+        // =========================
+        // SAFE JSON PARSE
+        // =========================
+        let data = null;
 
         try {
             data = JSON.parse(text);
         } catch (e) {
-            console.warn("⚠️ JSON error, fallback image gebruikt");
+            console.warn("⚠️ JSON invalid → fallback image");
             return { image: "" };
         }
 
-        if (!data?.image) {
-            console.warn("⚠️ Geen image ontvangen, fallback");
+        // =========================
+        // VALIDATION
+        // =========================
+        if (!data || !data.image) {
+            console.warn("⚠️ No image in response");
             return { image: "" };
         }
 
@@ -50,9 +83,8 @@ export async function uploadFile(file) {
 
     } catch (err) {
 
-        console.error("❌ DRIVE FAIL (SAFE MODE):", err);
+        console.error("❌ DRIVE FAIL SAFE:", err);
 
-        // 🔥 BELANGRIJK: CMS MAG NIET STOPPEN
         return { image: "" };
     }
 }
