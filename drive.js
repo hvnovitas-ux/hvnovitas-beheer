@@ -5,16 +5,14 @@ export async function uploadFile(file) {
 
     console.log("🚀 DRIVE UPLOAD START");
 
-    const base64 = await new Promise((resolve) => {
-
-        const reader = new FileReader();
-
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-
-        reader.readAsDataURL(file);
-    });
-
     try {
+
+        const base64 = await new Promise((resolve) => {
+
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(",")[1]);
+            reader.readAsDataURL(file);
+        });
 
         const res = await fetch(SCRIPT_URL, {
             method: "POST",
@@ -32,27 +30,29 @@ export async function uploadFile(file) {
 
         const text = await res.text();
 
-        console.log("📦 RAW RESPONSE:", text);
+        console.log("📦 RAW:", text);
 
         let data;
 
         try {
             data = JSON.parse(text);
         } catch (e) {
-            throw new Error("Apps Script gaf geen geldige JSON terug");
+            console.warn("⚠️ JSON error, fallback image gebruikt");
+            return { image: "" };
         }
 
-        if (!data.image) {
-            throw new Error("Geen image URL ontvangen");
+        if (!data?.image) {
+            console.warn("⚠️ Geen image ontvangen, fallback");
+            return { image: "" };
         }
-
-        console.log("🖼️ UPLOAD OK:", data);
 
         return data;
 
     } catch (err) {
 
-        console.error("❌ DRIVE ERROR:", err);
-        throw err;
+        console.error("❌ DRIVE FAIL (SAFE MODE):", err);
+
+        // 🔥 BELANGRIJK: CMS MAG NIET STOPPEN
+        return { image: "" };
     }
 }
