@@ -1,8 +1,6 @@
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 Firebase INIT START");
-
 const firebaseConfig = {
     apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
     authDomain: "hv-novitas-beheer.firebaseapp.com",
@@ -16,5 +14,3 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const db = getDatabase(app);
-
-console.log("🧡 Firebase READY");
