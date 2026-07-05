@@ -4,24 +4,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>HV Novitas CMS</title>
 
 <style>
-body { font-family: Arial; background:#f4f6f8; margin:0; }
-.topbar { background:#ff6a00; color:white; padding:15px; font-size:20px; }
-.container { max-width:900px; margin:auto; padding:20px; }
 
-.box { background:white; padding:15px; border-radius:12px; margin-bottom:20px; }
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
 
-input, textarea { width:100%; padding:10px; margin:5px 0; }
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
-button { background:#ff6a00; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer; }
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
 
-.news-item { background:#fff; padding:10px; margin:10px 0; border-radius:10px; }
+.box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
 
-.actions { display:flex; gap:10px; }
-.actions button { background:#333; }
-.actions .delete { background:red; }
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+button {
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.news-item {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.actions button {
+    background: #333;
+}
+
+.actions button:last-child {
+    background: red;
+}
+
 </style>
 
 </head>
@@ -32,37 +87,42 @@ button { background:#ff6a00; color:white; border:none; padding:10px; border-radi
 
 <div class="container">
 
-<!-- FORM -->
-<div class="box">
+    <!-- FORM -->
+    <div class="box">
 
-<h2>Nieuw bericht</h2>
+        <h2>Nieuw bericht</h2>
 
-<form id="newsForm">
+        <form id="newsForm">
 
-<input type="text" id="title" placeholder="Titel">
-<textarea id="text" placeholder="Bericht"></textarea>
-<input type="file" id="image">
+            <input type="text" id="title" placeholder="Titel" required>
 
-<button type="submit">Publiceren</button>
+            <textarea id="text" placeholder="Bericht" required></textarea>
 
-</form>
+            <input type="file" id="image">
 
-<p id="status"></p>
+            <button type="submit">Publiceren</button>
+
+        </form>
+
+        <p id="status"></p>
+
+    </div>
+
+    <!-- LIST (BELANGRIJK VOOR EDIT/DELETE) -->
+    <div class="box">
+
+        <h2>Berichten beheren</h2>
+
+        <div id="newsList"></div>
+
+    </div>
 
 </div>
 
-<!-- LIST -->
-<div class="box">
-
-<h2>Berichten beheren</h2>
-<div id="newsList"></div>
-
-</div>
-
-</div>
-
+<!-- SCRIPTS -->
 <script type="module" src="firebase.js"></script>
 <script type="module" src="cms.js"></script>
 
 </body>
+
 </html>
