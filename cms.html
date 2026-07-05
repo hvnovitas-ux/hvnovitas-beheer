@@ -61,73 +61,43 @@ img {
     margin-top: 10px;
 }
 
-.preview {
-    margin-top: 10px;
-}
-
-.status {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
-}
-
 </style>
-
 </head>
 
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-🧡 HV NOVITAS CMS
-</div>
+<div class="topbar">🧡 HV NOVITAS CMS</div>
 
 <div class="container">
 
-    <!-- =========================
-         NIEUW BERICHT
-    ========================== -->
-    <div class="box">
+<div class="box">
 
-        <h2>Nieuw bericht</h2>
+<h2>Nieuw bericht</h2>
 
-        <form id="newsForm">
+<form id="newsForm">
 
-            <input type="text" id="title" placeholder="Titel" required>
+<input type="text" id="title" placeholder="Titel">
 
-            <textarea id="text" placeholder="Bericht" rows="6" required></textarea>
+<textarea id="text" placeholder="Bericht"></textarea>
 
-            <!-- IMAGE UPLOAD (MAX 3 SYSTEEM) -->
-            <input type="file" id="image">
+<input type="file" id="image">
 
-            <button type="button" id="addImage">Foto toevoegen</button>
+<button type="button" id="addImage">Foto toevoegen</button>
 
-            <div id="preview" class="preview"></div>
+<div id="preview"></div>
 
-            <p id="imgStatus" class="status">0 / 3 foto's</p>
+<p id="imgStatus">0 / 3 foto's</p>
 
-            <button type="submit" id="publish">Publiceren</button>
+<button type="submit">Publiceren</button>
 
-        </form>
+</form>
 
-        <p id="status"></p>
-
-    </div>
-
-    <!-- =========================
-         NEWS LIST
-    ========================== -->
-    <div class="box">
-
-        <h2>Nieuws</h2>
-
-        <div id="newsList"></div>
-
-    </div>
+<p id="status"></p>
 
 </div>
 
-<!-- SCRIPTS -->
+</div>
+
 <script type="module" src="firebase.js"></script>
 <script type="module" src="images.js"></script>
 <script type="module" src="cms.js"></script>
