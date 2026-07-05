@@ -1,28 +1,15 @@
 import { db } from "./firebase.js";
 import { ref, push, remove, update, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS LOADED");
+console.log("🧡 TEXT CMS LOADED");
 
 document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("newsForm");
     const status = document.getElementById("status");
     const list = document.getElementById("newsList");
-    const imgInput = document.getElementById("image");
 
-    let imageData = "";
     window.editingId = null;
-    window.currentImage = "";
-
-    // ================= IMAGE =================
-    imgInput?.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = () => imageData = reader.result;
-        reader.readAsDataURL(file);
-    });
 
     // ================= SAVE / EDIT =================
     form.addEventListener("submit", async (e) => {
@@ -34,27 +21,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!title || !text) return;
 
+        status.textContent = "⏳ Opslaan...";
+
         try {
 
-            status.textContent = "⏳ Opslaan...";
-
+            // ================= EDIT =================
             if (window.editingId) {
 
                 await update(ref(db, "news/" + window.editingId), {
                     title,
                     text,
-                    image: imageData || window.currentImage || ""
+                    date: new Date().toLocaleDateString("nl-NL"),
+                    time: new Date().toLocaleTimeString("nl-NL")
                 });
 
                 window.editingId = null;
-                window.currentImage = "";
 
-            } else {
+            }
+
+            // ================= CREATE =================
+            else {
 
                 await push(ref(db, "news"), {
                     title,
                     text,
-                    image: imageData,
                     created: Date.now(),
                     date: new Date().toLocaleDateString("nl-NL"),
                     time: new Date().toLocaleTimeString("nl-NL")
@@ -62,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             form.reset();
-            imageData = "";
             status.textContent = "✅ Opgeslagen!";
 
         } catch (err) {
@@ -71,15 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ================= LOAD LIST =================
+    // ================= LIST =================
     onValue(ref(db, "news"), (snapshot) => {
 
         const data = snapshot.val();
 
-        if (!list) {
-            console.error("❌ newsList ontbreekt in HTML");
-            return;
-        }
+        if (!list) return;
 
         const items = Object.entries(data || {}).map(([id, value]) => ({
             id,
@@ -91,13 +77,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <b>${n.title}</b>
 
+                <p>${n.text}</p>
+
+                <small>${n.date || ""} ${n.time || ""}</small>
+
                 <div class="actions">
-                    <button onclick="editNews('${n.id}', '${n.title}', '${n.text}', '${n.image || ""}')">Edit</button>
+                    <button onclick="editNews('${n.id}', '${n.title}', '${n.text}')">Edit</button>
                     <button onclick="deleteNews('${n.id}')" style="background:red;">Delete</button>
                 </div>
 
             </div>
         `).join("");
+
     });
 
 });
@@ -105,19 +96,16 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================= DELETE =================
 window.deleteNews = async (id) => {
 
-    if (!id) return;
-
     if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
 
     await remove(ref(db, "news/" + id));
 };
 
 // ================= EDIT =================
-window.editNews = (id, title, text, image) => {
+window.editNews = (id, title, text) => {
 
-    document.getElementById("title").value = title || "";
-    document.getElementById("text").value = text || "";
+    document.getElementById("title").value = title;
+    document.getElementById("text").value = text;
 
     window.editingId = id;
-    window.currentImage = image || "";
 };
