@@ -39,4 +39,3 @@ export function render(previewEl, statusEl) {
     });
 
     statusEl.textContent = `${images.length} / 3 foto's`;
-}
