@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, push, remove, update, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS FINAL LOADED");
+console.log("🧡 CMS LOADED");
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -12,28 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let imageData = "";
     window.editingId = null;
-    window.currentImage = "";
 
-    // =====================
-    // IMAGE
-    // =====================
+    // ================= IMAGE =================
     imgInput?.addEventListener("change", (e) => {
-
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-
-        reader.onload = () => {
-            imageData = reader.result;
-        };
-
+        reader.onload = () => imageData = reader.result;
         reader.readAsDataURL(file);
     });
 
-    // =====================
-    // SUBMIT (CREATE + EDIT)
-    // =====================
+    // ================= SAVE / EDIT =================
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
@@ -47,21 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            // ================= EDIT =================
             if (window.editingId) {
 
                 await update(ref(db, "news/" + window.editingId), {
                     title,
                     text,
-                    image: imageData || window.currentImage || ""
+                    image: imageData
                 });
 
                 window.editingId = null;
-                window.currentImage = "";
-            }
 
-            // ================= CREATE =================
-            else {
+            } else {
 
                 await push(ref(db, "news"), {
                     title,
@@ -83,9 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // =====================
-    // LOAD LIST
-    // =====================
+    // ================= LIST =================
     onValue(ref(db, "news"), (snapshot) => {
 
         const data = snapshot.val();
@@ -107,32 +91,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
             </div>
         `).join("");
-
     });
 
 });
 
-// =====================
-// DELETE (FIXED)
-// =====================
+// ================= DELETE =================
 window.deleteNews = async (id) => {
 
-    if (!id) return;
-
-    const ok = confirm("Weet je zeker dat je dit wilt verwijderen?");
-    if (!ok) return;
+    if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
 
     await remove(ref(db, "news/" + id));
 };
 
-// =====================
-// EDIT (FIXED)
-// =====================
+// ================= EDIT =================
 window.editNews = (id, title, text, image) => {
 
     document.getElementById("title").value = title || "";
     document.getElementById("text").value = text || "";
 
     window.editingId = id;
-    window.currentImage = image || "";
+    window.imageData = image || "";
 };
