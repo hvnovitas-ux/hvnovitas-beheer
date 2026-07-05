@@ -1,5 +1,5 @@
 import { db } from "./firebase.js";
-import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { ref, push, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 console.log("🧡 CMS LOADED");
 
@@ -7,37 +7,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("newsForm");
     const status = document.getElementById("status");
-
     const imgInput = document.getElementById("image");
 
-    let imageData = ""; // 👈 1 FOTO ONLY
-
-    if (!form) {
-        console.error("❌ FORM NIET GEVONDEN");
-        return;
-    }
+    let imageData = "";
+    window.editingId = null;
 
     // =========================
-    // IMAGE SELECT (1 FOTO)
+    // IMAGE HANDLING
     // =========================
-    imgInput?.addEventListener("change", async (e) => {
+    imgInput?.addEventListener("change", (e) => {
 
         const file = e.target.files[0];
-
         if (!file) return;
 
         const reader = new FileReader();
 
         reader.onload = () => {
-            imageData = reader.result; // 👈 base64 opslaan
-            console.log("🖼 FOTO INGELADEN");
+            imageData = reader.result;
         };
 
         reader.readAsDataURL(file);
     });
 
     // =========================
-    // SUBMIT
+    // SUBMIT (CREATE + EDIT)
     // =========================
     form.addEventListener("submit", async (e) => {
 
@@ -55,28 +48,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
             status.textContent = "⏳ Opslaan...";
 
-            await push(ref(db, "news"), {
-                title,
-                text,
-                image: imageData, // 👈 BELANGRIJK
-                created: Date.now(),
-                date: new Date().toLocaleDateString("nl-NL"),
-                time: new Date().toLocaleTimeString("nl-NL")
-            });
+            // EDIT MODE
+            if (window.editingId) {
 
-            console.log("✅ OPGESLAGEN");
+                await update(ref(db, "news/" + window.editingId), {
+                    title,
+                    text
+                });
+
+                window.editingId = null;
+
+            } 
+            // CREATE MODE
+            else {
+
+                await push(ref(db, "news"), {
+                    title,
+                    text,
+                    image: imageData,
+                    created: Date.now(),
+                    date: new Date().toLocaleDateString("nl-NL"),
+                    time: new Date().toLocaleTimeString("nl-NL")
+                });
+            }
 
             status.textContent = "✅ Opgeslagen!";
-
             form.reset();
-            imageData = ""; // reset na save
+            imageData = "";
 
         } catch (err) {
-
-            console.error("❌ ERROR:", err);
-            status.textContent = "❌ Opslaan mislukt";
+            console.error(err);
+            status.textContent = "❌ Fout bij opslaan";
         }
 
     });
 
 });
+
+// =========================
+// DELETE FUNCTION (GLOBAL)
+// =========================
+window.deleteNews = async (id) => {
+
+    const ok = confirm("Weet je zeker dat je dit wilt verwijderen?");
+    if (!ok) return;
+
+    await remove(ref(db, "news/" + id));
+};
+
+// =========================
+// EDIT FUNCTION (GLOBAL)
+// =========================
+window.editNews = (id, title, text) => {
+
+    document.getElementById("title").value = title;
+    document.getElementById("text").value = text;
+
+    window.editingId = id;
