@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<title>Agenda HV Novitas</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f0f10;
+    color: white;
+}
+
+.topbar {
+    background: #ff6a00;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+.item {
+    background: #1a1a1d;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid #ff6a00;
+    border-radius: 8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">🧡 HV NOVITAS AGENDA</div>
+
+<div class="container">
+
+    <div id="agendaList"></div>
+
+</div>
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="agenda-view.js"></script>
+
+</body>
+</html>
