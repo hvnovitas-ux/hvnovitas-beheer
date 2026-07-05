@@ -11,7 +11,7 @@
 
 body {
     margin: 0;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background: #f4f6f8;
 }
 
@@ -43,24 +43,32 @@ body {
     margin-top: 10px;
 }
 
+small {
+    color: gray;
+}
+
 </style>
 
 </head>
 
 <body>
 
-<div class="topbar">🧡 HV NOVITAS NIEUWS</div>
+<div class="topbar">
+🧡 HV NOVITAS NIEUWS
+</div>
 
 <div class="container">
 
-    <!-- BELANGRIJK: DIT MOET BESTAAN -->
+    <!-- 🔥 BELANGRIJK: DIT MOET BESTAAN -->
     <div id="newsList"></div>
 
 </div>
 
-<!-- SCRIPTS -->
+<!-- FIREBASE -->
 <script type="module" src="firebase.js"></script>
-<script type="module" src="news.js"></script>
+
+<!-- ONLY VIEW SCRIPT -->
+<script type="module" src="home-news.js"></script>
 
 </body>
 
