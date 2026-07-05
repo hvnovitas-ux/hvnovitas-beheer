@@ -1,111 +1,175 @@
-// ==========================================
-// HV NOVITAS CMS - STABLE VERSION
-// ==========================================
-
 import { db } from "./firebase.js";
 import { uploadFile } from "./drive.js";
 
 import {
     ref,
-    push
+    push,
+    onValue,
+    remove,
+    update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 // ==========================================
-// START
+// ELEMENTEN
 // ==========================================
 
-console.log("🔥 CMS JS GELADEN");
+const form = document.getElementById("newsForm");
+const title = document.getElementById("title");
+const text = document.getElementById("text");
+const image = document.getElementById("image");
+
+const publish = document.getElementById("publish");
+const reset = document.getElementById("reset");
+const melding = document.getElementById("melding");
+const newsList = document.getElementById("newsList");
+
+let editID = null;
 
 // ==========================================
-// DOM READY
+// RESET
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+function clearForm() {
+    title.value = "";
+    text.value = "";
+    image.value = "";
+    editID = null;
+}
 
-    const form = document.getElementById("newsForm");
-    const titleInput = document.getElementById("title");
-    const textInput = document.getElementById("text");
-    const imageInput = document.getElementById("image");
-    const status = document.getElementById("status");
+// ==========================================
+// PUBLISH
+// ==========================================
 
-    if (!form) {
-        console.error("❌ FORM NIET GEVONDEN");
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!title.value.trim() || !text.value.trim()) {
+        alert("Vul titel en bericht in");
         return;
     }
 
-    console.log("✅ FORM READY");
+    try {
 
-    // ======================================
-    // SUBMIT
-    // ======================================
+        let imageUrl = "";
 
-    form.addEventListener("submit", async (e) => {
+        const file = image.files[0];
 
-        e.preventDefault();
-
-        console.log("🚀 SUBMIT CLICKED");
-
-        const title = titleInput.value.trim();
-        const text = textInput.value.trim();
-        const file = imageInput.files[0];
-
-        if (!title || !text) {
-            alert("Vul titel en tekst in");
-            return;
+        if (file) {
+            const upload = await uploadFile(file);
+            imageUrl = upload.image;
         }
 
-        try {
+        const data = {
+            title: title.value.trim(),
+            text: text.value.trim(),
+            image: imageUrl,
+            created: Date.now(),
+            date: new Date().toLocaleDateString("nl-NL"),
+            time: new Date().toLocaleTimeString("nl-NL", {
+                hour: "2-digit",
+                minute: "2-digit"
+            })
+        };
 
-            status.innerText = "⏳ Uploaden...";
+        if (editID) {
 
-            let imageUrl = "";
+            await update(ref(db, "news/" + editID), data);
+            melding.textContent = "✅ Nieuws bijgewerkt";
 
-            // ==================================
-            // DRIVE UPLOAD (APPS SCRIPT)
-            // ==================================
-
-            if (file) {
-
-                console.log("📷 Upload start...");
-
-                const upload = await uploadFile(file);
-
-                console.log("📦 Upload result:", upload);
-
-                imageUrl = upload.image;
-            }
-
-            // ==================================
-            // FIREBASE SAVE
-            // ==================================
-
-            const data = {
-                title,
-                text,
-                image: imageUrl,
-                timestamp: Date.now(),
-                date: new Date().toLocaleDateString("nl-NL"),
-                time: new Date().toLocaleTimeString("nl-NL", {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                })
-            };
+        } else {
 
             await push(ref(db, "news"), data);
-
-            console.log("🔥 SAVED TO FIREBASE");
-
-            status.innerText = "✅ Gepubliceerd!";
-
-            form.reset();
-
-        } catch (error) {
-
-            console.error("❌ ERROR:", error);
-
-            status.innerText = "❌ Fout bij upload";
+            melding.textContent = "✅ Nieuws gepubliceerd";
         }
 
-    });
+        clearForm();
+
+    } catch (err) {
+
+        console.error(err);
+        melding.textContent = "❌ Fout bij opslaan";
+    }
 
 });
+
+// ==========================================
+// LOAD NEWS (BEHOUD UI)
+// ==========================================
+
+onValue(ref(db, "news"), (snapshot) => {
+
+    let items = [];
+
+    snapshot.forEach((item) => {
+        items.push({
+            id: item.key,
+            ...item.val()
+        });
+    });
+
+    items.sort((a, b) => b.created - a.created);
+
+    if (items.length === 0) {
+        newsList.innerHTML = "Nog geen nieuws geplaatst.";
+        return;
+    }
+
+    let html = "";
+
+    items.forEach((b) => {
+
+        html += `
+<div class="bericht">
+
+    ${b.image ? `<img src="${b.image}" style="width:120px;border-radius:8px;">` : ""}
+
+    <h3>${b.title}</h3>
+
+    <small>📅 ${b.date} 🕒 ${b.time}</small>
+
+    <p>${b.text}</p>
+
+    <button onclick="editNews('${b.id}')">✏️ Bewerken</button>
+    <button onclick="deleteNews('${b.id}')">🗑️ Verwijderen</button>
+
+</div>
+`;
+    });
+
+    newsList.innerHTML = html;
+
+});
+
+// ==========================================
+// DELETE
+// ==========================================
+
+window.deleteNews = async function (id) {
+
+    if (!confirm("Verwijderen?")) return;
+
+    await remove(ref(db, "news/" + id));
+};
+
+// ==========================================
+// EDIT
+// ==========================================
+
+window.editNews = function (id) {
+
+    onValue(ref(db, "news/" + id), (snap) => {
+
+        const b = snap.val();
+
+        if (!b) return;
+
+        editID = id;
+
+        title.value = b.title;
+        text.value = b.text;
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+    }, { onlyOnce: true });
+};
+🔥 WAT DIT NU
