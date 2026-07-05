@@ -2,42 +2,65 @@
 <html lang="nl">
 
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HV Novitas Nieuws</title>
 
-    <title>HV Novitas Nieuws</title>
+<style>
 
-    <link rel="stylesheet" href="home-news.css">
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
+
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.news-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.news-item img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+</style>
 
 </head>
 
 <body>
 
-    <!-- ==========================================
-         HEADER
-    =========================================== -->
+<div class="topbar">🧡 HV NOVITAS NIEUWS</div>
 
-    <div style="background:#ff6a00;color:white;padding:20px;font-size:22px;font-weight:bold;">
-        🧡 HV Novitas Nieuws
-    </div>
+<div class="container">
 
-    <!-- ==========================================
-         NIEUWS CONTAINER (CLEAN)
-    =========================================== -->
+    <!-- BELANGRIJK: DIT MOET BESTAAN -->
+    <div id="newsList"></div>
 
-    <main style="max-width:900px;margin:auto;padding:20px;">
+</div>
 
-        <div id="news"></div>
-
-    </main>
-
-    <!-- ==========================================
-         SCRIPTS
-    =========================================== -->
-
-    <script type="module" src="firebase.js"></script>
-    <script type="module" src="home-news.js"></script>
+<!-- SCRIPTS -->
+<script type="module" src="firebase.js"></script>
+<script type="module" src="news.js"></script>
 
 </body>
 
