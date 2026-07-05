@@ -1,102 +1,14 @@
-}
+<form id="newsForm">
 
-.box {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-}
+    <input type="text" id="title" placeholder="Titel">
+    <textarea id="text" placeholder="Bericht"></textarea>
 
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
+    <input type="file" id="image">
 
-button {
-    background: #ff6a00;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-}
+    <button id="publish" type="submit">Publiceren</button>
 
-.news-item {
-    background: #fff;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+</form>
 
-.actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
+<p id="status"></p>
 
-.actions button {
-    background: #333;
-}
-
-.actions .delete {
-    background: #e74c3c;
-}
-
-img {
-    width: 100%;
-    border-radius: 10px;
-    margin-top: 10px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="topbar">
-🧡 HV NOVITAS CMS
-</div>
-
-<div class="container">
-
-    <!-- FORM -->
-    <div class="box">
-
-        <h2>Nieuw bericht</h2>
-
-        <input type="text" id="title" placeholder="Titel">
-
-        <textarea id="text" rows="6" placeholder="Bericht"></textarea>
-
-        <!-- FOTO UPLOAD -->
-        <input type="file" id="image">
-
-        <button id="publish">Publiceren</button>
-
-        <p id="status"></p>
-
-    </div>
-
-    <!-- LIST -->
-    <div class="box">
-
-        <h2>Nieuws</h2>
-        <div id="newsList"></div>
-
-    </div>
-
-</div>
-
-<script type="module" src="firebase.js"></script>
-<script type="module" src="drive.js"></script>
-<script type="module" src="cms.js"></script>
-
-</body>
-</html>
+<div id="newsList"></div>
