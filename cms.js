@@ -3,12 +3,15 @@ import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-da
 
 console.log("🧡 CMS SAFE START");
 
-const form = document.getElementById("newsForm");
-const status = document.getElementById("status");
+document.addEventListener("DOMContentLoaded", () => {
 
-if (!form) {
-    console.error("❌ newsForm niet gevonden");
-} else {
+    const form = document.getElementById("newsForm");
+    const status = document.getElementById("status");
+
+    if (!form) {
+        console.error("❌ newsForm niet gevonden");
+        return;
+    }
 
     form.addEventListener("submit", async (e) => {
 
@@ -31,6 +34,7 @@ if (!form) {
             time: new Date().toLocaleTimeString("nl-NL")
         });
 
-        status.textContent = "✅ Werkt (basis versie)";
+        status.textContent = "✅ Werkt nu echt";
     });
-}
+
+});
