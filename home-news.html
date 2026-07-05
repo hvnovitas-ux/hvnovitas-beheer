@@ -4,7 +4,6 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>HV Novitas Nieuws</title>
@@ -16,33 +15,28 @@
 <body>
 
     <!-- ==========================================
-         NIEUWS
+         HEADER
     =========================================== -->
 
-    <main id="nieuws">
+    <div style="background:#ff6a00;color:white;padding:20px;font-size:22px;font-weight:bold;">
+        🧡 HV Novitas Nieuws
+    </div>
 
-        <h2>📰 Laatste Nieuws</h2>
+    <!-- ==========================================
+         NIEUWS CONTAINER (CLEAN)
+    =========================================== -->
 
-        <div id="news">
+    <main style="max-width:900px;margin:auto;padding:20px;">
 
-            <article class="kaart">
-
-                <div class="tekst">
-
-                    Nieuws wordt geladen...
-
-                </div>
-
-            </article>
-
-        </div>
+        <div id="news"></div>
 
     </main>
 
     <!-- ==========================================
-         JAVASCRIPT
+         SCRIPTS
     =========================================== -->
 
+    <script type="module" src="firebase.js"></script>
     <script type="module" src="home-news.js"></script>
 
 </body>
