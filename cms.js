@@ -1,15 +1,18 @@
 import { db } from "./firebase.js";
 import { ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NEWS CMS CLEAN LOADED");
+console.log("🧡 HV NOVITAS CMS LOADED");
 
+// ================= DOM =================
 const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
 const status = document.getElementById("status");
 const list = document.getElementById("newsList");
 
+// ================= STATE =================
 window.editingId = null;
+window.newsCache = {};
 
 // ================= CREATE / UPDATE =================
 form.addEventListener("submit", async (e) => {
@@ -51,7 +54,7 @@ form.addEventListener("submit", async (e) => {
 
     } catch (err) {
         console.error(err);
-        status.textContent = "❌ Fout";
+        status.textContent = "❌ Fout bij opslaan";
     }
 });
 
@@ -63,9 +66,12 @@ onValue(ref(db, "news"), (snapshot) => {
     if (!list) return;
 
     if (!data) {
-        list.innerHTML = "<p>Geen nieuws</p>";
+        list.innerHTML = "<p style='color:#aaa'>Geen nieuws</p>";
         return;
     }
+
+    // cache voor edit
+    window.newsCache = data;
 
     const items = Object.entries(data).map(([id, v]) => ({
         id,
@@ -82,8 +88,8 @@ onValue(ref(db, "news"), (snapshot) => {
 
             <br><br>
 
-            <button onclick="editNews('${n.id}', ${JSON.stringify(n)})">Edit</button>
-            <button onclick="deleteNews('${n.id}')">Delete</button>
+            <button onclick="editNews('${n.id}')">✏️ Edit</button>
+            <button onclick="deleteNews('${n.id}')">🗑️ Delete</button>
 
         </div>
     `).join("");
@@ -96,10 +102,16 @@ window.deleteNews = async (id) => {
 };
 
 // ================= EDIT =================
-window.editNews = (id, data) => {
+window.editNews = (id) => {
+
+    const data = window.newsCache[id];
+
+    if (!data) return;
 
     title.value = data.title;
     text.value = data.text;
 
     window.editingId = id;
+
+    status.textContent = "✏️ Bewerken actief...";
 };
