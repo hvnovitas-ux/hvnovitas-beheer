@@ -3,9 +3,15 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 
 const newsList = document.getElementById("newsList");
 
+if (!newsList) {
+    console.error("❌ newsList ontbreekt in HTML");
+}
+
 onValue(ref(db, "news"), (snapshot) => {
 
     const data = snapshot.val();
+
+    if (!newsList) return;
 
     if (!data) {
         newsList.innerHTML = "Geen nieuws";
