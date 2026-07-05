@@ -13,8 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let imageData = "";
     window.editingId = null;
 
-    // IMAGE
+    // ================= IMAGE =================
     imgInput?.addEventListener("change", (e) => {
+
         const file = e.target.files[0];
         if (!file) return;
 
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         reader.readAsDataURL(file);
     });
 
-    // SAVE / EDIT
+    // ================= SAVE / EDIT =================
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
@@ -62,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         status.textContent = "✅ Opgeslagen!";
     });
 
-    // LOAD LIST
+    // ================= LOAD LIST =================
     onValue(ref(db, "news"), (snapshot) => {
 
         const data = snapshot.val();
@@ -78,11 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <b>${n.title}</b>
 
                 <div class="actions">
-
                     <button onclick="editNews('${n.id}', '${n.title}', '${n.text}')">Edit</button>
-
-                    <button class="delete" onclick="deleteNews('${n.id}')">Delete</button>
-
+                    <button onclick="deleteNews('${n.id}')" style="background:red;">Delete</button>
                 </div>
 
             </div>
@@ -91,15 +89,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-// DELETE
+// ================= DELETE (FIXED) =================
 window.deleteNews = async (id) => {
-    if (!confirm("Verwijderen?")) return;
+
+    if (!id) return;
+
+    const ok = confirm("Verwijderen?");
+    if (!ok) return;
+
     await remove(ref(db, "news/" + id));
 };
 
-// EDIT
+// ================= EDIT (FIXED) =================
 window.editNews = (id, title, text) => {
+
     document.getElementById("title").value = title;
     document.getElementById("text").value = text;
+
     window.editingId = id;
 };
