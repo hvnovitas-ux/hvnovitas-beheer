@@ -1,42 +1,151 @@
 import { db } from "./firebase.js";
-import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const newsList = document.getElementById("newsList");
+import {
+    ref,
+    query,
+    orderByChild,
+    limitToLast,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-onValue(ref(db, "news"), (snapshot) => {
+// ==========================================
+// CONTAINER
+// ==========================================
 
-    const data = snapshot.val();
+const newsContainer = document.getElementById("news");
 
-    if (!data) {
-        newsList.innerHTML = "Geen nieuws";
+if (!newsContainer) {
+    console.error("❌ #news container niet gevonden");
+    throw new Error("Container ontbreekt");
+}
+
+// ==========================================
+// QUERY (SYNC MET CMS → created)
+// ==========================================
+
+const newsQuery = query(
+    ref(db, "news"),
+    orderByChild("created"),
+    limitToLast(3)
+);
+
+// ==========================================
+// SAFE TEXT
+// ==========================================
+
+function escapeHTML(text = "") {
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+function formatText(text = "") {
+    return escapeHTML(text).replace(/\n/g, "<br>");
+}
+
+// ==========================================
+// IMAGE
+// ==========================================
+
+function createImage(item) {
+
+    if (!item.image) return "";
+
+    return `
+        <img
+            class="nieuwsfoto"
+            src="${item.image}"
+            alt="${escapeHTML(item.title || "")}"
+            loading="lazy">
+    `;
+}
+
+// ==========================================
+// CARD
+// ==========================================
+
+function createCard(item) {
+
+    const text = item.text || "";
+
+    const shortText =
+        text.length > 180
+            ? text.substring(0, 180) + "..."
+            : text;
+
+    return `
+        <article class="kaart">
+
+            ${createImage(item)}
+
+            <h3>${escapeHTML(item.title || "")}</h3>
+
+            <div class="datum">
+                📅 ${item.date || ""} &nbsp;&nbsp; 🕒 ${item.time || ""}
+            </div>
+
+            <div class="tekst">
+                ${formatText(shortText)}
+            </div>
+
+        </article>
+    `;
+}
+
+// ==========================================
+// LOAD NEWS
+// ==========================================
+
+onValue(newsQuery, (snapshot) => {
+
+    const newsItems = [];
+
+    snapshot.forEach((item) => {
+        newsItems.push({
+            id: item.key,
+            ...item.val()
+        });
+    });
+
+    // BELANGRIJK: stabiele sort
+    newsItems.sort((a, b) =>
+        (b.created || 0) - (a.created || 0)
+    );
+
+    if (newsItems.length === 0) {
+
+        newsContainer.innerHTML = `
+            <article class="kaart">
+                <h3>📰 Nog geen nieuws</h3>
+                <div class="tekst">
+                    Er zijn nog geen nieuwsberichten.
+                </div>
+            </article>
+        `;
         return;
     }
 
-    const items = Object.entries(data).map(([id, value]) => ({
-        id,
-        ...value
-    }));
+    newsContainer.innerHTML = newsItems
+        .map(createCard)
+        .join("");
 
-    newsList.innerHTML = items.reverse().map(n => {
+}, (error) => {
 
-        return `
-            <div class="news-item">
+    console.error("❌ NEWS ERROR:", error);
 
-                <h3>${n.title}</h3>
-
-                ${n.image ? `<img src="${n.image}" style="width:100%; border-radius:10px; margin-top:10px;">` : ""}
-
-                <p>${n.text}</p>
-
-                <small>📅 ${n.date} 🕒 ${n.time}</small>
-
-                <div class="actions">
-                    <button onclick="editNews('${n.id}', '${n.title}', '${n.text}', '${n.image}')">Edit</button>
-                    <button onclick="deleteNews('${n.id}')" style="background:red;">Delete</button>
-                </div>
-
+    newsContainer.innerHTML = `
+        <article class="kaart">
+            <h3>❌ Fout</h3>
+            <div class="tekst">
+                Nieuws kon niet worden geladen.
             </div>
-        `;
-    }).join("");
-
+        </article>
+    `;
 });
+
+// ==========================================
+// LOG
+// ==========================================
+
+console.log("🧡 HOME NEWS RESTORED OK");
