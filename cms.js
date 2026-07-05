@@ -6,10 +6,11 @@ import {
     push,
     onValue,
     remove,
-    update
+    update,
+    get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 HV NOVITAS CMS LOADED");
+console.log("🧡 CMS DEFINITIVE LOADED");
 
 // ==========================================
 // ELEMENTEN
@@ -160,16 +161,16 @@ function deleteNews(id) {
 }
 
 // ==========================================
-// EDIT
+// EDIT (FIXED - NO onValue BUG)
 // ==========================================
 
-function editNews(id) {
+async function editNews(id) {
 
-    const itemRef = ref(db, "news/" + id);
+    try {
 
-    onValue(itemRef, (snap) => {
-
+        const snap = await get(ref(db, "news/" + id));
         const data = snap.val();
+
         if (!data) return;
 
         editID = id;
@@ -179,11 +180,13 @@ function editNews(id) {
 
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-    }, { onlyOnce: true });
+    } catch (err) {
+        console.error("EDIT ERROR:", err);
+    }
 }
 
 // ==========================================
-// EXPORT NAAR WINDOW
+// EXPORT
 // ==========================================
 
 window.deleteNews = deleteNews;
