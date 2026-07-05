@@ -1,62 +1,89 @@
+<!DOCTYPE html>
+<html lang="nl">
+
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HV Novitas Agenda</title>
 
-    <title>HV Novitas Beheer - Agenda</title>
+<style>
 
-    <link rel="stylesheet" href="style.css">
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f0f10; /* zwart */
+    color: white;
+}
+
+/* TOPBAR */
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* ITEM CARD */
+.item {
+    background: #1a1a1d;
+    border-left: 5px solid #ff6a00;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+
+/* TITEL */
+.item b {
+    color: #ff6a00;
+    font-size: 18px;
+}
+
+/* DATUM */
+.date {
+    color: #aaa;
+    font-size: 14px;
+}
+
+/* TEXT */
+.item p {
+    color: #ddd;
+}
+
+/* HOVER EFFECT */
+.item:hover {
+    transform: scale(1.01);
+    transition: 0.2s;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<header class="topbar">
+<div class="topbar">
+NOVITAS AGENDA
+</div>
 
-    <h1>📅 Agenda</h1>
+<div class="container">
 
-    <nav>
+    <div id="agendaList"></div>
 
-        <a href="dashboard.html">Dashboard</a>
-        <a href="news.html">Nieuws</a>
-        <a href="proeftrainingen.html">Proeftrainingen</a>
-        <a href="contact.html">Contact</a>
-        <a href="vrijwilligers.html">Vrijwilligers</a>
-        <a href="agenda.html" class="active">Agenda</a>
+</div>
 
-    </nav>
-
-</header>
-
-<main>
-
-    <section class="content">
-
-        <h2>Agenda</h2>
-
-        <div id="status">
-
-            Agenda wordt geladen...
-
-        </div>
-
-        <div id="agenda">
-
-            <div class="loading">
-
-                Nog geen activiteiten gevonden.
-
-            </div>
-
-        </div>
-
-    </section>
-
-</main>
-
-<script type="module" src="dashboard.js"></script>
-<script type="module" src="agenda.js"></script>
+<script type="module" src="firebase.js"></script>
+<script type="module" src="agenda-view.js"></script>
 
 </body>
-
 </html>
