@@ -14,7 +14,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 // ==========================================
-// HV NOVITAS BEHEER - FIREBASE
+// HV NOVITAS FIREBASE CONFIG
 // ==========================================
 
 const firebaseConfig = {
@@ -32,41 +32,30 @@ const firebaseConfig = {
     messagingSenderId: "71716605241",
 
     appId: "1:71716605241:web:b7e87d680b7499421a6ce8"
-
 };
 
 // ==========================================
-// INITIALISEREN
+// INIT
 // ==========================================
 
 const app = initializeApp(firebaseConfig);
 
 // ==========================================
-// AUTHENTICATION
+// SERVICES
 // ==========================================
 
 const auth = getAuth(app);
-
 const provider = new GoogleAuthProvider();
 
 provider.setCustomParameters({
     prompt: "select_account"
 });
 
-// ==========================================
-// DATABASE
-// ==========================================
-
 const db = getDatabase(app);
-
-// ==========================================
-// STORAGE
-// ==========================================
-
 const storage = getStorage(app);
 
 // ==========================================
-// EXPORTS
+// EXPORT
 // ==========================================
 
 export {
@@ -77,7 +66,7 @@ export {
 };
 
 // ==========================================
-// INFO
+// LOG (SAFE)
 // ==========================================
 
-console.log("🧡 HV Novitas Beheer succesvol verbonden met Firebase");
+console.log("🧡 HV Novitas Firebase OK");
