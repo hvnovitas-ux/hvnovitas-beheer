@@ -15,14 +15,13 @@ import {
 const newsContainer = document.getElementById("news");
 
 if (!newsContainer) {
-
     console.error("❌ #news container niet gevonden");
     throw new Error("Container ontbreekt");
 }
 
 // ==========================================
-// QUERY (laatste 3 nieuws)
-   // ==========================================
+// QUERY (laatste 3 berichten)
+// ==========================================
 
 const newsQuery = query(
     ref(db, "news"),
@@ -31,7 +30,7 @@ const newsQuery = query(
 );
 
 // ==========================================
-// HTML HELPERS
+// HELPERS
 // ==========================================
 
 function escapeHTML(text = "") {
@@ -41,75 +40,35 @@ function escapeHTML(text = "") {
         .replace(/>/g, "&gt;");
 }
 
-function formatText(text = "") {
-    return escapeHTML(text).replace(/\n/g, "<br>");
-}
-
 // ==========================================
-// CARD
+// CARD BUILDER
 // ==========================================
 
 function createCard(item) {
 
-    const shortText = item.text.length > 150
-        ? item.text.substring(0, 150) + "..."
-        : item.text;
+    const textValue = item.text || "";
+
+    const shortText = textValue.length > 150
+        ? textValue.substring(0, 150) + "..."
+        : textValue;
 
     return `
 <article class="kaart">
 
-    <h3>${escapeHTML(item.title)}</h3>
+    <h3>${escapeHTML(item.title || "")}</h3>
 
     <div class="datum">
         📅 ${item.date || ""} &nbsp;&nbsp;
         🕒 ${item.time || ""}
     </div>
 
-    <p id="short-${item.id}">
-        ${formatText(shortText)}
-    </p>
+    ${item.image ? `<img src="${item.image}" style="width:100%;border-radius:10px;">` : ""}
 
-    <p id="full-${item.id}" style="display:none;">
-        ${formatText(item.text)}
-    </p>
-
-    <button
-        id="btn-${item.id}"
-        onclick="toggleNews('${item.id}')">
-        Lees verder
-    </button>
+    <p>${escapeHTML(shortText)}</p>
 
 </article>
 `;
 }
-
-// ==========================================
-// TOGGLE LEES VERDER
-// ==========================================
-
-window.toggleNews = function (id) {
-
-    const shortEl = document.getElementById("short-" + id);
-    const fullEl = document.getElementById("full-" + id);
-    const btn = document.getElementById("btn-" + id);
-
-    if (!shortEl || !fullEl || !btn) return;
-
-    const open = fullEl.style.display === "block";
-
-    if (open) {
-
-        fullEl.style.display = "none";
-        shortEl.style.display = "block";
-        btn.innerText = "Lees verder";
-
-    } else {
-
-        fullEl.style.display = "block";
-        shortEl.style.display = "none";
-        btn.innerText = "Minder tonen";
-    }
-};
 
 // ==========================================
 // LOAD NEWS
@@ -120,16 +79,11 @@ onValue(newsQuery, (snapshot) => {
     const items = [];
 
     snapshot.forEach((item) => {
-
         items.push({
             id: item.key,
             ...item.val()
         });
-
     });
-
-    // nieuwste eerst
-    items.sort((a, b) => b.created - a.created);
 
     if (items.length === 0) {
 
@@ -166,4 +120,4 @@ onValue(newsQuery, (snapshot) => {
 // START LOG
 // ==========================================
 
-console.log("🧡 HV Novitas NEWS.JS geladen");
+console.log("🧡 HV Novitas NEWS.JS REBUILD OK");
