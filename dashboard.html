@@ -2,81 +2,76 @@
 <html lang="nl">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>HV Novitas Dashboard</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f0f10;
+    color: white;
+}
+
+/* TOPBAR */
+.topbar {
+    background: #ff6a00;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* MENU */
+.menu {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* ITEMS */
+.menu a {
+    display: block;
+    background: #1a1a1d;
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border-left: 4px solid #ff6a00;
+    font-size: 16px;
+}
+
+/* HOVER */
+.menu a:hover {
+    background: #2a2a2f;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="dashboard">
+<div class="topbar">
+🧡 HV NOVITAS DASHBOARD
+</div>
 
-    <!-- TOPBAR -->
-    <header class="topbar">
+<div class="menu">
 
-        <div class="logo-area">
+    <a href="cms.html">📰 Nieuws beheren</a>
 
-            <img src="images/logo.png" class="logo" alt="HV Novitas">
+    <a href="proeftrainingen.html">🏃 Proeftrainingen</a>
 
-            <div>
-                <h1>HV NOVITAS CMS</h1>
-                <p>Beheer Dashboard</p>
-            </div>
+    <a href="sponsors.html">🤝 Sponsors</a>
 
-        </div>
-
-    </header>
-
-    <!-- MENU -->
-    <main class="dashboard-main">
-
-        <div class="dashboard-grid">
-
-            <!-- 🧡 CMS (BEHEER) -->
-            <a href="cms.html" class="dashboard-card">
-                <div class="card-icon">📰</div>
-                <h2>Nieuws beheren</h2>
-            </a>
-
-            <!-- 👁 NEWS (PUBLIC VIEW) -->
-            <a href="news.html" class="dashboard-card">
-                <div class="card-icon">👁️</div>
-                <h2>Nieuws bekijken</h2>
-            </a>
-
-            <!-- OVERIGE -->
-            <a href="proeftrainingen.html" class="dashboard-card">
-                <div class="card-icon">🏃</div>
-                <h2>Proeftrainingen</h2>
-            </a>
-
-            <a href="agenda.html" class="dashboard-card">
-                <div class="card-icon">📅</div>
-                <h2>Agenda</h2>
-            </a>
-
-            <a href="sponsors.html" class="dashboard-card">
-                <div class="card-icon">🤝</div>
-                <h2>Sponsors</h2>
-            </a>
-
-            <a href="instellingen.html" class="dashboard-card">
-                <div class="card-icon">⚙️</div>
-                <h2>Instellingen</h2>
-            </a>
-
-        </div>
-
-    </main>
+    <a href="instellingen.html">⚙️ Instellingen</a>
 
 </div>
 
-<script type="module" src="dashboard.js"></script>
-
 </body>
+
 </html>
