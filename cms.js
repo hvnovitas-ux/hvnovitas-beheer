@@ -1,111 +1,67 @@
 import { db } from "./firebase.js";
-import { ref, push, remove, update, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 TEXT CMS LOADED");
+console.log("🧡 AGENDA CMS LOADED");
 
-document.addEventListener("DOMContentLoaded", () => {
+const title = document.getElementById("title");
+const date = document.getElementById("date");
+const time = document.getElementById("time");
+const text = document.getElementById("text");
+const status = document.getElementById("status");
+const list = document.getElementById("agendaList");
 
-    const form = document.getElementById("newsForm");
-    const status = document.getElementById("status");
-    const list = document.getElementById("newsList");
+document.getElementById("save").addEventListener("click", async () => {
 
-    window.editingId = null;
+    if (!title.value || !date.value) {
+        alert("Vul titel en datum in");
+        return;
+    }
 
-    // ================= SAVE / EDIT =================
-    form.addEventListener("submit", async (e) => {
-
-        e.preventDefault();
-
-        const title = document.getElementById("title").value.trim();
-        const text = document.getElementById("text").value.trim();
-
-        if (!title || !text) return;
-
-        status.textContent = "⏳ Opslaan...";
-
-        try {
-
-            // ================= EDIT =================
-            if (window.editingId) {
-
-                await update(ref(db, "news/" + window.editingId), {
-                    title,
-                    text,
-                    date: new Date().toLocaleDateString("nl-NL"),
-                    time: new Date().toLocaleTimeString("nl-NL")
-                });
-
-                window.editingId = null;
-
-            }
-
-            // ================= CREATE =================
-            else {
-
-                await push(ref(db, "news"), {
-                    title,
-                    text,
-                    created: Date.now(),
-                    date: new Date().toLocaleDateString("nl-NL"),
-                    time: new Date().toLocaleTimeString("nl-NL")
-                });
-            }
-
-            form.reset();
-            status.textContent = "✅ Opgeslagen!";
-
-        } catch (err) {
-            console.error(err);
-            status.textContent = "❌ Fout";
-        }
+    await push(ref(db, "agenda"), {
+        title: title.value,
+        date: date.value,
+        time: time.value,
+        text: text.value,
+        created: Date.now()
     });
 
-    // ================= LIST =================
-    onValue(ref(db, "news"), (snapshot) => {
+    status.textContent = "✅ Opgeslagen";
 
-        const data = snapshot.val();
+    title.value = "";
+    date.value = "";
+    time.value = "";
+    text.value = "";
+});
 
-        if (!list) return;
+// ================= LOAD =================
+onValue(ref(db, "agenda"), (snapshot) => {
 
-        const items = Object.entries(data || {}).map(([id, value]) => ({
-            id,
-            ...value
-        }));
+    const data = snapshot.val();
 
-        list.innerHTML = items.reverse().map(n => `
-            <div class="news-item">
+    if (!data) {
+        list.innerHTML = "<p style='color:#aaa'>Geen agenda items</p>";
+        return;
+    }
 
-                <b>${n.title}</b>
+    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
 
-                <p>${n.text}</p>
+    list.innerHTML = items.reverse().map(i => `
+        <div class="item">
 
-                <small>${n.date || ""} ${n.time || ""}</small>
+            <b>${i.title}</b><br>
 
-                <div class="actions">
-                    <button onclick="editNews('${n.id}', '${n.title}', '${n.text}')">Edit</button>
-                    <button onclick="deleteNews('${n.id}')" style="background:red;">Delete</button>
-                </div>
+            <span style="color:#aaa">📅 ${i.date} 🕒 ${i.time || ""}</span>
 
-            </div>
-        `).join("");
+            <p>${i.text || ""}</p>
 
-    });
+            <button onclick="deleteItem('${i.id}')">Delete</button>
+
+        </div>
+    `).join("");
 
 });
 
 // ================= DELETE =================
-window.deleteNews = async (id) => {
-
-    if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
-
-    await remove(ref(db, "news/" + id));
-};
-
-// ================= EDIT =================
-window.editNews = (id, title, text) => {
-
-    document.getElementById("title").value = title;
-    document.getElementById("text").value = text;
-
-    window.editingId = id;
+window.deleteItem = async (id) => {
+    await remove(ref(db, "agenda/" + id));
 };
