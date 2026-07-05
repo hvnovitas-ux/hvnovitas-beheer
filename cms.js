@@ -1,4 +1,5 @@
-import { db, storage } from "./firebase.js";
+import { db } from "./firebase.js";
+import { uploadFile } from "./drive.js";
 
 import {
     ref,
@@ -9,13 +10,7 @@ import {
     get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-import {
-    ref as sRef,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
-
-console.log("🧡 CMS PRO CLEAN LOADED");
+console.log("🧡 CMS DRIVE FINAL LOADED");
 
 // ELEMENTEN
 const title = document.getElementById("title");
@@ -27,7 +22,10 @@ const newsList = document.getElementById("newsList");
 
 let editID = null;
 
-// SAVE
+// ============================
+// PUBLISH (CREATE / UPDATE)
+// ============================
+
 publish.onclick = async () => {
 
     if (!title.value || !text.value) {
@@ -41,15 +39,12 @@ publish.onclick = async () => {
 
         let imageUrl = "";
 
-        const file = image?.files?.[0]; // SAFE FIX
+        const file = image?.files?.[0];
 
+        // ✔ DRIVE UPLOAD (geen Firebase Storage meer)
         if (file) {
-
-            const imgRef = sRef(storage, "news/" + Date.now() + "_" + file.name);
-
-            await uploadBytes(imgRef, file);
-
-            imageUrl = await getDownloadURL(imgRef);
+            const upload = await uploadFile(file);
+            imageUrl = upload?.image || "";
         }
 
         const data = {
@@ -75,6 +70,7 @@ publish.onclick = async () => {
             status.textContent = "✅ Gepubliceerd";
         }
 
+        // reset
         title.value = "";
         text.value = "";
         image.value = "";
@@ -83,11 +79,14 @@ publish.onclick = async () => {
     } catch (err) {
 
         console.error("CMS ERROR:", err);
-        status.textContent = "❌ Fout bij opslaan";
+        status.textContent = "❌ Opslaan mislukt";
     }
 };
 
-// LOAD
+// ============================
+// LOAD NEWS
+// ============================
+
 onValue(ref(db, "news"), (snap) => {
 
     const items = [];
@@ -98,39 +97,70 @@ onValue(ref(db, "news"), (snap) => {
 
     items.sort((a, b) => (b.created || 0) - (a.created || 0));
 
+    if (items.length === 0) {
+        newsList.innerHTML = "<p>Geen nieuws</p>";
+        return;
+    }
+
     newsList.innerHTML = items.map(n => `
         <div class="news-item">
 
             <h3>${n.title || ""}</h3>
+
             <small>${n.date || ""} ${n.time || ""}</small>
 
-            ${n.image ? `<img src="${n.image}" style="width:100%;border-radius:10px;">` : ""}
+            ${n.image ? `<img src="${n.image}" alt="news image">` : ""}
 
             <p>${n.text || ""}</p>
 
-            <button onclick="editNews('${n.id}')">Edit</button>
-            <button onclick="deleteNews('${n.id}')">Delete</button>
+            <div class="actions">
+
+                <button onclick="editNews('${n.id}')">Edit</button>
+                <button onclick="deleteNews('${n.id}')">Delete</button>
+
+            </div>
 
         </div>
     `).join("");
 
 });
 
+// ============================
 // DELETE
+// ============================
+
 window.deleteNews = async (id) => {
-    await remove(ref(db, "news/" + id));
+
+    if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
+
+    try {
+        await remove(ref(db, "news/" + id));
+    } catch (err) {
+        console.error("DELETE ERROR:", err);
+    }
 };
 
+// ============================
 // EDIT
+// ============================
+
 window.editNews = async (id) => {
 
-    const snap = await get(ref(db, "news/" + id));
-    const data = snap.val();
+    try {
 
-    if (!data) return;
+        const snap = await get(ref(db, "news/" + id));
+        const data = snap.val();
 
-    title.value = data.title || "";
-    text.value = data.text || "";
+        if (!data) return;
 
-    editID = id;
+        editID = id;
+
+        title.value = data.title || "";
+        text.value = data.text || "";
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+    } catch (err) {
+        console.error("EDIT ERROR:", err);
+    }
 };
