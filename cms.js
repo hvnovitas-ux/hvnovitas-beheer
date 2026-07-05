@@ -1,52 +1,29 @@
 import { db } from "./firebase.js";
-import { uploadFile } from "./drive.js";
 
 import {
     ref,
     push,
     onValue,
     remove,
-    update,
-    get
+    update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS DEFINITIVE LOADED");
+console.log("🧡 NEW CMS LOADED");
 
-// ==========================================
 // ELEMENTEN
-// ==========================================
-
-const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
-const image = document.getElementById("image");
+const publish = document.getElementById("publish");
+const status = document.getElementById("status");
 const newsList = document.getElementById("newsList");
-const status = document.getElementById("melding");
 
 let editID = null;
 
-// ==========================================
-// RESET FORM
-// ==========================================
+// PUBLISH
+publish.onclick = async () => {
 
-function resetForm() {
-    title.value = "";
-    text.value = "";
-    image.value = "";
-    editID = null;
-    status.textContent = "";
-}
-
-// ==========================================
-// SUBMIT (CREATE + UPDATE)
-// ==========================================
-
-form.addEventListener("submit", async (e) => {
-
-    e.preventDefault();
-
-    if (!title.value.trim() || !text.value.trim()) {
-        alert("Titel en bericht zijn verplicht");
+    if (!title.value || !text.value) {
+        alert("Vul alles in");
         return;
     }
 
@@ -54,19 +31,9 @@ form.addEventListener("submit", async (e) => {
 
         status.textContent = "⏳ Opslaan...";
 
-        let imageUrl = "";
-
-        const file = image.files?.[0];
-
-        if (file) {
-            const upload = await uploadFile(file);
-            imageUrl = upload?.image || "";
-        }
-
         const data = {
-            title: title.value.trim(),
-            text: text.value.trim(),
-            image: imageUrl,
+            title: title.value,
+            text: text.value,
             created: Date.now(),
             date: new Date().toLocaleDateString("nl-NL"),
             time: new Date().toLocaleTimeString("nl-NL", {
@@ -86,108 +53,59 @@ form.addEventListener("submit", async (e) => {
             status.textContent = "✅ Gepubliceerd";
         }
 
-        resetForm();
+        title.value = "";
+        text.value = "";
+        editID = null;
 
     } catch (err) {
-
-        console.error("CMS ERROR:", err);
-        status.textContent = "❌ Fout bij opslaan";
+        console.error(err);
+        status.textContent = "❌ Fout";
     }
-});
+};
 
-// ==========================================
 // LOAD NEWS
-// ==========================================
+onValue(ref(db, "news"), (snap) => {
 
-const newsRef = ref(db, "news");
+    let items = [];
 
-onValue(newsRef, (snapshot) => {
-
-    const items = [];
-
-    snapshot.forEach((item) => {
-        items.push({
-            id: item.key,
-            ...item.val()
-        });
+    snap.forEach((i) => {
+        items.push({ id: i.key, ...i.val() });
     });
 
     items.sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    if (items.length === 0) {
-        newsList.innerHTML = "<p>Geen nieuws geplaatst</p>";
-        return;
-    }
-
-    newsList.innerHTML = items.map(item => {
-
-        const img = item.image
-            ? `<img src="${item.image}" style="width:100%;border-radius:10px;margin-top:10px;">`
-            : "";
-
-        return `
+    newsList.innerHTML = items.map(n => `
         <div class="news-item">
 
-            <h3>${item.title || ""}</h3>
+            <h3>${n.title}</h3>
+            <small>${n.date} ${n.time}</small>
 
-            <small>${item.date || ""} • ${item.time || ""}</small>
+            <p>${n.text}</p>
 
-            ${img}
+            <div class="actions">
 
-            <p>${item.text || ""}</p>
-
-            <div style="display:flex;gap:10px;margin-top:10px;">
-
-                <button onclick="editNews('${item.id}')">✏️ Edit</button>
-                <button onclick="deleteNews('${item.id}')">🗑️ Delete</button>
+                <button onclick="editNews('${n.id}')">Edit</button>
+                <button class="delete" onclick="deleteNews('${n.id}')">Delete</button>
 
             </div>
 
         </div>
-        `;
-    }).join("");
-
+    `).join("");
 });
 
-// ==========================================
 // DELETE
-// ==========================================
+window.deleteNews = async (id) => {
+    await remove(ref(db, "news/" + id));
+};
 
-function deleteNews(id) {
+// EDIT
+window.editNews = async (id) => {
 
-    if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
+    const snap = await get(ref(db, "news/" + id));
+    const data = snap.val();
 
-    remove(ref(db, "news/" + id));
-}
+    title.value = data.title;
+    text.value = data.text;
 
-// ==========================================
-// EDIT (FIXED - NO onValue BUG)
-// ==========================================
-
-async function editNews(id) {
-
-    try {
-
-        const snap = await get(ref(db, "news/" + id));
-        const data = snap.val();
-
-        if (!data) return;
-
-        editID = id;
-
-        title.value = data.title || "";
-        text.value = data.text || "";
-
-        window.scrollTo({ top: 0, behavior: "smooth" });
-
-    } catch (err) {
-        console.error("EDIT ERROR:", err);
-    }
-}
-
-// ==========================================
-// EXPORT
-// ==========================================
-
-window.deleteNews = deleteNews;
-window.editNews = editNews;
+    editID = id;
+};
