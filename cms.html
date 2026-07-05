@@ -55,32 +55,20 @@ button {
     cursor: pointer;
 }
 
-.news-item {
-    background: #fff;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.actions button {
-    background: #333;
-}
-
-.actions .delete {
-    background: #e74c3c;
-}
-
 img {
     width: 100%;
     border-radius: 10px;
     margin-top: 10px;
+}
+
+.preview {
+    margin-top: 10px;
+}
+
+.status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
 }
 
 </style>
@@ -94,10 +82,11 @@ img {
 🧡 HV NOVITAS CMS
 </div>
 
-<!-- CONTAINER -->
 <div class="container">
 
-    <!-- FORM -->
+    <!-- =========================
+         NEWS FORM
+    ========================== -->
     <div class="box">
 
         <h2>Nieuw bericht</h2>
@@ -108,9 +97,16 @@ img {
 
             <textarea id="text" placeholder="Bericht" rows="6" required></textarea>
 
+            <!-- IMAGE UPLOAD -->
             <input type="file" id="image">
 
-            <button id="publish" type="submit">Publiceren</button>
+            <button type="button" id="addImage">Foto toevoegen</button>
+
+            <div id="preview" class="preview"></div>
+
+            <p id="imgStatus" class="status">0 / 3 foto's</p>
+
+            <button type="submit" id="publish">Publiceren</button>
 
         </form>
 
@@ -118,18 +114,22 @@ img {
 
     </div>
 
-    <!-- NEWS LIST -->
+    <!-- =========================
+         NEWS LIST (OPTIONEEL)
+    ========================== -->
     <div class="box">
 
-        <h2>Nieuws</h2>
+        <h2>Nieuws (Firebase)</h2>
+
         <div id="newsList"></div>
 
     </div>
 
 </div>
 
-<!-- SCRIPTS (BELANGRIJK) -->
+<!-- SCRIPTS -->
 <script type="module" src="firebase.js"></script>
+<script type="module" src="images.js"></script>
 <script type="module" src="cms.js"></script>
 
 </body>
