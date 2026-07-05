@@ -2,100 +2,143 @@
 <html lang="nl">
 
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HV Novitas CMS</title>
 
-    <meta charset="UTF-8">
+<style>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
 
-    <title>HV Novitas Beheer</title>
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
-    <link rel="stylesheet" href="cms.css">
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+button {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #ff6a00;
+    color: white;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.news-item {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.news-item h3 {
+    margin: 0;
+    color: #ff6a00;
+}
+
+.actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+</style>
 
 </head>
 
 <body>
 
-    <main class="container">
+<div class="topbar">
+🧡 HV NOVITAS CMS DASHBOARD
+</div>
 
-        <h1>🧡 HV Novitas Nieuwsbeheer</h1>
+<div class="container">
+
+    <!-- LEFT: FORM -->
+    <div class="card">
+
+        <h2>Nieuw bericht</h2>
 
         <form id="newsForm">
 
-            <div class="form-group">
+            <label>Titel</label>
+            <input type="text" id="title">
 
-                <label for="title">Titel</label>
+            <label>Bericht</label>
+            <textarea id="text" rows="8"></textarea>
 
-                <input
-                    type="text"
-                    id="title"
-                    maxlength="100"
-                    required>
+            <label>Foto</label>
+            <input type="file" id="image">
 
-            </div>
+            <button class="btn-primary" type="submit">
+                Publiceren
+            </button>
 
-            <div class="form-group">
-
-                <label for="text">Nieuwsbericht</label>
-
-                <textarea
-                    id="text"
-                    rows="8"
-                    required></textarea>
-
-            </div>
-
-            <div class="form-group">
-
-                <label for="image">Foto</label>
-
-                <input
-                    type="file"
-                    id="image"
-                    accept="image/*">
-
-            </div>
-
-            <div class="buttons">
-
-                <button
-                    type="submit"
-                    id="submitButton">
-
-                    💾 Nieuws opslaan
-
-                </button>
-
-                <button
-                    type="button"
-                    id="cancelButton"
-                    style="display:none;">
-
-                    Annuleren
-
-                </button>
-
-            </div>
+            <p id="melding"></p>
 
         </form>
 
-        <hr>
+    </div>
 
-        <section>
+    <!-- RIGHT: NEWS -->
+    <div>
 
-            <h2>Geplaatste nieuwsberichten</h2>
+        <h2>Nieuws overzicht</h2>
 
-            <div id="newsList">
+        <div id="newsList"></div>
 
-                <p>Nieuws wordt geladen...</p>
+    </div>
 
-            </div>
+</div>
 
-        </section>
-
-    </main>
-
-    <script type="module" src="cms.js"></script>
+<script type="module" src="firebase.js"></script>
+<script type="module" src="drive.js"></script>
+<script type="module" src="cms.js"></script>
 
 </body>
-
 </html>
