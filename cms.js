@@ -9,7 +9,7 @@ import {
     update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🔥 CMS CLEAN REBUILD LOADED");
+console.log("🔥 CMS CLEAN REBUILD OK");
 
 // ==========================================
 // ELEMENTEN
@@ -33,6 +33,7 @@ function resetForm() {
     text.value = "";
     image.value = "";
     editID = null;
+    status.textContent = "";
 }
 
 // ==========================================
@@ -43,21 +44,21 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (!title.value.trim() || !text.value.trim()) {
-        alert("Vul titel en bericht in");
+        alert("Titel en bericht zijn verplicht");
         return;
     }
 
     try {
 
-        status.textContent = "⏳ Uploaden...";
+        status.textContent = "⏳ Bezig met opslaan...";
 
         let imageUrl = "";
 
-        const file = image.files[0];
+        const file = image.files && image.files[0];
 
         if (file) {
             const upload = await uploadFile(file);
-            imageUrl = upload.image;
+            imageUrl = upload.image || "";
         }
 
         const data = {
@@ -87,10 +88,9 @@ form.addEventListener("submit", async (e) => {
 
     } catch (err) {
 
-        console.error(err);
+        console.error("CMS ERROR:", err);
         status.textContent = "❌ Fout bij opslaan";
     }
-
 });
 
 // ==========================================
@@ -99,7 +99,7 @@ form.addEventListener("submit", async (e) => {
 
 onValue(ref(db, "news"), (snapshot) => {
 
-    let items = [];
+    const items = [];
 
     snapshot.forEach((item) => {
         items.push({
@@ -108,23 +108,29 @@ onValue(ref(db, "news"), (snapshot) => {
         });
     });
 
-    items.sort((a, b) => b.created - a.created);
+    items.sort((a, b) => (b.created || 0) - (a.created || 0));
 
     if (items.length === 0) {
         newsList.innerHTML = "<p>Geen nieuws geplaatst</p>";
         return;
     }
 
-    newsList.innerHTML = items.map(b => `
+    newsList.innerHTML = items.map(b => {
+
+        const img = b.image
+            ? `<img src="${b.image}" style="width:100%;border-radius:10px;margin-top:10px;">`
+            : "";
+
+        return `
         <div class="news-item">
 
-            <h3>${b.title}</h3>
+            <h3>${b.title || ""}</h3>
 
-            <small>${b.date} • ${b.time}</small>
+            <small>${b.date || ""} • ${b.time || ""}</small>
 
-            ${b.image ? `<img src="${b.image}" style="width:100%;border-radius:10px;">` : ""}
+            ${img}
 
-            <p>${b.text}</p>
+            <p>${b.text || ""}</p>
 
             <div style="display:flex;gap:10px;margin-top:10px;">
 
@@ -134,7 +140,9 @@ onValue(ref(db, "news"), (snapshot) => {
             </div>
 
         </div>
-    `).join("");
+        `;
+
+    }).join("");
 
 });
 
@@ -144,7 +152,7 @@ onValue(ref(db, "news"), (snapshot) => {
 
 window.deleteNews = async function (id) {
 
-    if (!confirm("Verwijderen?")) return;
+    if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
 
     await remove(ref(db, "news/" + id));
 };
@@ -158,13 +166,12 @@ window.editNews = function (id) {
     onValue(ref(db, "news/" + id), (snap) => {
 
         const data = snap.val();
-
         if (!data) return;
 
         editID = id;
 
-        title.value = data.title;
-        text.value = data.text;
+        title.value = data.title || "";
+        text.value = data.text || "";
 
         window.scrollTo({ top: 0, behavior: "smooth" });
 
