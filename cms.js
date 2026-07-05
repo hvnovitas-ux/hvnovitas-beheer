@@ -1,40 +1,22 @@
-import { db } from "./firebase.js";
-import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-console.log("🧡 CMS SAFE START");
+console.log("🧡 CMS DEBUG START");
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    console.log("🟢 DOM LOADED");
+
     const form = document.getElementById("newsForm");
-    const status = document.getElementById("status");
+
+    console.log("FORM:", form);
 
     if (!form) {
-        console.error("❌ newsForm niet gevonden");
+        console.error("❌ FORM BESTAAT NIET");
         return;
     }
 
-    form.addEventListener("submit", async (e) => {
-
+    form.addEventListener("submit", (e) => {
         e.preventDefault();
-
-        const title = document.getElementById("title").value;
-        const text = document.getElementById("text").value;
-
-        if (!title || !text) {
-            alert("Vul alles in");
-            return;
-        }
-
-        await push(ref(db, "news"), {
-            title,
-            text,
-            image: "",
-            created: Date.now(),
-            date: new Date().toLocaleDateString("nl-NL"),
-            time: new Date().toLocaleTimeString("nl-NL")
-        });
-
-        status.textContent = "✅ Werkt nu echt";
+        console.log("🟢 SUBMIT WERKT");
+        alert("CMS werkt tot hier");
     });
 
 });
