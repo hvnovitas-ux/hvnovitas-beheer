@@ -7,66 +7,21 @@
 <title>HV Novitas CMS</title>
 
 <style>
-body { font-family: Arial; margin:0; background:#f4f6f8; }
+body { font-family: Arial; background:#f4f6f8; margin:0; }
+.topbar { background:#ff6a00; color:white; padding:15px; font-size:20px; }
+.container { max-width:900px; margin:auto; padding:20px; }
 
-.topbar {
-    background:#ff6a00;
-    color:white;
-    padding:15px;
-    font-size:20px;
-    font-weight:bold;
-}
+.box { background:white; padding:15px; border-radius:12px; margin-bottom:20px; }
 
-.container {
-    max-width:900px;
-    margin:auto;
-    padding:20px;
-}
+input, textarea { width:100%; padding:10px; margin:5px 0; }
 
-.box {
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:20px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.08);
-}
+button { background:#ff6a00; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer; }
 
-input, textarea {
-    width:100%;
-    padding:10px;
-    margin:5px 0 10px;
-    border-radius:8px;
-    border:1px solid #ddd;
-}
+.news-item { background:#fff; padding:10px; margin:10px 0; border-radius:10px; }
 
-button {
-    background:#ff6a00;
-    color:white;
-    border:none;
-    padding:10px 15px;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-img {
-    width:100%;
-    border-radius:10px;
-    margin-top:10px;
-}
-
-.actions {
-    display:flex;
-    gap:10px;
-    margin-top:10px;
-}
-
-.actions button {
-    background:#333;
-}
-
-.actions .delete {
-    background:red;
-}
+.actions { display:flex; gap:10px; }
+.actions button { background:#333; }
+.actions .delete { background:red; }
 </style>
 
 </head>
@@ -77,33 +32,37 @@ img {
 
 <div class="container">
 
-    <!-- CMS FORM -->
-    <div class="box">
+<!-- FORM -->
+<div class="box">
 
-        <h2>Nieuw bericht</h2>
+<h2>Nieuw bericht</h2>
 
-        <form id="newsForm">
+<form id="newsForm">
 
-            <input type="text" id="title" placeholder="Titel" required>
+<input type="text" id="title" placeholder="Titel">
+<textarea id="text" placeholder="Bericht"></textarea>
+<input type="file" id="image">
 
-            <textarea id="text" placeholder="Bericht" required></textarea>
+<button type="submit">Publiceren</button>
 
-            <input type="file" id="image">
+</form>
 
-            <button type="submit">Publiceren</button>
-
-        </form>
-
-        <p id="status"></p>
-
-    </div>
+<p id="status"></p>
 
 </div>
 
-<!-- SCRIPTS -->
+<!-- LIST -->
+<div class="box">
+
+<h2>Berichten beheren</h2>
+<div id="newsList"></div>
+
+</div>
+
+</div>
+
 <script type="module" src="firebase.js"></script>
 <script type="module" src="cms.js"></script>
 
 </body>
-
 </html>
