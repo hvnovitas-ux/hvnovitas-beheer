@@ -1,37 +1,29 @@
 import { db } from "./firebase.js";
-import { ref, push, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { ref, push, remove, update, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS LOADED");
+console.log("🧡 CMS ACTIVE");
 
 document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("newsForm");
     const status = document.getElementById("status");
+    const list = document.getElementById("newsList");
     const imgInput = document.getElementById("image");
 
     let imageData = "";
     window.editingId = null;
 
-    // ======================
     // IMAGE
-    // ======================
     imgInput?.addEventListener("change", (e) => {
-
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-
-        reader.onload = () => {
-            imageData = reader.result;
-        };
-
+        reader.onload = () => imageData = reader.result;
         reader.readAsDataURL(file);
     });
 
-    // ======================
-    // SUBMIT (CREATE + EDIT)
-    // ======================
+    // SAVE / EDIT
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
@@ -39,70 +31,75 @@ document.addEventListener("DOMContentLoaded", () => {
         const title = document.getElementById("title").value.trim();
         const text = document.getElementById("text").value.trim();
 
-        if (!title || !text) {
-            alert("Vul alles in");
-            return;
+        if (!title || !text) return;
+
+        status.textContent = "⏳ Opslaan...";
+
+        if (window.editingId) {
+
+            await update(ref(db, "news/" + window.editingId), {
+                title,
+                text,
+                image: imageData
+            });
+
+            window.editingId = null;
+
+        } else {
+
+            await push(ref(db, "news"), {
+                title,
+                text,
+                image: imageData,
+                created: Date.now(),
+                date: new Date().toLocaleDateString("nl-NL"),
+                time: new Date().toLocaleTimeString("nl-NL")
+            });
         }
 
-        try {
+        form.reset();
+        imageData = "";
+        status.textContent = "✅ Opgeslagen!";
+    });
 
-            status.textContent = "⏳ Opslaan...";
+    // LOAD LIST
+    onValue(ref(db, "news"), (snapshot) => {
 
-            // EDIT MODE
-            if (window.editingId) {
+        const data = snapshot.val();
 
-                await update(ref(db, "news/" + window.editingId), {
-                    title,
-                    text,
-                    image: imageData
-                });
+        const items = Object.entries(data || {}).map(([id, value]) => ({
+            id,
+            ...value
+        }));
 
-                window.editingId = null;
+        list.innerHTML = items.reverse().map(n => `
+            <div class="news-item">
 
-            } 
-            // CREATE MODE
-            else {
+                <b>${n.title}</b>
 
-                await push(ref(db, "news"), {
-                    title,
-                    text,
-                    image: imageData,
-                    created: Date.now(),
-                    date: new Date().toLocaleDateString("nl-NL"),
-                    time: new Date().toLocaleTimeString("nl-NL")
-                });
-            }
+                <div class="actions">
 
-            status.textContent = "✅ Opgeslagen!";
-            form.reset();
-            imageData = "";
+                    <button onclick="editNews('${n.id}', '${n.title}', '${n.text}')">Edit</button>
 
-        } catch (err) {
-            console.error(err);
-            status.textContent = "❌ Fout";
-        }
+                    <button class="delete" onclick="deleteNews('${n.id}')">Delete</button>
 
+                </div>
+
+            </div>
+        `).join("");
     });
 
 });
 
-// ======================
 // DELETE
-// ======================
 window.deleteNews = async (id) => {
-
-    if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
-
+    if (!confirm("Verwijderen?")) return;
     await remove(ref(db, "news/" + id));
 };
 
-// ======================
 // EDIT
-// ======================
-window.editNews = (id, title, text, image) => {
-
+window.editNews = (id, title, text) => {
     document.getElementById("title").value = title;
     document.getElementById("text").value = text;
-
     window.editingId = id;
 };
