@@ -1,29 +1,37 @@
-import { db } from "./firebase.js";
+import { db, storage } from "./firebase.js";
 
 import {
     ref,
     push,
     onValue,
     remove,
-    update
+    update,
+    get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NEW CMS LOADED");
+import {
+    ref as sRef,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+
+console.log("🧡 CMS PRO CLEAN LOADED");
 
 // ELEMENTEN
 const title = document.getElementById("title");
 const text = document.getElementById("text");
+const image = document.getElementById("image");
 const publish = document.getElementById("publish");
 const status = document.getElementById("status");
 const newsList = document.getElementById("newsList");
 
 let editID = null;
 
-// PUBLISH
+// SAVE
 publish.onclick = async () => {
 
     if (!title.value || !text.value) {
-        alert("Vul alles in");
+        status.textContent = "⚠️ Vul titel en tekst in";
         return;
     }
 
@@ -31,9 +39,23 @@ publish.onclick = async () => {
 
         status.textContent = "⏳ Opslaan...";
 
+        let imageUrl = "";
+
+        const file = image?.files?.[0]; // SAFE FIX
+
+        if (file) {
+
+            const imgRef = sRef(storage, "news/" + Date.now() + "_" + file.name);
+
+            await uploadBytes(imgRef, file);
+
+            imageUrl = await getDownloadURL(imgRef);
+        }
+
         const data = {
-            title: title.value,
-            text: text.value,
+            title: title.value.trim(),
+            text: text.value.trim(),
+            image: imageUrl,
             created: Date.now(),
             date: new Date().toLocaleDateString("nl-NL"),
             time: new Date().toLocaleTimeString("nl-NL", {
@@ -55,20 +77,22 @@ publish.onclick = async () => {
 
         title.value = "";
         text.value = "";
+        image.value = "";
         editID = null;
 
     } catch (err) {
-        console.error(err);
-        status.textContent = "❌ Fout";
+
+        console.error("CMS ERROR:", err);
+        status.textContent = "❌ Fout bij opslaan";
     }
 };
 
-// LOAD NEWS
+// LOAD
 onValue(ref(db, "news"), (snap) => {
 
-    let items = [];
+    const items = [];
 
-    snap.forEach((i) => {
+    snap.forEach(i => {
         items.push({ id: i.key, ...i.val() });
     });
 
@@ -77,20 +101,19 @@ onValue(ref(db, "news"), (snap) => {
     newsList.innerHTML = items.map(n => `
         <div class="news-item">
 
-            <h3>${n.title}</h3>
-            <small>${n.date} ${n.time}</small>
+            <h3>${n.title || ""}</h3>
+            <small>${n.date || ""} ${n.time || ""}</small>
 
-            <p>${n.text}</p>
+            ${n.image ? `<img src="${n.image}" style="width:100%;border-radius:10px;">` : ""}
 
-            <div class="actions">
+            <p>${n.text || ""}</p>
 
-                <button onclick="editNews('${n.id}')">Edit</button>
-                <button class="delete" onclick="deleteNews('${n.id}')">Delete</button>
-
-            </div>
+            <button onclick="editNews('${n.id}')">Edit</button>
+            <button onclick="deleteNews('${n.id}')">Delete</button>
 
         </div>
     `).join("");
+
 });
 
 // DELETE
@@ -104,8 +127,10 @@ window.editNews = async (id) => {
     const snap = await get(ref(db, "news/" + id));
     const data = snap.val();
 
-    title.value = data.title;
-    text.value = data.text;
+    if (!data) return;
+
+    title.value = data.title || "";
+    text.value = data.text || "";
 
     editID = id;
 };
