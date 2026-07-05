@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const list = document.getElementById("newsList");
+const home = document.getElementById("homeNews");
 
 onValue(ref(db, "news"), (snapshot) => {
 
@@ -9,9 +9,10 @@ onValue(ref(db, "news"), (snapshot) => {
 
     const items = Object.entries(data || {})
         .map(([id, value]) => ({ id, ...value }))
-        .reverse();
+        .reverse()
+        .slice(0, 5);
 
-    list.innerHTML = items.map(n => `
+    home.innerHTML = items.map(n => `
         <div class="news-item">
 
             <h3>${n.title}</h3>
@@ -20,8 +21,7 @@ onValue(ref(db, "news"), (snapshot) => {
 
             <p>${n.text}</p>
 
-            <small>${n.date} ${n.time}</small>
-
         </div>
     `).join("");
+
 });
