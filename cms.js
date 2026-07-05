@@ -1,33 +1,36 @@
 import { db } from "./firebase.js";
 import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const form = document.getElementById("uploadForm");
+console.log("🧡 CMS SAFE START");
+
+const form = document.getElementById("newsForm");
 const status = document.getElementById("status");
 
-form.addEventListener("submit", async (e) => {
+if (!form) {
+    console.error("❌ newsForm niet gevonden");
+} else {
 
-    e.preventDefault();
+    form.addEventListener("submit", async (e) => {
 
-    const title = document.getElementById("title").value;
-    const text = document.getElementById("text").value;
-    const file = document.getElementById("image").files[0];
+        e.preventDefault();
 
-    if (!title || !text) {
-        alert("Vul alles in");
-        return;
-    }
+        const title = document.getElementById("title").value;
+        const text = document.getElementById("text").value;
 
-    status.textContent = "⏳ Foto upload nog niet actief...";
+        if (!title || !text) {
+            alert("Vul alles in");
+            return;
+        }
 
-    // tijdelijk: alleen tekst testen
-    await push(ref(db, "news"), {
-        title,
-        text,
-        image: "",
-        created: Date.now(),
-        date: new Date().toLocaleDateString("nl-NL"),
-        time: new Date().toLocaleTimeString("nl-NL")
+        await push(ref(db, "news"), {
+            title,
+            text,
+            image: "",
+            created: Date.now(),
+            date: new Date().toLocaleDateString("nl-NL"),
+            time: new Date().toLocaleTimeString("nl-NL")
+        });
+
+        status.textContent = "✅ Werkt (basis versie)";
     });
-
-    status.textContent = "✅ Werkt (test zonder foto)";
-});
+}
