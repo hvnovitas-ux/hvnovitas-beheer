@@ -1,20 +1,20 @@
 import { db } from "./firebase.js";
 import { ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 HV NOVITAS CMS LOADED");
+console.log("🧡 HV NOVITAS PRO CMS LOADED");
 
-// ================= DOM =================
+// DOM
 const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
 const status = document.getElementById("status");
 const list = document.getElementById("newsList");
 
-// ================= STATE =================
+// state
 window.editingId = null;
 window.newsCache = {};
 
-// ================= CREATE / UPDATE =================
+// ================= SAVE (CREATE / UPDATE) =================
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -24,7 +24,6 @@ form.addEventListener("submit", async (e) => {
 
     try {
 
-        // 🔴 EDIT MODE
         if (window.editingId) {
 
             await update(ref(db, "news/" + window.editingId), {
@@ -36,9 +35,7 @@ form.addEventListener("submit", async (e) => {
 
             window.editingId = null;
 
-        } 
-        // 🟢 CREATE MODE
-        else {
+        } else {
 
             await push(ref(db, "news"), {
                 title: title.value,
@@ -54,11 +51,11 @@ form.addEventListener("submit", async (e) => {
 
     } catch (err) {
         console.error(err);
-        status.textContent = "❌ Fout bij opslaan";
+        status.textContent = "❌ Fout";
     }
 });
 
-// ================= LOAD NEWS =================
+// ================= LOAD =================
 onValue(ref(db, "news"), (snapshot) => {
 
     const data = snapshot.val();
@@ -70,7 +67,6 @@ onValue(ref(db, "news"), (snapshot) => {
         return;
     }
 
-    // cache voor edit
     window.newsCache = data;
 
     const items = Object.entries(data).map(([id, v]) => ({
@@ -82,6 +78,7 @@ onValue(ref(db, "news"), (snapshot) => {
         <div class="news-item">
 
             <b>${n.title}</b>
+
             <p>${n.text}</p>
 
             <small>${n.date || ""} ${n.time || ""}</small>
@@ -112,6 +109,5 @@ window.editNews = (id) => {
     text.value = data.text;
 
     window.editingId = id;
-
     status.textContent = "✏️ Bewerken actief...";
 };
