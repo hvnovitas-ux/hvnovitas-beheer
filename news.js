@@ -7,7 +7,12 @@ onValue(ref(db, "news"), (snapshot) => {
 
     const data = snapshot.val();
 
-    const items = Object.entries(data || {}).map(([id, value]) => ({
+    if (!data) {
+        newsList.innerHTML = "Geen nieuws";
+        return;
+    }
+
+    const items = Object.entries(data).map(([id, value]) => ({
         id,
         ...value
     }));
@@ -19,7 +24,7 @@ onValue(ref(db, "news"), (snapshot) => {
 
                 <h3>${n.title}</h3>
 
-                ${n.image ? `<img src="${n.image}" style="width:100%; border-radius:10px;">` : ""}
+                ${n.image ? `<img src="${n.image}" style="width:100%; border-radius:10px; margin-top:10px;">` : ""}
 
                 <p>${n.text}</p>
 
@@ -32,7 +37,6 @@ onValue(ref(db, "news"), (snapshot) => {
 
             </div>
         `;
-
     }).join("");
 
 });
