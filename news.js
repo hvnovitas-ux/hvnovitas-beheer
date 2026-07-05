@@ -2,208 +2,168 @@ import { db } from "./firebase.js";
 
 import {
     ref,
-    push,
-    onValue,
-    remove,
-    update
+    query,
+    orderByChild,
+    limitToLast,
+    onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 // ==========================================
-// Elementen
+// CONTAINER
 // ==========================================
 
-const title = document.getElementById("title");
-const text = document.getElementById("text");
-const publish = document.getElementById("publish");
-const reset = document.getElementById("reset");
-const melding = document.getElementById("melding");
-const newsList = document.getElementById("newsList");
+const newsContainer = document.getElementById("news");
 
-let editID = null;
+if (!newsContainer) {
 
-// ==========================================
-// Publiceren
-// ==========================================
-
-publish.addEventListener("click", async () => {
-
-    if (title.value.trim() === "") {
-        alert("Vul een titel in.");
-        return;
-    }
-
-    if (text.value.trim() === "") {
-        alert("Vul een bericht in.");
-        return;
-    }
-
-    const nu = new Date();
-
-    const bericht = {
-
-        title: title.value.trim(),
-
-        text: text.value.trim(),
-
-        date: nu.toLocaleDateString("nl-NL"),
-
-        time: nu.toLocaleTimeString("nl-NL", {
-            hour: "2-digit",
-            minute: "2-digit"
-        }),
-
-        created: Date.now()
-
-    };
-
-    try {
-
-        if (editID) {
-
-            await update(ref(db, "news/" + editID), bericht);
-
-            melding.textContent = "✅ Nieuws bijgewerkt.";
-
-            editID = null;
-
-        } else {
-
-            await push(ref(db, "news"), bericht);
-
-            melding.textContent = "✅ Nieuws gepubliceerd.";
-
-        }
-
-        leeg();
-
-    } catch (error) {
-
-        console.error(error);
-
-        melding.textContent = "❌ Fout bij opslaan.";
-
-    }
-
-});
-
-// ==========================================
-// Wissen
-// ==========================================
-
-reset.addEventListener("click", leeg);
-
-function leeg() {
-
-    title.value = "";
-    text.value = "";
-
+    console.error("❌ #news container niet gevonden");
+    throw new Error("Container ontbreekt");
 }
 
 // ==========================================
-// Nieuws laden
+// QUERY (laatste 3 nieuws)
+   // ==========================================
+
+const newsQuery = query(
+    ref(db, "news"),
+    orderByChild("created"),
+    limitToLast(3)
+);
+
+// ==========================================
+// HTML HELPERS
 // ==========================================
 
-onValue(ref(db, "news"), (snapshot) => {
+function escapeHTML(text = "") {
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
 
-    let berichten = [];
+function formatText(text = "") {
+    return escapeHTML(text).replace(/\n/g, "<br>");
+}
+
+// ==========================================
+// CARD
+// ==========================================
+
+function createCard(item) {
+
+    const shortText = item.text.length > 150
+        ? item.text.substring(0, 150) + "..."
+        : item.text;
+
+    return `
+<article class="kaart">
+
+    <h3>${escapeHTML(item.title)}</h3>
+
+    <div class="datum">
+        📅 ${item.date || ""} &nbsp;&nbsp;
+        🕒 ${item.time || ""}
+    </div>
+
+    <p id="short-${item.id}">
+        ${formatText(shortText)}
+    </p>
+
+    <p id="full-${item.id}" style="display:none;">
+        ${formatText(item.text)}
+    </p>
+
+    <button
+        id="btn-${item.id}"
+        onclick="toggleNews('${item.id}')">
+        Lees verder
+    </button>
+
+</article>
+`;
+}
+
+// ==========================================
+// TOGGLE LEES VERDER
+// ==========================================
+
+window.toggleNews = function (id) {
+
+    const shortEl = document.getElementById("short-" + id);
+    const fullEl = document.getElementById("full-" + id);
+    const btn = document.getElementById("btn-" + id);
+
+    if (!shortEl || !fullEl || !btn) return;
+
+    const open = fullEl.style.display === "block";
+
+    if (open) {
+
+        fullEl.style.display = "none";
+        shortEl.style.display = "block";
+        btn.innerText = "Lees verder";
+
+    } else {
+
+        fullEl.style.display = "block";
+        shortEl.style.display = "none";
+        btn.innerText = "Minder tonen";
+    }
+};
+
+// ==========================================
+// LOAD NEWS
+// ==========================================
+
+onValue(newsQuery, (snapshot) => {
+
+    const items = [];
 
     snapshot.forEach((item) => {
 
-        berichten.push({
-
+        items.push({
             id: item.key,
-
             ...item.val()
-
         });
 
     });
 
-    berichten.sort((a, b) => b.created - a.created);
+    // nieuwste eerst
+    items.sort((a, b) => b.created - a.created);
 
-    if (berichten.length === 0) {
+    if (items.length === 0) {
 
-        newsList.innerHTML = "Nog geen nieuws geplaatst.";
-
+        newsContainer.innerHTML = `
+            <article class="kaart">
+                <h3>📰 Geen nieuws</h3>
+                <p>Er zijn nog geen nieuwsberichten.</p>
+            </article>
+        `;
         return;
-
     }
 
     let html = "";
 
-    berichten.forEach((b) => {
-
-        html += `
-<div class="bericht">
-
-<h3>${b.title}</h3>
-
-<small>
-📅 ${b.date}
-&nbsp;&nbsp;
-🕒 ${b.time}
-</small>
-
-<p>${b.text}</p>
-
-<button onclick="bewerk('${b.id}')">
-✏️ Bewerken
-</button>
-
-<button onclick="verwijder('${b.id}')">
-🗑️ Verwijderen
-</button>
-
-</div>
-`;
-
+    items.forEach(item => {
+        html += createCard(item);
     });
 
-    newsList.innerHTML = html;
+    newsContainer.innerHTML = html;
 
+}, (error) => {
+
+    console.error("❌ Nieuws fout:", error);
+
+    newsContainer.innerHTML = `
+        <article class="kaart">
+            <h3>❌ Fout</h3>
+            <p>Nieuws kon niet worden geladen.</p>
+        </article>
+    `;
 });
 
 // ==========================================
-// Verwijderen
+// START LOG
 // ==========================================
 
-window.verwijder = async function (id) {
-
-    if (!confirm("Nieuws verwijderen?")) return;
-
-    await remove(ref(db, "news/" + id));
-
-};
-
-// ==========================================
-// Bewerken
-// ==========================================
-
-window.bewerk = function (id) {
-
-    onValue(ref(db, "news/" + id), (snapshot) => {
-
-        const b = snapshot.val();
-
-        if (!b) return;
-
-        editID = id;
-
-        title.value = b.title;
-        text.value = b.text;
-
-        window.scrollTo({
-
-            top: 0,
-
-            behavior: "smooth"
-
-        });
-
-    }, {
-
-        onlyOnce: true
-
-    });
-
-};
+console.log("🧡 HV Novitas NEWS.JS geladen");
