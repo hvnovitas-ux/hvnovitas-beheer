@@ -1,14 +1,137 @@
-<form id="newsForm">
+<!DOCTYPE html>
+<html lang="nl">
 
-    <input type="text" id="title" placeholder="Titel">
-    <textarea id="text" placeholder="Bericht"></textarea>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <input type="file" id="image">
+<title>HV Novitas CMS</title>
 
-    <button id="publish" type="submit">Publiceren</button>
+<style>
 
-</form>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
 
-<p id="status"></p>
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
-<div id="newsList"></div>
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+button {
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.news-item {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.actions button {
+    background: #333;
+}
+
+.actions .delete {
+    background: #e74c3c;
+}
+
+img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+🧡 HV NOVITAS CMS
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+    <!-- FORM -->
+    <div class="box">
+
+        <h2>Nieuw bericht</h2>
+
+        <form id="newsForm">
+
+            <input type="text" id="title" placeholder="Titel" required>
+
+            <textarea id="text" placeholder="Bericht" rows="6" required></textarea>
+
+            <input type="file" id="image">
+
+            <button id="publish" type="submit">Publiceren</button>
+
+        </form>
+
+        <p id="status"></p>
+
+    </div>
+
+    <!-- NEWS LIST -->
+    <div class="box">
+
+        <h2>Nieuws</h2>
+        <div id="newsList"></div>
+
+    </div>
+
+</div>
+
+<!-- SCRIPTS (BELANGRIJK) -->
+<script type="module" src="firebase.js"></script>
+<script type="module" src="cms.js"></script>
+
+</body>
+
+</html>
