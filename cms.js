@@ -9,7 +9,7 @@ import {
     update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🔥 CMS CLEAN REBUILD OK");
+console.log("🧡 HV NOVITAS CMS LOADED");
 
 // ==========================================
 // ELEMENTEN
@@ -25,7 +25,7 @@ const status = document.getElementById("melding");
 let editID = null;
 
 // ==========================================
-// RESET
+// RESET FORM
 // ==========================================
 
 function resetForm() {
@@ -37,10 +37,11 @@ function resetForm() {
 }
 
 // ==========================================
-// SUBMIT
+// SUBMIT (CREATE + UPDATE)
 // ==========================================
 
 form.addEventListener("submit", async (e) => {
+
     e.preventDefault();
 
     if (!title.value.trim() || !text.value.trim()) {
@@ -50,15 +51,15 @@ form.addEventListener("submit", async (e) => {
 
     try {
 
-        status.textContent = "⏳ Bezig met opslaan...";
+        status.textContent = "⏳ Opslaan...";
 
         let imageUrl = "";
 
-        const file = image.files && image.files[0];
+        const file = image.files?.[0];
 
         if (file) {
             const upload = await uploadFile(file);
-            imageUrl = upload.image || "";
+            imageUrl = upload?.image || "";
         }
 
         const data = {
@@ -97,7 +98,9 @@ form.addEventListener("submit", async (e) => {
 // LOAD NEWS
 // ==========================================
 
-onValue(ref(db, "news"), (snapshot) => {
+const newsRef = ref(db, "news");
+
+onValue(newsRef, (snapshot) => {
 
     const items = [];
 
@@ -115,33 +118,32 @@ onValue(ref(db, "news"), (snapshot) => {
         return;
     }
 
-    newsList.innerHTML = items.map(b => {
+    newsList.innerHTML = items.map(item => {
 
-        const img = b.image
-            ? `<img src="${b.image}" style="width:100%;border-radius:10px;margin-top:10px;">`
+        const img = item.image
+            ? `<img src="${item.image}" style="width:100%;border-radius:10px;margin-top:10px;">`
             : "";
 
         return `
         <div class="news-item">
 
-            <h3>${b.title || ""}</h3>
+            <h3>${item.title || ""}</h3>
 
-            <small>${b.date || ""} • ${b.time || ""}</small>
+            <small>${item.date || ""} • ${item.time || ""}</small>
 
             ${img}
 
-            <p>${b.text || ""}</p>
+            <p>${item.text || ""}</p>
 
             <div style="display:flex;gap:10px;margin-top:10px;">
 
-                <button onclick="editNews('${b.id}')">✏️ Edit</button>
-                <button onclick="deleteNews('${b.id}')">🗑️ Delete</button>
+                <button onclick="editNews('${item.id}')">✏️ Edit</button>
+                <button onclick="deleteNews('${item.id}')">🗑️ Delete</button>
 
             </div>
 
         </div>
         `;
-
     }).join("");
 
 });
@@ -150,20 +152,22 @@ onValue(ref(db, "news"), (snapshot) => {
 // DELETE
 // ==========================================
 
-window.deleteNews = async function (id) {
+function deleteNews(id) {
 
     if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
 
-    await remove(ref(db, "news/" + id));
-};
+    remove(ref(db, "news/" + id));
+}
 
 // ==========================================
 // EDIT
 // ==========================================
 
-window.editNews = function (id) {
+function editNews(id) {
 
-    onValue(ref(db, "news/" + id), (snap) => {
+    const itemRef = ref(db, "news/" + id);
+
+    onValue(itemRef, (snap) => {
 
         const data = snap.val();
         if (!data) return;
@@ -176,4 +180,11 @@ window.editNews = function (id) {
         window.scrollTo({ top: 0, behavior: "smooth" });
 
     }, { onlyOnce: true });
-};
+}
+
+// ==========================================
+// EXPORT NAAR WINDOW
+// ==========================================
+
+window.deleteNews = deleteNews;
+window.editNews = editNews;
