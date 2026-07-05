@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, push, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS LOADED");
+console.log("🧡 CMS RESET LOADED");
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let imageData = "";
     window.editingId = null;
 
-    // =========================
-    // IMAGE HANDLING
-    // =========================
+    // =====================
+    // IMAGE LOAD
+    // =====================
     imgInput?.addEventListener("change", (e) => {
 
         const file = e.target.files[0];
@@ -29,9 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
         reader.readAsDataURL(file);
     });
 
-    // =========================
-    // SUBMIT (CREATE + EDIT)
-    // =========================
+    // =====================
+    // CREATE / UPDATE
+    // =====================
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
@@ -48,19 +48,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             status.textContent = "⏳ Opslaan...";
 
-            // EDIT MODE
             if (window.editingId) {
 
                 await update(ref(db, "news/" + window.editingId), {
                     title,
-                    text
+                    text,
+                    image: imageData
                 });
 
                 window.editingId = null;
 
-            } 
-            // CREATE MODE
-            else {
+            } else {
 
                 await push(ref(db, "news"), {
                     title,
@@ -78,30 +76,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (err) {
             console.error(err);
-            status.textContent = "❌ Fout bij opslaan";
+            status.textContent = "❌ Fout";
         }
 
     });
 
 });
 
-// =========================
-// DELETE FUNCTION (GLOBAL)
-// =========================
+// =====================
+// DELETE
+// =====================
 window.deleteNews = async (id) => {
 
-    const ok = confirm("Weet je zeker dat je dit wilt verwijderen?");
-    if (!ok) return;
+    if (!confirm("Verwijderen?")) return;
 
     await remove(ref(db, "news/" + id));
 };
 
-// =========================
-// EDIT FUNCTION (GLOBAL)
-// =========================
-window.editNews = (id, title, text) => {
+// =====================
+// EDIT
+// =====================
+window.editNews = (id, title, text, image) => {
 
     document.getElementById("title").value = title;
     document.getElementById("text").value = text;
 
     window.editingId = id;
+};
