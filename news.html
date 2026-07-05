@@ -1,107 +1,76 @@
-  <img src="images/logo.png" class="logo" alt="HV Novitas">
+<!DOCTYPE html>
+<html lang="nl">
 
-            <div>
-                <h1>HV NOVITAS CMS</h1>
-                <p>Nieuwsbeheer</p>
-            </div>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HV Novitas Nieuws</title>
 
-        </div>
+<style>
 
-    </header>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
 
-    <!-- =======================================
-         PAGINA TITEL
-    ======================================== -->
+.header {
+    background: #ff6a00;
+    color: white;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
 
-    <section class="page-title">
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
 
-        <h2>Nieuwsbeheer</h2>
+.card {
+    background: white;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
 
-        <p>Voeg nieuws toe, wijzig of verwijder berichten.</p>
+.card h3 {
+    margin: 0;
+    color: #ff6a00;
+}
 
-    </section>
+.card small {
+    color: gray;
+}
 
-    <!-- =======================================
-         FORM (BELANGRIJK FIX)
-    ======================================== -->
+.card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
 
-    <main class="news-layout">
+</style>
 
-        <section class="news-editor">
+</head>
 
-            <h3>Nieuw bericht</h3>
+<body>
 
-            <!-- 🔥 FORM IS NU CORRECT -->
-            <form id="newsForm">
+<div class="header">
+🧡 HV Novitas Nieuws
+</div>
 
-                <label>Titel</label>
-                <input type="text" id="title" placeholder="Titel" required>
+<div class="container">
 
-                <label>Bericht</label>
-                <textarea id="text" rows="10" placeholder="Typ hier..." required></textarea>
-
-                <label>Foto</label>
-                <input type="file" id="image" accept="image/*">
-
-                <div class="editor-buttons">
-
-                    <button type="submit" id="publish">
-                        Publiceren
-                    </button>
-
-                    <button type="reset">
-                        Wissen
-                    </button>
-
-                </div>
-
-                <p id="status"></p>
-
-            </form>
-
-        </section>
-
-        <!-- =======================================
-             OVERVIEW
-        ======================================== -->
-
-        <section class="news-overview">
-
-            <h3>Nieuwsberichten</h3>
-
-            <div id="newsList">
-                <p>Geen nieuws...</p>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- =======================================
-         FOOTER
-    ======================================== -->
-
-    <footer class="footer">
-
-        <div>Firebase</div>
-        <div>Google Drive</div>
-        <div>HV Novitas CMS</div>
-
-    </footer>
+    <div id="news">
+        <p>Nieuws wordt geladen...</p>
+    </div>
 
 </div>
 
-<!-- =======================================
-     SCRIPTS
-======================================= -->
-
-<script src="https://accounts.google.com/gsi/client"></script>
-<script src="https://apis.google.com/js/api.js"></script>
-
 <script type="module" src="firebase.js"></script>
-<script type="module" src="drive.js"></script>
-<script type="module" src="cms.js"></script>
+<script type="module" src="news.js"></script>
 
 </body>
-
 </html>
