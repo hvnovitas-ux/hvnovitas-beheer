@@ -8,7 +8,7 @@ import {
     render
 } from "./images.js";
 
-console.log("🧡 PRO CMS LOADED");
+console.log("🧡 CMS LOADED");
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -21,13 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const imgStatus = document.getElementById("imgStatus");
 
     if (!form) {
-        console.error("❌ newsForm niet gevonden");
+        console.error("❌ FORM NIET GEVONDEN");
         return;
     }
 
-    // =========================
-    // IMAGE HANDLING
-    // =========================
+    // =====================
+    // IMAGE SYSTEM
+    // =====================
     addBtn?.addEventListener("click", () => {
 
         const file = imgInput.files[0];
@@ -41,9 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
         imgInput.value = "";
     });
 
-    // =========================
-    // SUBMIT NEWS
-    // =========================
+    // =====================
+    // SUBMIT
+    // =====================
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {
 
             console.error("FIREBASE ERROR:", err);
-            status.textContent = "❌ Fout bij opslaan";
+            status.textContent = "❌ Opslaan mislukt";
         }
 
     });
