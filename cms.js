@@ -1,13 +1,6 @@
 import { db } from "./firebase.js";
 import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-import {
-    images,
-    addImage,
-    resetImages,
-    render
-} from "./images.js";
-
 console.log("🧡 CMS LOADED");
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,34 +9,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = document.getElementById("status");
 
     const imgInput = document.getElementById("image");
-    const addBtn = document.getElementById("addImage");
-    const preview = document.getElementById("preview");
-    const imgStatus = document.getElementById("imgStatus");
+
+    let imageData = ""; // 👈 1 FOTO ONLY
 
     if (!form) {
         console.error("❌ FORM NIET GEVONDEN");
         return;
     }
 
-    // =====================
-    // IMAGE SYSTEM
-    // =====================
-    addBtn?.addEventListener("click", () => {
+    // =========================
+    // IMAGE SELECT (1 FOTO)
+    // =========================
+    imgInput?.addEventListener("change", async (e) => {
 
-        const file = imgInput.files[0];
+        const file = e.target.files[0];
 
-        if (!file) {
-            alert("Selecteer een foto");
-            return;
-        }
+        if (!file) return;
 
-        addImage(file, preview, imgStatus);
-        imgInput.value = "";
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            imageData = reader.result; // 👈 base64 opslaan
+            console.log("🖼 FOTO INGELADEN");
+        };
+
+        reader.readAsDataURL(file);
     });
 
-    // =====================
+    // =========================
     // SUBMIT
-    // =====================
+    // =========================
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
@@ -63,21 +58,22 @@ document.addEventListener("DOMContentLoaded", () => {
             await push(ref(db, "news"), {
                 title,
                 text,
-                images,
+                image: imageData, // 👈 BELANGRIJK
                 created: Date.now(),
                 date: new Date().toLocaleDateString("nl-NL"),
                 time: new Date().toLocaleTimeString("nl-NL")
             });
 
+            console.log("✅ OPGESLAGEN");
+
             status.textContent = "✅ Opgeslagen!";
 
             form.reset();
-            resetImages();
-            render(preview, imgStatus);
+            imageData = ""; // reset na save
 
         } catch (err) {
 
-            console.error("FIREBASE ERROR:", err);
+            console.error("❌ ERROR:", err);
             status.textContent = "❌ Opslaan mislukt";
         }
 
