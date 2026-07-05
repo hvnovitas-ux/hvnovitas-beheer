@@ -1,8 +1,3 @@
-
-// ==========================================
-// HV NOVITAS - HOME NEWS (CLEAN)
-// ==========================================
-
 import { db } from "./firebase.js";
 
 import {
@@ -25,17 +20,17 @@ if (!newsContainer) {
 }
 
 // ==========================================
-// QUERY
+// QUERY (SYNC MET CMS → created)
 // ==========================================
 
 const newsQuery = query(
     ref(db, "news"),
-    orderByChild("timestamp"),
+    orderByChild("created"),
     limitToLast(3)
 );
 
 // ==========================================
-// HELPERS
+// SAFE TEXT
 // ==========================================
 
 function escapeHTML(text = "") {
@@ -47,13 +42,6 @@ function escapeHTML(text = "") {
 
 function formatText(text = "") {
     return escapeHTML(text).replace(/\n/g, "<br>");
-}
-
-function createSummary(text = "", max = 180) {
-    const value = text.trim();
-    return value.length <= max
-        ? value
-        : value.substring(0, max).trim() + "...";
 }
 
 // ==========================================
@@ -68,7 +56,7 @@ function createImage(item) {
         <img
             class="nieuwsfoto"
             src="${item.image}"
-            alt="${escapeHTML(item.title)}"
+            alt="${escapeHTML(item.title || "")}"
             loading="lazy">
     `;
 }
@@ -79,19 +67,26 @@ function createImage(item) {
 
 function createCard(item) {
 
+    const text = item.text || "";
+
+    const shortText =
+        text.length > 180
+            ? text.substring(0, 180) + "..."
+            : text;
+
     return `
         <article class="kaart">
 
             ${createImage(item)}
 
-            <h3>${escapeHTML(item.title)}</h3>
+            <h3>${escapeHTML(item.title || "")}</h3>
 
             <div class="datum">
                 📅 ${item.date || ""} &nbsp;&nbsp; 🕒 ${item.time || ""}
             </div>
 
             <div class="tekst">
-                ${formatText(createSummary(item.text || ""))}
+                ${formatText(shortText)}
             </div>
 
         </article>
@@ -99,7 +94,7 @@ function createCard(item) {
 }
 
 // ==========================================
-// LOAD NEWS (SINGLE LISTENER - FIXED)
+// LOAD NEWS
 // ==========================================
 
 onValue(newsQuery, (snapshot) => {
@@ -113,8 +108,9 @@ onValue(newsQuery, (snapshot) => {
         });
     });
 
+    // BELANGRIJK: stabiele sort
     newsItems.sort((a, b) =>
-        (b.timestamp || 0) - (a.timestamp || 0)
+        (b.created || 0) - (a.created || 0)
     );
 
     if (newsItems.length === 0) {
@@ -123,25 +119,20 @@ onValue(newsQuery, (snapshot) => {
             <article class="kaart">
                 <h3>📰 Nog geen nieuws</h3>
                 <div class="tekst">
-                    Er zijn momenteel nog geen nieuwsberichten.
+                    Er zijn nog geen nieuwsberichten.
                 </div>
             </article>
         `;
-
         return;
     }
 
-    let html = "";
-
-    newsItems.forEach((item) => {
-        html += createCard(item);
-    });
-
-    newsContainer.innerHTML = html;
+    newsContainer.innerHTML = newsItems
+        .map(createCard)
+        .join("");
 
 }, (error) => {
 
-    console.error("❌ Nieuws fout:", error);
+    console.error("❌ NEWS ERROR:", error);
 
     newsContainer.innerHTML = `
         <article class="kaart">
@@ -157,4 +148,4 @@ onValue(newsQuery, (snapshot) => {
 // LOG
 // ==========================================
 
-console.log("🧡 HV Novitas Home News geladen");
+console.log("🧡 HOME NEWS RESTORED OK");
