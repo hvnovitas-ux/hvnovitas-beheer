@@ -1,18 +1,23 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const home = document.getElementById("homeNews");
+const newsList = document.getElementById("newsList");
 
 onValue(ref(db, "news"), (snapshot) => {
 
     const data = snapshot.val();
 
-    const items = Object.entries(data || {})
-        .map(([id, value]) => ({ id, ...value }))
-        .reverse()
-        .slice(0, 5);
+    if (!data) {
+        newsList.innerHTML = "Geen nieuws";
+        return;
+    }
 
-    home.innerHTML = items.map(n => `
+    const items = Object.entries(data).map(([id, value]) => ({
+        id,
+        ...value
+    }));
+
+    newsList.innerHTML = items.reverse().map(n => `
         <div class="news-item">
 
             <h3>${n.title}</h3>
@@ -21,6 +26,9 @@ onValue(ref(db, "news"), (snapshot) => {
 
             <p>${n.text}</p>
 
+            <small>📅 ${n.date} 🕒 ${n.time}</small>
+
         </div>
     `).join("");
+
 });
