@@ -8,70 +8,26 @@
 <title>HV Novitas Nieuws</title>
 
 <style>
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-}
-
-.topbar {
-    background: #ff6a00;
-    color: white;
-    padding: 15px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.container {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px;
-}
-
-.news-item {
-    background: white;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-}
-
-.news-item img {
-    width: 100%;
-    border-radius: 10px;
-    margin-top: 10px;
-}
-
-small {
-    color: gray;
-}
-
+body { margin:0; font-family:Arial; background:#f4f6f8; }
+.topbar { background:#ff6a00; color:white; padding:15px; font-weight:bold; }
+.container { max-width:900px; margin:auto; padding:20px; }
+.news-item { background:white; padding:15px; margin-bottom:10px; border-radius:10px; }
 </style>
 
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="topbar">
-🏆 HV Novitas Nieuws
-</div>
+<div class="topbar">🏆 HV Novitas Nieuws</div>
 
-<!-- MAIN CONTAINER -->
 <div class="container">
 
-    <!-- 🔥 DIT IS WAAR JE NEWS IN KOMT -->
     <div id="newsList"></div>
 
 </div>
 
-<!-- FIREBASE -->
 <script type="module" src="firebase.js"></script>
-
-<!-- VIEW SCRIPT (BELANGRIJK: home-news.js) -->
-<script type="module" src="home-news.js"></script>
+<script type="module" src="news.js"></script>
 
 </body>
-
 </html>
