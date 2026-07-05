@@ -1,60 +1,89 @@
 import { db } from "./firebase.js";
-import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 AGENDA CMS LOADED");
+console.log("🧡 NEWS CMS CLEAN LOADED");
 
+const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
-const date = document.getElementById("date");
-const time = document.getElementById("time");
 const text = document.getElementById("text");
 const status = document.getElementById("status");
-const list = document.getElementById("agendaList");
+const list = document.getElementById("newsList");
 
-document.getElementById("save").addEventListener("click", async () => {
+window.editingId = null;
 
-    if (!title.value || !date.value) {
-        alert("Vul titel en datum in");
-        return;
+// ================= CREATE / UPDATE =================
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!title.value || !text.value) return;
+
+    status.textContent = "⏳ Opslaan...";
+
+    try {
+
+        // 🔴 EDIT MODE
+        if (window.editingId) {
+
+            await update(ref(db, "news/" + window.editingId), {
+                title: title.value,
+                text: text.value,
+                date: new Date().toLocaleDateString("nl-NL"),
+                time: new Date().toLocaleTimeString("nl-NL")
+            });
+
+            window.editingId = null;
+
+        } 
+        // 🟢 CREATE MODE
+        else {
+
+            await push(ref(db, "news"), {
+                title: title.value,
+                text: text.value,
+                created: Date.now(),
+                date: new Date().toLocaleDateString("nl-NL"),
+                time: new Date().toLocaleTimeString("nl-NL")
+            });
+        }
+
+        form.reset();
+        status.textContent = "✅ Opgeslagen";
+
+    } catch (err) {
+        console.error(err);
+        status.textContent = "❌ Fout";
     }
-
-    await push(ref(db, "agenda"), {
-        title: title.value,
-        date: date.value,
-        time: time.value,
-        text: text.value,
-        created: Date.now()
-    });
-
-    status.textContent = "✅ Opgeslagen";
-
-    title.value = "";
-    date.value = "";
-    time.value = "";
-    text.value = "";
 });
 
-// ================= LOAD =================
-onValue(ref(db, "agenda"), (snapshot) => {
+// ================= LOAD NEWS =================
+onValue(ref(db, "news"), (snapshot) => {
 
     const data = snapshot.val();
 
+    if (!list) return;
+
     if (!data) {
-        list.innerHTML = "<p style='color:#aaa'>Geen agenda items</p>";
+        list.innerHTML = "<p>Geen nieuws</p>";
         return;
     }
 
-    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
+    const items = Object.entries(data).map(([id, v]) => ({
+        id,
+        ...v
+    }));
 
-    list.innerHTML = items.reverse().map(i => `
-        <div class="item">
+    list.innerHTML = items.reverse().map(n => `
+        <div class="news-item">
 
-            <b>${i.title}</b><br>
+            <b>${n.title}</b>
+            <p>${n.text}</p>
 
-            <span style="color:#aaa">📅 ${i.date} 🕒 ${i.time || ""}</span>
+            <small>${n.date || ""} ${n.time || ""}</small>
 
-            <p>${i.text || ""}</p>
+            <br><br>
 
-            <button onclick="deleteItem('${i.id}')">Delete</button>
+            <button onclick="editNews('${n.id}', ${JSON.stringify(n)})">Edit</button>
+            <button onclick="deleteNews('${n.id}')">Delete</button>
 
         </div>
     `).join("");
@@ -62,6 +91,15 @@ onValue(ref(db, "agenda"), (snapshot) => {
 });
 
 // ================= DELETE =================
-window.deleteItem = async (id) => {
-    await remove(ref(db, "agenda/" + id));
+window.deleteNews = async (id) => {
+    await remove(ref(db, "news/" + id));
+};
+
+// ================= EDIT =================
+window.editNews = (id, data) => {
+
+    title.value = data.title;
+    text.value = data.text;
+
+    window.editingId = id;
 };
