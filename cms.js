@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS FINAL LOADED");
+console.log("🧡 CMS FINAL ACTIVE");
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -9,20 +9,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = document.getElementById("status");
 
     if (!form) {
-        console.error("❌ newsForm niet gevonden");
+        console.error("❌ FORM NIET GEVONDEN");
         return;
     }
 
     form.addEventListener("submit", async (e) => {
+
         e.preventDefault();
 
-        console.log("🟢 SUBMIT WERKT");
+        console.log("🟢 SUBMIT TRIGGERED");
 
         const title = document.getElementById("title").value;
         const text = document.getElementById("text").value;
 
         if (!title || !text) {
-            alert("Vul titel en tekst in");
+            alert("Vul alles in");
             return;
         }
 
@@ -31,27 +32,22 @@ document.addEventListener("DOMContentLoaded", () => {
             status.textContent = "⏳ Opslaan...";
 
             await push(ref(db, "news"), {
-                title: title,
-                text: text,
+                title,
+                text,
                 image: "",
                 created: Date.now(),
                 date: new Date().toLocaleDateString("nl-NL"),
-                time: new Date().toLocaleTimeString("nl-NL", {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                })
+                time: new Date().toLocaleTimeString("nl-NL")
             });
 
-            console.log("✅ OPGESLAGEN IN FIREBASE");
-
+            status.textContent = "✅ Opgeslagen!";
             form.reset();
-            status.textContent = "✅ Nieuws opgeslagen";
 
         } catch (err) {
-
-            console.error("❌ FIREBASE ERROR:", err);
+            console.error("FIREBASE ERROR:", err);
             status.textContent = "❌ Fout bij opslaan";
         }
+
     });
 
 });
