@@ -15,12 +15,12 @@ import {
 const newsContainer = document.getElementById("news");
 
 if (!newsContainer) {
-    console.error("❌ #news container niet gevonden");
-    throw new Error("Container ontbreekt");
+    console.error("❌ news container niet gevonden");
+    throw new Error("Missing #news container");
 }
 
 // ==========================================
-// QUERY (laatste 3 berichten)
+// FIREBASE QUERY (laatste 3 nieuws)
 // ==========================================
 
 const newsQuery = query(
@@ -30,7 +30,7 @@ const newsQuery = query(
 );
 
 // ==========================================
-// HELPERS
+// HTML SAFE TEXT
 // ==========================================
 
 function escapeHTML(text = "") {
@@ -41,16 +41,17 @@ function escapeHTML(text = "") {
 }
 
 // ==========================================
-// CARD BUILDER
+// CARD
 // ==========================================
 
 function createCard(item) {
 
-    const textValue = item.text || "";
+    const text = item.text || "";
 
-    const shortText = textValue.length > 150
-        ? textValue.substring(0, 150) + "..."
-        : textValue;
+    const shortText =
+        text.length > 150
+            ? text.substring(0, 150) + "..."
+            : text;
 
     return `
 <article class="kaart">
@@ -58,11 +59,13 @@ function createCard(item) {
     <h3>${escapeHTML(item.title || "")}</h3>
 
     <div class="datum">
-        📅 ${item.date || ""} &nbsp;&nbsp;
-        🕒 ${item.time || ""}
+        📅 ${item.date || ""} • 🕒 ${item.time || ""}
     </div>
 
-    ${item.image ? `<img src="${item.image}" style="width:100%;border-radius:10px;">` : ""}
+    ${item.image
+        ? `<img src="${item.image}" style="width:100%;border-radius:10px;margin-top:10px;">`
+        : ""
+    }
 
     <p>${escapeHTML(shortText)}</p>
 
@@ -71,47 +74,45 @@ function createCard(item) {
 }
 
 // ==========================================
-// LOAD NEWS
+// LOAD DATA
 // ==========================================
 
 onValue(newsQuery, (snapshot) => {
 
     const items = [];
 
-    snapshot.forEach((item) => {
+    snapshot.forEach((child) => {
         items.push({
-            id: item.key,
-            ...item.val()
+            id: child.key,
+            ...child.val()
         });
     });
 
     if (items.length === 0) {
-
         newsContainer.innerHTML = `
             <article class="kaart">
                 <h3>📰 Geen nieuws</h3>
-                <p>Er zijn nog geen nieuwsberichten.</p>
+                <p>Er zijn nog geen berichten geplaatst.</p>
             </article>
         `;
         return;
     }
 
-    let html = "";
+    // nieuwste eerst
+    items.sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    items.forEach(item => {
-        html += createCard(item);
-    });
-
-    newsContainer.innerHTML = html;
+    newsContainer.innerHTML = items
+        .map(createCard)
+        .join("");
 
 }, (error) => {
 
-    console.error("❌ Nieuws fout:", error);
+    console.error("❌ NEWS ERROR:", error);
 
     newsContainer.innerHTML = `
         <article class="kaart">
             <h3>❌ Fout</h3>
-            <p>Nieuws kon niet worden geladen.</p>
+            <p>Nieuws kon niet geladen worden.</p>
         </article>
     `;
 });
@@ -120,4 +121,4 @@ onValue(newsQuery, (snapshot) => {
 // START LOG
 // ==========================================
 
-console.log("🧡 HV Novitas NEWS.JS REBUILD OK");
+console.log("🧡 NEWS.JS CLEAN REWRITE LOADED");
