@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let imageData = "";
     window.editingId = null;
+    window.currentImage = "";
 
     // ================= IMAGE =================
     imgInput?.addEventListener("change", (e) => {
@@ -33,19 +34,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!title || !text) return;
 
-        status.textContent = "⏳ Opslaan...";
-
         try {
+
+            status.textContent = "⏳ Opslaan...";
 
             if (window.editingId) {
 
                 await update(ref(db, "news/" + window.editingId), {
                     title,
                     text,
-                    image: imageData
+                    image: imageData || window.currentImage || ""
                 });
 
                 window.editingId = null;
+                window.currentImage = "";
 
             } else {
 
@@ -69,10 +71,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ================= LIST =================
+    // ================= LOAD LIST =================
     onValue(ref(db, "news"), (snapshot) => {
 
         const data = snapshot.val();
+
+        if (!list) {
+            console.error("❌ newsList ontbreekt in HTML");
+            return;
+        }
 
         const items = Object.entries(data || {}).map(([id, value]) => ({
             id,
@@ -98,6 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================= DELETE =================
 window.deleteNews = async (id) => {
 
+    if (!id) return;
+
     if (!confirm("Weet je zeker dat je dit wilt verwijderen?")) return;
 
     await remove(ref(db, "news/" + id));
@@ -110,5 +119,5 @@ window.editNews = (id, title, text, image) => {
     document.getElementById("text").value = text || "";
 
     window.editingId = id;
-    window.imageData = image || "";
+    window.currentImage = image || "";
 };
