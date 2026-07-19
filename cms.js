@@ -1,34 +1,34 @@
 import { db } from "./firebase.js";
 import { ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 STABLE CMS LOADED");
+console.log("🧡 FINAL STABLE CMS LOADED");
 
 window.addEventListener("DOMContentLoaded", () => {
 
     // ================= NEWS =================
 
-    const form = document.getElementById("newsForm");
+    const newsForm = document.getElementById("newsForm");
     const title = document.getElementById("title");
     const text = document.getElementById("text");
     const newsList = document.getElementById("newsList");
 
-    let editingId = null;
+    let editingNewsId = null;
 
-    if (form) {
+    if (newsForm) {
 
-        form.addEventListener("submit", async (e) => {
+        newsForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
             if (!title.value || !text.value) return;
 
-            if (editingId) {
+            if (editingNewsId) {
 
-                await update(ref(db, "news/" + editingId), {
+                await update(ref(db, "news/" + editingNewsId), {
                     title: title.value,
                     text: text.value
                 });
 
-                editingId = null;
+                editingNewsId = null;
 
             } else {
 
@@ -39,7 +39,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            form.reset();
+            newsForm.reset();
         });
     }
 
@@ -71,7 +71,7 @@ window.addEventListener("DOMContentLoaded", () => {
     window.editNews = (id, titleValue, textValue) => {
         document.getElementById("title").value = titleValue;
         document.getElementById("text").value = textValue;
-        editingId = id;
+        editingNewsId = id;
     };
 
     window.deleteNews = async (id) => {
@@ -81,23 +81,23 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // ================= SPONSORS =================
 
-    const fileInput = document.getElementById("logo");
-    const sponsorList = document.getElementById("sponsorList");
+    const sponsorFile = document.getElementById("logo");
     const sponsorBtn = document.getElementById("saveSponsor");
+    const sponsorList = document.getElementById("sponsorList");
     const sponsorStatus = document.getElementById("sponsorStatus");
 
-    if (sponsorBtn && fileInput) {
+    if (sponsorBtn && sponsorFile) {
 
         sponsorBtn.addEventListener("click", () => {
 
-            if (!fileInput.files[0]) {
+            if (!sponsorFile.files[0]) {
                 alert("Kies eerst een logo");
                 return;
             }
 
             if (sponsorStatus) sponsorStatus.textContent = "Uploaden...";
 
-            const file = fileInput.files[0];
+            const file = sponsorFile.files[0];
             const reader = new FileReader();
 
             reader.onload = async () => {
@@ -107,7 +107,7 @@ window.addEventListener("DOMContentLoaded", () => {
                     created: Date.now()
                 });
 
-                fileInput.value = "";
+                sponsorFile.value = "";
                 if (sponsorStatus) sponsorStatus.textContent = "✅ Opgeslagen";
             };
 
@@ -190,10 +190,19 @@ window.addEventListener("DOMContentLoaded", () => {
         const items = Object.entries(data);
 
         omeList.innerHTML = items.map(([id, o]) => `
-            <div style="display:inline-block; margin:10px;">
+            <div style="display:inline-block; margin:10px; text-align:center;">
                 <img src="${o.imageUrl}" style="height:80px; border-radius:10px;">
+                <br>
+                <button onclick="deleteOmeJan('${id}')"
+                    style="background:red;color:white;border:none;padding:5px;border-radius:5px;">
+                    Delete
+                </button>
             </div>
         `).join("");
     });
+
+    window.deleteOmeJan = async (id) => {
+        await remove(ref(db, "omejan/" + id));
+    };
 
 });
