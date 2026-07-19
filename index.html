@@ -10,29 +10,74 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #ff6a00;
+        }
+
+        h2 {
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 15px;
+            background: #ff6a00;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-<div class="login">
+<div class="login-box">
 
-    <div class="login-box">
+    <h1>🧡 HV Novitas</h1>
 
-        <h1>🧡 HV Novitas</h1>
+    <h2>Beheer</h2>
 
-        <h2>Beheer</h2>
+    <p>
+        Alleen voor bevoegde bestuursleden.
+    </p>
 
-        <p>
-            Alleen voor bevoegde bestuursleden.
-        </p>
+    <button id="login">
+        🔐 Inloggen met Google
+    </button>
 
-        <button id="login">
-            🔐 Inloggen met Google
-        </button>
-
-        <p id="status"></p>
-
-    </div>
+    <p id="status"></p>
 
 </div>
 
