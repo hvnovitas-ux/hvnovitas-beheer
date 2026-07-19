@@ -85,3 +85,19 @@ window.editNews = (id) => {
 
     window.editingId = id;
 };
+import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { db } from "./firebase.js";
+
+console.log("🤝 SPONSOR TEST READY");
+
+// TEST: 1 sponsor toevoegen
+window.addTestSponsor = async () => {
+
+    await push(ref(db, "sponsors"), {
+        name: "Test Sponsor",
+        imageUrl: "https://via.placeholder.com/150",
+        created: Date.now()
+    });
+
+    console.log("Sponsor toegevoegd");
+};
