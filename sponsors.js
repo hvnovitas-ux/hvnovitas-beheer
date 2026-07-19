@@ -4,14 +4,14 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 const sponsorTrack = document.getElementById("sponsorTrack");
 
 let animationId = null;
-let position = 0;
-let speed = 0.6;
 
 onValue(ref(db, "sponsors"), (snapshot) => {
 
     const data = snapshot.val();
 
-    cancelAnimationFrame(animationId);
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+    }
 
     sponsorTrack.innerHTML = "";
 
@@ -22,39 +22,37 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 
     const sponsors = Object.values(data);
 
-    function buildRow() {
+    // Bouw de rij 3 keer op voor een vloeiende lus
+    for (let i = 0; i < 3; i++) {
 
         sponsors.forEach((sponsor) => {
 
-            const div = document.createElement("div");
-            div.className = "sponsor";
+            const item = document.createElement("div");
+            item.className = "sponsor";
 
-            div.innerHTML = `
-                <img src="${sponsor.imageUrl}" alt="Sponsor">
-            `;
+            const img = document.createElement("img");
+            img.src = sponsor.imageUrl;
+            img.alt = "Sponsor";
 
-            sponsorTrack.appendChild(div);
+            item.appendChild(img);
+            sponsorTrack.appendChild(item);
 
         });
 
     }
 
-    // Genoeg logo's maken voor een vloeiende lus
-    buildRow();
-    buildRow();
-    buildRow();
+    let position = 0;
+    const speed = 0.5;
 
     requestAnimationFrame(() => {
 
-        const halfWidth = sponsorTrack.scrollWidth / 3;
-
-        position = 0;
+        const loopWidth = sponsorTrack.scrollWidth / 3;
 
         function animate() {
 
             position -= speed;
 
-            if (Math.abs(position) >= halfWidth) {
+            if (Math.abs(position) >= loopWidth) {
                 position = 0;
             }
 
