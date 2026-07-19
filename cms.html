@@ -1,3 +1,51 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HV Novitas CMS</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
+
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
 button {
     background: #ff6a00;
     color: white;
@@ -7,7 +55,7 @@ button {
     cursor: pointer;
 }
 
-/* NEWS ITEM */
+/* NEWS */
 .news-item {
     background: #fff;
     padding: 10px;
@@ -16,7 +64,7 @@ button {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* ACTION BUTTONS */
+/* ACTIONS */
 .actions {
     display: flex;
     gap: 10px;
@@ -31,6 +79,15 @@ button {
     background: red;
 }
 
+/* SPONSORS */
+#sponsorList img {
+    height: 60px;
+    margin: 10px;
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
+}
+
 </style>
 
 </head>
@@ -41,18 +98,16 @@ button {
 
 <div class="container">
 
-    <!-- FORM -->
+    <!-- ================= NEWS ================= -->
     <div class="box">
 
-        <h2>Nieuw bericht</h2>
+        <h2>📰 Nieuws beheren</h2>
 
         <form id="newsForm">
 
             <input type="text" id="title" placeholder="Titel" required>
 
             <textarea id="text" placeholder="Bericht" required></textarea>
-
-            <!-- ❌ IMAGE VERWIJDERD (BELANGRIJK VOOR STABILITEIT) -->
 
             <button type="submit">Publiceren</button>
 
@@ -62,12 +117,32 @@ button {
 
     </div>
 
-    <!-- LIST -->
     <div class="box">
 
         <h2>Berichten beheren</h2>
 
         <div id="newsList"></div>
+
+    </div>
+
+    <!-- ================= SPONSORS ================= -->
+    <div class="box">
+
+        <h2>🤝 Sponsors beheren</h2>
+
+        <input type="file" id="logo">
+
+        <button id="saveSponsor">Upload sponsor</button>
+
+        <p id="status"></p>
+
+    </div>
+
+    <div class="box">
+
+        <h2>Huidige sponsors</h2>
+
+        <div id="sponsorList"></div>
 
     </div>
 
