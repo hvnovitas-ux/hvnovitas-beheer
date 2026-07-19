@@ -3,62 +3,67 @@ import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/1
 
 console.log("🧡 Sponsors CMS geladen");
 
-const fileInput = document.getElementById("logo");
-const list = document.getElementById("sponsorList");
-const status = document.getElementById("sponsorStatus"); // 🔥 FIX
+window.addEventListener("DOMContentLoaded", () => {
 
-document.getElementById("saveSponsor").addEventListener("click", async () => {
+    const fileInput = document.getElementById("logo");
+    const list = document.getElementById("sponsorList");
+    const status = document.getElementById("sponsorStatus");
+    const btn = document.getElementById("saveSponsor");
 
-    if (!fileInput.files[0]) {
-        alert("Kies eerst een logo");
-        return;
-    }
+    btn.addEventListener("click", async () => {
 
-    status.textContent = "Uploaden...";
+        if (!fileInput.files[0]) {
+            alert("Kies eerst een logo");
+            return;
+        }
 
-    const file = fileInput.files[0];
-    const reader = new FileReader();
+        status.textContent = "Uploaden...";
 
-    reader.onload = async () => {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
 
-        await push(ref(db, "sponsors"), {
-            imageUrl: reader.result,
-            created: Date.now()
-        });
+        reader.onload = async () => {
 
-        fileInput.value = "";
-        status.textContent = "✅ Opgeslagen";
+            await push(ref(db, "sponsors"), {
+                imageUrl: reader.result,
+                created: Date.now()
+            });
+
+            fileInput.value = "";
+            status.textContent = "✅ Opgeslagen";
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    onValue(ref(db, "sponsors"), (snapshot) => {
+
+        const data = snapshot.val();
+
+        if (!list) return;
+
+        if (!data) {
+            list.innerHTML = "<p>Geen sponsors</p>";
+            return;
+        }
+
+        const items = Object.entries(data);
+
+        list.innerHTML = items.map(([id, s]) => `
+            <div style="display:inline-block; margin:10px; text-align:center;">
+
+                <img src="${s.imageUrl}" style="height:60px; background:white; padding:5px; border-radius:8px;">
+
+                <br>
+
+                <button onclick="deleteSponsor('${id}')">Delete</button>
+
+            </div>
+        `).join("");
+    });
+
+    window.deleteSponsor = async (id) => {
+        await remove(ref(db, "sponsors/" + id));
     };
 
-    reader.readAsDataURL(file);
 });
-
-onValue(ref(db, "sponsors"), (snapshot) => {
-
-    const data = snapshot.val();
-
-    if (!list) return;
-
-    if (!data) {
-        list.innerHTML = "<p>Geen sponsors</p>";
-        return;
-    }
-
-    const items = Object.entries(data);
-
-    list.innerHTML = items.map(([id, s]) => `
-        <div style="display:inline-block; margin:10px; text-align:center;">
-
-            <img src="${s.imageUrl}" style="height:60px; background:white; padding:5px; border-radius:8px;">
-
-            <br>
-
-            <button onclick="deleteSponsor('${id}')">Delete</button>
-
-        </div>
-    `).join("");
-});
-
-window.deleteSponsor = async (id) => {
-    await remove(ref(db, "sponsors/" + id));
-};
