@@ -5,11 +5,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ome Jan - HV Novitas</title>
+<title>Ome Jan</title>
 
 <style>
 
-/* ================= BASIC ================= */
+/* ================= PAGE ================= */
 
 body {
     margin: 0;
@@ -17,23 +17,34 @@ body {
     background: #f4f6f8;
 }
 
-/* ================= SLIDER ================= */
+/* ================= EMBED SAFE SLIDER ================= */
 
 .slider {
     width: 100%;
+    max-width: 100%;
+    height: 200px;          /* 👈 BELANGRIJK: niet te groot */
     overflow: hidden;
+    border-radius: 12px;
+    position: relative;
+    background: #fff;
 }
+
+/* ================= TRACK ================= */
 
 #sliderTrack {
     display: flex;
+    height: 100%;
     transition: transform 0.6s ease-in-out;
 }
 
+/* ================= IMAGES ================= */
+
 #sliderTrack img {
     width: 100%;
-    height: 400px;
+    height: 200px;          /* 👈 zelfde als container */
     object-fit: cover;
     flex-shrink: 0;
+    display: block;
 }
 
 /* ================= DOTS ================= */
@@ -44,9 +55,9 @@ body {
 }
 
 .dot {
-    height: 10px;
-    width: 10px;
-    margin: 5px;
+    height: 8px;
+    width: 8px;
+    margin: 4px;
     display: inline-block;
     background: #ccc;
     border-radius: 50%;
@@ -61,6 +72,8 @@ body {
 </head>
 
 <body>
+
+<!-- ================= SLIDER ================= -->
 
 <div class="slider">
     <div id="sliderTrack"></div>
@@ -92,7 +105,7 @@ let images = [];
 let index = 0;
 let interval = null;
 
-// ================= LOAD DATA =================
+// ================= LOAD =================
 
 onValue(ref(db, "omejan"), (snapshot) => {
 
@@ -122,10 +135,8 @@ function createDots() {
     dots.innerHTML = "";
 
     images.forEach(() => {
-
         const dot = document.createElement("span");
         dot.className = "dot";
-
         dots.appendChild(dot);
     });
 
