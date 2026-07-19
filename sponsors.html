@@ -1,10 +1,95 @@
-<section>
+<!DOCTYPE html>
+<html lang="nl">
 
-    <div id="sponsors"></div>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>HV Novitas Sponsors</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
+
+/* TOPBAR */
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* SPONSOR SLIDER */
+#sponsorSlider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+}
+
+/* LOGO STYLE */
+#sponsorSlider img {
+    height: 60px;
+    flex-shrink: 0;
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+#sponsorSlider img:hover {
+    transform: scale(1.05);
+}
+
+/* STATUS */
+#status {
+    margin-top: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+🤝 HV NOVITAS SPONSORS
+</div>
+
+<div class="container">
+
+    <h2>Onze sponsors</h2>
+
+    <!-- SLIDER -->
+    <div id="sponsorSlider"></div>
+
+    <!-- STATUS -->
     <p id="status">Laden...</p>
 
-</section>
+</div>
 
+<!-- FIREBASE -->
 <script type="module" src="firebase.js"></script>
+
+<!-- SPONSORS SCRIPT -->
 <script type="module" src="sponsors.js"></script>
+
+</body>
+
+</html>
