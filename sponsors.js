@@ -3,9 +3,15 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 
 const sponsorTrack = document.getElementById("sponsorTrack");
 
+let animationId = null;
+let position = 0;
+let speed = 0.6;
+
 onValue(ref(db, "sponsors"), (snapshot) => {
 
     const data = snapshot.val();
+
+    cancelAnimationFrame(animationId);
 
     sponsorTrack.innerHTML = "";
 
@@ -16,24 +22,50 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 
     const sponsors = Object.values(data);
 
-    function buildSponsors() {
+    function buildRow() {
 
         sponsors.forEach((sponsor) => {
 
-            sponsorTrack.innerHTML += `
-                <div class="sponsor">
-                    <img src="${sponsor.imageUrl}" alt="Sponsor">
-                </div>
+            const div = document.createElement("div");
+            div.className = "sponsor";
+
+            div.innerHTML = `
+                <img src="${sponsor.imageUrl}" alt="Sponsor">
             `;
+
+            sponsorTrack.appendChild(div);
 
         });
 
     }
 
-    // Eerste rij
-    buildSponsors();
+    // Genoeg logo's maken voor een vloeiende lus
+    buildRow();
+    buildRow();
+    buildRow();
 
-    // Tweede rij (voor later de oneindige slider)
-    buildSponsors();
+    requestAnimationFrame(() => {
+
+        const halfWidth = sponsorTrack.scrollWidth / 3;
+
+        position = 0;
+
+        function animate() {
+
+            position -= speed;
+
+            if (Math.abs(position) >= halfWidth) {
+                position = 0;
+            }
+
+            sponsorTrack.style.transform = `translateX(${position}px)`;
+
+            animationId = requestAnimationFrame(animate);
+
+        }
+
+        animate();
+
+    });
 
 });
