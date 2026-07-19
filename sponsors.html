@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HV Novitas Sponsors</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f6f8;
+}
+
+h2{
+    text-align:center;
+    color:#ff6a00;
+}
+
+#sponsorList{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:20px;
+    margin-top:30px;
+}
+
+.sponsor{
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.sponsor img{
+    max-height:80px;
+    max-width:220px;
+    display:block;
+}
+
+</style>
+
+</head>
+<body>
+
+<h2>🤝 Onze Sponsors</h2>
+
+<div id="sponsorList"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer",
+    storageBucket: "hv-novitas-beheer.appspot.com",
+    messagingSenderId: "71716605241",
+    appId: "1:71716605241:web:b7e87d680b7499421a6ce8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const sponsorList = document.getElementById("sponsorList");
+
+onValue(ref(db,"sponsors"),snapshot=>{
+
+    const data=snapshot.val();
+
+    if(!data){
+        sponsorList.innerHTML="<p>Nog geen sponsors gevonden.</p>";
+        return;
+    }
+
+    sponsorList.innerHTML="";
+
+    Object.values(data).forEach(sponsor=>{
+
+        sponsorList.innerHTML += `
+            <div class="sponsor">
+                <img src="${sponsor.imageUrl}" alt="Sponsor">
+            </div>
+        `;
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
