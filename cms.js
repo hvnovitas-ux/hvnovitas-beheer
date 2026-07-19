@@ -146,73 +146,65 @@ window.addEventListener("DOMContentLoaded", () => {
             </div>
         `).join("");
     });
-    import { ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import { db } from "./firebase.js";
-
-console.log("📸 Ome Jan module geladen");
-
-// ================= ELEMENTEN =================
-
-const fileInput = document.getElementById("omejanFile");
-const btn = document.getElementById("saveOmejan");
-const list = document.getElementById("omejanList");
-const status = document.getElementById("omejanStatus");
-
-// ================= UPLOAD =================
-
-if (btn && fileInput) {
-
-    btn.addEventListener("click", () => {
-
-        if (!fileInput.files[0]) {
-            alert("Kies eerst een foto");
-            return;
-        }
-
-        if (status) status.textContent = "Uploaden...";
-
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-
-        reader.onload = async () => {
-
-            await push(ref(db, "omejan"), {
-                imageUrl: reader.result,
-                created: Date.now()
-            });
-
-            fileInput.value = "";
-            if (status) status.textContent = "✅ Opgeslagen";
-        };
-
-        reader.readAsDataURL(file);
-    });
-}
-
-// ================= LOAD =================
-
-onValue(ref(db, "omejan"), (snapshot) => {
-
-    if (!list) return;
-
-    const data = snapshot.val();
-
-    if (!data) {
-        list.innerHTML = "<p>Geen foto's</p>";
-        return;
-    }
-
-    const items = Object.entries(data);
-
-    list.innerHTML = items.map(([id, o]) => `
-        <div style="display:inline-block; margin:10px;">
-            <img src="${o.imageUrl}" style="height:80px; border-radius:10px;">
-        </div>
-    `).join("");
-});
 
     window.deleteSponsor = async (id) => {
         await remove(ref(db, "sponsors/" + id));
     };
+
+    // ================= OME JAN =================
+
+    const fileInputO = document.getElementById("omejanFile");
+    const btnO = document.getElementById("saveOmejan");
+    const listO = document.getElementById("omejanList");
+    const statusO = document.getElementById("omejanStatus");
+
+    if (btnO && fileInputO) {
+
+        btnO.addEventListener("click", () => {
+
+            if (!fileInputO.files[0]) {
+                alert("Kies eerst een foto");
+                return;
+            }
+
+            if (statusO) statusO.textContent = "Uploaden...";
+
+            const file = fileInputO.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async () => {
+
+                await push(ref(db, "omejan"), {
+                    imageUrl: reader.result,
+                    created: Date.now()
+                });
+
+                fileInputO.value = "";
+                if (statusO) statusO.textContent = "✅ Opgeslagen";
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    onValue(ref(db, "omejan"), (snapshot) => {
+
+        if (!listO) return;
+
+        const data = snapshot.val();
+
+        if (!data) {
+            listO.innerHTML = "<p>Geen foto's</p>";
+            return;
+        }
+
+        const items = Object.entries(data);
+
+        listO.innerHTML = items.map(([id, o]) => `
+            <div style="display:inline-block; margin:10px;">
+                <img src="${o.imageUrl}" style="height:80px; border-radius:10px;">
+            </div>
+        `).join("");
+    });
 
 });
