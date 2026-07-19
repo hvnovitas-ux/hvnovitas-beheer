@@ -39,17 +39,14 @@ body {
     box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-/* INPUTS */
 input, textarea {
     width: 100%;
     padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 10px;
+    margin: 5px 0 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
 }
 
-/* BUTTON */
 button {
     background: #ff6a00;
     color: white;
@@ -59,7 +56,6 @@ button {
     cursor: pointer;
 }
 
-/* NEWS */
 .news-item {
     background: #fff;
     padding: 10px;
@@ -68,7 +64,6 @@ button {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* SPONSORS */
 #sponsorList {
     display: flex;
     flex-wrap: wrap;
@@ -93,19 +88,14 @@ button {
 
 <div class="container">
 
-    <!-- ================= NEWS ================= -->
     <div class="box">
 
         <h2>📰 Nieuws beheren</h2>
 
         <form id="newsForm">
-
             <input type="text" id="title" placeholder="Titel" required>
-
             <textarea id="text" placeholder="Bericht" required></textarea>
-
             <button type="submit">Publiceren</button>
-
         </form>
 
         <p id="newsStatus"></p>
@@ -115,7 +105,6 @@ button {
 
     </div>
 
-    <!-- ================= SPONSORS ================= -->
     <div class="box">
 
         <h2>🤝 Sponsors beheren</h2>
@@ -132,7 +121,6 @@ button {
 
 </div>
 
-<!-- SCRIPTS -->
 <script type="module" src="firebase.js"></script>
 <script type="module" src="cms.js"></script>
 
