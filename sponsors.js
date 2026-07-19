@@ -1,42 +1,31 @@
-// ==========================================
-// HV NOVITAS - SPONSORS
-// ==========================================
+import { db } from "./firebase.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const container = document.getElementById("sponsors");
 const status = document.getElementById("status");
 
-async function laadSponsors() {
+function laadSponsors() {
 
     status.textContent = "Sponsors laden...";
 
-    try {
+    onValue(ref(db, "sponsors"), (snapshot) => {
 
-        container.innerHTML = `
+        const data = snapshot.val();
 
-        <div class="bericht">
+        if (!data) {
+            container.innerHTML = "<p>Geen sponsors gevonden</p>";
+            status.textContent = "Gereed";
+            return;
+        }
 
-            <h3>💰 Sponsormodule</h3>
+        const items = Object.values(data);
 
-            <p>
-                De koppeling wordt binnenkort toegevoegd.
-            </p>
-
-        </div>
-
-        `;
+        container.innerHTML = items.map(s => `
+            <img src="${s.imageUrl}" style="height:60px; margin:10px;">
+        `).join("");
 
         status.textContent = "Gereed";
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        status.textContent = "Fout bij laden.";
-
-    }
-
+    });
 }
 
 laadSponsors();
