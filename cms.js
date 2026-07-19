@@ -79,15 +79,68 @@ window.editNews = (id) => {
     window.editingId = id;
 };
 
-// ================= SPONSORS TEST (APART + SAFE) =================
+// ================= SPONSORS (ECHTE CMS LOGICA) =================
 
-window.addTestSponsor = async () => {
+const fileInput = document.getElementById("logo");
+const sponsorList = document.getElementById("sponsorList");
+const statusSponsor = document.getElementById("sponsorStatus");
+const btn = document.getElementById("saveSponsor");
 
-    await push(ref(db, "sponsors"), {
-        name: "Test Sponsor",
-        imageUrl: "https://via.placeholder.com/150",
-        created: Date.now()
+if (btn) {
+
+    btn.addEventListener("click", () => {
+
+        if (!fileInput.files[0]) {
+            alert("Kies eerst een logo");
+            return;
+        }
+
+        if (statusSponsor) statusSponsor.textContent = "Uploaden...";
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async () => {
+
+            await push(ref(db, "sponsors"), {
+                imageUrl: reader.result,
+                created: Date.now()
+            });
+
+            fileInput.value = "";
+            if (statusSponsor) statusSponsor.textContent = "✅ Opgeslagen";
+        };
+
+        reader.readAsDataURL(file);
     });
+}
 
-    console.log("Sponsor toegevoegd");
+onValue(ref(db, "sponsors"), (snapshot) => {
+
+    if (!sponsorList) return;
+
+    const data = snapshot.val();
+
+    if (!data) {
+        sponsorList.innerHTML = "<p>Geen sponsors</p>";
+        return;
+    }
+
+    const items = Object.entries(data);
+
+    sponsorList.innerHTML = items.map(([id, s]) => `
+        <div style="display:inline-block; margin:10px; text-align:center;">
+
+            <img src="${s.imageUrl}" style="height:60px; background:white; padding:5px; border-radius:8px;">
+
+            <br>
+
+            <button onclick="deleteSponsor('${id}')">Delete</button>
+
+        </div>
+    `).join("");
+});
+
+window.deleteSponsor = async (id) => {
+    await remove(ref(db, "sponsors/" + id));
 };
