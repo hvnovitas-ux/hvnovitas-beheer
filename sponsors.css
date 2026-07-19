@@ -1,0 +1,60 @@
+/* ===== Sponsor gedeelte ===== */
+
+.sponsor-section{
+    width:100%;
+    padding:20px 0;
+    background:#ffffff;
+    overflow:hidden;
+}
+
+/* ===== Slider ===== */
+
+.slider{
+    width:100%;
+    overflow:hidden;
+    position:relative;
+}
+
+/* ===== Track ===== */
+
+.track{
+    display:flex;
+    align-items:center;
+    gap:40px;
+    width:max-content;
+}
+
+/* ===== Sponsor ===== */
+
+.sponsor{
+    flex:0 0 auto;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#fff;
+    padding:10px 20px;
+    border-radius:10px;
+}
+
+/* ===== Logo ===== */
+
+.sponsor img{
+    height:70px;
+    width:auto;
+    display:block;
+    object-fit:contain;
+}
+
+/* ===== Mobiel ===== */
+
+@media (max-width:768px){
+
+    .track{
+        gap:20px;
+    }
+
+    .sponsor img{
+        height:50px;
+    }
+
+}
