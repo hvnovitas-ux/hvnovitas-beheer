@@ -5,52 +5,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ome Jan</title>
+<title>Ome Jan Swipe</title>
 
 <style>
-
-/* ================= PAGE RESET ================= */
 
 body {
     margin: 0;
     font-family: Arial;
-    background: transparent; /* 👈 belangrijk voor embed */
+    background: #f4f6f8;
 }
 
-/* ================= RESPONSIVE WRAPPER ================= */
+/* ================= SLIDER ================= */
 
 .slider {
     width: 100%;
-    height: 100%;
-    max-height: 400px;
+    max-width: 600px;
+    margin: auto;
     overflow: hidden;
     border-radius: 12px;
+    touch-action: pan-y;
 }
-
-/* ================= TRACK ================= */
 
 #sliderTrack {
     display: flex;
-    height: 100%;
-    transition: transform 0.6s ease-in-out;
+    transition: transform 0.4s ease;
 }
-
-/* ================= IMAGES ================= */
 
 #sliderTrack img {
     width: 100%;
-    height: 100%;
-    max-height: 400px;
+    height: 250px;
     object-fit: cover;
     flex-shrink: 0;
-    display: block;
+    user-select: none;
 }
 
 /* ================= DOTS ================= */
 
 #dots {
     text-align: center;
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
 .dot {
@@ -66,28 +59,17 @@ body {
     background: #ff6a00;
 }
 
-/* ================= AUTO HEIGHT FIX ================= */
-
-.container {
-    width: 100%;
-    height: 100%;
-}
-
 </style>
 
 </head>
 
 <body>
 
-<div class="container">
-
-    <div class="slider">
-        <div id="sliderTrack"></div>
-    </div>
-
-    <div id="dots"></div>
-
+<div class="slider" id="slider">
+    <div id="sliderTrack"></div>
 </div>
+
+<div id="dots"></div>
 
 <!-- ================= FIREBASE ================= -->
 
@@ -108,22 +90,17 @@ const db = getDatabase(app);
 
 const track = document.getElementById("sliderTrack");
 const dots = document.getElementById("dots");
+const slider = document.getElementById("slider");
 
 let images = [];
 let index = 0;
-let interval = null;
 
 // ================= LOAD =================
 
 onValue(ref(db, "omejan"), (snapshot) => {
 
     const data = snapshot.val();
-
-    if (!data) {
-        track.innerHTML = "<p>Geen foto's</p>";
-        dots.innerHTML = "";
-        return;
-    }
+    if (!data) return;
 
     images = Object.values(data);
     index = 0;
@@ -133,7 +110,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
     `).join("");
 
     createDots();
-    startSlider();
+    update();
 });
 
 // ================= DOTS =================
@@ -143,46 +120,63 @@ function createDots() {
     dots.innerHTML = "";
 
     images.forEach(() => {
-        const dot = document.createElement("span");
-        dot.className = "dot";
-        dots.appendChild(dot);
+        const d = document.createElement("span");
+        d.className = "dot";
+        dots.appendChild(d);
     });
-
-    updateDots();
 }
 
-// ================= SLIDER =================
+// ================= UPDATE =================
 
-function startSlider() {
+function update() {
+    track.style.transform = `translateX(-${index * 100}%)`;
 
-    if (interval) clearInterval(interval);
-
-    if (images.length <= 1) return;
-
-    interval = setInterval(() => {
-
-        index++;
-
-        if (index >= images.length) {
-            index = 0;
-        }
-
-        track.style.transform = `translateX(-${index * 100}%)`;
-
-        updateDots();
-
-    }, 3000);
-}
-
-// ================= DOT UPDATE =================
-
-function updateDots() {
-
-    const allDots = document.querySelectorAll(".dot");
-
-    allDots.forEach((d, i) => {
+    document.querySelectorAll(".dot").forEach((d, i) => {
         d.classList.toggle("active", i === index);
     });
+}
+
+// ================= SWIPE =================
+
+let startX = 0;
+let endX = 0;
+
+slider.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+});
+
+slider.addEventListener("touchend", (e) => {
+    endX = e.changedTouches[0].clientX;
+
+    handleSwipe();
+});
+
+slider.addEventListener("mousedown", (e) => {
+    startX = e.clientX;
+});
+
+slider.addEventListener("mouseup", (e) => {
+    endX = e.clientX;
+
+    handleSwipe();
+});
+
+function handleSwipe() {
+
+    let diff = startX - endX;
+
+    if (Math.abs(diff) < 50) return;
+
+    if (diff > 0) {
+        index++;
+    } else {
+        index--;
+    }
+
+    if (index < 0) index = images.length - 1;
+    if (index >= images.length) index = 0;
+
+    update();
 }
 
 </script>
