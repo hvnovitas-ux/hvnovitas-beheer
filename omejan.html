@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ome Jan Swipe</title>
+<title>Ome Jan</title>
 
 <style>
 
@@ -24,11 +24,12 @@ body {
     overflow: hidden;
     border-radius: 12px;
     touch-action: pan-y;
+    position: relative;
 }
 
 #sliderTrack {
     display: flex;
-    transition: transform 0.4s ease;
+    transition: transform 0.5s ease-in-out;
 }
 
 #sliderTrack img {
@@ -94,6 +95,7 @@ const slider = document.getElementById("slider");
 
 let images = [];
 let index = 0;
+let interval = null;
 
 // ================= LOAD =================
 
@@ -111,6 +113,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
 
     createDots();
     update();
+    startAutoPlay();
 });
 
 // ================= DOTS =================
@@ -129,6 +132,7 @@ function createDots() {
 // ================= UPDATE =================
 
 function update() {
+
     track.style.transform = `translateX(-${index * 100}%)`;
 
     document.querySelectorAll(".dot").forEach((d, i) => {
@@ -136,19 +140,37 @@ function update() {
     });
 }
 
+// ================= AUTOPLAY =================
+
+function startAutoPlay() {
+
+    if (interval) clearInterval(interval);
+
+    if (images.length <= 1) return;
+
+    interval = setInterval(() => {
+
+        index++;
+
+        if (index >= images.length) {
+            index = 0;
+        }
+
+        update();
+
+    }, 3000);
+}
+
 // ================= SWIPE =================
 
 let startX = 0;
-let endX = 0;
 
 slider.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
 });
 
 slider.addEventListener("touchend", (e) => {
-    endX = e.changedTouches[0].clientX;
-
-    handleSwipe();
+    handleSwipe(e.changedTouches[0].clientX);
 });
 
 slider.addEventListener("mousedown", (e) => {
@@ -156,12 +178,10 @@ slider.addEventListener("mousedown", (e) => {
 });
 
 slider.addEventListener("mouseup", (e) => {
-    endX = e.clientX;
-
-    handleSwipe();
+    handleSwipe(e.clientX);
 });
 
-function handleSwipe() {
+function handleSwipe(endX) {
 
     let diff = startX - endX;
 
