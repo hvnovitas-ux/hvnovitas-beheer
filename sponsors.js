@@ -5,9 +5,8 @@ console.log("🧡 Sponsors CMS geladen");
 
 const fileInput = document.getElementById("logo");
 const list = document.getElementById("sponsorList");
-const status = document.getElementById("status");
+const status = document.getElementById("sponsorStatus"); // 🔥 FIX
 
-// ================= UPLOAD =================
 document.getElementById("saveSponsor").addEventListener("click", async () => {
 
     if (!fileInput.files[0]) {
@@ -34,7 +33,6 @@ document.getElementById("saveSponsor").addEventListener("click", async () => {
     reader.readAsDataURL(file);
 });
 
-// ================= LOAD =================
 onValue(ref(db, "sponsors"), (snapshot) => {
 
     const data = snapshot.val();
@@ -61,7 +59,6 @@ onValue(ref(db, "sponsors"), (snapshot) => {
     `).join("");
 });
 
-// ================= DELETE =================
 window.deleteSponsor = async (id) => {
     await remove(ref(db, "sponsors/" + id));
 };
