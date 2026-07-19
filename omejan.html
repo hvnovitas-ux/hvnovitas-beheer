@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ome Jan - HV Novitas</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
+
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+.box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* SLIDER */
+.slider {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    position: relative;
+}
+
+.track {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+}
+
+.track img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border-radius: 12px;
+}
+
+/* DOTS */
+.dots {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    margin: 5px;
+    display: inline-block;
+    background: #ccc;
+    border-radius: 50%;
+}
+
+.dot.active {
+    background: #ff6a00;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+📸 Ome Jan ondersteunt HV Novitas
+</div>
+
+<div class="container">
+
+    <div class="box">
+
+        <div class="slider">
+            <div id="sliderTrack" class="track">
+                <p>Foto’s laden...</p>
+            </div>
+        </div>
+
+        <div id="dots" class="dots"></div>
+
+    </div>
+
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer",
+    storageBucket: "hv-novitas-beheer.appspot.com",
+    messagingSenderId: "YOUR_ID",
+    appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const track = document.getElementById("sliderTrack");
+const dots = document.getElementById("dots");
+
+let index = 0;
+let images = [];
+
+onValue(ref(db, "omejan"), (snapshot) => {
+
+    const data = snapshot.val();
+
+    if (!data) {
+        track.innerHTML = "<p>Geen foto's</p>";
+        return;
+    }
+
+    images = Object.values(data);
+
+    track.innerHTML = images.map(img => `
+        <img src="${img.imageUrl}">
+    `).join("");
+
+    createDots();
+    startSlider();
+});
+
+function createDots() {
+
+    dots.innerHTML = "";
+
+    images.forEach((_, i) => {
+
+        const dot = document.createElement("span");
+        dot.classList.add("dot");
+        if (i === 0) dot.classList.add("active");
+
+        dots.appendChild(dot);
+    });
+}
+
+function startSlider() {
+
+    setInterval(() => {
+
+        index++;
+
+        if (index >= images.length) {
+            index = 0;
+        }
+
+        track.style.transform = `translateX(-${index * 100}%)`;
+
+        updateDots();
+
+    }, 3000);
+}
+
+function updateDots() {
+
+    const allDots = document.querySelectorAll(".dot");
+
+    allDots.forEach((d, i) => {
+        d.classList.toggle("active", i === index);
+    });
+}
+
+</script>
+
+</body>
+
+</html>
