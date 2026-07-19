@@ -1,3 +1,6 @@
+import { db } from "./firebase.js";
+import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
 const btn = document.getElementById("saveSponsor");
 
 if (btn) {
