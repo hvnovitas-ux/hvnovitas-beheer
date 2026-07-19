@@ -1,1 +1,161 @@
-<!DOCTYPE html> <html lang="nl"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>HV Novitas CMS</title> <style> body { margin: 0; font-family: Arial; background: #f4f6f8; } .topbar { background: #ff6a00; color: white; padding: 15px; font-size: 20px; font-weight: bold; } .container { max-width: 900px; margin: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; } .box { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); } /* INPUTS */ input, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; } /* BUTTON */ button { background: #ff6a00; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; } /* NEWS */ .news-item { background: #fff; padding: 10px; margin-bottom: 10px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); } /* SPONSORS */ #sponsorList { display: flex; flex-wrap: wrap; gap: 10px; } #sponsorList img { height: 60px; background: white; padding: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); } </style> </head> <body> <div class="topbar">🧡 HV NOVITAS CMS</div> <div class="container"> <!-- ================= NEWS ================= --> <div class="box"> <h2>📰 Nieuws beheren</h2> <form id="newsForm"> <input type="text" id="title" placeholder="Titel" required> <textarea id="text" placeholder="Bericht" required></textarea> <button type="submit">Publiceren</button> </form> <p id="newsStatus"></p> <h3>Berichten beheren</h3> <div id="newsList"></div> </div> <!-- ================= SPONSORS ================= --> <div class="box"> <h2>🤝 Sponsors beheren</h2> <input type="file" id="logo"> <button id="saveSponsor">Upload sponsor</button> <p id="sponsorStatus"></p> <h3>Huidige sponsors</h3> <div id="sponsorList"></div> </div> </div> <!-- SCRIPTS --> <script type="module" src="firebase.js"></script> <script type="module" src="cms.js"></script> </body> </html>
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HV Novitas CMS</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
+
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* INPUTS */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* BUTTON */
+button {
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* NEWS */
+.news-item {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* SPONSORS */
+#sponsorList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#sponsorList img {
+    height: 60px;
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* OME JAN */
+#omejanList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#omejanList img {
+    height: 80px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">🧡 HV NOVITAS CMS</div>
+
+<div class="container">
+
+    <!-- ================= NEWS ================= -->
+    <div class="box">
+
+        <h2>📰 Nieuws beheren</h2>
+
+        <form id="newsForm">
+            <input type="text" id="title" placeholder="Titel" required>
+            <textarea id="text" placeholder="Bericht" required></textarea>
+            <button type="submit">Publiceren</button>
+        </form>
+
+        <p id="newsStatus"></p>
+
+        <h3>Berichten beheren</h3>
+        <div id="newsList"></div>
+
+    </div>
+
+    <!-- ================= SPONSORS ================= -->
+    <div class="box">
+
+        <h2>🤝 Sponsors beheren</h2>
+
+        <input type="file" id="logo">
+        <button id="saveSponsor">Upload sponsor</button>
+
+        <p id="sponsorStatus"></p>
+
+        <h3>Huidige sponsors</h3>
+        <div id="sponsorList"></div>
+
+    </div>
+
+    <!-- ================= OME JAN (READY) ================= -->
+    <div class="box">
+
+        <h2>📸 Ome Jan (nieuw)</h2>
+
+        <p>Deze sectie wordt in stap 2 actief gemaakt</p>
+
+        <div id="omejanList"></div>
+
+    </div>
+
+</div>
+
+<!-- SCRIPTS -->
+<script type="module" src="firebase.js"></script>
+<script type="module" src="cms.js"></script>
+
+</body>
+
+</html>
