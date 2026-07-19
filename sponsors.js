@@ -14,14 +14,26 @@ onValue(ref(db, "sponsors"), (snapshot) => {
         return;
     }
 
-    Object.values(data).forEach((sponsor) => {
+    const sponsors = Object.values(data);
 
-        sponsorTrack.innerHTML += `
-            <div class="sponsor">
-                <img src="${sponsor.imageUrl}" alt="Sponsor">
-            </div>
-        `;
+    function buildSponsors() {
 
-    });
+        sponsors.forEach((sponsor) => {
+
+            sponsorTrack.innerHTML += `
+                <div class="sponsor">
+                    <img src="${sponsor.imageUrl}" alt="Sponsor">
+                </div>
+            `;
+
+        });
+
+    }
+
+    // Eerste rij
+    buildSponsors();
+
+    // Tweede rij (voor later de oneindige slider)
+    buildSponsors();
 
 });
