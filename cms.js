@@ -61,7 +61,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 <b>${n.title}</b>
                 <p>${n.text}</p>
 
-                <button onclick="editNews('${id}', '${n.title}', \`${n.text}\`)">Edit</button>
+                <button onclick="editNews('${id}', \`${n.title}\`, \`${n.text}\`)">Edit</button>
                 <button onclick="deleteNews('${id}')">Delete</button>
 
             </div>
@@ -139,5 +139,61 @@ window.addEventListener("DOMContentLoaded", () => {
     window.deleteSponsor = async (id) => {
         await remove(ref(db, "sponsors/" + id));
     };
+
+
+    // ================= OME JAN =================
+
+    const omeFile = document.getElementById("omejanFile");
+    const omeBtn = document.getElementById("saveOmejan");
+    const omeList = document.getElementById("omejanList");
+    const omeStatus = document.getElementById("omejanStatus");
+
+    if (omeBtn && omeFile) {
+
+        omeBtn.addEventListener("click", () => {
+
+            if (!omeFile.files[0]) {
+                alert("Kies eerst een foto");
+                return;
+            }
+
+            if (omeStatus) omeStatus.textContent = "Uploaden...";
+
+            const file = omeFile.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async () => {
+
+                await push(ref(db, "omejan"), {
+                    imageUrl: reader.result,
+                    created: Date.now()
+                });
+
+                omeFile.value = "";
+                if (omeStatus) omeStatus.textContent = "✅ Opgeslagen";
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    onValue(ref(db, "omejan"), (snapshot) => {
+
+        const data = snapshot.val();
+        if (!omeList) return;
+
+        if (!data) {
+            omeList.innerHTML = "<p>Geen foto's</p>";
+            return;
+        }
+
+        const items = Object.entries(data);
+
+        omeList.innerHTML = items.map(([id, o]) => `
+            <div style="display:inline-block; margin:10px;">
+                <img src="${o.imageUrl}" style="height:80px; border-radius:10px;">
+            </div>
+        `).join("");
+    });
 
 });
