@@ -1,14 +1,15 @@
-import { db } from "./firebase.js";
-import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-console.log("🧡 Sponsors CMS geladen");
-
 window.addEventListener("DOMContentLoaded", () => {
 
     const fileInput = document.getElementById("logo");
     const list = document.getElementById("sponsorList");
     const status = document.getElementById("sponsorStatus");
     const btn = document.getElementById("saveSponsor");
+
+    // 💥 BELANGRIJK: STOP ALS ELEMENT NIET BESTAAT
+    if (!btn || !fileInput || !list) {
+        console.log("❌ Sponsors module niet actief op deze pagina");
+        return;
+    }
 
     btn.addEventListener("click", async () => {
 
