@@ -1,18 +1,19 @@
 import { db } from "./firebase.js";
 import { ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS SIMPLE LOADED");
+console.log("🧡 CLEAN CMS LOADED");
+
+// ================= NEWS =================
 
 const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
-const status = document.getElementById("status");
-const list = document.getElementById("newsList");
+const statusNews = document.getElementById("newsStatus");
+const newsList = document.getElementById("newsList");
 
 window.editingId = null;
 window.newsCache = {};
 
-// SAVE
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -37,18 +38,16 @@ form.addEventListener("submit", async (e) => {
     }
 
     form.reset();
-    status.textContent = "✅ Opgeslagen";
+    if (statusNews) statusNews.textContent = "✅ Opgeslagen";
 });
 
-// LOAD
 onValue(ref(db, "news"), (snapshot) => {
 
     const data = snapshot.val();
-
-    if (!list) return;
+    if (!newsList) return;
 
     if (!data) {
-        list.innerHTML = "<p>Geen nieuws</p>";
+        newsList.innerHTML = "<p>Geen nieuws</p>";
         return;
     }
 
@@ -56,7 +55,7 @@ onValue(ref(db, "news"), (snapshot) => {
 
     const items = Object.entries(data);
 
-    list.innerHTML = items.reverse().map(([id, n]) => `
+    newsList.innerHTML = items.reverse().map(([id, n]) => `
         <div class="news-item">
 
             <b>${n.title}</b>
@@ -67,30 +66,21 @@ onValue(ref(db, "news"), (snapshot) => {
 
         </div>
     `).join("");
-
 });
 
-// DELETE
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
 };
 
-// EDIT
 window.editNews = (id) => {
-
     const data = window.newsCache[id];
-
     title.value = data.title;
     text.value = data.text;
-
     window.editingId = id;
 };
-import { ref, push } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import { db } from "./firebase.js";
 
-console.log("🤝 SPONSOR TEST READY");
+// ================= SPONSORS TEST (APART + SAFE) =================
 
-// TEST: 1 sponsor toevoegen
 window.addTestSponsor = async () => {
 
     await push(ref(db, "sponsors"), {
