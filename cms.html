@@ -39,7 +39,6 @@ body {
     box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-/* INPUTS */
 input, textarea, select {
     width: 100%;
     padding: 10px;
@@ -49,7 +48,6 @@ input, textarea, select {
     border: 1px solid #ddd;
 }
 
-/* BUTTON */
 button {
     background: #ff6a00;
     color: white;
@@ -59,7 +57,6 @@ button {
     cursor: pointer;
 }
 
-/* LIST ITEMS */
 .news-item {
     background: #fff;
     padding: 10px;
@@ -68,33 +65,18 @@ button {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* SPONSORS */
 #sponsorList {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-#sponsorList img {
-    height: 60px;
-    background: white;
-    padding: 5px;
-    border-radius: 8px;
-}
-
-/* OME JAN */
 #omejanList {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-#omejanList img {
-    height: 80px;
-    border-radius: 10px;
-}
-
-/* AGENDA */
 #agendaList {
     margin-top: 10px;
 }
@@ -157,7 +139,7 @@ button {
 <!-- ================= AGENDA ================= -->
 <div class="box">
 
-    <h2>📅 Agenda systeem</h2>
+    <h2>📅 Agenda systeem (UPGRADED)</h2>
 
     <!-- SINGLE -->
     <select id="agendaType">
@@ -176,6 +158,8 @@ button {
     <hr>
 
     <!-- BULK -->
+    <h3>📋 Bulk invoer</h3>
+
     <textarea id="agendaBulk" placeholder="
 14 feb 14:50 Avanti HS1 Novitas HS1
 21 feb 19:00 EMM HS1 Novitas HS1
@@ -186,11 +170,14 @@ button {
 
     <hr>
 
-    <!-- REPEAT -->
+    <!-- REPEAT (UPGRADE) -->
+    <h3>🔁 Herhaling trainingen</h3>
+
     <input id="repeatFrom" placeholder="Start datum">
     <input id="repeatUntil" placeholder="Eind datum">
-    <input id="repeatTime" placeholder="19:00">
-    <input id="repeatTitle" placeholder="Training naam">
+    <input id="repeatTime" placeholder="Tijd (19:00)">
+    <input id="repeatTitle" placeholder="Training groep (Jeugd/Senioren)">
+    <input id="repeatExtraTitle" placeholder="Extra titel (Training senioren)">
 
     <button id="generateRepeat">Herhaling genereren</button>
 
@@ -202,7 +189,6 @@ button {
 
 </div>
 
-<!-- ================= SCRIPTS ================= -->
 <script type="module" src="firebase.js"></script>
 <script type="module" src="cms.js"></script>
 
