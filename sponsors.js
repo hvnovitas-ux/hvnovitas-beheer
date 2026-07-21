@@ -1,8 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-// ================= FIREBASE =================
-
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "hv-novitas-beheer.firebaseapp.com",
@@ -16,7 +14,8 @@ const db = getDatabase(app);
 const track = document.getElementById("sponsorTrack");
 
 let offset = 0;
-let interval = null;
+let speed = 1;
+let animation;
 
 // ================= LOAD ONCE =================
 
@@ -32,15 +31,9 @@ async function loadSponsors() {
     const data = snapshot.val();
     const items = Object.values(data);
 
-    // build slider content
-    track.innerHTML = items.concat(items).map(s => `
-        <img src="${s.imageUrl}" style="
-            height:60px;
-            margin:10px;
-            background:white;
-            padding:5px;
-            border-radius:8px;
-        ">
+    // dubbel maken voor infinite loop effect
+    track.innerHTML = [...items, ...items].map(s => `
+        <img src="${s.imageUrl}" class="sponsor-img">
     `).join("");
 
     startSlider();
@@ -50,11 +43,7 @@ async function loadSponsors() {
 
 function startSlider() {
 
-    const images = track.querySelectorAll("img");
-
-    if (!images.length) return;
-
-    let speed = 1;
+    const width = track.scrollWidth / 2;
 
     function animate() {
 
@@ -62,12 +51,11 @@ function startSlider() {
 
         track.style.transform = `translateX(${offset}px)`;
 
-        // reset loop
-        if (Math.abs(offset) > track.scrollWidth / 2) {
+        if (Math.abs(offset) >= width) {
             offset = 0;
         }
 
-        requestAnimationFrame(animate);
+        animation = requestAnimationFrame(animate);
     }
 
     animate();
