@@ -9,34 +9,37 @@ import {
 
 console.log("🧡 HV NOVITAS CMS LOADED");
 
-// ================= CLOUDINARY SETTINGS =================
-
-const cloudName = "JOUW_CLOUD_NAME";
-const uploadPreset = "hvnovitas_upload";
-
-async function uploadToCloudinary(file) {
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
-
-    const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-            method: "POST",
-            body: formData
-        }
-    );
-
-    return await res.json();
-}
-
-// ================= NEWS =================
+// ================= ELEMENTS =================
 
 const newsForm = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
 const newsList = document.getElementById("newsList");
+
+const sponsorFile = document.getElementById("logo");
+const sponsorBtn = document.getElementById("saveSponsor");
+const sponsorList = document.getElementById("sponsorList");
+
+const omeFile = document.getElementById("omejanFile");
+const omeBtn = document.getElementById("saveOmejan");
+const omeList = document.getElementById("omejanList");
+
+const agendaType = document.getElementById("agendaType");
+const agendaDate = document.getElementById("agendaDate");
+const agendaTime = document.getElementById("agendaTime");
+const agendaTeam1 = document.getElementById("agendaTeam1");
+const agendaTeam2 = document.getElementById("agendaTeam2");
+const agendaBulk = document.getElementById("agendaBulk");
+
+const repeatFrom = document.getElementById("repeatFrom");
+const repeatUntil = document.getElementById("repeatUntil");
+const repeatTime = document.getElementById("repeatTime");
+const repeatTitle = document.getElementById("repeatTitle");
+const repeatExtraTitle = document.getElementById("repeatExtraTitle");
+
+const agendaList = document.getElementById("agendaList");
+
+// ================= NEWS =================
 
 let editingNewsId = null;
 
@@ -101,16 +104,11 @@ window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
 };
 
-// ================= SPONSORS (BLIJFT FIREBASE) =================
+// ================= SPONSORS =================
 
-const sponsorFile = document.getElementById("logo");
-const sponsorBtn = document.getElementById("saveSponsor");
-const sponsorList = document.getElementById("sponsorList");
+sponsorBtn?.addEventListener("click", () => {
 
-sponsorBtn?.addEventListener("click", async () => {
-
-    const file = sponsorFile.files[0];
-    if (!file) return;
+    if (!sponsorFile.files[0]) return;
 
     const reader = new FileReader();
 
@@ -124,7 +122,7 @@ sponsorBtn?.addEventListener("click", async () => {
         sponsorFile.value = "";
     };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(sponsorFile.files[0]);
 });
 
 onValue(ref(db, "sponsors"), (snapshot) => {
@@ -152,25 +150,26 @@ window.deleteSponsor = async (id) => {
     await remove(ref(db, "sponsors/" + id));
 };
 
-// ================= OME JAN (CLOUDINARY FIX) =================
-
-const omeFile = document.getElementById("omejanFile");
-const omeBtn = document.getElementById("saveOmejan");
-const omeList = document.getElementById("omejanList");
+// ================= OME JAN =================
 
 omeBtn?.addEventListener("click", async () => {
 
     const file = omeFile.files[0];
     if (!file) return;
 
-    const data = await uploadToCloudinary(file);
+    const reader = new FileReader();
 
-    await push(ref(db, "omejan"), {
-        imageUrl: data.secure_url,
-        created: Date.now()
-    });
+    reader.onload = async () => {
 
-    omeFile.value = "";
+        await push(ref(db, "omejan"), {
+            imageUrl: reader.result,
+            created: Date.now()
+        });
+
+        omeFile.value = "";
+    };
+
+    reader.readAsDataURL(file);
 });
 
 onValue(ref(db, "omejan"), (snapshot) => {
@@ -198,29 +197,12 @@ window.deleteOmeJan = async (id) => {
     await remove(ref(db, "omejan/" + id));
 };
 
-// ================= AGENDA (BLIJFT HETZELFDE) =================
-
-const agendaType = document.getElementById("agendaType");
-const agendaDate = document.getElementById("agendaDate");
-const agendaTime = document.getElementById("agendaTime");
-const agendaTeam1 = document.getElementById("agendaTeam1");
-const agendaTeam2 = document.getElementById("agendaTeam2");
-const agendaBulk = document.getElementById("agendaBulk");
-
-const repeatFrom = document.getElementById("repeatFrom");
-const repeatUntil = document.getElementById("repeatUntil");
-const repeatTime = document.getElementById("repeatTime");
-const repeatTitle = document.getElementById("repeatTitle");
-const repeatExtraTitle = document.getElementById("repeatExtraTitle");
-
-const agendaList = document.getElementById("agendaList");
-const agendaStatus = document.getElementById("agendaStatus");
+// ================= AGENDA =================
 
 document.getElementById("saveAgenda")?.addEventListener("click", async () => {
 
     await push(ref(db, "agenda"), {
         type: agendaType.value,
-        mode: "single",
         date: agendaDate.value,
         time: agendaTime.value,
         team1: agendaTeam1.value,
@@ -228,9 +210,9 @@ document.getElementById("saveAgenda")?.addEventListener("click", async () => {
         created: Date.now()
     });
 
-    agendaStatus.textContent = "✅ Opgeslagen";
 });
 
+// bulk
 document.getElementById("importAgendaBulk")?.addEventListener("click", async () => {
 
     const lines = agendaBulk.value.split("\n");
@@ -242,8 +224,7 @@ document.getElementById("importAgendaBulk")?.addEventListener("click", async () 
         const p = line.split(" ");
 
         await push(ref(db, "agenda"), {
-            type: line.includes("training") ? "training" : "match",
-            mode: "bulk",
+            type: "match",
             raw: line,
             date: p[0] + " " + p[1],
             time: p[2],
@@ -253,9 +234,9 @@ document.getElementById("importAgendaBulk")?.addEventListener("click", async () 
         });
     }
 
-    agendaStatus.textContent = "📋 Bulk klaar";
 });
 
+// repeat
 document.getElementById("generateRepeat")?.addEventListener("click", async () => {
 
     const start = new Date(repeatFrom.value);
@@ -269,7 +250,6 @@ document.getElementById("generateRepeat")?.addEventListener("click", async () =>
 
             await push(ref(db, "agenda"), {
                 type: "training",
-                mode: "repeat",
                 date: current.toDateString(),
                 time: repeatTime.value,
                 team1: repeatTitle.value,
@@ -281,9 +261,9 @@ document.getElementById("generateRepeat")?.addEventListener("click", async () =>
         current.setDate(current.getDate() + 1);
     }
 
-    agendaStatus.textContent = "🔁 Herhaling klaar";
 });
 
+// list
 onValue(ref(db, "agenda"), (snapshot) => {
 
     const data = snapshot.val();
@@ -299,11 +279,9 @@ onValue(ref(db, "agenda"), (snapshot) => {
     agendaList.innerHTML = items.map(([id, a]) => `
         <div class="news-item">
 
-            <b>${a.date} - ${a.time}</b><br>
+            <b>${a.date} - ${a.time || ""}</b><br>
             ${a.team1 || ""} ${a.team2 || ""}<br>
-            <small>${a.type} (${a.mode})</small>
 
-            <br>
             <button onclick="deleteAgenda('${id}')">Delete</button>
 
         </div>
