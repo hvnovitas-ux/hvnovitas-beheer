@@ -11,59 +11,53 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f0f10; /* zwart */
-    color: white;
+    font-family: Arial;
+    background: #f4f6f8;
 }
 
 /* TOPBAR */
 .topbar {
-    background: #ff6a00;
+    background: linear-gradient(90deg, #ff6a00, #ff8c1a);
     color: white;
-    padding: 15px;
-    font-size: 20px;
-    font-weight: bold;
+    padding: 12px;
     text-align: center;
+    font-weight: bold;
 }
 
-/* CONTAINER */
+/* WRAPPER */
 .container {
     max-width: 900px;
     margin: auto;
-    padding: 20px;
-}
-
-/* ITEM CARD */
-.item {
-    background: #1a1a1d;
-    border-left: 5px solid #ff6a00;
     padding: 15px;
-    margin-bottom: 12px;
+}
+
+/* DAY BLOCK */
+.day {
+    margin-bottom: 15px;
+    background: white;
     border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    padding: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-/* TITEL */
-.item b {
-    color: #ff6a00;
-    font-size: 18px;
+/* ITEM */
+.item {
+    padding: 8px;
+    margin-top: 6px;
+    border-left: 5px solid #ddd;
+    background: #fafafa;
+    border-radius: 6px;
 }
 
-/* DATUM */
-.date {
-    color: #aaa;
-    font-size: 14px;
-}
+/* TYPES */
+.match { border-left-color: #ff6a00; }
+.training { border-left-color: #2ecc71; }
+.meeting { border-left-color: #3498db; }
 
-/* TEXT */
-.item p {
-    color: #ddd;
-}
-
-/* HOVER EFFECT */
-.item:hover {
-    transform: scale(1.01);
-    transition: 0.2s;
+/* SMALL TEXT */
+.small {
+    font-size: 12px;
+    color: #777;
 }
 
 </style>
@@ -73,17 +67,106 @@ body {
 <body>
 
 <div class="topbar">
-NOVITAS AGENDA
+📅 HV NOVITAS AGENDA
 </div>
 
-<div class="container">
-
-    <div id="agendaList"></div>
+<div class="container" id="agenda">
 
 </div>
 
-<script type="module" src="firebase.js"></script>
-<script type="module" src="agenda-view.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+    getDatabase,
+    ref,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+// ================= FIREBASE =================
+
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const agendaEl = document.getElementById("agenda");
+
+// ================= HELPERS =================
+
+function safeDate(dateStr) {
+    const d = new Date(dateStr);
+    return isNaN(d) ? null : d;
+}
+
+// ================= LOAD AGENDA =================
+
+onValue(ref(db, "agenda"), (snapshot) => {
+
+    const data = snapshot.val();
+
+    if (!data) {
+        agendaEl.innerHTML = "<p>Geen agenda beschikbaar</p>";
+        return;
+    }
+
+    const items = Object.values(data);
+
+    // ================= SORT PER DAG =================
+
+    let grouped = {};
+
+    items.forEach(a => {
+
+        if (!grouped[a.date]) {
+            grouped[a.date] = [];
+        }
+
+        grouped[a.date].push(a);
+    });
+
+    // sort dates
+    const sortedDates = Object.keys(grouped).sort((a, b) => {
+        return new Date(a) - new Date(b);
+    });
+
+    let html = "";
+
+    // ================= BUILD UI =================
+
+    sortedDates.forEach(date => {
+
+        html += `
+            <div class="day">
+                <h3>📅 ${date}</h3>
+        `;
+
+        grouped[date]
+            .sort((a, b) => (a.time || "").localeCompare(b.time || ""))
+            .forEach(a => {
+
+                html += `
+                    <div class="item ${a.type || ''}">
+                        <b>${a.time || ""}</b><br>
+                        ${a.team1 || ""} ${a.team2 ? "vs " + a.team2 : ""}
+                        ${a.titleExtra ? `<div class="small">${a.titleExtra}</div>` : ""}
+                    </div>
+                `;
+            });
+
+        html += `</div>`;
+    });
+
+    agendaEl.innerHTML = html;
+});
+
+</script>
 
 </body>
+
 </html>
