@@ -13,42 +13,65 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ================= START =================
+const track = document.getElementById("sponsorTrack");
 
-window.addEventListener("DOMContentLoaded", async () => {
+let offset = 0;
+let interval = null;
 
-    const track = document.getElementById("sponsorTrack");
+// ================= LOAD ONCE =================
 
-    if (!track) {
-        console.error("sponsorTrack niet gevonden");
+async function loadSponsors() {
+
+    const snapshot = await get(ref(db, "sponsors"));
+
+    if (!snapshot.exists()) {
+        track.innerHTML = "<p>Geen sponsors</p>";
         return;
     }
 
-    try {
+    const data = snapshot.val();
+    const items = Object.values(data);
 
-        const snapshot = await get(ref(db, "sponsors"));
+    // build slider content
+    track.innerHTML = items.concat(items).map(s => `
+        <img src="${s.imageUrl}" style="
+            height:60px;
+            margin:10px;
+            background:white;
+            padding:5px;
+            border-radius:8px;
+        ">
+    `).join("");
 
-        if (!snapshot.exists()) {
-            track.innerHTML = "<p>Geen sponsors</p>";
-            return;
+    startSlider();
+}
+
+// ================= SLIDER =================
+
+function startSlider() {
+
+    const images = track.querySelectorAll("img");
+
+    if (!images.length) return;
+
+    let speed = 1;
+
+    function animate() {
+
+        offset -= speed;
+
+        track.style.transform = `translateX(${offset}px)`;
+
+        // reset loop
+        if (Math.abs(offset) > track.scrollWidth / 2) {
+            offset = 0;
         }
 
-        const data = snapshot.val();
-        const items = Object.values(data);
-
-        track.innerHTML = items.map(s => `
-            <img src="${s.imageUrl}" style="
-                height:60px;
-                margin:10px;
-                background:white;
-                padding:5px;
-                border-radius:8px;
-            ">
-        `).join("");
-
-    } catch (error) {
-        console.error("Sponsors error:", error);
-        track.innerHTML = "<p>Fout bij laden sponsors</p>";
+        requestAnimationFrame(animate);
     }
 
-});
+    animate();
+}
+
+// start
+loadSponsors();
