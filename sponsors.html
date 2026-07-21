@@ -1,20 +1,43 @@
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-<link rel="stylesheet" href="sponsors.css">
+// ================= FIREBASE =================
 
-</head>
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer"
+};
 
-<body>
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-<div class="slider">
+const track = document.getElementById("sponsorTrack");
 
-    <div id="sponsorTrack" class="track"></div>
+// ================= LOAD ONCE =================
 
-</div>
+async function loadSponsors() {
 
-<script type="module" src="sponsors.js"></script>
+    const snapshot = await get(ref(db, "sponsors"));
 
-</body>
+    if (!snapshot.exists()) {
+        track.innerHTML = "<p>Geen sponsors</p>";
+        return;
+    }
 
-</html>
+    const data = snapshot.val();
+    const items = Object.values(data);
+
+    track.innerHTML = items.map(s => `
+        <img src="${s.imageUrl}" style="
+            height:60px;
+            margin:10px;
+            background:white;
+            padding:5px;
+            border-radius:8px;
+        ">
+    `).join("");
+}
+
+loadSponsors();
