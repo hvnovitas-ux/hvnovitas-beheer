@@ -42,10 +42,10 @@ const repeatExtraTitle = document.getElementById("repeatExtraTitle");
 const agendaList = document.getElementById("agendaList");
 
 // =====================================================
-// CLOUDINARY SETTINGS (OME JAN)
+// CLOUDINARY CONFIG (OME JAN)
 // =====================================================
 
-const cloudName = "JOUW_CLOUD_NAME";
+const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
 
 // =====================================================
@@ -116,7 +116,7 @@ window.deleteNews = async (id) => {
 };
 
 // =====================================================
-// SPONSORS (FIREBASE IMAGE)
+// SPONSORS (FIREBASE BASE64 - zoals jij wil)
 // =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
@@ -165,7 +165,7 @@ window.deleteSponsor = async (id) => {
 };
 
 // =====================================================
-// OME JAN (CLOUDINARY UPLOAD)
+// OME JAN (CLOUDINARY FIX - WORKING)
 // =====================================================
 
 omeBtn?.addEventListener("click", async () => {
@@ -177,32 +177,45 @@ omeBtn?.addEventListener("click", async () => {
         return;
     }
 
+    console.log("📸 Upload gestart...");
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", uploadPreset);
 
-    const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-            method: "POST",
-            body: formData
+    try {
+
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        console.log("☁️ Cloudinary response:", data);
+
+        if (!response.ok || !data.secure_url) {
+            console.error("UPLOAD ERROR:", data);
+            alert("Upload mislukt - check console");
+            return;
         }
-    );
 
-    const data = await res.json();
+        await push(ref(db, "omejan"), {
+            imageUrl: data.secure_url,
+            created: Date.now()
+        });
 
-    if (!data.secure_url) {
-        alert("Upload mislukt");
-        console.error(data);
-        return;
+        console.log("✅ Upload gelukt");
+
+        omeFile.value = "";
+
+    } catch (err) {
+        console.error("NETWORK ERROR:", err);
+        alert("Netwerk fout");
     }
-
-    await push(ref(db, "omejan"), {
-        imageUrl: data.secure_url,
-        created: Date.now()
-    });
-
-    omeFile.value = "";
 });
 
 // =====================================================
@@ -278,6 +291,7 @@ document.getElementById("importAgendaBulk")?.addEventListener("click", async () 
             created: Date.now()
         });
     }
+
 });
 
 document.getElementById("generateRepeat")?.addEventListener("click", async () => {
@@ -303,6 +317,7 @@ document.getElementById("generateRepeat")?.addEventListener("click", async () =>
 
         current.setDate(current.getDate() + 1);
     }
+
 });
 
 // =====================================================
