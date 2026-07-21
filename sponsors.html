@@ -5,56 +5,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sponsors HV Novitas</title>
+<title>HV Novitas Sponsors</title>
 
-<style>
-
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #f4f6f8;
-}
-
-/* WRAPPER */
-.slider {
-    width: 100%;
-    max-width: 900px;
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-/* TRACK */
-#sponsorTrack {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-}
-
-/* IMAGE */
-#sponsorTrack img {
-    height: 60px;
-    background: white;
-    padding: 8px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    object-fit: contain;
-}
-
-</style>
+<link rel="stylesheet" href="sponsors.css">
 
 </head>
 
 <body>
 
+<!-- ================= SPONSOR SLIDER ================= -->
+
 <div class="slider">
-    <div id="sponsorTrack"></div>
+
+    <!-- ⚠️ BELANGRIJK: ID moet matchen met JS -->
+    <div class="track" id="sponsorTrack"></div>
+
 </div>
 
 <!-- ================= JS ================= -->
+
 <script type="module" src="sponsors.js"></script>
 
 </body>
