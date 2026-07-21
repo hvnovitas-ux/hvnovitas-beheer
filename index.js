@@ -17,7 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ================= ELEMENTEN =================
+// ================= ELEMENTS =================
 
 const matchesEl = document.getElementById("matches");
 const activitiesEl = document.getElementById("activities");
@@ -30,9 +30,9 @@ onValue(ref(db, "agenda"), (snapshot) => {
     const data = snapshot.val();
 
     if (!data) {
-        matchesEl.innerHTML = "<h3>⚔️ Wedstrijden</h3><p>Geen wedstrijden</p>";
-        activitiesEl.innerHTML = "<h3>🏋️ Activiteiten</h3><p>Geen activiteiten</p>";
-        highlightsEl.innerHTML = "<h3>🏆 Highlights</h3><p>Nog geen highlights</p>";
+        matchesEl.innerHTML += "<p>Geen wedstrijden</p>";
+        activitiesEl.innerHTML += "<p>Geen activiteiten</p>";
+        highlightsEl.innerHTML += "<p>Geen highlights</p>";
         return;
     }
 
@@ -42,26 +42,20 @@ onValue(ref(db, "agenda"), (snapshot) => {
     let activities = [];
     let highlights = [];
 
-    // ================= SORTING =================
+    // ================= SORT =================
 
     items.forEach(a => {
 
-        // MATCHES
         if (a.type === "match") {
 
-            if (!matches[a.date]) {
-                matches[a.date] = [];
-            }
-
+            if (!matches[a.date]) matches[a.date] = [];
             matches[a.date].push(a);
         }
 
-        // ACTIVITIES
         else if (a.type === "training" || a.type === "meeting") {
             activities.push(a);
         }
 
-        // HIGHLIGHTS (alleen echte highlights)
         else if (a.type === "highlight") {
             highlights.push(a);
         }
@@ -81,8 +75,7 @@ onValue(ref(db, "agenda"), (snapshot) => {
 
                     ${matches[date].map(m => `
                         <div>
-                            ${m.time || ""} - 
-                            ${m.team1 || ""} vs ${m.team2 || ""}
+                            ${m.time || ""} - ${m.team1 || ""} vs ${m.team2 || ""}
                         </div>
                     `).join("")}
                 </div>
