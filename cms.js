@@ -7,11 +7,11 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-window.addEventListener("DOMContentLoaded", () => {
-
 console.log("🧡 HV NOVITAS CMS LOADED");
 
-// ================= ELEMENTS =================
+// =====================================================
+// ELEMENTS
+// =====================================================
 
 const newsForm = document.getElementById("newsForm");
 const title = document.getElementById("title");
@@ -32,14 +32,16 @@ const agendaTime = document.getElementById("agendaTime");
 const agendaTeam1 = document.getElementById("agendaTeam1");
 const agendaTeam2 = document.getElementById("agendaTeam2");
 
-const calendar = document.getElementById("calendar");
-
-// ================= CLOUDINARY =================
+// =====================================================
+// CLOUDINARY
+// =====================================================
 
 const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
 
-// ================= NEWS (SAFE LOAD) =================
+// =====================================================
+// NEWS (NO LIVE CONNECTION)
+// =====================================================
 
 async function loadNews() {
 
@@ -66,12 +68,9 @@ async function loadNews() {
 
 loadNews();
 
-window.deleteNews = async (id) => {
-    await remove(ref(db, "news/" + id));
-    loadNews();
-};
-
-// ================= SPONSORS =================
+// =====================================================
+// SPONSORS
+// =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
 
@@ -112,11 +111,9 @@ onValue(ref(db, "sponsors"), (snapshot) => {
     `).join("");
 });
 
-window.deleteSponsor = async (id) => {
-    await remove(ref(db, "sponsors/" + id));
-};
-
-// ================= OME JAN (CLOUDINARY) =================
+// =====================================================
+// OME JAN (CLOUDINARY)
+// =====================================================
 
 omeBtn?.addEventListener("click", async () => {
 
@@ -139,7 +136,10 @@ omeBtn?.addEventListener("click", async () => {
 
         const data = await res.json();
 
-        if (!res.ok || !data.secure_url) return;
+        if (!res.ok || !data.secure_url) {
+            console.error("UPLOAD ERROR:", data);
+            return;
+        }
 
         await push(ref(db, "omejan"), {
             imageUrl: data.secure_url,
@@ -153,7 +153,9 @@ omeBtn?.addEventListener("click", async () => {
     }
 });
 
-// ================= AGENDA =================
+// =====================================================
+// AGENDA
+// =====================================================
 
 document.getElementById("saveAgenda")?.addEventListener("click", async () => {
 
@@ -167,4 +169,24 @@ document.getElementById("saveAgenda")?.addEventListener("click", async () => {
     });
 });
 
-});
+// =====================================================
+// DELETE FUNCTIONS (FIXED - NO WINDOW BUGS)
+// =====================================================
+
+async function deleteNews(id) {
+    await remove(ref(db, "news/" + id));
+    loadNews();
+}
+
+async function deleteSponsor(id) {
+    await remove(ref(db, "sponsors/" + id));
+}
+
+async function deleteOmeJan(id) {
+    await remove(ref(db, "omejan/" + id));
+}
+
+// expose for HTML onclick
+window.deleteNews = deleteNews;
+window.deleteSponsor = deleteSponsor;
+window.deleteOmeJan = deleteOmeJan;
