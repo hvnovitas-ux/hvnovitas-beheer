@@ -2,9 +2,9 @@ import { db } from "./firebase.js";
 import {
     ref,
     push,
+    get,
     onValue,
-    remove,
-    update
+    remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 console.log("🧡 HV NOVITAS CMS LOADED");
@@ -31,36 +31,23 @@ const agendaDate = document.getElementById("agendaDate");
 const agendaTime = document.getElementById("agendaTime");
 const agendaTeam1 = document.getElementById("agendaTeam1");
 const agendaTeam2 = document.getElementById("agendaTeam2");
-const agendaBulk = document.getElementById("agendaBulk");
 
 // =====================================================
-// CLOUDINARY CONFIG
+// CLOUDINARY
 // =====================================================
 
 const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
 
 // =====================================================
-// NEWS
+// NEWS (NO OPEN CONNECTION)
 // =====================================================
 
-newsForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
+async function loadNews() {
 
-    if (!title.value || !text.value) return;
+    const snap = await get(ref(db, "news"));
+    const data = snap.val();
 
-    await push(ref(db, "news"), {
-        title: title.value,
-        text: text.value,
-        created: Date.now()
-    });
-
-    newsForm.reset();
-});
-
-onValue(ref(db, "news"), (snapshot) => {
-
-    const data = snapshot.val();
     if (!newsList) return;
 
     if (!data) {
@@ -77,24 +64,23 @@ onValue(ref(db, "news"), (snapshot) => {
             <button onclick="deleteNews('${id}')">Delete</button>
         </div>
     `).join("");
-});
+}
+
+loadNews();
 
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
+    loadNews();
 };
 
 // =====================================================
-// SPONSORS (FIREBASE)
+// SPONSORS (FIREBASE BASE64)
 // =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
 
     const file = sponsorFile?.files?.[0];
-
-    if (!file) {
-        alert("Geen sponsor geselecteerd");
-        return;
-    }
+    if (!file) return;
 
     const reader = new FileReader();
 
@@ -137,7 +123,7 @@ window.deleteSponsor = async (id) => {
 };
 
 // =====================================================
-// OME JAN (CLOUDINARY SAFE + FIXED)
+// OME JAN (CLOUDINARY)
 // =====================================================
 
 omeBtn?.addEventListener("click", async () => {
@@ -148,8 +134,6 @@ omeBtn?.addEventListener("click", async () => {
         alert("Kies een foto");
         return;
     }
-
-    console.log("📸 Upload start:", file.name);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -167,11 +151,9 @@ omeBtn?.addEventListener("click", async () => {
 
         const data = await res.json();
 
-        console.log("☁️ Cloudinary response:", data);
-
         if (!res.ok || !data.secure_url) {
             console.error("UPLOAD ERROR:", data);
-            alert("Upload mislukt (check console)");
+            alert("Upload mislukt");
             return;
         }
 
@@ -179,8 +161,6 @@ omeBtn?.addEventListener("click", async () => {
             imageUrl: data.secure_url,
             created: Date.now()
         });
-
-        console.log("✅ Upload OK");
 
         omeFile.value = "";
 
