@@ -7,11 +7,11 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
+window.addEventListener("DOMContentLoaded", () => {
+
 console.log("🧡 HV NOVITAS CMS LOADED");
 
-// =====================================================
-// ELEMENTS
-// =====================================================
+// ================= ELEMENTS =================
 
 const newsForm = document.getElementById("newsForm");
 const title = document.getElementById("title");
@@ -34,16 +34,12 @@ const agendaTeam2 = document.getElementById("agendaTeam2");
 
 const calendar = document.getElementById("calendar");
 
-// =====================================================
-// CLOUDINARY
-// =====================================================
+// ================= CLOUDINARY =================
 
 const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
 
-// =====================================================
-// NEWS (NO LIVE CONNECTION)
-// =====================================================
+// ================= NEWS (SAFE LOAD) =================
 
 async function loadNews() {
 
@@ -75,9 +71,7 @@ window.deleteNews = async (id) => {
     loadNews();
 };
 
-// =====================================================
-// SPONSORS
-// =====================================================
+// ================= SPONSORS =================
 
 sponsorBtn?.addEventListener("click", () => {
 
@@ -109,9 +103,7 @@ onValue(ref(db, "sponsors"), (snapshot) => {
         return;
     }
 
-    const items = Object.entries(data);
-
-    sponsorList.innerHTML = items.map(([id, s]) => `
+    sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
         <div style="display:inline-block;margin:10px;">
             <img src="${s.imageUrl}" style="height:60px;">
             <br>
@@ -124,9 +116,7 @@ window.deleteSponsor = async (id) => {
     await remove(ref(db, "sponsors/" + id));
 };
 
-// =====================================================
-// OME JAN (CLOUDINARY)
-// =====================================================
+// ================= OME JAN (CLOUDINARY) =================
 
 omeBtn?.addEventListener("click", async () => {
 
@@ -149,10 +139,7 @@ omeBtn?.addEventListener("click", async () => {
 
         const data = await res.json();
 
-        if (!res.ok || !data.secure_url) {
-            console.error("UPLOAD ERROR:", data);
-            return;
-        }
+        if (!res.ok || !data.secure_url) return;
 
         await push(ref(db, "omejan"), {
             imageUrl: data.secure_url,
@@ -166,9 +153,7 @@ omeBtn?.addEventListener("click", async () => {
     }
 });
 
-// =====================================================
-// AGENDA TYPES
-// =====================================================
+// ================= AGENDA =================
 
 document.getElementById("saveAgenda")?.addEventListener("click", async () => {
 
@@ -182,50 +167,4 @@ document.getElementById("saveAgenda")?.addEventListener("click", async () => {
     });
 });
 
-// =====================================================
-// CALENDAR + FILTER
-// =====================================================
-
-let agendaData = {};
-let filter = "all";
-
-onValue(ref(db, "agenda"), (snapshot) => {
-    agendaData = snapshot.val() || {};
-    renderCalendar();
 });
-
-window.setFilter = (type) => {
-    filter = type;
-    renderCalendar();
-};
-
-function renderCalendar() {
-
-    if (!calendar) return;
-
-    const items = Object.entries(agendaData);
-    let html = "";
-
-    for (let i = 1; i <= 30; i++) {
-
-        const dayItems = items.filter(([id, a]) => {
-
-            if (filter !== "all" && a.type !== filter) return false;
-
-            return a.date?.includes(i.toString());
-        });
-
-        html += `
-            <div class="day">
-                <b>${i}</b>
-                ${dayItems.map(([id, a]) => `
-                    <div class="${a.type}">
-                        ${a.time || ""} ${a.team1 || ""}
-                    </div>
-                `).join("")}
-            </div>
-        `;
-    }
-
-    calendar.innerHTML = html;
-}
