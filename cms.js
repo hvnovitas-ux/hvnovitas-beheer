@@ -26,11 +26,18 @@ const omeFile = document.getElementById("omejanFile");
 const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
 
+const agendaType = document.getElementById("agendaType");
+const agendaDate = document.getElementById("agendaDate");
+const agendaTime = document.getElementById("agendaTime");
+const agendaTeam1 = document.getElementById("agendaTeam1");
+const agendaTeam2 = document.getElementById("agendaTeam2");
+const agendaBulk = document.getElementById("agendaBulk");
+
 // =====================================================
-// CLOUDINARY (OME JAN)
+// CLOUDINARY CONFIG
 // =====================================================
 
-const cloudName = "JOUW_CLOUD_NAME"; 
+const cloudName = "hwxe3jzg"; // jouw cloud
 const uploadPreset = "hvnovitas_upload";
 
 // =====================================================
@@ -78,7 +85,7 @@ window.deleteNews = async (id) => {
 };
 
 // =====================================================
-// SPONSORS (FIREBASE BASE64)
+// SPONSORS (FIREBASE)
 // =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
@@ -127,7 +134,7 @@ window.deleteSponsor = async (id) => {
 };
 
 // =====================================================
-// OME JAN (CLOUDINARY FIX + ERROR DEBUG)
+// OME JAN (CLOUDINARY FIXED)
 // =====================================================
 
 omeBtn?.addEventListener("click", async () => {
@@ -139,7 +146,7 @@ omeBtn?.addEventListener("click", async () => {
         return;
     }
 
-    console.log("📸 Upload gestart:", file.name);
+    console.log("📸 Upload start:", file.name);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -159,15 +166,9 @@ omeBtn?.addEventListener("click", async () => {
 
         console.log("☁️ Cloudinary response:", data);
 
-        if (!res.ok) {
-            console.error("❌ HTTP ERROR:", data);
-            alert("Upload mislukt (HTTP error)");
-            return;
-        }
-
-        if (!data.secure_url) {
-            console.error("❌ NO URL:", data);
-            alert("Upload mislukt (geen URL)");
+        if (!res.ok || !data.secure_url) {
+            console.error("UPLOAD ERROR:", data);
+            alert("Upload mislukt (check console)");
             return;
         }
 
@@ -181,7 +182,7 @@ omeBtn?.addEventListener("click", async () => {
         omeFile.value = "";
 
     } catch (err) {
-        console.error("❌ NETWORK ERROR:", err);
+        console.error("NETWORK ERROR:", err);
         alert("Netwerk fout");
     }
 });
@@ -214,3 +215,20 @@ onValue(ref(db, "omejan"), (snapshot) => {
 window.deleteOmeJan = async (id) => {
     await remove(ref(db, "omejan/" + id));
 };
+
+// =====================================================
+// AGENDA (BASIC)
+// =====================================================
+
+document.getElementById("saveAgenda")?.addEventListener("click", async () => {
+
+    await push(ref(db, "agenda"), {
+        type: agendaType.value,
+        date: agendaDate.value,
+        time: agendaTime.value,
+        team1: agendaTeam1.value,
+        team2: agendaTeam2.value,
+        created: Date.now()
+    });
+
+});
