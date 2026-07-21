@@ -1,11 +1,10 @@
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { db } from "./firebase.js";
+import { ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const db = getDatabase();
 const track = document.querySelector(".track");
 
 let position = 0;
 let speed = 0.5;
-let animationId;
 
 // ================= LOAD =================
 
@@ -17,7 +16,6 @@ async function loadSponsors() {
 
     const data = Object.values(snap.val());
 
-    // 2x voor infinite loop
     const items = [...data, ...data];
 
     track.innerHTML = items.map(s => `
@@ -29,7 +27,7 @@ async function loadSponsors() {
     start();
 }
 
-// ================= SMOOTH LOOP =================
+// ================= ANIMATION =================
 
 function start() {
 
@@ -41,16 +39,14 @@ function start() {
 
         track.style.transform = `translateX(${position}px)`;
 
-        // ultra smooth reset (geen jump zichtbaar)
         if (Math.abs(position) >= halfWidth) {
             position = 0;
         }
 
-        animationId = requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
     }
 
     animate();
 }
 
-// start
 loadSponsors();
