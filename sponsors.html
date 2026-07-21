@@ -13,31 +13,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const track = document.getElementById("sponsorTrack");
+// ================= SAFE START =================
 
-// ================= LOAD ONCE =================
+window.addEventListener("DOMContentLoaded", async () => {
 
-async function loadSponsors() {
+    const track = document.getElementById("sponsorTrack");
 
-    const snapshot = await get(ref(db, "sponsors"));
-
-    if (!snapshot.exists()) {
-        track.innerHTML = "<p>Geen sponsors</p>";
+    if (!track) {
+        console.error("sponsorTrack niet gevonden in HTML");
         return;
     }
 
-    const data = snapshot.val();
-    const items = Object.values(data);
+    try {
 
-    track.innerHTML = items.map(s => `
-        <img src="${s.imageUrl}" style="
-            height:60px;
-            margin:10px;
-            background:white;
-            padding:5px;
-            border-radius:8px;
-        ">
-    `).join("");
-}
+        const snapshot = await get(ref(db, "sponsors"));
 
-loadSponsors();
+        if (!snapshot.exists()) {
+            track.innerHTML = "<p>Geen sponsors</p>";
+            return;
+        }
+
+        const data = snapshot.val();
+        const items = Object.values(data);
+
+        track.innerHTML = items.map(s => `
+            <img src="${s.imageUrl}" style="
+                height:60px;
+                margin:10px;
+                background:white;
+                padding:5px;
+                border-radius:8px;
+            ">
+        `).join("");
+
+    } catch (err) {
+        console.error("Sponsors error:", err);
+        track.innerHTML = "<p>Fout bij laden sponsors</p>";
+    }
+
+});
