@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-window.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener("DOMContentLoaded", () => {
 
     const track = document.querySelector(".track");
 
@@ -11,32 +11,32 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     let position = 0;
-    const speed = 0.5;
+    let speed = 0.5;
 
-    try {
+    async function loadSponsors() {
 
         const snap = await get(ref(db, "sponsors"));
 
-        if (!snap.exists()) {
-            track.innerHTML = "<p>Geen sponsors</p>";
-            return;
-        }
+        if (!snap.exists()) return;
 
         const data = Object.values(snap.val());
-
-        console.log("SPONSORS DATA:", data);
 
         const items = [...data, ...data];
 
         track.innerHTML = items.map(s => `
             <div class="sponsor">
-                <img src="${s.imageUrl || s.image || ''}">
+                <img src="${s.imageUrl}">
             </div>
         `).join("");
 
-        function animate() {
+        start();
+    }
 
-            const halfWidth = track.scrollWidth / 2;
+    function start() {
+
+        const halfWidth = track.scrollWidth / 2;
+
+        function animate() {
 
             position -= speed;
 
@@ -50,8 +50,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         }
 
         animate();
-
-    } catch (err) {
-        console.error("Firebase error:", err);
     }
+
+    loadSponsors();
 });
