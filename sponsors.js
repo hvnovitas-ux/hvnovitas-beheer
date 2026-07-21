@@ -1,69 +1,54 @@
-import { db } from "./firebase.js";
-import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const sponsorTrack = document.getElementById("sponsorTrack");
+// ================= FIREBASE =================
 
-let animationId = null;
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer"
+};
 
-onValue(ref(db, "sponsors"), (snapshot) => {
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    const data = snapshot.val();
+// ================= START =================
 
-    if (animationId) {
-        cancelAnimationFrame(animationId);
-    }
+window.addEventListener("DOMContentLoaded", async () => {
 
-    sponsorTrack.innerHTML = "";
+    const track = document.getElementById("sponsorTrack");
 
-    if (!data) {
-        sponsorTrack.innerHTML = "<p>Geen sponsors gevonden.</p>";
+    if (!track) {
+        console.error("sponsorTrack niet gevonden");
         return;
     }
 
-    const sponsors = Object.values(data);
+    try {
 
-    // Bouw de rij 3 keer op voor een vloeiende lus
-    for (let i = 0; i < 3; i++) {
+        const snapshot = await get(ref(db, "sponsors"));
 
-        sponsors.forEach((sponsor) => {
-
-            const item = document.createElement("div");
-            item.className = "sponsor";
-
-            const img = document.createElement("img");
-            img.src = sponsor.imageUrl;
-            img.alt = "Sponsor";
-
-            item.appendChild(img);
-            sponsorTrack.appendChild(item);
-
-        });
-
-    }
-
-    let position = 0;
-    const speed = 0.5;
-
-    requestAnimationFrame(() => {
-
-        const loopWidth = sponsorTrack.scrollWidth / 3;
-
-        function animate() {
-
-            position -= speed;
-
-            if (Math.abs(position) >= loopWidth) {
-                position = 0;
-            }
-
-            sponsorTrack.style.transform = `translateX(${position}px)`;
-
-            animationId = requestAnimationFrame(animate);
-
+        if (!snapshot.exists()) {
+            track.innerHTML = "<p>Geen sponsors</p>";
+            return;
         }
 
-        animate();
+        const data = snapshot.val();
+        const items = Object.values(data);
 
-    });
+        track.innerHTML = items.map(s => `
+            <img src="${s.imageUrl}" style="
+                height:60px;
+                margin:10px;
+                background:white;
+                padding:5px;
+                border-radius:8px;
+            ">
+        `).join("");
+
+    } catch (error) {
+        console.error("Sponsors error:", error);
+        track.innerHTML = "<p>Fout bij laden sponsors</p>";
+    }
 
 });
