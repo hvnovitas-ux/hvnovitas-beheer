@@ -9,7 +9,9 @@ import {
 
 console.log("🧡 HV NOVITAS CMS LOADED");
 
-// ================= ELEMENTS =================
+// =====================================================
+// ELEMENTS
+// =====================================================
 
 const newsForm = document.getElementById("newsForm");
 const title = document.getElementById("title");
@@ -39,12 +41,16 @@ const repeatExtraTitle = document.getElementById("repeatExtraTitle");
 
 const agendaList = document.getElementById("agendaList");
 
-// ================= CLOUDINARY SETTINGS =================
+// =====================================================
+// CLOUDINARY SETTINGS (OME JAN)
+// =====================================================
 
 const cloudName = "JOUW_CLOUD_NAME";
 const uploadPreset = "hvnovitas_upload";
 
-// ================= NEWS =================
+// =====================================================
+// NEWS
+// =====================================================
 
 let editingNewsId = null;
 
@@ -109,7 +115,9 @@ window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
 };
 
-// ================= SPONSORS (FIREBASE BASE64) =================
+// =====================================================
+// SPONSORS (FIREBASE IMAGE)
+// =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
 
@@ -156,7 +164,9 @@ window.deleteSponsor = async (id) => {
     await remove(ref(db, "sponsors/" + id));
 };
 
-// ================= OME JAN (CLOUDINARY) =================
+// =====================================================
+// OME JAN (CLOUDINARY UPLOAD)
+// =====================================================
 
 omeBtn?.addEventListener("click", async () => {
 
@@ -183,6 +193,7 @@ omeBtn?.addEventListener("click", async () => {
 
     if (!data.secure_url) {
         alert("Upload mislukt");
+        console.error(data);
         return;
     }
 
@@ -193,6 +204,10 @@ omeBtn?.addEventListener("click", async () => {
 
     omeFile.value = "";
 });
+
+// =====================================================
+// OME JAN LIST
+// =====================================================
 
 onValue(ref(db, "omejan"), (snapshot) => {
 
@@ -213,9 +228,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
 
             <br>
 
-            <button onclick="deleteOmeJan('${id}')">
-                Verwijder
-            </button>
+            <button onclick="deleteOmeJan('${id}')">Delete</button>
 
         </div>
     `).join("");
@@ -228,7 +241,9 @@ window.deleteOmeJan = async (id) => {
     await remove(ref(db, "omejan/" + id));
 };
 
-// ================= AGENDA =================
+// =====================================================
+// AGENDA
+// =====================================================
 
 document.getElementById("saveAgenda")?.addEventListener("click", async () => {
 
@@ -263,7 +278,6 @@ document.getElementById("importAgendaBulk")?.addEventListener("click", async () 
             created: Date.now()
         });
     }
-
 });
 
 document.getElementById("generateRepeat")?.addEventListener("click", async () => {
@@ -289,8 +303,11 @@ document.getElementById("generateRepeat")?.addEventListener("click", async () =>
 
         current.setDate(current.getDate() + 1);
     }
-
 });
+
+// =====================================================
+// AGENDA LIST
+// =====================================================
 
 onValue(ref(db, "agenda"), (snapshot) => {
 
