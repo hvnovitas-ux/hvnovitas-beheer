@@ -1,0 +1,137 @@
+/* =====================================================
+   HV NOVITAS - EMBED AGENDA STYLES
+   (GitHub Pages / iframe safe)
+===================================================== */
+
+.agenda-wrapper {
+    font-family: Arial, sans-serif;
+    width: 100%;
+    max-width: 100%;
+    background: #f4f6f8;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* =====================================================
+   FILTER BAR
+===================================================== */
+
+.agenda-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.agenda-filters button {
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.agenda-filters button:hover {
+    opacity: 0.85;
+}
+
+/* =====================================================
+   CALENDAR GRID
+===================================================== */
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+/* =====================================================
+   DAY BLOCK
+===================================================== */
+
+.day {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 6px;
+    min-height: 70px;
+    font-size: 11px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+}
+
+/* dag nummer */
+.day b {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+/* =====================================================
+   EVENT ITEMS
+===================================================== */
+
+.event-item {
+    margin-top: 3px;
+    padding: 3px 5px;
+    border-radius: 5px;
+    font-size: 10px;
+    line-height: 1.2;
+    color: #000;
+}
+
+/* =====================================================
+   TYPES (KLEUREN)
+===================================================== */
+
+.match {
+    background: #ffdddd;
+    border-left: 3px solid #ff3b3b;
+}
+
+.training {
+    background: #dde9ff;
+    border-left: 3px solid #3b82ff;
+}
+
+.meeting {
+    background: #f0f0f0;
+    border-left: 3px solid #999;
+}
+
+.clubday {
+    background: #ffe4c4;
+    border-left: 3px solid #ff9800;
+}
+
+.event {
+    background: #fff3b0;
+    border-left: 3px solid #ffcc00;
+}
+
+.tournament {
+    background: #d6ffd6;
+    border-left: 3px solid #22c55e;
+}
+
+.cancelled {
+    background: #ddd;
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    #calendar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .agenda-filters {
+        flex-direction: column;
+    }
+}
