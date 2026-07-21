@@ -61,6 +61,7 @@ async function loadNews() {
         <div class="news-item">
             <b>${n.title}</b>
             <p>${n.text}</p>
+
             <button onclick="deleteNews('${id}')">Delete</button>
         </div>
     `).join("");
@@ -103,10 +104,10 @@ onValue(ref(db, "sponsors"), (snapshot) => {
     }
 
     sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
-        <div style="display:inline-block;margin:10px;">
+        <div style="display:inline-block;margin:10px;text-align:center;">
             <img src="${s.imageUrl}" style="height:60px;">
             <br>
-            <button onclick="deleteSponsor('${id}')">Delete</button>
+            <button class="delete-sponsor" data-id="${id}">Delete</button>
         </div>
     `).join("");
 });
@@ -154,6 +155,42 @@ omeBtn?.addEventListener("click", async () => {
 });
 
 // =====================================================
+// FOTO BEHEER (100% FIX - NO onclick BUGS)
+// =====================================================
+
+onValue(ref(db, "omejan"), (snapshot) => {
+
+    const data = snapshot.val();
+    if (!omeList) return;
+
+    if (!data) {
+        omeList.innerHTML = "Geen foto's";
+        return;
+    }
+
+    omeList.innerHTML = "";
+
+    Object.entries(data).forEach(([id, o]) => {
+
+        const div = document.createElement("div");
+        div.style = "display:inline-block;margin:10px;text-align:center;";
+
+        div.innerHTML = `
+            <img src="${o.imageUrl}" style="height:80px;border-radius:8px;">
+            <br>
+            <button class="delete-photo">Delete</button>
+        `;
+
+        div.querySelector(".delete-photo").addEventListener("click", async () => {
+            await remove(ref(db, "omejan/" + id));
+            console.log("deleted:", id);
+        });
+
+        omeList.appendChild(div);
+    });
+});
+
+// =====================================================
 // AGENDA
 // =====================================================
 
@@ -168,25 +205,3 @@ document.getElementById("saveAgenda")?.addEventListener("click", async () => {
         created: Date.now()
     });
 });
-
-// =====================================================
-// DELETE FUNCTIONS (FIXED - NO WINDOW BUGS)
-// =====================================================
-
-async function deleteNews(id) {
-    await remove(ref(db, "news/" + id));
-    loadNews();
-}
-
-async function deleteSponsor(id) {
-    await remove(ref(db, "sponsors/" + id));
-}
-
-async function deleteOmeJan(id) {
-    await remove(ref(db, "omejan/" + id));
-}
-
-// expose for HTML onclick
-window.deleteNews = deleteNews;
-window.deleteSponsor = deleteSponsor;
-window.deleteOmeJan = deleteOmeJan;
