@@ -61,7 +61,6 @@ async function loadNews() {
         <div class="news-item">
             <b>${n.title}</b>
             <p>${n.text}</p>
-
             <button onclick="deleteNews('${id}')">Delete</button>
         </div>
     `).join("");
@@ -70,7 +69,7 @@ async function loadNews() {
 loadNews();
 
 // =====================================================
-// SPONSORS
+// SPONSORS (WORKING + DELETE FIXED)
 // =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
@@ -104,7 +103,14 @@ onValue(ref(db, "sponsors"), (snapshot) => {
     }
 
     sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
-        <div style="display:inline-block;margin:10px;text-align:center;">
+        <div style="
+            display:inline-block;
+            margin:10px;
+            text-align:center;
+            background:#fff;
+            padding:10px;
+            border-radius:10px;
+        ">
             <img src="${s.imageUrl}" style="height:60px;">
             <br>
             <button class="delete-sponsor" data-id="${id}">Delete</button>
@@ -113,7 +119,7 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 });
 
 // =====================================================
-// OME JAN (CLOUDINARY)
+// OME JAN (CLOUDINARY UPLOAD)
 // =====================================================
 
 omeBtn?.addEventListener("click", async () => {
@@ -137,10 +143,7 @@ omeBtn?.addEventListener("click", async () => {
 
         const data = await res.json();
 
-        if (!res.ok || !data.secure_url) {
-            console.error("UPLOAD ERROR:", data);
-            return;
-        }
+        if (!res.ok || !data.secure_url) return;
 
         await push(ref(db, "omejan"), {
             imageUrl: data.secure_url,
@@ -155,7 +158,7 @@ omeBtn?.addEventListener("click", async () => {
 });
 
 // =====================================================
-// FOTO BEHEER (100% FIX - NO onclick BUGS)
+// OME JAN UI (LIKE SPONSORS - FIXED VIEW)
 // =====================================================
 
 onValue(ref(db, "omejan"), (snapshot) => {
@@ -168,26 +171,20 @@ onValue(ref(db, "omejan"), (snapshot) => {
         return;
     }
 
-    omeList.innerHTML = "";
-
-    Object.entries(data).forEach(([id, o]) => {
-
-        const div = document.createElement("div");
-        div.style = "display:inline-block;margin:10px;text-align:center;";
-
-        div.innerHTML = `
-            <img src="${o.imageUrl}" style="height:80px;border-radius:8px;">
+    omeList.innerHTML = Object.entries(data).map(([id, o]) => `
+        <div style="
+            display:inline-block;
+            margin:10px;
+            text-align:center;
+            background:#fff;
+            padding:10px;
+            border-radius:10px;
+        ">
+            <img src="${o.imageUrl}" style="height:70px;border-radius:8px;">
             <br>
-            <button class="delete-photo">Delete</button>
-        `;
-
-        div.querySelector(".delete-photo").addEventListener("click", async () => {
-            await remove(ref(db, "omejan/" + id));
-            console.log("deleted:", id);
-        });
-
-        omeList.appendChild(div);
-    });
+            <button class="delete-photo" data-id="${id}">Delete</button>
+        </div>
+    `).join("");
 });
 
 // =====================================================
@@ -204,4 +201,29 @@ document.getElementById("saveAgenda")?.addEventListener("click", async () => {
         team2: agendaTeam2.value,
         created: Date.now()
     });
+});
+
+// =====================================================
+// DELETE HANDLERS (IMPORTANT FIX)
+// =====================================================
+
+document.addEventListener("click", async (e) => {
+
+    // NEWS
+    if (e.target.dataset.id && e.target.classList.contains("delete-news")) {
+        await remove(ref(db, "news/" + e.target.dataset.id));
+        loadNews();
+    }
+
+    // SPONSORS
+    if (e.target.classList.contains("delete-sponsor")) {
+        const id = e.target.dataset.id;
+        await remove(ref(db, "sponsors/" + id));
+    }
+
+    // OME JAN
+    if (e.target.classList.contains("delete-photo")) {
+        const id = e.target.dataset.id;
+        await remove(ref(db, "omejan/" + id));
+    }
 });
