@@ -1,54 +1,62 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+<!DOCTYPE html>
+<html lang="nl">
 
-// ================= FIREBASE =================
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "hv-novitas-beheer.firebaseapp.com",
-    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "hv-novitas-beheer"
-};
+<title>Sponsors HV Novitas</title>
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+<style>
 
-// ================= SAFE START =================
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
 
-window.addEventListener("DOMContentLoaded", async () => {
+/* WRAPPER */
+.slider {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
 
-    const track = document.getElementById("sponsorTrack");
+/* TRACK */
+#sponsorTrack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
 
-    if (!track) {
-        console.error("sponsorTrack niet gevonden in HTML");
-        return;
-    }
+/* IMAGE */
+#sponsorTrack img {
+    height: 60px;
+    background: white;
+    padding: 8px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    object-fit: contain;
+}
 
-    try {
+</style>
 
-        const snapshot = await get(ref(db, "sponsors"));
+</head>
 
-        if (!snapshot.exists()) {
-            track.innerHTML = "<p>Geen sponsors</p>";
-            return;
-        }
+<body>
 
-        const data = snapshot.val();
-        const items = Object.values(data);
+<div class="slider">
+    <div id="sponsorTrack"></div>
+</div>
 
-        track.innerHTML = items.map(s => `
-            <img src="${s.imageUrl}" style="
-                height:60px;
-                margin:10px;
-                background:white;
-                padding:5px;
-                border-radius:8px;
-            ">
-        `).join("");
+<!-- ================= JS ================= -->
+<script type="module" src="sponsors.js"></script>
 
-    } catch (err) {
-        console.error("Sponsors error:", err);
-        track.innerHTML = "<p>Fout bij laden sponsors</p>";
-    }
+</body>
 
-});
+</html>
