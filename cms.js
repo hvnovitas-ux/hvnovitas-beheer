@@ -37,7 +37,7 @@ const agendaBulk = document.getElementById("agendaBulk");
 // CLOUDINARY CONFIG
 // =====================================================
 
-const cloudName = "hwxe3jzg"; // jouw cloud
+const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
 
 // =====================================================
@@ -74,7 +74,6 @@ onValue(ref(db, "news"), (snapshot) => {
         <div class="news-item">
             <b>${n.title}</b>
             <p>${n.text}</p>
-
             <button onclick="deleteNews('${id}')">Delete</button>
         </div>
     `).join("");
@@ -90,8 +89,12 @@ window.deleteNews = async (id) => {
 
 sponsorBtn?.addEventListener("click", () => {
 
-    const file = sponsorFile.files[0];
-    if (!file) return;
+    const file = sponsorFile?.files?.[0];
+
+    if (!file) {
+        alert("Geen sponsor geselecteerd");
+        return;
+    }
 
     const reader = new FileReader();
 
@@ -134,12 +137,12 @@ window.deleteSponsor = async (id) => {
 };
 
 // =====================================================
-// OME JAN (CLOUDINARY FIXED)
+// OME JAN (CLOUDINARY SAFE + FIXED)
 // =====================================================
 
 omeBtn?.addEventListener("click", async () => {
 
-    const file = omeFile.files[0];
+    const file = omeFile?.files?.[0];
 
     if (!file) {
         alert("Kies een foto");
@@ -217,7 +220,7 @@ window.deleteOmeJan = async (id) => {
 };
 
 // =====================================================
-// AGENDA (BASIC)
+// AGENDA
 // =====================================================
 
 document.getElementById("saveAgenda")?.addEventListener("click", async () => {
