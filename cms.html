@@ -40,7 +40,7 @@ body {
 }
 
 /* INPUTS */
-input, textarea {
+input, textarea, select {
     width: 100%;
     padding: 10px;
     margin-top: 5px;
@@ -59,7 +59,7 @@ button {
     cursor: pointer;
 }
 
-/* NEWS */
+/* LIST ITEMS */
 .news-item {
     background: #fff;
     padding: 10px;
@@ -80,7 +80,6 @@ button {
     background: white;
     padding: 5px;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* OME JAN */
@@ -93,7 +92,11 @@ button {
 #omejanList img {
     height: 80px;
     border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* AGENDA */
+#agendaList {
+    margin-top: 10px;
 }
 
 </style>
@@ -106,60 +109,102 @@ button {
 
 <div class="container">
 
-    <!-- ================= NEWS ================= -->
-    <div class="box">
+<!-- ================= NEWS ================= -->
+<div class="box">
 
-        <h2>📰 Nieuws beheren</h2>
+    <h2>📰 Nieuws</h2>
 
-        <form id="newsForm">
-            <input type="text" id="title" placeholder="Titel" required>
-            <textarea id="text" placeholder="Bericht" required></textarea>
-            <button type="submit">Publiceren</button>
-        </form>
+    <form id="newsForm">
+        <input id="title" placeholder="Titel">
+        <textarea id="text" placeholder="Bericht"></textarea>
+        <button type="submit">Publiceren</button>
+    </form>
 
-        <p id="newsStatus"></p>
+    <p id="newsStatus"></p>
 
-        <h3>Berichten beheren</h3>
-        <div id="newsList"></div>
-
-    </div>
-
-    <!-- ================= SPONSORS ================= -->
-    <div class="box">
-
-        <h2>🤝 Sponsors beheren</h2>
-
-        <input type="file" id="logo">
-        <button id="saveSponsor">Upload sponsor</button>
-
-        <p id="sponsorStatus"></p>
-
-        <h3>Huidige sponsors</h3>
-        <div id="sponsorList"></div>
-
-    </div>
-
-    <!-- ================= OME JAN ================= -->
-    <div class="box">
-
-        <h2>📸 Ome Jan (foto’s)</h2>
-
-        <input type="file" id="omejanFile">
-        <button id="saveOmejan">Upload foto</button>
-
-        <p id="omejanStatus"></p>
-
-        <h3>Foto’s</h3>
-        <div id="omejanList"></div>
-
-    </div>
+    <div id="newsList"></div>
 
 </div>
 
-<!-- SCRIPTS -->
+<!-- ================= SPONSORS ================= -->
+<div class="box">
+
+    <h2>🤝 Sponsors</h2>
+
+    <input type="file" id="logo">
+    <button id="saveSponsor">Upload sponsor</button>
+
+    <p id="sponsorStatus"></p>
+
+    <div id="sponsorList"></div>
+
+</div>
+
+<!-- ================= OME JAN ================= -->
+<div class="box">
+
+    <h2>📸 Ome Jan</h2>
+
+    <input type="file" id="omejanFile">
+    <button id="saveOmejan">Upload foto</button>
+
+    <p id="omejanStatus"></p>
+
+    <div id="omejanList"></div>
+
+</div>
+
+<!-- ================= AGENDA ================= -->
+<div class="box">
+
+    <h2>📅 Agenda systeem</h2>
+
+    <!-- SINGLE -->
+    <select id="agendaType">
+        <option value="match">Wedstrijd</option>
+        <option value="training">Training</option>
+        <option value="meeting">Vergadering</option>
+    </select>
+
+    <input id="agendaDate" placeholder="Datum (14 feb)">
+    <input id="agendaTime" placeholder="Tijd (19:00)">
+    <input id="agendaTeam1" placeholder="Team / Titel">
+    <input id="agendaTeam2" placeholder="Tegenstander">
+
+    <button id="saveAgenda">Opslaan</button>
+
+    <hr>
+
+    <!-- BULK -->
+    <textarea id="agendaBulk" placeholder="
+14 feb 14:50 Avanti HS1 Novitas HS1
+21 feb 19:00 EMM HS1 Novitas HS1
+03 jan 19:00 Jeugd training
+"></textarea>
+
+    <button id="importAgendaBulk">Import bulk</button>
+
+    <hr>
+
+    <!-- REPEAT -->
+    <input id="repeatFrom" placeholder="Start datum">
+    <input id="repeatUntil" placeholder="Eind datum">
+    <input id="repeatTime" placeholder="19:00">
+    <input id="repeatTitle" placeholder="Training naam">
+
+    <button id="generateRepeat">Herhaling genereren</button>
+
+    <p id="agendaStatus"></p>
+
+    <div id="agendaList"></div>
+
+</div>
+
+</div>
+
+<!-- ================= SCRIPTS ================= -->
 <script type="module" src="firebase.js"></script>
 <script type="module" src="cms.js"></script>
 
 </body>
-
 </html>
