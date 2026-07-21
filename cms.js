@@ -26,56 +26,27 @@ const omeFile = document.getElementById("omejanFile");
 const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
 
-const agendaType = document.getElementById("agendaType");
-const agendaDate = document.getElementById("agendaDate");
-const agendaTime = document.getElementById("agendaTime");
-const agendaTeam1 = document.getElementById("agendaTeam1");
-const agendaTeam2 = document.getElementById("agendaTeam2");
-const agendaBulk = document.getElementById("agendaBulk");
-
-const repeatFrom = document.getElementById("repeatFrom");
-const repeatUntil = document.getElementById("repeatUntil");
-const repeatTime = document.getElementById("repeatTime");
-const repeatTitle = document.getElementById("repeatTitle");
-const repeatExtraTitle = document.getElementById("repeatExtraTitle");
-
-const agendaList = document.getElementById("agendaList");
-
 // =====================================================
-// CLOUDINARY CONFIG (OME JAN)
+// CLOUDINARY (OME JAN)
 // =====================================================
 
-const cloudName = "hwxe3jzg";
+const cloudName = "JOUW_CLOUD_NAME"; 
 const uploadPreset = "hvnovitas_upload";
 
 // =====================================================
 // NEWS
 // =====================================================
 
-let editingNewsId = null;
-
 newsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (!title.value || !text.value) return;
 
-    if (editingNewsId) {
-
-        await update(ref(db, "news/" + editingNewsId), {
-            title: title.value,
-            text: text.value
-        });
-
-        editingNewsId = null;
-
-    } else {
-
-        await push(ref(db, "news"), {
-            title: title.value,
-            text: text.value,
-            created: Date.now()
-        });
-    }
+    await push(ref(db, "news"), {
+        title: title.value,
+        text: text.value,
+        created: Date.now()
+    });
 
     newsForm.reset();
 });
@@ -86,7 +57,7 @@ onValue(ref(db, "news"), (snapshot) => {
     if (!newsList) return;
 
     if (!data) {
-        newsList.innerHTML = "<p>Geen nieuws</p>";
+        newsList.innerHTML = "Geen nieuws";
         return;
     }
 
@@ -94,29 +65,20 @@ onValue(ref(db, "news"), (snapshot) => {
 
     newsList.innerHTML = items.map(([id, n]) => `
         <div class="news-item">
-
             <b>${n.title}</b>
             <p>${n.text}</p>
 
-            <button onclick="editNews('${id}', \`${n.title}\`, \`${n.text}\`)">Edit</button>
             <button onclick="deleteNews('${id}')">Delete</button>
-
         </div>
     `).join("");
 });
-
-window.editNews = (id, t, txt) => {
-    title.value = t;
-    text.value = txt;
-    editingNewsId = id;
-};
 
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
 };
 
 // =====================================================
-// SPONSORS (FIREBASE BASE64 - zoals jij wil)
+// SPONSORS (FIREBASE BASE64)
 // =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
@@ -145,7 +107,7 @@ onValue(ref(db, "sponsors"), (snapshot) => {
     if (!sponsorList) return;
 
     if (!data) {
-        sponsorList.innerHTML = "<p>Geen sponsors</p>";
+        sponsorList.innerHTML = "Geen sponsors";
         return;
     }
 
@@ -165,7 +127,7 @@ window.deleteSponsor = async (id) => {
 };
 
 // =====================================================
-// OME JAN (CLOUDINARY FIX - WORKING)
+// OME JAN (CLOUDINARY FIX + ERROR DEBUG)
 // =====================================================
 
 omeBtn?.addEventListener("click", async () => {
@@ -177,7 +139,7 @@ omeBtn?.addEventListener("click", async () => {
         return;
     }
 
-    console.log("📸 Upload gestart...");
+    console.log("📸 Upload gestart:", file.name);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -185,7 +147,7 @@ omeBtn?.addEventListener("click", async () => {
 
     try {
 
-        const response = await fetch(
+        const res = await fetch(
             `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             {
                 method: "POST",
@@ -193,13 +155,19 @@ omeBtn?.addEventListener("click", async () => {
             }
         );
 
-        const data = await response.json();
+        const data = await res.json();
 
         console.log("☁️ Cloudinary response:", data);
 
-        if (!response.ok || !data.secure_url) {
-            console.error("UPLOAD ERROR:", data);
-            alert("Upload mislukt - check console");
+        if (!res.ok) {
+            console.error("❌ HTTP ERROR:", data);
+            alert("Upload mislukt (HTTP error)");
+            return;
+        }
+
+        if (!data.secure_url) {
+            console.error("❌ NO URL:", data);
+            alert("Upload mislukt (geen URL)");
             return;
         }
 
@@ -208,12 +176,12 @@ omeBtn?.addEventListener("click", async () => {
             created: Date.now()
         });
 
-        console.log("✅ Upload gelukt");
+        console.log("✅ Upload OK");
 
         omeFile.value = "";
 
     } catch (err) {
-        console.error("NETWORK ERROR:", err);
+        console.error("❌ NETWORK ERROR:", err);
         alert("Netwerk fout");
     }
 });
@@ -228,7 +196,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
     if (!omeList) return;
 
     if (!data) {
-        omeList.innerHTML = "<p>Geen foto's</p>";
+        omeList.innerHTML = "Geen foto's";
         return;
     }
 
@@ -236,118 +204,13 @@ onValue(ref(db, "omejan"), (snapshot) => {
 
     omeList.innerHTML = items.map(([id, o]) => `
         <div style="display:inline-block;margin:10px;text-align:center;">
-
             <img src="${o.imageUrl}" style="height:80px;border-radius:8px;">
-
             <br>
-
             <button onclick="deleteOmeJan('${id}')">Delete</button>
-
         </div>
     `).join("");
 });
 
 window.deleteOmeJan = async (id) => {
-
-    if (!confirm("Foto verwijderen?")) return;
-
     await remove(ref(db, "omejan/" + id));
-};
-
-// =====================================================
-// AGENDA
-// =====================================================
-
-document.getElementById("saveAgenda")?.addEventListener("click", async () => {
-
-    await push(ref(db, "agenda"), {
-        type: agendaType.value,
-        date: agendaDate.value,
-        time: agendaTime.value,
-        team1: agendaTeam1.value,
-        team2: agendaTeam2.value,
-        created: Date.now()
-    });
-
-});
-
-document.getElementById("importAgendaBulk")?.addEventListener("click", async () => {
-
-    const lines = agendaBulk.value.split("\n");
-
-    for (let line of lines) {
-
-        if (!line.trim()) continue;
-
-        const p = line.split(" ");
-
-        await push(ref(db, "agenda"), {
-            type: "match",
-            raw: line,
-            date: p[0] + " " + p[1],
-            time: p[2],
-            team1: p[3] || "",
-            team2: p[4] || "",
-            created: Date.now()
-        });
-    }
-
-});
-
-document.getElementById("generateRepeat")?.addEventListener("click", async () => {
-
-    const start = new Date(repeatFrom.value);
-    const end = new Date(repeatUntil.value);
-
-    let current = new Date(start);
-
-    while (current <= end) {
-
-        if (current.getDay() === 2) {
-
-            await push(ref(db, "agenda"), {
-                type: "training",
-                date: current.toDateString(),
-                time: repeatTime.value,
-                team1: repeatTitle.value,
-                titleExtra: repeatExtraTitle.value,
-                created: Date.now()
-            });
-        }
-
-        current.setDate(current.getDate() + 1);
-    }
-
-});
-
-// =====================================================
-// AGENDA LIST
-// =====================================================
-
-onValue(ref(db, "agenda"), (snapshot) => {
-
-    const data = snapshot.val();
-    if (!agendaList) return;
-
-    if (!data) {
-        agendaList.innerHTML = "<p>Geen agenda</p>";
-        return;
-    }
-
-    const items = Object.entries(data);
-
-    agendaList.innerHTML = items.map(([id, a]) => `
-        <div class="news-item">
-
-            <b>${a.date} - ${a.time || ""}</b><br>
-            ${a.team1 || ""} ${a.team2 || ""}<br>
-
-            <button onclick="deleteAgenda('${id}')">Delete</button>
-
-        </div>
-    `).join("");
-});
-
-window.deleteAgenda = async (id) => {
-    await remove(ref(db, "agenda/" + id));
 };
