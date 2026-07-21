@@ -9,6 +9,28 @@ import {
 
 console.log("🧡 HV NOVITAS CMS LOADED");
 
+// ================= CLOUDINARY SETTINGS =================
+
+const cloudName = "JOUW_CLOUD_NAME";
+const uploadPreset = "hvnovitas_upload";
+
+async function uploadToCloudinary(file) {
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
+
+    const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+    return await res.json();
+}
+
 // ================= NEWS =================
 
 const newsForm = document.getElementById("newsForm");
@@ -18,34 +40,31 @@ const newsList = document.getElementById("newsList");
 
 let editingNewsId = null;
 
-if (newsForm) {
+newsForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    newsForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    if (!title.value || !text.value) return;
 
-        if (!title.value || !text.value) return;
+    if (editingNewsId) {
 
-        if (editingNewsId) {
+        await update(ref(db, "news/" + editingNewsId), {
+            title: title.value,
+            text: text.value
+        });
 
-            await update(ref(db, "news/" + editingNewsId), {
-                title: title.value,
-                text: text.value
-            });
+        editingNewsId = null;
 
-            editingNewsId = null;
+    } else {
 
-        } else {
+        await push(ref(db, "news"), {
+            title: title.value,
+            text: text.value,
+            created: Date.now()
+        });
+    }
 
-            await push(ref(db, "news"), {
-                title: title.value,
-                text: text.value,
-                created: Date.now()
-            });
-        }
-
-        newsForm.reset();
-    });
-}
+    newsForm.reset();
+});
 
 onValue(ref(db, "news"), (snapshot) => {
 
@@ -57,9 +76,9 @@ onValue(ref(db, "news"), (snapshot) => {
         return;
     }
 
-    const items = Object.entries(data);
+    const items = Object.entries(data).reverse();
 
-    newsList.innerHTML = items.reverse().map(([id, n]) => `
+    newsList.innerHTML = items.map(([id, n]) => `
         <div class="news-item">
 
             <b>${n.title}</b>
@@ -82,35 +101,31 @@ window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
 };
 
-
-// ================= SPONSORS =================
+// ================= SPONSORS (BLIJFT FIREBASE) =================
 
 const sponsorFile = document.getElementById("logo");
 const sponsorBtn = document.getElementById("saveSponsor");
 const sponsorList = document.getElementById("sponsorList");
-const sponsorStatus = document.getElementById("sponsorStatus");
 
-if (sponsorBtn && sponsorFile) {
+sponsorBtn?.addEventListener("click", async () => {
 
-    sponsorBtn.addEventListener("click", () => {
+    const file = sponsorFile.files[0];
+    if (!file) return;
 
-        if (!sponsorFile.files[0]) return;
+    const reader = new FileReader();
 
-        const reader = new FileReader();
+    reader.onload = async () => {
 
-        reader.onload = async () => {
+        await push(ref(db, "sponsors"), {
+            imageUrl: reader.result,
+            created: Date.now()
+        });
 
-            await push(ref(db, "sponsors"), {
-                imageUrl: reader.result,
-                created: Date.now()
-            });
+        sponsorFile.value = "";
+    };
 
-            sponsorFile.value = "";
-        };
-
-        reader.readAsDataURL(sponsorFile.files[0]);
-    });
-}
+    reader.readAsDataURL(file);
+});
 
 onValue(ref(db, "sponsors"), (snapshot) => {
 
@@ -137,32 +152,26 @@ window.deleteSponsor = async (id) => {
     await remove(ref(db, "sponsors/" + id));
 };
 
-
-// ================= OME JAN =================
+// ================= OME JAN (CLOUDINARY FIX) =================
 
 const omeFile = document.getElementById("omejanFile");
 const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
 
-if (omeBtn && omeFile) {
+omeBtn?.addEventListener("click", async () => {
 
-    omeBtn.addEventListener("click", () => {
+    const file = omeFile.files[0];
+    if (!file) return;
 
-        const reader = new FileReader();
+    const data = await uploadToCloudinary(file);
 
-        reader.onload = async () => {
-
-            await push(ref(db, "omejan"), {
-                imageUrl: reader.result,
-                created: Date.now()
-            });
-
-            omeFile.value = "";
-        };
-
-        reader.readAsDataURL(omeFile.files[0]);
+    await push(ref(db, "omejan"), {
+        imageUrl: data.secure_url,
+        created: Date.now()
     });
-}
+
+    omeFile.value = "";
+});
 
 onValue(ref(db, "omejan"), (snapshot) => {
 
@@ -189,8 +198,7 @@ window.deleteOmeJan = async (id) => {
     await remove(ref(db, "omejan/" + id));
 };
 
-
-// ================= AGENDA SYSTEM =================
+// ================= AGENDA (BLIJFT HETZELFDE) =================
 
 const agendaType = document.getElementById("agendaType");
 const agendaDate = document.getElementById("agendaDate");
@@ -252,9 +260,6 @@ document.getElementById("generateRepeat")?.addEventListener("click", async () =>
 
     const start = new Date(repeatFrom.value);
     const end = new Date(repeatUntil.value);
-    const time = repeatTime.value;
-    const title = repeatTitle.value;
-    const extra = repeatExtraTitle.value;
 
     let current = new Date(start);
 
@@ -266,9 +271,9 @@ document.getElementById("generateRepeat")?.addEventListener("click", async () =>
                 type: "training",
                 mode: "repeat",
                 date: current.toDateString(),
-                time,
-                team1: title,
-                titleExtra: extra,
+                time: repeatTime.value,
+                team1: repeatTitle.value,
+                titleExtra: repeatExtraTitle.value,
                 created: Date.now()
             });
         }
