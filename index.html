@@ -2,88 +2,208 @@
 <html lang="nl">
 
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HV Novitas</title>
 
-    <title>HV Novitas Beheer</title>
+<style>
 
-    <link rel="stylesheet" href="style.css">
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
 
-    <style>
+/* TOPBAR */
+.topbar {
+    background: #ff6a00;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+/* LAYOUT */
+.container {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+}
 
-        .login-box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 300px;
-        }
+/* COLUMNS */
+.column {
+    flex: 1;
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    min-height: 500px;
+}
 
-        h1 {
-            margin: 0;
-            color: #ff6a00;
-        }
+/* ITEMS */
+.item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
 
-        h2 {
-            margin-top: 5px;
-        }
+.match {
+    border-left: 5px solid #ff6a00;
+    padding-left: 10px;
+}
 
-        button {
-            margin-top: 15px;
-            background: #ff6a00;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
+.training {
+    border-left: 5px solid #2ecc71;
+    padding-left: 10px;
+}
 
-        #status {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-        }
+.meeting {
+    border-left: 5px solid #3498db;
+    padding-left: 10px;
+}
 
-    </style>
+.highlight {
+    border-left: 5px solid gold;
+    padding-left: 10px;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+    }
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="login-box">
+<div class="topbar">
+🧡 HV NOVITAS
+</div>
 
-    <h1>🧡 HV Novitas</h1>
+<div class="container">
 
-    <h2>Beheer</h2>
+    <!-- ================= WEDSTRIJDEN ================= -->
+    <div class="column" id="matches">
+        <h3>⚔️ Wedstrijden</h3>
+    </div>
 
-    <p>
-        Alleen voor bevoegde bestuursleden.
-    </p>
+    <!-- ================= ACTIVITEITEN ================= -->
+    <div class="column" id="activities">
+        <h3>🏋️ Activiteiten</h3>
+    </div>
 
-    <button id="login">
-        🔐 Inloggen met Google
-    </button>
-
-    <p id="status"></p>
+    <!-- ================= HIGHLIGHTS ================= -->
+    <div class="column" id="highlights">
+        <h3>🏆 Highlights</h3>
+    </div>
 
 </div>
 
-<script type="module" src="firebase.js"></script>
-<script type="module" src="login.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const matchesEl = document.getElementById("matches");
+const activitiesEl = document.getElementById("activities");
+const highlightsEl = document.getElementById("highlights");
+
+onValue(ref(db, "agenda"), (snapshot) => {
+
+    const data = snapshot.val();
+
+    if (!data) return;
+
+    const items = Object.values(data);
+
+    let matches = {};
+    let activities = [];
+    let highlights = [];
+
+    // ================= SORTING =================
+
+    items.forEach(a => {
+
+        // MATCHES (gegroepeerd per datum)
+        if (a.type === "match") {
+
+            if (!matches[a.date]) matches[a.date] = [];
+
+            matches[a.date].push(a);
+        }
+
+        // ACTIVITIES
+        if (a.type === "training" || a.type === "meeting") {
+            activities.push(a);
+        }
+
+        // HIGHLIGHTS (laatste/important)
+        if (a.type === "highlight" || a.mode === "repeat") {
+            highlights.push(a);
+        }
+    });
+
+    // ================= MATCHES =================
+
+    matchesEl.innerHTML = "<h3>⚔️ Wedstrijden</h3>";
+
+    Object.keys(matches).forEach(date => {
+
+        matchesEl.innerHTML += `
+            <div class="item match">
+                <b>${date}</b>
+                ${matches[date].map(m => `
+                    <div>${m.time} - ${m.team1} vs ${m.team2}</div>
+                `).join("")}
+            </div>
+        `;
+    });
+
+    // ================= ACTIVITIES =================
+
+    activitiesEl.innerHTML = "<h3>🏋️ Activiteiten</h3>";
+
+    activities.forEach(a => {
+
+        activitiesEl.innerHTML += `
+            <div class="item ${a.type}">
+                <b>${a.date} ${a.time}</b><br>
+                ${a.team1 || ""}
+            </div>
+        `;
+    });
+
+    // ================= HIGHLIGHTS =================
+
+    highlightsEl.innerHTML = "<h3>🏆 Highlights</h3>";
+
+    highlights.forEach(h => {
+
+        highlightsEl.innerHTML += `
+            <div class="item highlight">
+                <b>${h.date}</b><br>
+                ${h.team1 || ""}
+            </div>
+        `;
+    });
+
+});
+
+</script>
 
 </body>
-
 </html>
