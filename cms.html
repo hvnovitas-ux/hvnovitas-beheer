@@ -65,12 +65,7 @@ button {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-#sponsorList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
+#sponsorList,
 #omejanList {
     display: flex;
     flex-wrap: wrap;
@@ -139,17 +134,16 @@ button {
 <!-- ================= AGENDA ================= -->
 <div class="box">
 
-    <h2>📅 Agenda systeem (UPGRADED)</h2>
+    <h2>📅 Agenda systeem</h2>
 
-    <!-- SINGLE -->
     <select id="agendaType">
         <option value="match">Wedstrijd</option>
         <option value="training">Training</option>
         <option value="meeting">Vergadering</option>
     </select>
 
-    <input id="agendaDate" placeholder="Datum (14 feb)">
-    <input id="agendaTime" placeholder="Tijd (19:00)">
+    <input id="agendaDate" placeholder="Datum">
+    <input id="agendaTime" placeholder="Tijd">
     <input id="agendaTeam1" placeholder="Team / Titel">
     <input id="agendaTeam2" placeholder="Tegenstander">
 
@@ -157,29 +151,21 @@ button {
 
     <hr>
 
-    <!-- BULK -->
     <h3>📋 Bulk invoer</h3>
-
-    <textarea id="agendaBulk" placeholder="
-14 feb 14:50 Avanti HS1 Novitas HS1
-21 feb 19:00 EMM HS1 Novitas HS1
-03 jan 19:00 Jeugd training
-"></textarea>
-
+    <textarea id="agendaBulk"></textarea>
     <button id="importAgendaBulk">Import bulk</button>
 
     <hr>
 
-    <!-- REPEAT (UPGRADE) -->
-    <h3>🔁 Herhaling trainingen</h3>
+    <h3>🔁 Herhaling</h3>
 
     <input id="repeatFrom" placeholder="Start datum">
     <input id="repeatUntil" placeholder="Eind datum">
-    <input id="repeatTime" placeholder="Tijd (19:00)">
-    <input id="repeatTitle" placeholder="Training groep (Jeugd/Senioren)">
-    <input id="repeatExtraTitle" placeholder="Extra titel (Training senioren)">
+    <input id="repeatTime" placeholder="Tijd">
+    <input id="repeatTitle" placeholder="Titel">
+    <input id="repeatExtraTitle" placeholder="Extra">
 
-    <button id="generateRepeat">Herhaling genereren</button>
+    <button id="generateRepeat">Genereer</button>
 
     <p id="agendaStatus"></p>
 
