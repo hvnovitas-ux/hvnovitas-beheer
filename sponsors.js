@@ -29,7 +29,10 @@ window.addEventListener("DOMContentLoaded", () => {
             </div>
         `).join("");
 
-        start();
+        // 🔥 BELANGRIJK: wacht 1 frame voor layout
+        requestAnimationFrame(() => {
+            start();
+        });
     }
 
     function start() {
