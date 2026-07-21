@@ -39,6 +39,11 @@ const repeatExtraTitle = document.getElementById("repeatExtraTitle");
 
 const agendaList = document.getElementById("agendaList");
 
+// ================= CLOUDINARY SETTINGS =================
+
+const cloudName = "JOUW_CLOUD_NAME";
+const uploadPreset = "hvnovitas_upload";
+
 // ================= NEWS =================
 
 let editingNewsId = null;
@@ -104,11 +109,12 @@ window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
 };
 
-// ================= SPONSORS =================
+// ================= SPONSORS (FIREBASE BASE64) =================
 
 sponsorBtn?.addEventListener("click", () => {
 
-    if (!sponsorFile.files[0]) return;
+    const file = sponsorFile.files[0];
+    if (!file) return;
 
     const reader = new FileReader();
 
@@ -122,7 +128,7 @@ sponsorBtn?.addEventListener("click", () => {
         sponsorFile.value = "";
     };
 
-    reader.readAsDataURL(sponsorFile.files[0]);
+    reader.readAsDataURL(file);
 });
 
 onValue(ref(db, "sponsors"), (snapshot) => {
@@ -150,26 +156,42 @@ window.deleteSponsor = async (id) => {
     await remove(ref(db, "sponsors/" + id));
 };
 
-// ================= OME JAN =================
+// ================= OME JAN (CLOUDINARY) =================
 
 omeBtn?.addEventListener("click", async () => {
 
     const file = omeFile.files[0];
-    if (!file) return;
 
-    const reader = new FileReader();
+    if (!file) {
+        alert("Kies een foto");
+        return;
+    }
 
-    reader.onload = async () => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
 
-        await push(ref(db, "omejan"), {
-            imageUrl: reader.result,
-            created: Date.now()
-        });
+    const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
 
-        omeFile.value = "";
-    };
+    const data = await res.json();
 
-    reader.readAsDataURL(file);
+    if (!data.secure_url) {
+        alert("Upload mislukt");
+        return;
+    }
+
+    await push(ref(db, "omejan"), {
+        imageUrl: data.secure_url,
+        created: Date.now()
+    });
+
+    omeFile.value = "";
 });
 
 onValue(ref(db, "omejan"), (snapshot) => {
@@ -185,15 +207,24 @@ onValue(ref(db, "omejan"), (snapshot) => {
     const items = Object.entries(data);
 
     omeList.innerHTML = items.map(([id, o]) => `
-        <div style="display:inline-block;margin:10px;">
-            <img src="${o.imageUrl}" style="height:80px;">
+        <div style="display:inline-block;margin:10px;text-align:center;">
+
+            <img src="${o.imageUrl}" style="height:80px;border-radius:8px;">
+
             <br>
-            <button onclick="deleteOmeJan('${id}')">Delete</button>
+
+            <button onclick="deleteOmeJan('${id}')">
+                Verwijder
+            </button>
+
         </div>
     `).join("");
 });
 
 window.deleteOmeJan = async (id) => {
+
+    if (!confirm("Foto verwijderen?")) return;
+
     await remove(ref(db, "omejan/" + id));
 };
 
@@ -212,7 +243,6 @@ document.getElementById("saveAgenda")?.addEventListener("click", async () => {
 
 });
 
-// bulk
 document.getElementById("importAgendaBulk")?.addEventListener("click", async () => {
 
     const lines = agendaBulk.value.split("\n");
@@ -236,7 +266,6 @@ document.getElementById("importAgendaBulk")?.addEventListener("click", async () 
 
 });
 
-// repeat
 document.getElementById("generateRepeat")?.addEventListener("click", async () => {
 
     const start = new Date(repeatFrom.value);
@@ -263,7 +292,6 @@ document.getElementById("generateRepeat")?.addEventListener("click", async () =>
 
 });
 
-// list
 onValue(ref(db, "agenda"), (snapshot) => {
 
     const data = snapshot.val();
