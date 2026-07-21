@@ -1,49 +1,30 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "hv-novitas-beheer.firebaseapp.com",
-    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "hv-novitas-beheer"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const track = document.getElementById("sponsorTrack");
+const db = getDatabase();
+const track = document.querySelector(".track");
 
 let offset = 0;
-let speed = 1;
-let animation;
-
-// ================= LOAD ONCE =================
+let speed = 0.6; // rustig zoals vroeger
 
 async function loadSponsors() {
 
-    const snapshot = await get(ref(db, "sponsors"));
+    const snap = await get(ref(db, "sponsors"));
 
-    if (!snapshot.exists()) {
-        track.innerHTML = "<p>Geen sponsors</p>";
-        return;
-    }
+    if (!snap.exists()) return;
 
-    const data = snapshot.val();
-    const items = Object.values(data);
+    const data = Object.values(snap.val());
 
-    // dubbel maken voor infinite loop effect
-    track.innerHTML = [...items, ...items].map(s => `
-        <img src="${s.imageUrl}" class="sponsor-img">
+    // BELANGRIJK: gebruik .sponsor wrapper (zoals je CSS)
+    track.innerHTML = data.concat(data).map(s => `
+        <div class="sponsor">
+            <img src="${s.imageUrl}">
+        </div>
     `).join("");
 
-    startSlider();
+    startAnimation();
 }
 
-// ================= SLIDER =================
-
-function startSlider() {
-
-    const width = track.scrollWidth / 2;
+function startAnimation() {
 
     function animate() {
 
@@ -51,15 +32,15 @@ function startSlider() {
 
         track.style.transform = `translateX(${offset}px)`;
 
-        if (Math.abs(offset) >= width) {
+        // reset zonder breuk (smooth loop)
+        if (Math.abs(offset) > track.scrollWidth / 2) {
             offset = 0;
         }
 
-        animation = requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
     }
 
     animate();
 }
 
-// start
 loadSponsors();
