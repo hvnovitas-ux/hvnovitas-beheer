@@ -32,6 +32,8 @@ const agendaTime = document.getElementById("agendaTime");
 const agendaTeam1 = document.getElementById("agendaTeam1");
 const agendaTeam2 = document.getElementById("agendaTeam2");
 
+const calendar = document.getElementById("calendar");
+
 // =====================================================
 // CLOUDINARY
 // =====================================================
@@ -40,7 +42,7 @@ const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
 
 // =====================================================
-// NEWS (NO OPEN CONNECTION)
+// NEWS (NO LIVE CONNECTION)
 // =====================================================
 
 async function loadNews() {
@@ -74,7 +76,7 @@ window.deleteNews = async (id) => {
 };
 
 // =====================================================
-// SPONSORS (FIREBASE BASE64)
+// SPONSORS
 // =====================================================
 
 sponsorBtn?.addEventListener("click", () => {
@@ -129,11 +131,7 @@ window.deleteSponsor = async (id) => {
 omeBtn?.addEventListener("click", async () => {
 
     const file = omeFile?.files?.[0];
-
-    if (!file) {
-        alert("Kies een foto");
-        return;
-    }
+    if (!file) return;
 
     const formData = new FormData();
     formData.append("file", file);
@@ -153,7 +151,6 @@ omeBtn?.addEventListener("click", async () => {
 
         if (!res.ok || !data.secure_url) {
             console.error("UPLOAD ERROR:", data);
-            alert("Upload mislukt");
             return;
         }
 
@@ -165,42 +162,12 @@ omeBtn?.addEventListener("click", async () => {
         omeFile.value = "";
 
     } catch (err) {
-        console.error("NETWORK ERROR:", err);
-        alert("Netwerk fout");
+        console.error(err);
     }
 });
 
 // =====================================================
-// OME JAN LIST
-// =====================================================
-
-onValue(ref(db, "omejan"), (snapshot) => {
-
-    const data = snapshot.val();
-    if (!omeList) return;
-
-    if (!data) {
-        omeList.innerHTML = "Geen foto's";
-        return;
-    }
-
-    const items = Object.entries(data);
-
-    omeList.innerHTML = items.map(([id, o]) => `
-        <div style="display:inline-block;margin:10px;text-align:center;">
-            <img src="${o.imageUrl}" style="height:80px;border-radius:8px;">
-            <br>
-            <button onclick="deleteOmeJan('${id}')">Delete</button>
-        </div>
-    `).join("");
-});
-
-window.deleteOmeJan = async (id) => {
-    await remove(ref(db, "omejan/" + id));
-};
-
-// =====================================================
-// AGENDA
+// AGENDA TYPES
 // =====================================================
 
 document.getElementById("saveAgenda")?.addEventListener("click", async () => {
@@ -213,5 +180,52 @@ document.getElementById("saveAgenda")?.addEventListener("click", async () => {
         team2: agendaTeam2.value,
         created: Date.now()
     });
-
 });
+
+// =====================================================
+// CALENDAR + FILTER
+// =====================================================
+
+let agendaData = {};
+let filter = "all";
+
+onValue(ref(db, "agenda"), (snapshot) => {
+    agendaData = snapshot.val() || {};
+    renderCalendar();
+});
+
+window.setFilter = (type) => {
+    filter = type;
+    renderCalendar();
+};
+
+function renderCalendar() {
+
+    if (!calendar) return;
+
+    const items = Object.entries(agendaData);
+    let html = "";
+
+    for (let i = 1; i <= 30; i++) {
+
+        const dayItems = items.filter(([id, a]) => {
+
+            if (filter !== "all" && a.type !== filter) return false;
+
+            return a.date?.includes(i.toString());
+        });
+
+        html += `
+            <div class="day">
+                <b>${i}</b>
+                ${dayItems.map(([id, a]) => `
+                    <div class="${a.type}">
+                        ${a.time || ""} ${a.team1 || ""}
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    calendar.innerHTML = html;
+}
