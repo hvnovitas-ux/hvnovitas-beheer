@@ -3,10 +3,11 @@ import { ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-dat
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    const track = document.querySelector(".track");
+    // ✔ FIX: juiste selector
+    const track = document.getElementById("sponsorTrack");
 
     if (!track) {
-        console.error("❌ track niet gevonden");
+        console.error("❌ sponsorTrack niet gevonden");
         return;
     }
 
@@ -29,10 +30,7 @@ window.addEventListener("DOMContentLoaded", () => {
             </div>
         `).join("");
 
-        // 🔥 BELANGRIJK: wacht 1 frame voor layout
-        requestAnimationFrame(() => {
-            start();
-        });
+        start();
     }
 
     function start() {
