@@ -3,8 +3,11 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0
 const db = getDatabase();
 const track = document.querySelector(".track");
 
-let offset = 0;
-let speed = 0.6; // rustig zoals vroeger
+let position = 0;
+let speed = 0.5;
+let animationId;
+
+// ================= LOAD =================
 
 async function loadSponsors() {
 
@@ -14,33 +17,40 @@ async function loadSponsors() {
 
     const data = Object.values(snap.val());
 
-    // BELANGRIJK: gebruik .sponsor wrapper (zoals je CSS)
-    track.innerHTML = data.concat(data).map(s => `
+    // 2x voor infinite loop
+    const items = [...data, ...data];
+
+    track.innerHTML = items.map(s => `
         <div class="sponsor">
             <img src="${s.imageUrl}">
         </div>
     `).join("");
 
-    startAnimation();
+    start();
 }
 
-function startAnimation() {
+// ================= SMOOTH LOOP =================
+
+function start() {
+
+    const halfWidth = track.scrollWidth / 2;
 
     function animate() {
 
-        offset -= speed;
+        position -= speed;
 
-        track.style.transform = `translateX(${offset}px)`;
+        track.style.transform = `translateX(${position}px)`;
 
-        // reset zonder breuk (smooth loop)
-        if (Math.abs(offset) > track.scrollWidth / 2) {
-            offset = 0;
+        // ultra smooth reset (geen jump zichtbaar)
+        if (Math.abs(position) >= halfWidth) {
+            position = 0;
         }
 
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     }
 
     animate();
 }
 
+// start
 loadSponsors();
