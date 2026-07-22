@@ -4,8 +4,7 @@ import {
     push,
     get,
     onValue,
-    remove,
-    update
+    remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 console.log("🧡 CMS LOADED");
@@ -36,8 +35,7 @@ newsForm?.addEventListener("submit", async (e) => {
             title,
             text,
             imageUrl,
-            created: Date.now(),
-            date: new Date().toISOString().split("T")[0]
+            created: Date.now()
         });
 
         newsForm.reset();
@@ -46,17 +44,19 @@ newsForm?.addEventListener("submit", async (e) => {
 
     if (file) {
         const reader = new FileReader();
+
         reader.onload = () => {
             imageUrl = reader.result;
             save();
         };
+
         reader.readAsDataURL(file);
     } else {
         save();
     }
 });
 
-// ================= LOAD NEWS =================
+// ================= NEWS LADEN =================
 
 async function loadNews() {
 
@@ -67,16 +67,22 @@ async function loadNews() {
         .map(([id, value]) => ({ id, ...value }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
+    if (!newsList) return;
+
     newsList.innerHTML = items.map(n => `
         <div class="news-item">
 
             <b>${n.title || ""}</b><br>
 
-            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
+            ${n.imageUrl ? `
+                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;margin-top:5px;">
+            ` : ""}
 
             <p>${n.text || ""}</p>
 
-            <small>📅 ${n.date || ""}</small>
+            <small>📅 ${new Date(n.created).toLocaleDateString()}</small>
+
+            <br><br>
 
             <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
 
