@@ -3,25 +3,62 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Nieuws Beheer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HV Novitas Nieuws</title>
 
 <style>
-body { font-family: Arial; background:#f4f6f8; margin:0; }
-.topbar { background:#222; color:white; padding:15px; }
-.container { padding:20px; max-width:900px; margin:auto; }
-.news-item { background:white; padding:15px; margin-bottom:10px; border-radius:10px; }
-button { margin-right:5px; }
+
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f4f6f8;
+}
+
+.topbar {
+    background: #222;
+    color: white;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.news-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.news-item img {
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+small {
+    color: gray;
+}
+
 </style>
 
 </head>
 
 <body>
 
-<div class="topbar">🧡 Nieuws Beheer</div>
+<div class="topbar">
+🧡 HV NOVITAS NIEUWS
+</div>
 
 <div class="container">
 
-    <!-- 🔥 DIT MOET BESTAAN -->
+    <!-- 🔥 hier komt alles uit Firebase -->
     <div id="newsList"></div>
 
 </div>
@@ -29,8 +66,8 @@ button { margin-right:5px; }
 <!-- FIREBASE -->
 <script type="module" src="firebase.js"></script>
 
-<!-- CMS (NIET news.js!) -->
-<script type="module" src="cms.js"></script>
+<!-- 🔥 BELANGRIJK: DIT IS DE JUISTE -->
+<script type="module" src="news.js"></script>
 
 </body>
 </html>
