@@ -7,82 +7,54 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS FULL LOADED");
-
-// ================= CLOUDINARY =================
-
-const cloudName = "hwxe3jzg";
-const uploadPreset = "hvnovitas_upload";
+console.log("🧡 CMS FINAL LOADED");
 
 // ================= ELEMENTS =================
 
-// NEWS
-const newsForm = document.getElementById("newsForm");
+const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
-const newsImage = document.getElementById("newsImage");
-const newsList = document.getElementById("newsList");
+const image = document.getElementById("newsImage");
+const list = document.getElementById("newsList");
 
-// SPONSORS
-const sponsorFile = document.getElementById("logo");
-const sponsorBtn = document.getElementById("saveSponsor");
-const sponsorList = document.getElementById("sponsorList");
+// ================= SAVE NEWS =================
 
-// OME JAN
-const omeFile = document.getElementById("omejanFile");
-const omeBtn = document.getElementById("saveOmejan");
-const omeList = document.getElementById("omejanList");
-
-
-// ================= NEWS UPLOAD =================
-
-newsForm?.addEventListener("submit", async (e) => {
+form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const t = title.value;
-    const tx = text.value;
-    const file = newsImage?.files?.[0];
+    const t = title?.value || "";
+    const tx = text?.value || "";
+    const file = image?.files?.[0];
 
     if (!t || !tx) return;
 
-    const saveNews = async (imageUrl = "") => {
+    const savePost = async (imageUrl = "") => {
 
         await push(ref(db, "news"), {
             title: t,
             text: tx,
-            imageUrl,
+            imageUrl: imageUrl || "",
             created: Date.now()
         });
 
-        newsForm.reset();
+        form.reset();
         loadNews();
     };
 
     if (file) {
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", uploadPreset);
+        const reader = new FileReader();
 
-        const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+        reader.onload = () => {
+            savePost(reader.result);
+        };
 
-        const data = await res.json();
-
-        if (data.secure_url) {
-            saveNews(data.secure_url);
-        }
+        reader.readAsDataURL(file);
 
     } else {
-        saveNews("");
+        savePost("");
     }
 });
-
 
 // ================= LOAD NEWS =================
 
@@ -95,9 +67,10 @@ async function loadNews() {
         .map(([id, n]) => ({ id, ...n }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    if (!newsList) return;
+    if (!list) return;
 
-    newsList.innerHTML = items.map(n => `
+    list.innerHTML = items.map(n => `
+
         <div class="news-item">
 
             <b>${n.title || ""}</b><br>
@@ -109,7 +82,7 @@ async function loadNews() {
             <p>${n.text || ""}</p>
 
             <small>
-                📅 ${n.created ? new Date(n.created).toLocaleDateString() : ""}
+                📅 ${n.created ? new Date(n.created).toLocaleDateString() : "geen datum"}
                 🕒 ${n.created ? new Date(n.created).toLocaleTimeString() : ""}
             </small>
 
@@ -118,118 +91,15 @@ async function loadNews() {
             <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
 
         </div>
+
     `).join("");
 }
 
 loadNews();
-
-
-// ================= SPONSORS =================
-
-sponsorBtn?.addEventListener("click", () => {
-
-    const file = sponsorFile?.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
-
-    fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        if (!data.secure_url) return;
-
-        push(ref(db, "sponsors"), {
-            imageUrl: data.secure_url,
-            created: Date.now()
-        });
-
-        sponsorFile.value = "";
-    });
-});
-
-
-onValue(ref(db, "sponsors"), (snapshot) => {
-
-    const data = snapshot.val() || {};
-
-    if (!sponsorList) return;
-
-    sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
-        <div style="display:inline-block;margin:10px;text-align:center;">
-            <img src="${s.imageUrl}" style="height:60px;border-radius:8px;">
-            <br>
-            <button onclick="deleteSponsor('${id}')">🗑 Delete</button>
-        </div>
-    `).join("");
-});
-
-
-// ================= OME JAN =================
-
-omeBtn?.addEventListener("click", async () => {
-
-    const file = omeFile?.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
-
-    const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-            method: "POST",
-            body: formData
-        }
-    );
-
-    const data = await res.json();
-
-    if (data.secure_url) {
-
-        await push(ref(db, "omejan"), {
-            imageUrl: data.secure_url,
-            created: Date.now()
-        });
-
-        omeFile.value = "";
-    }
-});
-
-
-onValue(ref(db, "omejan"), (snapshot) => {
-
-    const data = snapshot.val() || {};
-
-    if (!omeList) return;
-
-    omeList.innerHTML = Object.entries(data).map(([id, o]) => `
-        <div style="display:inline-block;margin:10px;text-align:center;background:#fff;padding:10px;border-radius:10px;">
-            <img src="${o.imageUrl}" style="height:70px;border-radius:8px;">
-            <br>
-            <button onclick="deleteOmeJan('${id}')">🗑 Delete</button>
-        </div>
-    `).join("");
-});
-
 
 // ================= DELETE =================
 
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
     loadNews();
-};
-
-window.deleteSponsor = async (id) => {
-    await remove(ref(db, "sponsors/" + id));
-};
-
-window.deleteOmeJan = async (id) => {
-    await remove(ref(db, "omejan/" + id));
 };
