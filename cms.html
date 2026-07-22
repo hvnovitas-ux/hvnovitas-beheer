@@ -90,6 +90,10 @@ button {
     <form id="newsForm">
         <input id="title" placeholder="Titel">
         <textarea id="text" placeholder="Bericht"></textarea>
+
+        <!-- 🔥 BELANGRIJK: DIT WAS MISSEND -->
+        <input type="file" id="newsImage">
+
         <button type="submit">Publiceren</button>
     </form>
 
@@ -129,6 +133,7 @@ button {
 
 </div>
 
+<!-- ================= SCRIPTS ================= -->
 <script type="module" src="firebase.js"></script>
 <script type="module" src="cms.js"></script>
 
