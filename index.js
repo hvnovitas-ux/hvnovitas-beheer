@@ -2,13 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 import {
     getDatabase,
     ref,
+    get,
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-// ================= FIREBASE =================
-
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
+    apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
     authDomain: "hv-novitas-beheer.firebaseapp.com",
     databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "hv-novitas-beheer"
@@ -17,38 +16,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ================= ELEMENTS =================
-
 const matchesEl = document.getElementById("matches");
 const activitiesEl = document.getElementById("activities");
 const highlightsEl = document.getElementById("highlights");
-
-// safety check (voorkomt crashes in embed)
-if (!matchesEl || !activitiesEl || !highlightsEl) {
-    console.error("HTML elementen niet gevonden");
-}
-
-// ================= LOAD AGENDA =================
 
 onValue(ref(db, "agenda"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    // reset UI (belangrijk)
     matchesEl.innerHTML = "<h3>⚔️ Wedstrijden</h3>";
     activitiesEl.innerHTML = "<h3>🏋️ Activiteiten</h3>";
     highlightsEl.innerHTML = "<h3>🏆 Highlights</h3>";
 
     const items = Object.values(data);
-
-    if (items.length === 0) {
-        matchesEl.innerHTML += "<p>Geen data</p>";
-        activitiesEl.innerHTML += "<p>Geen data</p>";
-        highlightsEl.innerHTML += "<p>Geen data</p>";
-        return;
-    }
-
-    // ================= SORTING =================
 
     const matches = {};
     const activities = [];
@@ -59,7 +39,6 @@ onValue(ref(db, "agenda"), (snapshot) => {
         const type = a.type || "activity";
 
         if (type === "match") {
-
             if (!matches[a.date]) matches[a.date] = [];
             matches[a.date].push(a);
         }
@@ -67,8 +46,7 @@ onValue(ref(db, "agenda"), (snapshot) => {
         else if (
             type === "training" ||
             type === "meeting" ||
-            type === "clubday" ||
-            type === "event"
+            type === "clubday"
         ) {
             activities.push(a);
         }
@@ -82,47 +60,31 @@ onValue(ref(db, "agenda"), (snapshot) => {
         }
     });
 
-    // ================= MATCHES =================
-
     Object.keys(matches)
-        .sort((a, b) => (a || "").localeCompare(b || ""))
+        .sort((a, b) => a.localeCompare(b))
         .forEach(date => {
-
-            const html = matches[date].map(m => `
-                <div>
-                    ${m.time || ""} - ${m.team1 || ""} vs ${m.team2 || ""}
-                </div>
-            `).join("");
 
             matchesEl.innerHTML += `
                 <div class="item match">
                     <b>${date}</b>
-                    ${html}
+                    ${matches[date].map(m => `
+                        <div>${m.time || ""} ${m.team1 || ""} vs ${m.team2 || ""}</div>
+                    `).join("")}
                 </div>
             `;
         });
-
-    // ================= ACTIVITIES =================
 
     activities
         .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
         .forEach(a => {
 
             activitiesEl.innerHTML += `
-                <div class="item ${a.type || "training"}">
+                <div class="item ${a.type}">
                     <b>${a.date || ""} ${a.time || ""}</b><br>
                     ${a.team1 || ""}
-                    ${a.team2 ? " vs " + a.team2 : ""}
                 </div>
             `;
         });
-
-    // ================= HIGHLIGHTS =================
-
-    if (highlights.length === 0) {
-        highlightsEl.innerHTML += "<p>Geen highlights</p>";
-        return;
-    }
 
     highlights
         .sort((a, b) => (b.created || 0) - (a.created || 0))
@@ -135,5 +97,4 @@ onValue(ref(db, "agenda"), (snapshot) => {
                 </div>
             `;
         });
-
 });
