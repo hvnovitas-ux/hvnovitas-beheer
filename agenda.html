@@ -1,13 +1,69 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>HV Novitas Agenda</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #ff6a00;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    max-width: 900px;
+    margin: auto;
+}
+
+.cal-head {
+    font-weight: bold;
+    text-align: center;
+    padding: 8px;
+    background: #ff6a00;
+    color: white;
+    border-radius: 6px;
+}
+
+.cal-day {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cal-day:hover {
+    background: #ffe0cc;
+}
+
+.empty {
+    background: transparent;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>📅 HV NOVITAS AGENDA</h1>
+
+<div id="miniCalendar"></div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import {
-    getDatabase,
-    ref,
-    get
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-// ================= FIREBASE =================
+import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
@@ -19,78 +75,44 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const agendaEl = document.getElementById("agenda");
+const miniCalendar = document.getElementById("miniCalendar");
 
-// ================= LOAD AGENDA (LIGHT VERSION) =================
+// ================= CALENDAR =================
 
-async function loadAgenda() {
+function createCalendar() {
 
-    try {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
 
-        const snapshot = await get(ref(db, "agenda"));
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
 
-        if (!snapshot.exists()) {
-            agendaEl.innerHTML = "<p>Geen agenda beschikbaar</p>";
-            return;
-        }
+    const daysInMonth = lastDay.getDate();
+    const startDay = firstDay.getDay();
 
-        const data = snapshot.val();
-        const items = Object.values(data);
+    const days = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
 
-        // ================= GROUP PER DAG =================
+    let html = "";
 
-        let grouped = {};
+    days.forEach(d => {
+        html += `<div class="cal-head">${d}</div>`;
+    });
 
-        items.forEach(a => {
-
-            if (!grouped[a.date]) {
-                grouped[a.date] = [];
-            }
-
-            grouped[a.date].push(a);
-        });
-
-        // sort dates
-        const sortedDates = Object.keys(grouped).sort((a, b) => {
-            return new Date(a) - new Date(b);
-        });
-
-        let html = "";
-
-        // ================= BUILD UI =================
-
-        sortedDates.forEach(date => {
-
-            html += `
-                <div class="day">
-                    <h3>📅 ${date}</h3>
-            `;
-
-            grouped[date]
-                .sort((a, b) => (a.time || "").localeCompare(b.time || ""))
-                .forEach(a => {
-
-                    html += `
-                        <div class="item ${a.type || ''}">
-                            <b>${a.time || ""}</b><br>
-                            ${a.team1 || ""} ${a.team2 ? "vs " + a.team2 : ""}
-                            ${a.titleExtra ? `<div class="small">${a.titleExtra}</div>` : ""}
-                        </div>
-                    `;
-                });
-
-            html += `</div>`;
-        });
-
-        agendaEl.innerHTML = html;
-
-    } catch (error) {
-        console.error(error);
-        agendaEl.innerHTML = "<p>Fout bij laden agenda</p>";
+    for (let i = 0; i < startDay; i++) {
+        html += `<div class="empty"></div>`;
     }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        html += `<div class="cal-day">${d}</div>`;
+    }
+
+    miniCalendar.innerHTML = html;
 }
 
-// start
-loadAgenda();
+createCalendar();
 
 </script>
+
+</body>
+</html>
