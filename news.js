@@ -1,94 +1,57 @@
 import { db } from "./firebase.js";
-import {
-    ref,
-    push,
-    get,
-    onValue,
-    remove,
-    update
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS LOADED");
+console.log("🧡 NEWS SYSTEM LOADED");
 
-// ================= ELEMENTS =================
+// ================= ELEMENT =================
 
-const newsTitle = document.getElementById("title");
-const newsText = document.getElementById("text");
-const newsImage = document.getElementById("newsImage");
 const newsList = document.getElementById("newsList");
-const newsForm = document.getElementById("newsForm");
 
-// ================= NEWS OPSLAAN =================
+// ================= DATE FIX =================
 
-newsForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
+const formatDate = (n) => {
 
-    const title = newsTitle.value;
-    const text = newsText.value;
-    const file = newsImage?.files?.[0];
-
-    if (!title || !text) return;
-
-    let imageUrl = "";
-
-    const save = async () => {
-        await push(ref(db, "news"), {
-            title,
-            text,
-            imageUrl,
-            created: Date.now(),
-            date: new Date().toISOString().split("T")[0]
-        });
-
-        newsForm.reset();
-        loadNews();
-    };
-
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            imageUrl = reader.result;
-            save();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        save();
+    if (n.created) {
+        return new Date(n.created).toLocaleDateString();
     }
-});
+
+    if (n.date) {
+        return n.date;
+    }
+
+    return "";
+};
 
 // ================= LOAD NEWS =================
 
-async function loadNews() {
+onValue(ref(db, "news"), (snapshot) => {
 
-    const snap = await get(ref(db, "news"));
-    const data = snap.val() || {};
+    const data = snapshot.val() || {};
 
     const items = Object.entries(data)
         .map(([id, value]) => ({ id, ...value }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
+    if (!newsList) return;
+
+    if (items.length === 0) {
+        newsList.innerHTML = "<p>Geen nieuws</p>";
+        return;
+    }
+
     newsList.innerHTML = items.map(n => `
         <div class="news-item">
 
-            <b>${n.title || ""}</b><br>
+            <h3>${n.title || ""}</h3>
 
-            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
+            ${n.imageUrl ? `
+                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;margin-top:5px;">
+            ` : ""}
 
             <p>${n.text || ""}</p>
 
-            <small>📅 ${n.date || ""}</small>
-
-            <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
+            <small>📅 ${formatDate(n)}</small>
 
         </div>
     `).join("");
-}
-
-loadNews();
-
-// ================= DELETE =================
-
-window.deleteNews = async (id) => {
-    await remove(ref(db, "news/" + id));
-    loadNews();
-};
+});
