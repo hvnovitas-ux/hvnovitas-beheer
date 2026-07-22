@@ -40,14 +40,10 @@ h1 {
 
 .cal-day {
     background: white;
-    min-height: 70px;
+    min-height: 80px;
     padding: 5px;
     border-radius: 6px;
     cursor: pointer;
-}
-
-.cal-day:hover {
-    background: #ffe0cc;
 }
 
 /* EVENTS */
@@ -66,38 +62,44 @@ h1 {
 .eventType { background: #b56aff; }
 .meeting { background: #7ad97a; }
 
-/* POPUP */
+/* POPUPS */
 
-#popup {
+.popup {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
     background: rgba(0,0,0,0.6);
 }
 
-.popup-box {
-    background: white;
-    width: 300px;
-    margin: 100px auto;
-    padding: 20px;
-    border-radius: 10px;
+.box {
+    background:white;
+    width:300px;
+    margin:100px auto;
+    padding:20px;
+    border-radius:10px;
 }
 
 input, select {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0;
+    width:100%;
+    padding:8px;
+    margin:5px 0;
 }
 
 button {
-    background: #ff6a00;
-    color: white;
-    border: none;
-    padding: 8px;
-    width: 100%;
-    border-radius: 6px;
+    width:100%;
+    padding:8px;
+    background:#ff6a00;
+    color:white;
+    border:none;
+    border-radius:6px;
+    margin-top:5px;
+}
+
+.deleteBtn {
+    background:red;
 }
 
 </style>
@@ -110,9 +112,9 @@ button {
 
 <div id="calendar" class="calendar-grid"></div>
 
-<!-- POPUP -->
-<div id="popup">
-    <div class="popup-box">
+<!-- ADD POPUP -->
+<div id="popup" class="popup">
+    <div class="box">
 
         <h3>Nieuwe afspraak</h3>
 
@@ -127,11 +129,28 @@ button {
         </select>
 
         <input id="team1" placeholder="Team / titel">
-        <input id="team2" placeholder="Tegenstander (optioneel)">
-        <input id="time" placeholder="Tijd (19:00)">
+        <input id="team2" placeholder="Tegenstander">
+        <input id="time" placeholder="Tijd">
 
-        <button id="save">Opslaan</button>
+        <button id="saveBtn">Opslaan</button>
         <button onclick="closePopup()">Sluiten</button>
+
+    </div>
+</div>
+
+<!-- EDIT POPUP -->
+<div id="editPopup" class="popup">
+    <div class="box">
+
+        <h3>Event bewerken</h3>
+
+        <input id="editTeam1">
+        <input id="editTeam2">
+        <input id="editTime">
+
+        <button id="updateBtn">Update</button>
+        <button class="deleteBtn" id="deleteBtn">Delete</button>
+        <button onclick="closeEdit()">Sluiten</button>
 
     </div>
 </div>
@@ -143,8 +162,12 @@ import {
     getDatabase,
     ref,
     get,
-    push
+    push,
+    update,
+    remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+/* ================= FIREBASE ================= */
 
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
@@ -156,9 +179,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+/* ================= VARS ================= */
+
 const calendar = document.getElementById("calendar");
 
 let selectedDate = "";
+let editId = null;
+let agendaData = [];
+
+/* ================= LOAD DATA ================= */
+
+async function loadAgenda() {
+
+    const snap = await get(ref(db, "agenda"));
+
+    if (snap.exists()) {
+        agendaData = Object.entries(snap.val());
+    } else {
+        agendaData = [];
+    }
+
+    render();
+}
 
 /* ================= CALENDAR ================= */
 
@@ -178,36 +220,56 @@ function createCalendar() {
 
     let html = "";
 
-    days.forEach(d => {
-        html += `<div class="cal-head">${d}</div>`;
-    });
+    days.forEach(d => html += `<div class="cal-head">${d}</div>`);
 
-    for (let i = 0; i < start; i++) {
-        html += `<div></div>`;
-    }
+    for (let i = 0; i < start; i++) html += `<div></div>`;
 
     for (let d = 1; d <= daysInMonth; d++) {
-
-        html += `
-            <div class="cal-day" onclick="openPopup(${d})">
-                <b>${d}</b>
-            </div>
-        `;
+        html += `<div class="cal-day" onclick="openPopup('${d}')"><b>${d}</b></div>`;
     }
 
     calendar.innerHTML = html;
 }
 
-createCalendar();
+/* ================= RENDER EVENTS ================= */
 
-/* ================= POPUP ================= */
+function render() {
+
+    document.querySelectorAll(".cal-day").forEach(dayEl => {
+
+        const day = dayEl.innerText.trim();
+
+        const events = agendaData.filter(([id, a]) =>
+            a.date?.startsWith(day + " ")
+        );
+
+        events.forEach(([id, ev]) => {
+
+            const div = document.createElement("div");
+
+            let cls = "event";
+
+            if (ev.type === "match") cls += " match";
+            if (ev.type === "training") cls += " training";
+            if (ev.type === "clubday") cls += " clubday";
+            if (ev.type === "event") cls += " eventType";
+            if (ev.type === "meeting") cls += " meeting";
+
+            div.className = cls;
+            div.innerHTML = `${ev.time || ""} ${ev.team1 || ""}`;
+
+            div.onclick = () => openEdit(id, ev);
+
+            dayEl.appendChild(div);
+        });
+    });
+}
+
+/* ================= POPUPS ================= */
 
 window.openPopup = (day) => {
-
     selectedDate = day + " feb";
-
     document.getElementById("dateInput").value = selectedDate;
-
     document.getElementById("popup").style.display = "block";
 };
 
@@ -215,26 +277,61 @@ window.closePopup = () => {
     document.getElementById("popup").style.display = "none";
 };
 
+window.openEdit = (id, ev) => {
+
+    editId = id;
+
+    document.getElementById("editTeam1").value = ev.team1 || "";
+    document.getElementById("editTeam2").value = ev.team2 || "";
+    document.getElementById("editTime").value = ev.time || "";
+
+    document.getElementById("editPopup").style.display = "block";
+};
+
+window.closeEdit = () => {
+    document.getElementById("editPopup").style.display = "none";
+};
+
 /* ================= SAVE ================= */
 
-document.getElementById("save").addEventListener("click", async () => {
-
-    const type = document.getElementById("typeInput").value;
-    const team1 = document.getElementById("team1").value;
-    const team2 = document.getElementById("team2").value;
-    const time = document.getElementById("time").value;
+document.getElementById("saveBtn").addEventListener("click", async () => {
 
     await push(ref(db, "agenda"), {
         date: selectedDate,
-        type,
-        team1,
-        team2,
-        time,
+        type: document.getElementById("typeInput").value,
+        team1: document.getElementById("team1").value,
+        team2: document.getElementById("team2").value,
+        time: document.getElementById("time").value,
         created: Date.now()
     });
 
     closePopup();
 });
+
+/* ================= UPDATE + DELETE ================= */
+
+document.getElementById("updateBtn").addEventListener("click", async () => {
+
+    await update(ref(db, "agenda/" + editId), {
+        team1: document.getElementById("editTeam1").value,
+        team2: document.getElementById("editTeam2").value,
+        time: document.getElementById("editTime").value
+    });
+
+    closeEdit();
+});
+
+document.getElementById("deleteBtn").addEventListener("click", async () => {
+
+    await remove(ref(db, "agenda/" + editId));
+
+    closeEdit();
+});
+
+/* ================= START ================= */
+
+createCalendar();
+loadAgenda();
 
 </script>
 
