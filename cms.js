@@ -13,7 +13,10 @@ console.log("🧡 HV NOVITAS CMS LOADED");
 // ELEMENTS
 // =====================================================
 
+const newsTitle = document.getElementById("title");
+const newsText = document.getElementById("text");
 const newsList = document.getElementById("newsList");
+const newsForm = document.getElementById("newsForm");
 
 const sponsorFile = document.getElementById("logo");
 const sponsorBtn = document.getElementById("saveSponsor");
@@ -45,7 +48,7 @@ async function loadNews() {
         <div class="news-item">
             <b>${n.title}</b>
             <p>${n.text}</p>
-            <button onclick="deleteNews('${id}')">Delete</button>
+            <button onclick="deleteNews('${id}')">🗑 Delete</button>
         </div>
     `).join("");
 }
@@ -89,9 +92,9 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 
     sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
         <div style="display:inline-block;margin:10px;text-align:center;">
-            <img src="${s.imageUrl}" style="height:60px;">
+            <img src="${s.imageUrl}" style="height:60px;border-radius:8px;">
             <br>
-            <button onclick="deleteSponsor('${id}')">Delete</button>
+            <button onclick="deleteSponsor('${id}')">🗑 Delete</button>
         </div>
     `).join("");
 });
@@ -121,7 +124,10 @@ omeBtn?.addEventListener("click", async () => {
 
         const data = await res.json();
 
-        if (!res.ok || !data.secure_url) return;
+        if (!res.ok || !data.secure_url) {
+            console.error("UPLOAD ERROR:", data);
+            return;
+        }
 
         await push(ref(db, "omejan"), {
             imageUrl: data.secure_url,
@@ -150,7 +156,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
         <div style="display:inline-block;margin:10px;text-align:center;background:#fff;padding:10px;border-radius:10px;">
             <img src="${o.imageUrl}" style="height:70px;border-radius:8px;">
             <br>
-            <button onclick="deleteOmeJan('${id}')">Delete</button>
+            <button onclick="deleteOmeJan('${id}')">🗑 Delete</button>
         </div>
     `).join("");
 });
