@@ -28,7 +28,7 @@ const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
 
 // =====================================================
-// NEWS (WITH IMAGE UPLOAD)
+// NEWS
 // =====================================================
 
 newsForm?.addEventListener("submit", async (e) => {
@@ -40,17 +40,20 @@ newsForm?.addEventListener("submit", async (e) => {
 
     if (!title || !text) return;
 
-    // WITH IMAGE
+    let imageUrl = "";
+
     if (file) {
 
         const reader = new FileReader();
 
         reader.onload = async () => {
 
+            imageUrl = reader.result;
+
             await push(ref(db, "news"), {
                 title,
                 text,
-                imageUrl: reader.result,
+                imageUrl,
                 created: Date.now()
             });
 
@@ -65,7 +68,6 @@ newsForm?.addEventListener("submit", async (e) => {
 
     } else {
 
-        // WITHOUT IMAGE
         await push(ref(db, "news"), {
             title,
             text,
@@ -83,24 +85,19 @@ newsForm?.addEventListener("submit", async (e) => {
 async function loadNews() {
 
     const snap = await get(ref(db, "news"));
-    const data = snap.val();
-
-    if (!newsList) return;
-
-    if (!data) {
-        newsList.innerHTML = "Geen nieuws";
-        return;
-    }
+    const data = snap.val() || {};
 
     const items = Object.entries(data).reverse();
 
     newsList.innerHTML = items.map(([id, n]) => `
         <div class="news-item">
-            <b>${n.title}</b>
+            <b>${n.title || ""}</b>
 
-            ${n.imageUrl ? `<br><img src="${n.imageUrl}" style="max-width:100%;border-radius:8px;margin-top:5px;">` : ""}
+            ${n.imageUrl ? `
+                <img src="${n.imageUrl}" style="max-width:100%;border-radius:8px;margin-top:5px;">
+            ` : ""}
 
-            <p>${n.text}</p>
+            <p>${n.text || ""}</p>
 
             <button onclick="deleteNews('${id}')">🗑 Delete</button>
         </div>
@@ -135,14 +132,7 @@ sponsorBtn?.addEventListener("click", () => {
 
 onValue(ref(db, "sponsors"), (snapshot) => {
 
-    const data = snapshot.val();
-
-    if (!sponsorList) return;
-
-    if (!data) {
-        sponsorList.innerHTML = "Geen sponsors";
-        return;
-    }
+    const data = snapshot.val() || {};
 
     sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
         <div style="display:inline-block;margin:10px;text-align:center;">
@@ -194,14 +184,7 @@ omeBtn?.addEventListener("click", async () => {
 
 onValue(ref(db, "omejan"), (snapshot) => {
 
-    const data = snapshot.val();
-
-    if (!omeList) return;
-
-    if (!data) {
-        omeList.innerHTML = "Geen foto's";
-        return;
-    }
+    const data = snapshot.val() || {};
 
     omeList.innerHTML = Object.entries(data).map(([id, o]) => `
         <div style="display:inline-block;margin:10px;text-align:center;background:#fff;padding:10px;border-radius:10px;">
@@ -213,7 +196,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
 });
 
 // =====================================================
-// DELETE FUNCTIONS
+// DELETE
 // =====================================================
 
 window.deleteNews = async (id) => {
