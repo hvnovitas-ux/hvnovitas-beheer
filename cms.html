@@ -72,10 +72,6 @@ button {
     gap: 10px;
 }
 
-#agendaList {
-    margin-top: 10px;
-}
-
 </style>
 
 </head>
@@ -128,48 +124,6 @@ button {
     <p id="omejanStatus"></p>
 
     <div id="omejanList"></div>
-
-</div>
-
-<!-- ================= AGENDA ================= -->
-<div class="box">
-
-    <h2>📅 Agenda systeem</h2>
-
-    <select id="agendaType">
-        <option value="match">Wedstrijd</option>
-        <option value="training">Training</option>
-        <option value="meeting">Vergadering</option>
-    </select>
-
-    <input id="agendaDate" placeholder="Datum">
-    <input id="agendaTime" placeholder="Tijd">
-    <input id="agendaTeam1" placeholder="Team / Titel">
-    <input id="agendaTeam2" placeholder="Tegenstander">
-
-    <button id="saveAgenda">Opslaan</button>
-
-    <hr>
-
-    <h3>📋 Bulk invoer</h3>
-    <textarea id="agendaBulk"></textarea>
-    <button id="importAgendaBulk">Import bulk</button>
-
-    <hr>
-
-    <h3>🔁 Herhaling</h3>
-
-    <input id="repeatFrom" placeholder="Start datum">
-    <input id="repeatUntil" placeholder="Eind datum">
-    <input id="repeatTime" placeholder="Tijd">
-    <input id="repeatTitle" placeholder="Titel">
-    <input id="repeatExtraTitle" placeholder="Extra">
-
-    <button id="generateRepeat">Genereer</button>
-
-    <p id="agendaStatus"></p>
-
-    <div id="agendaList"></div>
 
 </div>
 
