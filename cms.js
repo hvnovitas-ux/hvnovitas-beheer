@@ -4,14 +4,13 @@ import {
     push,
     get,
     onValue,
-    remove
+    remove,
+    update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 HV NOVITAS CMS LOADED");
+console.log("🧡 CMS LOADED");
 
-// =====================================================
-// ELEMENTS
-// =====================================================
+// ================= ELEMENTS =================
 
 const newsTitle = document.getElementById("title");
 const newsText = document.getElementById("text");
@@ -19,17 +18,7 @@ const newsImage = document.getElementById("newsImage");
 const newsList = document.getElementById("newsList");
 const newsForm = document.getElementById("newsForm");
 
-const sponsorFile = document.getElementById("logo");
-const sponsorBtn = document.getElementById("saveSponsor");
-const sponsorList = document.getElementById("sponsorList");
-
-const omeFile = document.getElementById("omejanFile");
-const omeBtn = document.getElementById("saveOmejan");
-const omeList = document.getElementById("omejanList");
-
-// =====================================================
-// NEWS
-// =====================================================
+// ================= NEWS OPSLAAN =================
 
 newsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -42,7 +31,7 @@ newsForm?.addEventListener("submit", async (e) => {
 
     let imageUrl = "";
 
-    const saveNews = async () => {
+    const save = async () => {
         await push(ref(db, "news"), {
             title,
             text,
@@ -51,10 +40,7 @@ newsForm?.addEventListener("submit", async (e) => {
             date: new Date().toISOString().split("T")[0]
         });
 
-        newsTitle.value = "";
-        newsText.value = "";
-        if (newsImage) newsImage.value = "";
-
+        newsForm.reset();
         loadNews();
     };
 
@@ -62,152 +48,47 @@ newsForm?.addEventListener("submit", async (e) => {
         const reader = new FileReader();
         reader.onload = () => {
             imageUrl = reader.result;
-            saveNews();
+            save();
         };
         reader.readAsDataURL(file);
     } else {
-        saveNews();
+        save();
     }
 });
 
-// =====================================================
-// LOAD NEWS
-// =====================================================
+// ================= LOAD NEWS =================
 
 async function loadNews() {
 
     const snap = await get(ref(db, "news"));
     const data = snap.val() || {};
 
-    const items = Object.entries(data).reverse();
+    const items = Object.entries(data)
+        .map(([id, value]) => ({ id, ...value }))
+        .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    newsList.innerHTML = items.map(([id, n]) => `
+    newsList.innerHTML = items.map(n => `
         <div class="news-item">
 
             <b>${n.title || ""}</b><br>
 
-            <small>${n.date || ""}</small><br>
-
-            ${n.imageUrl ? `
-                <img src="${n.imageUrl}" style="max-width:100%;border-radius:8px;margin-top:5px;">
-            ` : ""}
+            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
 
             <p>${n.text || ""}</p>
 
-            <button onclick="deleteNews('${id}')">🗑 Delete</button>
+            <small>📅 ${n.date || ""}</small>
+
+            <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
+
         </div>
     `).join("");
 }
 
 loadNews();
 
-// =====================================================
-// SPONSORS
-// =====================================================
-
-sponsorBtn?.addEventListener("click", () => {
-
-    const file = sponsorFile?.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = async () => {
-
-        await push(ref(db, "sponsors"), {
-            imageUrl: reader.result,
-            created: Date.now()
-        });
-
-        sponsorFile.value = "";
-    };
-
-    reader.readAsDataURL(file);
-});
-
-onValue(ref(db, "sponsors"), (snapshot) => {
-
-    const data = snapshot.val() || {};
-
-    sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
-        <div style="display:inline-block;margin:10px;text-align:center;">
-            <img src="${s.imageUrl}" style="height:60px;border-radius:8px;">
-            <br>
-            <button onclick="deleteSponsor('${id}')">🗑 Delete</button>
-        </div>
-    `).join("");
-});
-
-// =====================================================
-// OME JAN
-// =====================================================
-
-omeBtn?.addEventListener("click", async () => {
-
-    const file = omeFile?.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "hvnovitas_upload");
-
-    try {
-
-        const res = await fetch(
-            "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-
-        const data = await res.json();
-
-        if (!res.ok || !data.secure_url) return;
-
-        await push(ref(db, "omejan"), {
-            imageUrl: data.secure_url,
-            created: Date.now(),
-            date: new Date().toISOString().split("T")[0]
-        });
-
-        omeFile.value = "";
-
-    } catch (err) {
-        console.error(err);
-    }
-});
-
-onValue(ref(db, "omejan"), (snapshot) => {
-
-    const data = snapshot.val() || {};
-
-    omeList.innerHTML = Object.entries(data).map(([id, o]) => `
-        <div style="display:inline-block;margin:10px;text-align:center;background:#fff;padding:10px;border-radius:10px;">
-
-            <img src="${o.imageUrl}" style="height:70px;border-radius:8px;"><br>
-
-            <small>${o.date || ""}</small><br>
-
-            <button onclick="deleteOmeJan('${id}')">🗑 Delete</button>
-
-        </div>
-    `).join("");
-});
-
-// =====================================================
-// DELETE
-// =====================================================
+// ================= DELETE =================
 
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
     loadNews();
-};
-
-window.deleteSponsor = async (id) => {
-    await remove(ref(db, "sponsors/" + id));
-};
-
-window.deleteOmeJan = async (id) => {
-    await remove(ref(db, "omejan/" + id));
 };
