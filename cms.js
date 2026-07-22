@@ -42,45 +42,37 @@ newsForm?.addEventListener("submit", async (e) => {
 
     let imageUrl = "";
 
-    if (file) {
-
-        const reader = new FileReader();
-
-        reader.onload = async () => {
-
-            imageUrl = reader.result;
-
-            await push(ref(db, "news"), {
-                title,
-                text,
-                imageUrl,
-                created: Date.now()
-            });
-
-            loadNews();
-
-            newsTitle.value = "";
-            newsText.value = "";
-            newsImage.value = "";
-        };
-
-        reader.readAsDataURL(file);
-
-    } else {
-
+    const saveNews = async () => {
         await push(ref(db, "news"), {
             title,
             text,
-            imageUrl: "",
-            created: Date.now()
+            imageUrl,
+            created: Date.now(),
+            date: new Date().toISOString().split("T")[0]
         });
-
-        loadNews();
 
         newsTitle.value = "";
         newsText.value = "";
+        if (newsImage) newsImage.value = "";
+
+        loadNews();
+    };
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            imageUrl = reader.result;
+            saveNews();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        saveNews();
     }
 });
+
+// =====================================================
+// LOAD NEWS
+// =====================================================
 
 async function loadNews() {
 
@@ -91,7 +83,10 @@ async function loadNews() {
 
     newsList.innerHTML = items.map(([id, n]) => `
         <div class="news-item">
-            <b>${n.title || ""}</b>
+
+            <b>${n.title || ""}</b><br>
+
+            <small>${n.date || ""}</small><br>
 
             ${n.imageUrl ? `
                 <img src="${n.imageUrl}" style="max-width:100%;border-radius:8px;margin-top:5px;">
@@ -172,7 +167,8 @@ omeBtn?.addEventListener("click", async () => {
 
         await push(ref(db, "omejan"), {
             imageUrl: data.secure_url,
-            created: Date.now()
+            created: Date.now(),
+            date: new Date().toISOString().split("T")[0]
         });
 
         omeFile.value = "";
@@ -188,9 +184,13 @@ onValue(ref(db, "omejan"), (snapshot) => {
 
     omeList.innerHTML = Object.entries(data).map(([id, o]) => `
         <div style="display:inline-block;margin:10px;text-align:center;background:#fff;padding:10px;border-radius:10px;">
-            <img src="${o.imageUrl}" style="height:70px;border-radius:8px;">
-            <br>
+
+            <img src="${o.imageUrl}" style="height:70px;border-radius:8px;"><br>
+
+            <small>${o.date || ""}</small><br>
+
             <button onclick="deleteOmeJan('${id}')">🗑 Delete</button>
+
         </div>
     `).join("");
 });
