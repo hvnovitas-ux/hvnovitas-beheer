@@ -23,84 +23,101 @@ const matchesEl = document.getElementById("matches");
 const activitiesEl = document.getElementById("activities");
 const highlightsEl = document.getElementById("highlights");
 
+// safety check (voorkomt crashes in embed)
+if (!matchesEl || !activitiesEl || !highlightsEl) {
+    console.error("HTML elementen niet gevonden");
+}
+
 // ================= LOAD AGENDA =================
 
 onValue(ref(db, "agenda"), (snapshot) => {
 
-    const data = snapshot.val();
+    const data = snapshot.val() || {};
 
-    if (!data) {
-        matchesEl.innerHTML += "<p>Geen wedstrijden</p>";
-        activitiesEl.innerHTML += "<p>Geen activiteiten</p>";
-        highlightsEl.innerHTML += "<p>Geen highlights</p>";
-        return;
-    }
+    // reset UI (belangrijk)
+    matchesEl.innerHTML = "<h3>⚔️ Wedstrijden</h3>";
+    activitiesEl.innerHTML = "<h3>🏋️ Activiteiten</h3>";
+    highlightsEl.innerHTML = "<h3>🏆 Highlights</h3>";
 
     const items = Object.values(data);
 
-    let matches = {};
-    let activities = [];
-    let highlights = [];
+    if (items.length === 0) {
+        matchesEl.innerHTML += "<p>Geen data</p>";
+        activitiesEl.innerHTML += "<p>Geen data</p>";
+        highlightsEl.innerHTML += "<p>Geen data</p>";
+        return;
+    }
 
-    // ================= SORT =================
+    // ================= SORTING =================
+
+    const matches = {};
+    const activities = [];
+    const highlights = [];
 
     items.forEach(a => {
 
-        if (a.type === "match") {
+        const type = a.type || "activity";
+
+        if (type === "match") {
 
             if (!matches[a.date]) matches[a.date] = [];
             matches[a.date].push(a);
         }
 
-        else if (a.type === "training" || a.type === "meeting") {
+        else if (
+            type === "training" ||
+            type === "meeting" ||
+            type === "clubday" ||
+            type === "event"
+        ) {
             activities.push(a);
         }
 
-        else if (a.type === "highlight") {
+        else if (type === "highlight") {
             highlights.push(a);
+        }
+
+        else {
+            activities.push(a);
         }
     });
 
     // ================= MATCHES =================
 
-    matchesEl.innerHTML = "<h3>⚔️ Wedstrijden</h3>";
-
     Object.keys(matches)
-        .sort((a, b) => new Date(a) - new Date(b))
+        .sort((a, b) => (a || "").localeCompare(b || ""))
         .forEach(date => {
+
+            const html = matches[date].map(m => `
+                <div>
+                    ${m.time || ""} - ${m.team1 || ""} vs ${m.team2 || ""}
+                </div>
+            `).join("");
 
             matchesEl.innerHTML += `
                 <div class="item match">
                     <b>${date}</b>
-
-                    ${matches[date].map(m => `
-                        <div>
-                            ${m.time || ""} - ${m.team1 || ""} vs ${m.team2 || ""}
-                        </div>
-                    `).join("")}
+                    ${html}
                 </div>
             `;
         });
 
     // ================= ACTIVITIES =================
 
-    activitiesEl.innerHTML = "<h3>🏋️ Activiteiten</h3>";
-
     activities
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
         .forEach(a => {
 
             activitiesEl.innerHTML += `
-                <div class="item ${a.type}">
+                <div class="item ${a.type || "training"}">
                     <b>${a.date || ""} ${a.time || ""}</b><br>
                     ${a.team1 || ""}
+                    ${a.team2 ? " vs " + a.team2 : ""}
                 </div>
             `;
         });
 
     // ================= HIGHLIGHTS =================
-
-    highlightsEl.innerHTML = "<h3>🏆 Highlights</h3>";
 
     if (highlights.length === 0) {
         highlightsEl.innerHTML += "<p>Geen highlights</p>";
@@ -108,7 +125,7 @@ onValue(ref(db, "agenda"), (snapshot) => {
     }
 
     highlights
-        .sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0))
+        .sort((a, b) => (b.created || 0) - (a.created || 0))
         .forEach(h => {
 
             highlightsEl.innerHTML += `
@@ -118,4 +135,5 @@ onValue(ref(db, "agenda"), (snapshot) => {
                 </div>
             `;
         });
+
 });
