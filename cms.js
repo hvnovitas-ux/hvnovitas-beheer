@@ -15,6 +15,7 @@ console.log("🧡 HV NOVITAS CMS LOADED");
 
 const newsTitle = document.getElementById("title");
 const newsText = document.getElementById("text");
+const newsImage = document.getElementById("newsImage");
 const newsList = document.getElementById("newsList");
 const newsForm = document.getElementById("newsForm");
 
@@ -27,8 +28,57 @@ const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
 
 // =====================================================
-// NEWS
+// NEWS (WITH IMAGE UPLOAD)
 // =====================================================
+
+newsForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const title = newsTitle.value;
+    const text = newsText.value;
+    const file = newsImage?.files?.[0];
+
+    if (!title || !text) return;
+
+    // WITH IMAGE
+    if (file) {
+
+        const reader = new FileReader();
+
+        reader.onload = async () => {
+
+            await push(ref(db, "news"), {
+                title,
+                text,
+                imageUrl: reader.result,
+                created: Date.now()
+            });
+
+            loadNews();
+
+            newsTitle.value = "";
+            newsText.value = "";
+            newsImage.value = "";
+        };
+
+        reader.readAsDataURL(file);
+
+    } else {
+
+        // WITHOUT IMAGE
+        await push(ref(db, "news"), {
+            title,
+            text,
+            imageUrl: "",
+            created: Date.now()
+        });
+
+        loadNews();
+
+        newsTitle.value = "";
+        newsText.value = "";
+    }
+});
 
 async function loadNews() {
 
@@ -47,7 +97,11 @@ async function loadNews() {
     newsList.innerHTML = items.map(([id, n]) => `
         <div class="news-item">
             <b>${n.title}</b>
+
+            ${n.imageUrl ? `<br><img src="${n.imageUrl}" style="max-width:100%;border-radius:8px;margin-top:5px;">` : ""}
+
             <p>${n.text}</p>
+
             <button onclick="deleteNews('${id}')">🗑 Delete</button>
         </div>
     `).join("");
@@ -124,10 +178,7 @@ omeBtn?.addEventListener("click", async () => {
 
         const data = await res.json();
 
-        if (!res.ok || !data.secure_url) {
-            console.error("UPLOAD ERROR:", data);
-            return;
-        }
+        if (!res.ok || !data.secure_url) return;
 
         await push(ref(db, "omejan"), {
             imageUrl: data.secure_url,
