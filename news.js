@@ -8,7 +8,7 @@ onValue(ref(db, "news"), (snapshot) => {
     const data = snapshot.val() || {};
 
     const items = Object.entries(data)
-        .map(([id, n]) => ({ id, ...n })) // ✔ KEEP ID
+        .map(([id, n]) => ({ id, ...n }))
         .sort((a, b) => (b.created || 0) - (a.created || 0))
         .slice(0, 10);
 
@@ -19,7 +19,7 @@ onValue(ref(db, "news"), (snapshot) => {
             <h3>${n.title || ""}</h3>
 
             ${n.imageUrl ? `
-                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;">
+                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;margin-top:5px;">
             ` : ""}
 
             <p>${n.text || ""}</p>
