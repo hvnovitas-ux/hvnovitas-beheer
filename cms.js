@@ -6,14 +6,14 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS LOADED");
+console.log("🧡 CMS RESTORED");
 
 // ================= ELEMENTS =================
 
+const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
 const image = document.getElementById("newsImage");
-const form = document.getElementById("newsForm");
 const list = document.getElementById("newsList");
 
 // ================= SAVE =================
@@ -21,8 +21,8 @@ const list = document.getElementById("newsList");
 form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const t = title.value;
-    const tx = text.value;
+    const t = title?.value;
+    const tx = text?.value;
     const file = image?.files?.[0];
 
     if (!t || !tx) return;
@@ -63,6 +63,8 @@ async function loadNews() {
     const items = Object.entries(data)
         .map(([id, n]) => ({ id, ...n }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
+
+    if (!list) return;
 
     list.innerHTML = items.map(n => `
         <div class="news-item">
