@@ -8,11 +8,12 @@ onValue(ref(db, "news"), (snapshot) => {
     const data = snapshot.val() || {};
 
     const items = Object.entries(data)
-        .map(([id, n]) => n)
+        .map(([id, n]) => ({ id, ...n })) // ✔ KEEP ID
         .sort((a, b) => (b.created || 0) - (a.created || 0))
         .slice(0, 10);
 
     container.innerHTML = items.map(n => `
+
         <div class="news-item">
 
             <h3>${n.title || ""}</h3>
@@ -24,10 +25,19 @@ onValue(ref(db, "news"), (snapshot) => {
             <p>${n.text || ""}</p>
 
             <small>
-                📅 ${new Date(n.created).toLocaleDateString()}
-                🕒 ${new Date(n.created).toLocaleTimeString()}
+                📅 ${
+                    n.created
+                        ? new Date(n.created).toLocaleDateString()
+                        : (n.date || "")
+                }
+                🕒 ${
+                    n.created
+                        ? new Date(n.created).toLocaleTimeString()
+                        : (n.time || "")
+                }
             </small>
 
         </div>
+
     `).join("");
 });
