@@ -1,104 +1,82 @@
-<!DOCTYPE html>
-<html lang="nl">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+// ================= FIREBASE =================
 
-<title>HV Novitas</title>
+const firebaseConfig = {
+    apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer",
+    storageBucket: "hv-novitas-beheer.appspot.com",
+    messagingSenderId: "71716605241",
+    appId: "1:71716605241:web:b7e87d680b7499421a6ce8"
+};
 
-<style>
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #eef1f5;
-}
+// ================= ELEMENTS =================
 
-/* TOP */
-.topbar {
-    background: linear-gradient(90deg, #ff6a00, #ff8c1a);
-    color: white;
-    padding: 18px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-}
+const matchesEl = document.getElementById("matches");
+const activitiesEl = document.getElementById("activities");
+const highlightsEl = document.getElementById("highlights");
 
-/* GRID */
-.container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 15px;
-    padding: 15px;
-}
+// ================= LOAD AGENDA =================
 
-/* CARD */
-.column {
-    background: white;
-    border-radius: 14px;
-    padding: 12px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-    min-height: 500px;
-}
+async function loadAgenda() {
 
-.column h3 {
-    margin-top: 0;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 8px;
-}
+    const snap = await get(ref(db, "agenda"));
 
-/* ITEM */
-.item {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    background: #fafafa;
-    border-left: 4px solid #ddd;
-}
-
-.match { border-left-color: #ff6a00; }
-.training { border-left-color: #2ecc71; }
-.meeting { border-left-color: #3498db; }
-.highlight { border-left-color: gold; }
-
-.item b {
-    display: block;
-    margin-bottom: 3px;
-}
-
-/* MOBILE */
-@media (max-width: 900px) {
-    .container {
-        grid-template-columns: 1fr;
+    if (!snap.exists()) {
+        matchesEl.innerHTML += "<p>Geen data</p>";
+        activitiesEl.innerHTML += "<p>Geen data</p>";
+        highlightsEl.innerHTML += "<p>Geen data</p>";
+        return;
     }
+
+    const data = Object.entries(snap.val());
+
+    // reset
+    matchesEl.innerHTML = "<h3>⚔️ Wedstrijden</h3>";
+    activitiesEl.innerHTML = "<h3>🏋️ Activiteiten</h3>";
+    highlightsEl.innerHTML = "<h3>🏆 Highlights</h3>";
+
+    data.forEach(([id, item]) => {
+
+        const div = document.createElement("div");
+        div.className = "item " + (item.type || "");
+
+        div.innerHTML = `
+            <b>${item.date || ""}</b>
+            ${item.time ? "<br>" + item.time : ""}
+            <br>
+            ${item.team1 || ""}
+            ${item.team2 ? " vs " + item.team2 : ""}
+        `;
+
+        // ================= ROUTING =================
+
+        if (item.type === "match") {
+            matchesEl.appendChild(div);
+        }
+
+        else if (item.type === "training" || item.type === "meeting" || item.type === "clubday") {
+            activitiesEl.appendChild(div);
+        }
+
+        else {
+            highlightsEl.appendChild(div);
+        }
+    });
 }
 
-</style>
+// ================= REALTIME UPDATE =================
 
-</head>
+onValue(ref(db, "agenda"), () => {
+    loadAgenda();
+});
 
-<body>
+// ================= START =================
 
-<div class="topbar">🧡 HV NOVITAS</div>
-
-<div class="container">
-
-    <div class="column" id="matches">
-        <h3>⚔️ Wedstrijden</h3>
-    </div>
-
-    <div class="column" id="activities">
-        <h3>🏋️ Activiteiten</h3>
-    </div>
-
-    <div class="column" id="highlights">
-        <h3>🏆 Highlights</h3>
-    </div>
-
-</div>
-
-<script type="module" src="index.js"></script>
-
-</body>
-</html>
+loadAgenda();
