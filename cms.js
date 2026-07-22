@@ -13,9 +13,6 @@ console.log("🧡 HV NOVITAS CMS LOADED");
 // ELEMENTS
 // =====================================================
 
-const newsForm = document.getElementById("newsForm");
-const title = document.getElementById("title");
-const text = document.getElementById("text");
 const newsList = document.getElementById("newsList");
 
 const sponsorFile = document.getElementById("logo");
@@ -25,19 +22,6 @@ const sponsorList = document.getElementById("sponsorList");
 const omeFile = document.getElementById("omejanFile");
 const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
-
-const agendaType = document.getElementById("agendaType");
-const agendaDate = document.getElementById("agendaDate");
-const agendaTime = document.getElementById("agendaTime");
-const agendaTeam1 = document.getElementById("agendaTeam1");
-const agendaTeam2 = document.getElementById("agendaTeam2");
-
-// =====================================================
-// CLOUDINARY
-// =====================================================
-
-const cloudName = "hwxe3jzg";
-const uploadPreset = "hvnovitas_upload";
 
 // =====================================================
 // NEWS
@@ -95,6 +79,7 @@ sponsorBtn?.addEventListener("click", () => {
 onValue(ref(db, "sponsors"), (snapshot) => {
 
     const data = snapshot.val();
+
     if (!sponsorList) return;
 
     if (!data) {
@@ -112,7 +97,7 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 });
 
 // =====================================================
-// OME JAN (CLOUDINARY SAFE)
+// OME JAN
 // =====================================================
 
 omeBtn?.addEventListener("click", async () => {
@@ -122,12 +107,12 @@ omeBtn?.addEventListener("click", async () => {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
+    formData.append("upload_preset", "hvnovitas_upload");
 
     try {
 
         const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
             {
                 method: "POST",
                 body: formData
@@ -136,10 +121,7 @@ omeBtn?.addEventListener("click", async () => {
 
         const data = await res.json();
 
-        if (!res.ok || !data.secure_url) {
-            console.error("UPLOAD ERROR:", data);
-            return;
-        }
+        if (!res.ok || !data.secure_url) return;
 
         await push(ref(db, "omejan"), {
             imageUrl: data.secure_url,
@@ -153,13 +135,10 @@ omeBtn?.addEventListener("click", async () => {
     }
 });
 
-// =====================================================
-// OME JAN VIEW (SAFE + CLEAN)
-// =====================================================
-
 onValue(ref(db, "omejan"), (snapshot) => {
 
     const data = snapshot.val();
+
     if (!omeList) return;
 
     if (!data) {
@@ -177,25 +156,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
 });
 
 // =====================================================
-// AGENDA (SAFE + EXTENDED TYPES)
-// =====================================================
-
-document.getElementById("saveAgenda")?.addEventListener("click", async () => {
-
-    if (!agendaType.value || !agendaDate.value) return;
-
-    await push(ref(db, "agenda"), {
-        type: agendaType.value,
-        date: agendaDate.value,
-        time: agendaTime.value,
-        team1: agendaTeam1.value,
-        team2: agendaTeam2.value,
-        created: Date.now()
-    });
-});
-
-// =====================================================
-// DELETE (100% SAFE)
+// DELETE FUNCTIONS
 // =====================================================
 
 window.deleteNews = async (id) => {
