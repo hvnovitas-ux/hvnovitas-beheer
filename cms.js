@@ -7,7 +7,12 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS CLEAN LOADED");
+console.log("🧡 CMS FULL LOADED");
+
+// ================= CLOUDINARY =================
+
+const cloudName = "hwxe3jzg";
+const uploadPreset = "hvnovitas_upload";
 
 // ================= ELEMENTS =================
 
@@ -29,7 +34,7 @@ const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
 
 
-// ================= NEWS =================
+// ================= NEWS UPLOAD =================
 
 newsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -40,9 +45,7 @@ newsForm?.addEventListener("submit", async (e) => {
 
     if (!t || !tx) return;
 
-    let imageUrl = "";
-
-    const save = async () => {
+    const saveNews = async (imageUrl = "") => {
 
         await push(ref(db, "news"), {
             title: t,
@@ -56,16 +59,32 @@ newsForm?.addEventListener("submit", async (e) => {
     };
 
     if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            imageUrl = reader.result;
-            save();
-        };
-        reader.readAsDataURL(file);
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+
+        const res = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await res.json();
+
+        if (data.secure_url) {
+            saveNews(data.secure_url);
+        }
+
     } else {
-        save();
+        saveNews("");
     }
 });
+
+
+// ================= LOAD NEWS =================
 
 async function loadNews() {
 
@@ -83,11 +102,16 @@ async function loadNews() {
 
             <b>${n.title || ""}</b><br>
 
-            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
+            ${n.imageUrl ? `
+                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;margin-top:8px;">
+            ` : ""}
 
             <p>${n.text || ""}</p>
 
-            <small>📅 ${new Date(n.created).toLocaleDateString()}</small>
+            <small>
+                📅 ${n.created ? new Date(n.created).toLocaleDateString() : ""}
+                🕒 ${n.created ? new Date(n.created).toLocaleTimeString() : ""}
+            </small>
 
             <br><br>
 
@@ -107,20 +131,28 @@ sponsorBtn?.addEventListener("click", () => {
     const file = sponsorFile?.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
 
-    reader.onload = async () => {
+    fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
 
-        await push(ref(db, "sponsors"), {
-            imageUrl: reader.result,
+        if (!data.secure_url) return;
+
+        push(ref(db, "sponsors"), {
+            imageUrl: data.secure_url,
             created: Date.now()
         });
 
         sponsorFile.value = "";
-    };
-
-    reader.readAsDataURL(file);
+    });
 });
+
 
 onValue(ref(db, "sponsors"), (snapshot) => {
 
@@ -147,10 +179,10 @@ omeBtn?.addEventListener("click", async () => {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "hvnovitas_upload");
+    formData.append("upload_preset", uploadPreset);
 
     const res = await fetch(
-        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
             method: "POST",
             body: formData
@@ -169,6 +201,7 @@ omeBtn?.addEventListener("click", async () => {
         omeFile.value = "";
     }
 });
+
 
 onValue(ref(db, "omejan"), (snapshot) => {
 
