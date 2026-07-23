@@ -7,7 +7,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS WORKING");
+console.log("🧡 CMS RUNNING");
 
 // ================= ELEMENTS =================
 
@@ -48,21 +48,21 @@ form?.addEventListener("submit", async (e) => {
 
     if (file) {
 
-        const data = new FormData();
-        data.append("file", file);
-        data.append("upload_preset", uploadPreset);
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("upload_preset", uploadPreset);
 
         const res = await fetch(
             `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             {
                 method: "POST",
-                body: data
+                body: fd
             }
         );
 
-        const json = await res.json();
+        const data = await res.json();
 
-        save(json.secure_url || "");
+        save(data.secure_url || "");
 
     } else {
         save("");
