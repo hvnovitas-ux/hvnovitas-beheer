@@ -9,6 +9,11 @@ import {
 
 console.log("🧡 CMS FULL SYSTEM LOADED");
 
+// ================= CLOUDINARY CONFIG =================
+
+const cloudName = "hwxe3jzg";
+const uploadPreset = "hvnovitas_upload";
+
 // ================= NEWS =================
 
 const form = document.getElementById("newsForm");
@@ -16,10 +21,6 @@ const title = document.getElementById("title");
 const text = document.getElementById("text");
 const image = document.getElementById("newsImage");
 const list = document.getElementById("newsList");
-
-// CLOUDINARY SETTINGS
-const cloudName = "hwxe3jzg";
-const uploadPreset = "hvnovitas_upload";
 
 // SAVE NEWS
 form?.addEventListener("submit", async (e) => {
@@ -59,7 +60,6 @@ form?.addEventListener("submit", async (e) => {
         );
 
         const data = await res.json();
-
         save(data.secure_url || "");
 
     } else {
@@ -82,11 +82,11 @@ async function loadNews() {
     list.innerHTML = items.map(n => `
         <div class="news-item">
 
-            <b>${n.title || ""}</b><br>
+            <b>${n.title}</b><br>
 
             ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
 
-            <p>${n.text || ""}</p>
+            <p>${n.text}</p>
 
             <small>
                 📅 ${n.created ? new Date(n.created).toLocaleDateString() : ""}
