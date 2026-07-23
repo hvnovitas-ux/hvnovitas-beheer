@@ -7,7 +7,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS ULTIMATE LOADED");
+console.log("🧡 CLEAN CMS LOADED");
 
 // ================= ELEMENTS =================
 
@@ -17,23 +17,23 @@ const text = document.getElementById("text");
 const image = document.getElementById("newsImage");
 const list = document.getElementById("newsList");
 
-// ================= SAVE NEWS =================
+// ================= SAVE =================
 
 form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const t = title?.value || "";
-    const tx = text?.value || "";
+    const t = title.value;
+    const tx = text.value;
     const file = image?.files?.[0];
 
     if (!t || !tx) return;
 
-    const savePost = async (imageUrl = "") => {
+    const save = async (imageUrl = "") => {
 
         await push(ref(db, "news"), {
             title: t,
             text: tx,
-            imageUrl: imageUrl || "",
+            imageUrl,
             created: Date.now()
         });
 
@@ -42,21 +42,15 @@ form?.addEventListener("submit", async (e) => {
     };
 
     if (file) {
-
         const reader = new FileReader();
-
-        reader.onload = () => {
-            savePost(reader.result);
-        };
-
+        reader.onload = () => save(reader.result);
         reader.readAsDataURL(file);
-
     } else {
-        savePost("");
+        save("");
     }
 });
 
-// ================= LOAD NEWS =================
+// ================= LOAD =================
 
 async function loadNews() {
 
@@ -70,14 +64,11 @@ async function loadNews() {
     if (!list) return;
 
     list.innerHTML = items.map(n => `
-
         <div class="news-item">
 
             <b>${n.title || ""}</b><br>
 
-            ${n.imageUrl ? `
-                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;margin-top:8px;">
-            ` : ""}
+            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
 
             <p>${n.text || ""}</p>
 
@@ -91,7 +82,6 @@ async function loadNews() {
             <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
 
         </div>
-
     `).join("");
 }
 
