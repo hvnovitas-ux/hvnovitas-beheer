@@ -23,7 +23,7 @@ onValue(ref(db, "news"), (snapshot) => {
             <p>${n.text || ""}</p>
 
             <small>
-                📅 ${n.created ? new Date(n.created).toLocaleDateString() : "geen datum"}
+                📅 ${n.created ? new Date(n.created).toLocaleDateString() : ""}
                 🕒 ${n.created ? new Date(n.created).toLocaleTimeString() : ""}
             </small>
 
