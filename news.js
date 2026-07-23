@@ -3,16 +3,6 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 
 const container = document.getElementById("newsList");
 
-function getDate(n) {
-    if (n.created) return new Date(n.created).toLocaleDateString();
-    return n.date || "geen datum";
-}
-
-function getTime(n) {
-    if (n.created) return new Date(n.created).toLocaleTimeString();
-    return n.time || "";
-}
-
 onValue(ref(db, "news"), (snapshot) => {
 
     const data = snapshot.val() || {};
@@ -24,22 +14,19 @@ onValue(ref(db, "news"), (snapshot) => {
     if (!container) return;
 
     container.innerHTML = items.map(n => `
-
         <div class="news-item">
 
             <h3>${n.title || ""}</h3>
 
-            ${n.imageUrl ? `
-                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;">
-            ` : ""}
+            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
 
             <p>${n.text || ""}</p>
 
             <small>
-                📅 ${getDate(n)} 🕒 ${getTime(n)}
+                📅 ${n.created ? new Date(n.created).toLocaleDateString() : "geen datum"}
+                🕒 ${n.created ? new Date(n.created).toLocaleTimeString() : ""}
             </small>
 
         </div>
-
     `).join("");
 });
