@@ -7,23 +7,16 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS RUNNING");
+console.log("🧡 CMS CLEAN FINAL");
 
-// ================= ELEMENTS =================
-
+// ELEMENTS
 const form = document.getElementById("newsForm");
 const title = document.getElementById("title");
 const text = document.getElementById("text");
 const image = document.getElementById("newsImage");
 const list = document.getElementById("newsList");
 
-// ================= CLOUDINARY =================
-
-const cloudName = "hwxe3jzg";
-const uploadPreset = "hvnovitas_upload";
-
-// ================= SAVE =================
-
+// SAVE NEWS
 form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -34,7 +27,6 @@ form?.addEventListener("submit", async (e) => {
     if (!t || !tx) return;
 
     const save = async (imageUrl = "") => {
-
         await push(ref(db, "news"), {
             title: t,
             text: tx,
@@ -47,32 +39,16 @@ form?.addEventListener("submit", async (e) => {
     };
 
     if (file) {
-
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("upload_preset", uploadPreset);
-
-        const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-            {
-                method: "POST",
-                body: fd
-            }
-        );
-
-        const data = await res.json();
-
-        save(data.secure_url || "");
-
+        const reader = new FileReader();
+        reader.onload = () => save(reader.result);
+        reader.readAsDataURL(file);
     } else {
         save("");
     }
 });
 
-// ================= LOAD =================
-
+// LOAD NEWS
 async function loadNews() {
-
     const snap = await get(ref(db, "news"));
     const data = snap.val() || {};
 
@@ -92,7 +68,7 @@ async function loadNews() {
             <p>${n.text || ""}</p>
 
             <small>
-                📅 ${n.created ? new Date(n.created).toLocaleDateString() : ""}
+                📅 ${n.created ? new Date(n.created).toLocaleDateString() : "geen datum"}
                 🕒 ${n.created ? new Date(n.created).toLocaleTimeString() : ""}
             </small>
 
@@ -106,8 +82,7 @@ async function loadNews() {
 
 loadNews();
 
-// ================= DELETE =================
-
+// DELETE
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
     loadNews();
