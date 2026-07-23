@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const newsList = document.getElementById("newsList");
+const container = document.getElementById("newsList");
 
 onValue(ref(db, "news"), (snapshot) => {
 
@@ -11,15 +11,15 @@ onValue(ref(db, "news"), (snapshot) => {
         .map(([id, n]) => ({ id, ...n }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    if (!newsList) return;
+    if (!container) return;
 
-    newsList.innerHTML = items.map(n => `
+    container.innerHTML = items.map(n => `
         <div class="news-item">
 
             <h3>${n.title || ""}</h3>
 
-            ${n.imageUrl ? `
-                <img src="${n.imageUrl}" style="width:100%; border-radius:10px;">
+            ${(n.imageUrl || n.image) ? `
+                <img src="${n.imageUrl || n.image}" style="width:100%;border-radius:10px;">
             ` : ""}
 
             <p>${n.text || ""}</p>
@@ -31,5 +31,4 @@ onValue(ref(db, "news"), (snapshot) => {
 
         </div>
     `).join("");
-
 });
