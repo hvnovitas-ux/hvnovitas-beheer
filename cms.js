@@ -7,7 +7,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS FINAL LOADED");
+console.log("🧡 CMS ULTIMATE LOADED");
 
 // ================= ELEMENTS =================
 
