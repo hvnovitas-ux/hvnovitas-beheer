@@ -1,19 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { db } from "./firebase.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("📸 Ome Jan JS geladen");
-
-// ================= FIREBASE =================
-
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "hv-novitas-beheer.firebaseapp.com",
-    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "hv-novitas-beheer"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+console.log("📸 Ome Jan slider geladen");
 
 // ================= ELEMENTEN =================
 
@@ -22,21 +10,22 @@ const dots = document.getElementById("dots");
 
 let images = [];
 let index = 0;
+let interval = null;
 
-// ================= DATA LOAD =================
+// ================= DATA =================
 
 onValue(ref(db, "omejan"), (snapshot) => {
 
-    const data = snapshot.val();
+    const data = snapshot.val() || {};
 
     if (!track) return;
 
-    if (!data) {
+    images = Object.values(data);
+
+    if (images.length === 0) {
         track.innerHTML = "<p>Geen foto's</p>";
         return;
     }
-
-    images = Object.values(data);
 
     track.innerHTML = images.map(img => `
         <img src="${img.imageUrl}" style="width:100%; flex-shrink:0;">
@@ -57,7 +46,9 @@ function createDots() {
     images.forEach((_, i) => {
 
         const dot = document.createElement("span");
+
         dot.className = "dot";
+
         dot.style.cssText = `
             height:10px;
             width:10px;
@@ -65,19 +56,24 @@ function createDots() {
             display:inline-block;
             background:#ccc;
             border-radius:50%;
+            cursor:pointer;
         `;
 
         dots.appendChild(dot);
     });
+
+    updateDots();
 }
 
 // ================= SLIDER =================
 
 function startSlider() {
 
+    if (interval) clearInterval(interval);
+
     if (images.length <= 1) return;
 
-    setInterval(() => {
+    interval = setInterval(() => {
 
         index++;
 
@@ -92,7 +88,7 @@ function startSlider() {
     }, 3000);
 }
 
-// ================= DOT ACTIVE =================
+// ================= DOT UPDATE =================
 
 function updateDots() {
 
