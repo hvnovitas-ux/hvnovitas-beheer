@@ -1,57 +1,77 @@
 import { db } from "./firebase.js";
 import { ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-window.addEventListener("DOMContentLoaded", () => {
+console.log("🤝 Sponsor slider geladen");
 
-    // ✔ FIX: juiste selector
-    const track = document.getElementById("sponsorTrack");
+// ================= ELEMENT =================
 
-    if (!track) {
-        console.error("❌ sponsorTrack niet gevonden");
+const track = document.getElementById("sponsorTrack");
+
+if (!track) {
+    console.error("❌ sponsorTrack niet gevonden in HTML");
+}
+
+// ================= VARS =================
+
+let position = 0;
+let speed = 0.5;
+let animationId = null;
+
+// ================= LOAD SPONSORS =================
+
+async function loadSponsors() {
+
+    const snap = await get(ref(db, "sponsors"));
+    const data = snap.val() || {};
+
+    const list = Object.entries(data).map(([id, s]) => ({
+        id,
+        imageUrl: s.imageUrl || s.image || ""
+    }));
+
+    if (!track) return;
+
+    if (list.length === 0) {
+        track.innerHTML = "<p>Geen sponsors</p>";
         return;
     }
 
-    let position = 0;
-    let speed = 0.5;
+    // dubbel voor infinite scroll
+    const items = [...list, ...list];
 
-    async function loadSponsors() {
+    track.innerHTML = items.map(s => `
+        <div class="sponsor">
+            <img src="${s.imageUrl}" />
+        </div>
+    `).join("");
 
-        const snap = await get(ref(db, "sponsors"));
+    startSlider();
+}
 
-        if (!snap.exists()) return;
+// ================= SLIDER ANIMATION =================
 
-        const data = Object.values(snap.val());
+function startSlider() {
 
-        const items = [...data, ...data];
+    cancelAnimationFrame(animationId);
 
-        track.innerHTML = items.map(s => `
-            <div class="sponsor">
-                <img src="${s.imageUrl}">
-            </div>
-        `).join("");
+    const halfWidth = track.scrollWidth / 2;
 
-        start();
-    }
+    function animate() {
 
-    function start() {
+        position -= speed;
 
-        const halfWidth = track.scrollWidth / 2;
+        track.style.transform = `translateX(${position}px)`;
 
-        function animate() {
-
-            position -= speed;
-
-            track.style.transform = `translateX(${position}px)`;
-
-            if (Math.abs(position) >= halfWidth) {
-                position = 0;
-            }
-
-            requestAnimationFrame(animate);
+        if (Math.abs(position) >= halfWidth) {
+            position = 0;
         }
 
-        animate();
+        animationId = requestAnimationFrame(animate);
     }
 
-    loadSponsors();
-});
+    animate();
+}
+
+// ================= START =================
+
+window.addEventListener("DOMContentLoaded", loadSponsors);
