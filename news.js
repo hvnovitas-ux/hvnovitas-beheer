@@ -3,12 +3,12 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 
 const container = document.getElementById("newsList");
 
-function formatDate(n) {
+function getDate(n) {
     if (n.created) return new Date(n.created).toLocaleDateString();
     return n.date || "geen datum";
 }
 
-function formatTime(n) {
+function getTime(n) {
     if (n.created) return new Date(n.created).toLocaleTimeString();
     return n.time || "";
 }
@@ -30,14 +30,13 @@ onValue(ref(db, "news"), (snapshot) => {
             <h3>${n.title || ""}</h3>
 
             ${n.imageUrl ? `
-                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;margin-top:8px;">
+                <img src="${n.imageUrl}" style="width:100%;border-radius:10px;">
             ` : ""}
 
             <p>${n.text || ""}</p>
 
             <small>
-                📅 ${formatDate(n)} 
-                🕒 ${formatTime(n)}
+                📅 ${getDate(n)} 🕒 ${getTime(n)}
             </small>
 
         </div>
