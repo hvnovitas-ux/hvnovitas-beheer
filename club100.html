@@ -5,23 +5,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Club van 100 - HV Novitas</title>
+<title>Club van 100</title>
 
 <style>
 
 body {
     margin: 0;
     background: #0b0b0b;
-    font-family: Arial;
-}
-
-/* HEADER */
-.header {
-    background: #0b2a4a;
-    color: white;
-    text-align: center;
-    padding: 18px;
-    font-size: 20px;
 }
 
 /* GRID */
@@ -35,26 +25,24 @@ body {
 /* 🏺 TEGEL */
 .tile {
     background: #fbfaf6;
-
     border: 6px solid #1e4f8a;
     border-radius: 14px;
 
     aspect-ratio: 1 / 1;
 
-    position: relative;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
-    padding: 10px;
+    position: relative;
 
-    box-shadow:
-        0 10px 22px rgba(0,0,0,0.65),
-        inset 0 0 0 2px rgba(30,79,138,0.15);
+    font-family: Georgia;
+    color: #1e4f8a;
+
+    box-shadow: 0 10px 22px rgba(0,0,0,0.6);
 }
 
-/* ❖ ornament */
+/* ornament */
 .tile::after {
     content: "❖";
     position: absolute;
@@ -64,41 +52,18 @@ body {
     color: rgba(30,79,138,0.3);
 }
 
-/* 🧠 tekst */
+/* tekst */
 .tile-name {
-    width: 100%;
     text-align: center;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    gap: 4px;
-
-    font-family: Georgia, serif;
-    font-style: italic;
-    color: #1e4f8a;
 }
 
-/* VOORNAAM */
 .tile-name div:first-child {
     font-size: 18px;
     font-weight: bold;
-    line-height: 1.1;
 }
 
-/* ACHTERNAAM */
 .tile-name div:last-child {
     font-size: 14px;
-    opacity: 0.9;
-    line-height: 1.1;
-}
-
-/* MOBILE */
-@media (max-width: 700px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 </style>
@@ -107,13 +72,13 @@ body {
 
 <body>
 
-<div class="header">
-🏺 CLUB VAN 100 - HV NOVITAS
-</div>
-
 <div class="grid" id="clubList"></div>
 
-<script type="module" src="club100.js"></script>
+<!-- Firebase (NO MODULE VERSION) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="club100.js"></script>
 
 </body>
 
