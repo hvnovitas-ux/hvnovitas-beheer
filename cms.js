@@ -6,14 +6,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NOVITAS CMS FULL SYSTEM LOADED");
-
-// =====================================================
-// ☁️ CONFIG
-// =====================================================
-
-const cloudName = "hwxe3jzg";
-const uploadPreset = "hvnovitas_upload";
+console.log("🧡 NOVITAS CMS FULL LOADED");
 
 // =====================================================
 // 📰 NEWS
@@ -48,10 +41,10 @@ newsForm?.addEventListener("submit", async (e) => {
     if (file) {
         const fd = new FormData();
         fd.append("file", file);
-        fd.append("upload_preset", uploadPreset);
+        fd.append("upload_preset", "hvnovitas_upload");
 
         const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
             { method: "POST", body: fd }
         );
 
@@ -153,7 +146,7 @@ window.deleteHighlight = async (id) => {
 };
 
 // =====================================================
-// 🧱 CLUB VAN 100 (GEFIXT = ZELFDE STRUCTUUR ALS HIGHLIGHTS)
+// 🧱 CLUB VAN 100 (FIXED - DELETE WERKT IN CMS)
 // =====================================================
 
 const clubInput = document.getElementById("clubName");
@@ -163,7 +156,6 @@ const clubList = document.getElementById("clubList");
 clubBtn?.addEventListener("click", async () => {
 
     const name = clubInput.value;
-
     if (!name) return;
 
     await push(ref(db, "club100"), {
@@ -188,10 +180,18 @@ onValue(ref(db, "club100"), (snapshot) => {
         ? items.map(p => `
             <div class="tile">
                 ${p.name}
+
+                <br><br>
+
+                <button onclick="deleteClub('${p.id}')">🗑 Delete</button>
             </div>
         `).join("")
         : "<p>Geen leden</p>";
 });
+
+window.deleteClub = async (id) => {
+    await remove(ref(db, "club100/" + id));
+};
 
 // =====================================================
 // 🤝 SPONSORS
@@ -208,10 +208,10 @@ sponsorBtn?.addEventListener("click", async () => {
 
     const fd = new FormData();
     fd.append("file", file);
-    fd.append("upload_preset", uploadPreset);
+    fd.append("upload_preset", "hvnovitas_upload");
 
     const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
         { method: "POST", body: fd }
     );
 
@@ -233,6 +233,8 @@ onValue(ref(db, "sponsors"), (snapshot) => {
         id,
         ...s
     }));
+
+    if (!sponsorList) return;
 
     sponsorList.innerHTML = items.map(s => `
         <div style="display:inline-block;margin:10px;text-align:center;">
@@ -262,10 +264,10 @@ omeBtn?.addEventListener("click", async () => {
 
     const fd = new FormData();
     fd.append("file", file);
-    fd.append("upload_preset", uploadPreset);
+    fd.append("upload_preset", "hvnovitas_upload");
 
     const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
         { method: "POST", body: fd }
     );
 
@@ -287,6 +289,8 @@ onValue(ref(db, "omejan"), (snapshot) => {
         id,
         ...o
     }));
+
+    if (!omeList) return;
 
     omeList.innerHTML = items.map(o => `
         <div style="display:inline-block;margin:10px;text-align:center;">
