@@ -22,7 +22,6 @@ const text = document.getElementById("text");
 const image = document.getElementById("newsImage");
 const list = document.getElementById("newsList");
 
-// SAVE NEWS
 form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -67,7 +66,6 @@ form?.addEventListener("submit", async (e) => {
     }
 });
 
-// LOAD NEWS
 async function loadNews() {
 
     const snap = await get(ref(db, "news"));
@@ -105,7 +103,6 @@ loadNews();
 
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
-    loadNews();
 };
 
 // ================= SPONSORS =================
@@ -207,3 +204,28 @@ onValue(ref(db, "omejan"), (snapshot) => {
 window.deleteOmeJan = async (id) => {
     await remove(ref(db, "omejan/" + id));
 };
+
+// ================= 🆕 HIGHLIGHTS (TOEGEVOEGD) =================
+
+const hlDate = document.getElementById("hlDate");
+const hlTitle = document.getElementById("hlTitle");
+const hlText = document.getElementById("hlText");
+const hlType = document.getElementById("hlType");
+const saveHighlight = document.getElementById("saveHighlight");
+const highlightList = document.getElementById("highlightList");
+
+saveHighlight?.addEventListener("click", async () => {
+
+    if (!hlDate?.value || !hlTitle?.value) return;
+
+    await push(ref(db, "highlights"), {
+        date: hlDate.value,
+        title: hlTitle.value,
+        text: hlText.value,
+        type: hlType.value,
+        created: Date.now()
+    });
+
+    hlTitle.value = "";
+    hlText.value = "";
+});
