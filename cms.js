@@ -9,7 +9,7 @@ import {
 
 console.log("🧡 CMS FULL SYSTEM LOADED");
 
-// ================= CLOUDINARY CONFIG =================
+// ================= CLOUDINARY =================
 
 const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
@@ -87,8 +87,8 @@ async function loadNews() {
             <p>${n.text}</p>
 
             <small>
-                📅 ${n.created ? new Date(n.created).toLocaleDateString() : ""}
-                🕒 ${n.created ? new Date(n.created).toLocaleTimeString() : ""}
+                📅 ${new Date(n.created).toLocaleDateString()}
+                🕒 ${new Date(n.created).toLocaleTimeString()}
             </small>
 
             <br><br>
@@ -205,7 +205,7 @@ window.deleteOmeJan = async (id) => {
     await remove(ref(db, "omejan/" + id));
 };
 
-// ================= 🆕 HIGHLIGHTS (TOEGEVOEGD) =================
+// ================= 🧡 HIGHLIGHTS (GEFIXT) =================
 
 const hlDate = document.getElementById("hlDate");
 const hlTitle = document.getElementById("hlTitle");
@@ -221,11 +221,48 @@ saveHighlight?.addEventListener("click", async () => {
     await push(ref(db, "highlights"), {
         date: hlDate.value,
         title: hlTitle.value,
-        text: hlText.value,
-        type: hlType.value,
+        text: hlText.value || "",
+        type: hlType.value || "milestone",
         created: Date.now()
     });
 
     hlTitle.value = "";
     hlText.value = "";
 });
+
+function loadHighlights() {
+
+    onValue(ref(db, "highlights"), (snapshot) => {
+
+        const data = snapshot.val() || {};
+
+        const items = Object.entries(data)
+            .map(([id, item]) => ({ id, ...item }))
+            .sort((a, b) => (b.created || 0) - (a.created || 0));
+
+        if (!highlightList) return;
+
+        highlightList.innerHTML = items.length
+            ? items.map(h => `
+                <div class="news-item">
+
+                    <b>${h.title}</b><br>
+
+                    <small>📅 ${h.date} | ⭐ ${h.type}</small>
+
+                    <p>${h.text}</p>
+
+                    <button onclick="deleteHighlight('${h.id}')">🗑 Delete</button>
+
+                </div>
+            `).join("")
+            : "<p>Geen highlights</p>";
+
+    });
+}
+
+window.deleteHighlight = async (id) => {
+    await remove(ref(db, "highlights/" + id));
+};
+
+loadHighlights();
