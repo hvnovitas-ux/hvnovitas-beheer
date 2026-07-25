@@ -5,61 +5,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Club van 100 - HV Novitas</title>
+<title>Club van 100</title>
 
 <style>
 
-/* =========================
-   🌑 ACHTERGROND MUUR
-========================= */
-
 body {
     margin: 0;
-    background: 
-        radial-gradient(circle at top, #111 0%, #070707 60%, #050505 100%);
+    background: #0b0b0b;
     font-family: Arial;
-    color: white;
 }
 
-/* =========================
-   🏺 TITEL
-========================= */
-
-.header {
-    background: #0b2a4a;
-    color: white;
-    text-align: center;
-    padding: 18px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* =========================
-   🧱 MUUR GRID (BELANGRIJK)
-========================= */
-
+/* 🧱 MUUR GRID */
 .grid {
     display: grid;
-
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
-
-    padding: 20px;
-
-    align-items: start;
+    padding: 15px;
 }
 
-/* =========================
-   🏺 TEGEL (DOLFS MUUR STIJL)
-========================= */
-
+/* 🏺 TEGEL */
 .tile {
-    aspect-ratio: 1 / 1;
-
     background: #fbfaf6;
+    border: 6px solid #1e4f8a;
+    border-radius: 14px;
 
-    border: 5px solid #1e4f8a;
-    border-radius: 12px;
+    aspect-ratio: 1 / 1;
 
     display: flex;
     align-items: center;
@@ -70,20 +40,10 @@ body {
     font-family: Georgia, serif;
     color: #1e4f8a;
 
-    box-shadow:
-        0 8px 18px rgba(0,0,0,0.6),
-        inset 0 0 0 1px rgba(30,79,138,0.15);
-
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.6);
 }
 
-/* hover */
-.tile:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.8);
-}
-
-/* decoratie */
+/* ❖ decoratie */
 .tile::after {
     content: "❖";
     position: absolute;
@@ -93,33 +53,18 @@ body {
     opacity: 0.25;
 }
 
-/* =========================
-   🧠 TEKST
-========================= */
-
+/* 🧠 tekst */
 .tile-name {
     text-align: center;
-    padding: 6px;
 }
 
 .tile-name div:first-child {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
 }
 
 .tile-name div:last-child {
-    font-size: 11px;
-    opacity: 0.9;
-}
-
-/* =========================
-   📱 MOBIEL
-========================= */
-
-@media (max-width: 600px) {
-    .grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    font-size: 12px;
 }
 
 </style>
@@ -127,10 +72,6 @@ body {
 </head>
 
 <body>
-
-<div class="header">
-🏺 CLUB VAN 100 - HV NOVITAS
-</div>
 
 <div class="grid" id="clubList"></div>
 
