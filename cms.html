@@ -66,10 +66,23 @@ button {
 }
 
 #sponsorList,
-#omejanList {
+#omejanList,
+#clubList,
+#highlightList {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+/* 🏺 TEGEL STIJL */
+.tile {
+    background: #f8f4e8;
+    border: 2px solid #0b2a4a;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    font-family: Georgia, serif;
+    min-width: 120px;
 }
 
 </style>
@@ -84,50 +97,73 @@ button {
 
 <!-- ================= NEWS ================= -->
 <div class="box">
-
     <h2>📰 Nieuws</h2>
 
     <form id="newsForm">
         <input id="title" placeholder="Titel">
         <textarea id="text" placeholder="Bericht"></textarea>
-
-        <!-- 🔥 BELANGRIJK: DIT WAS MISSEND -->
         <input type="file" id="newsImage">
-
         <button type="submit">Publiceren</button>
     </form>
 
-    <p id="newsStatus"></p>
-
     <div id="newsList"></div>
+</div>
+
+<!-- ================= HIGHLIGHTS ================= -->
+<div class="box">
+
+<h2>🏆 Highlights</h2>
+
+<input type="date" id="hlDate">
+<input id="hlTitle" placeholder="Titel">
+<textarea id="hlText" placeholder="Beschrijving"></textarea>
+
+<select id="hlType">
+  <option value="goal">Doelpunt</option>
+  <option value="win">Overwinning</option>
+  <option value="milestone">Mijlpaal</option>
+  <option value="event">Event</option>
+</select>
+
+<button id="saveHighlight">Opslaan</button>
+
+<div id="highlightList"></div>
+
+</div>
+
+<!-- ================= CLUB VAN 100 ================= -->
+<div class="box">
+
+<h2>🏺 Club van 100</h2>
+
+<input id="clubName" placeholder="Naam">
+<button id="saveClub100">Toevoegen</button>
+
+<div id="clubList"></div>
 
 </div>
 
 <!-- ================= SPONSORS ================= -->
 <div class="box">
 
-    <h2>🤝 Sponsors</h2>
+<h2>🤝 Sponsors</h2>
 
-    <input type="file" id="logo">
-    <button id="saveSponsor">Upload sponsor</button>
+<input type="file" id="logo">
+<button id="saveSponsor">Upload sponsor</button>
 
-    <p id="sponsorStatus"></p>
-
-    <div id="sponsorList"></div>
+<div id="sponsorList"></div>
 
 </div>
 
 <!-- ================= OME JAN ================= -->
 <div class="box">
 
-    <h2>📸 Ome Jan</h2>
+<h2>📸 Ome Jan</h2>
 
-    <input type="file" id="omejanFile">
-    <button id="saveOmejan">Upload foto</button>
+<input type="file" id="omejanFile">
+<button id="saveOmejan">Upload foto</button>
 
-    <p id="omejanStatus"></p>
-
-    <div id="omejanList"></div>
+<div id="omejanList"></div>
 
 </div>
 
