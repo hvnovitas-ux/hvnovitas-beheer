@@ -9,14 +9,13 @@
 
 <style>
 
-/* 🖤 achtergrond */
 body {
     margin: 0;
     background: #0b0b0b;
     font-family: Arial;
 }
 
-/* header */
+/* HEADER */
 .header {
     background: #0b2a4a;
     color: white;
@@ -25,7 +24,7 @@ body {
     font-size: 20px;
 }
 
-/* grid muur */
+/* GRID */
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -33,65 +32,69 @@ body {
     padding: 20px;
 }
 
-/* 🏺 DELFTS TEGEL */
+/* 🏺 TEGEL */
 .tile {
-    background: #fdfcf7;
+    background: #fbfaf6;
 
     border: 6px solid #1e4f8a;
     border-radius: 14px;
 
     aspect-ratio: 1 / 1;
 
+    position: relative;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    position: relative;
-
-    text-align: center;
-
-    font-family: Georgia, serif;
-    font-style: italic;
-
-    color: #1e4f8a;
+    padding: 10px;
 
     box-shadow:
-        0 12px 25px rgba(0,0,0,0.7),
-        inset 0 0 0 2px rgba(30,79,138,0.15),
-        inset 0 0 30px rgba(255,255,255,0.6);
+        0 10px 22px rgba(0,0,0,0.65),
+        inset 0 0 0 2px rgba(30,79,138,0.15);
 }
 
-/* 🧿 binnenrand */
-.tile::before {
-    content: "";
-    position: absolute;
-    inset: 10px;
-    border: 2px solid rgba(30,79,138,0.25);
-    border-radius: 10px;
-    pointer-events: none;
-}
-
-/* ❖ hoek ornament */
+/* ❖ ornament */
 .tile::after {
     content: "❖";
     position: absolute;
-    top: 10px;
-    right: 12px;
-    font-size: 14px;
-    color: rgba(30,79,138,0.35);
+    top: 8px;
+    right: 10px;
+    font-size: 12px;
+    color: rgba(30,79,138,0.3);
 }
 
-/* naam blok */
+/* 🧠 tekst */
+.tile-name {
+    width: 100%;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 4px;
+
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: #1e4f8a;
+}
+
+/* VOORNAAM */
 .tile-name div:first-child {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
+    line-height: 1.1;
 }
 
+/* ACHTERNAAM */
 .tile-name div:last-child {
-    font-size: 16px;
+    font-size: 14px;
+    opacity: 0.9;
+    line-height: 1.1;
 }
 
-/* mobiel */
+/* MOBILE */
 @media (max-width: 700px) {
     .grid {
         grid-template-columns: 1fr;
@@ -105,7 +108,7 @@ body {
 <body>
 
 <div class="header">
-CLUB VAN 100 - HV NOVITAS
+🏺 CLUB VAN 100 - HV NOVITAS
 </div>
 
 <div class="grid" id="clubList"></div>
