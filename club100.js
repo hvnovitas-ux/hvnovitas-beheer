@@ -1,46 +1,47 @@
-import { db } from "./firebase.js";
-import {
-    ref,
-    onValue
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-console.log("🏺 Club van 100 loaded");
+console.log("🏺 CLUB100 SCRIPT START");
 
 const clubList = document.getElementById("clubList");
 
-onValue(ref(db, "club100"), (snapshot) => {
+// Firebase check
+if (!firebase) {
+    console.error("Firebase is niet geladen!");
+}
 
-    const data = snapshot.val() || {};
+// REF
+const refDB = firebase.database().ref("club100");
 
-    const items = Object.entries(data)
-        .map(([id, item]) => ({
-            id,
-            ...item
-        }))
-        .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+// LIVE DATA
+refDB.on("value", (snapshot) => {
 
-    if (!clubList) return;
+    const data = snapshot.val();
 
-    if (items.length === 0) {
+    console.log("CLUB100 DATA:", data);
+
+    if (!data) {
         clubList.innerHTML = `
-            <div style="color:white;text-align:center;">
-                Nog geen Club van 100 leden
+            <div style="color:white;text-align:center;padding:20px;">
+                Nog geen leden in Club van 100
             </div>
         `;
         return;
     }
 
+    const items = Object.entries(data).map(([id, item]) => ({
+        id,
+        ...item
+    }));
+
     clubList.innerHTML = items.map(p => {
 
         const parts = (p.name || "").split(" ");
-        const firstName = parts[0] || "";
-        const lastName = parts.slice(1).join(" ") || "";
+        const first = parts[0] || "";
+        const last = parts.slice(1).join(" ") || "";
 
         return `
             <div class="tile">
                 <div class="tile-name">
-                    <div>${firstName}</div>
-                    <div>${lastName}</div>
+                    <div>${first}</div>
+                    <div>${last}</div>
                 </div>
             </div>
         `;
