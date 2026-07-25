@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("CLUB100 geladen");
+console.log("🏺 Club van 100 geladen");
 
 const grid = document.getElementById("clubGrid");
 
@@ -35,7 +35,7 @@ onValue(ref(db, "club100"), (snapshot) => {
         return;
     }
 
-    // ================= RENDER TILES =================
+    // ================= RENDER =================
 
     grid.innerHTML = items.map(p => `
         <div class="tile">
