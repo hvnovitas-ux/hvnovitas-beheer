@@ -5,12 +5,20 @@ console.log("🏺 CLUB100 LOADED");
 
 const clubList = document.getElementById("clubList");
 
+// ===============================
+// 🔥 LIVE FIREBASE DATA
+// ===============================
+
 onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val();
 
     if (!data) {
-        clubList.innerHTML = "<p style='color:white;text-align:center'>Geen leden</p>";
+        clubList.innerHTML = `
+            <div style="color:white;text-align:center;padding:20px;">
+                Nog geen leden in Club van 100
+            </div>
+        `;
         return;
     }
 
@@ -18,16 +26,20 @@ onValue(ref(db, "club100"), (snapshot) => {
 
     clubList.innerHTML = items.map(([id, p]) => {
 
-        const parts = (p.name || "").split(" ");
+        const fullName = p.name || "";
+
+        const parts = fullName.split(" ");
         const first = parts[0] || "";
         const last = parts.slice(1).join(" ") || "";
 
         return `
             <div class="tile">
+
                 <div class="tile-name">
                     <div>${first}</div>
                     <div>${last}</div>
                 </div>
+
             </div>
         `;
     }).join("");
