@@ -1,16 +1,10 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 CLUB100 LOADED");
+console.log("🏺 CLUB100 LOADED OK");
 
 const clubList = document.getElementById("clubList");
 
-/* 🥇 VIP check */
-function isVIP(name) {
-    return (name || "").toLowerCase().includes("vip");
-}
-
-/* 🔥 render */
 onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val();
@@ -27,14 +21,11 @@ onValue(ref(db, "club100"), (snapshot) => {
         const name = p.name || "";
         const parts = name.split(" ");
 
-        const first = parts[0] || "";
-        const last = parts.slice(1).join(" ") || "";
-
         return `
-            <div class="tile ${isVIP(name) ? "vip" : ""}">
+            <div class="tile">
                 <div class="tile-name">
-                    <div>${first}</div>
-                    <div>${last}</div>
+                    <div>${parts[0] || ""}</div>
+                    <div>${parts.slice(1).join(" ")}</div>
                 </div>
             </div>
         `;
