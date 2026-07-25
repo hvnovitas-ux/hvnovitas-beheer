@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 Club van 100 geladen");
+console.log("🏺 Club van 100 loaded");
 
 const grid = document.getElementById("clubGrid");
 
@@ -18,7 +18,7 @@ onValue(ref(db, "club100"), (snapshot) => {
         .filter(Boolean)
         .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-    // ================= EMPTY STATE =================
+    // ================= EMPTY =================
 
     if (items.length === 0) {
         grid.innerHTML = `
@@ -35,7 +35,7 @@ onValue(ref(db, "club100"), (snapshot) => {
         return;
     }
 
-    // ================= RENDER =================
+    // ================= RENDER TILES =================
 
     grid.innerHTML = items.map(p => `
         <div class="tile">
