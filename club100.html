@@ -1,19 +1,129 @@
-<!-- 🔥 1. FIREBASE LIBRARIES -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<!DOCTYPE html>
+<html lang="nl">
 
-<!-- 🔥 2. INIT (BELANGRIJK!) -->
-<script>
-firebase.initializeApp({
-    apiKey: "JOUW_API_KEY",
-    authDomain: "JOUW_PROJECT.firebaseapp.com",
-    databaseURL: "https://JOUW_PROJECT.firebaseio.com",
-    projectId: "JOUW_PROJECT"
-});
-</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- 🔥 3. APP -->
-<script src="club100.js"></script>
+<title>Club van 100 - HV Novitas</title>
+
+<style>
+
+/* =========================
+   🌑 ACHTERGROND
+========================= */
+
+body {
+    margin: 0;
+    background: #0b0b0b;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================
+   🏺 TITELBALK
+========================= */
+
+.header {
+    background: #0b2a4a;
+    color: white;
+    text-align: center;
+    padding: 18px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* =========================
+   🧱 GRID MUUR
+========================= */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+}
+
+/* =========================
+   🏺 DOLFS BLAUWE TEGEL
+========================= */
+
+.tile {
+    background: #fbfaf6;
+
+    border: 6px solid #1e4f8a;
+    border-radius: 14px;
+
+    aspect-ratio: 1 / 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    box-shadow:
+        0 10px 22px rgba(0,0,0,0.65),
+        inset 0 0 0 2px rgba(30,79,138,0.15);
+
+    font-family: Georgia, serif;
+    color: #1e4f8a;
+}
+
+/* ❖ ornament */
+.tile::after {
+    content: "❖";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 12px;
+    color: rgba(30,79,138,0.3);
+}
+
+/* =========================
+   🧠 NAAM STYLING
+========================= */
+
+.tile-name {
+    text-align: center;
+    width: 100%;
+}
+
+.tile-name div:first-child {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.tile-name div:last-child {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* =========================
+   📱 MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- 🏺 HEADER -->
+<div class="header">
+    🏺 CLUB VAN 100 - HV NOVITAS
+</div>
+
+<!-- 🧱 TEGELS KOMEN HIER -->
+<div class="grid" id="clubList"></div>
+
+<!-- 🔥 FIREBASE + JS -->
+<script type="module" src="club100.js"></script>
 
 </body>
 
