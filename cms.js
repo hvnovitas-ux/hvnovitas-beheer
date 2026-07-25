@@ -2,14 +2,16 @@ import { db } from "./firebase.js";
 import {
     ref,
     push,
-    get,
     onValue,
-    remove
+    remove,
+    get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 console.log("🧡 NOVITAS CMS FULL SYSTEM LOADED");
 
-// ================= CLOUDINARY =================
+// =====================================================
+// ☁️ CONFIG
+// =====================================================
 
 const cloudName = "hwxe3jzg";
 const uploadPreset = "hvnovitas_upload";
@@ -34,7 +36,6 @@ newsForm?.addEventListener("submit", async (e) => {
     if (!t || !tx) return;
 
     const save = async (imageUrl = "") => {
-
         await push(ref(db, "news"), {
             title: t,
             text: tx,
@@ -47,7 +48,6 @@ newsForm?.addEventListener("submit", async (e) => {
     };
 
     if (file) {
-
         const fd = new FormData();
         fd.append("file", file);
         fd.append("upload_preset", uploadPreset);
@@ -59,35 +59,42 @@ newsForm?.addEventListener("submit", async (e) => {
 
         const data = await res.json();
         save(data.secure_url || "");
-
     } else {
         save("");
     }
 });
 
-async function loadNews() {
+function loadNews() {
 
-    const snap = await get(ref(db, "news"));
-    const data = snap.val() || {};
+    onValue(ref(db, "news"), (snapshot) => {
 
-    const items = Object.values(data)
-        .sort((a, b) => (b.created || 0) - (a.created || 0));
+        const data = snapshot.val() || {};
 
-    if (!newsList) return;
+        const items = Object.entries(data)
+            .map(([id, item]) => ({ id, ...item }))
+            .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    newsList.innerHTML = items.map(n => `
-        <div class="news-item">
-            <b>${n.title}</b><br>
-            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
-            <p>${n.text}</p>
-            <small>
-                📅 ${new Date(n.created).toLocaleDateString()}
-                🕒 ${new Date(n.created).toLocaleTimeString()}
-            </small>
-            <br><br>
-            <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
-        </div>
-    `).join("");
+        if (!newsList) return;
+
+        newsList.innerHTML = items.map(n => `
+            <div class="news-item">
+                <b>${n.title}</b><br>
+
+                ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
+
+                <p>${n.text}</p>
+
+                <small>
+                    📅 ${new Date(n.created).toLocaleDateString()}
+                    🕒 ${new Date(n.created).toLocaleTimeString()}
+                </small>
+
+                <br><br>
+
+                <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
+            </div>
+        `).join("");
+    });
 }
 
 loadNews();
@@ -139,21 +146,23 @@ function loadHighlights() {
             ? items.map(h => `
                 <div class="news-item">
                     <b>${h.title}</b><br>
+
                     <small>📅 ${h.date} | ⭐ ${h.type}</small>
+
                     <p>${h.text}</p>
+
                     <button onclick="deleteHighlight('${h.id}')">🗑 Delete</button>
                 </div>
             `).join("")
             : "<p>Geen highlights</p>";
-
     });
 }
+
+loadHighlights();
 
 window.deleteHighlight = async (id) => {
     await remove(ref(db, "highlights/" + id));
 };
-
-loadHighlights();
 
 // =====================================================
 // 🧱 CLUB VAN 100
@@ -181,14 +190,16 @@ onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    const items = Object.values(data);
+    const items = Object.entries(data)
+        .map(([id, item]) => ({ id, ...item }))
+        .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
     if (!clubList) return;
 
     clubList.innerHTML = items.length
         ? items.map(p => `
             <div class="tile">
-                🏺 ${p.name}
+                ${p.name}
             </div>
         `).join("")
         : "<p>Geen leden</p>";
@@ -230,11 +241,16 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
+    const items = Object.entries(data).map(([id, s]) => ({
+        id,
+        ...s
+    }));
+
+    sponsorList.innerHTML = items.map(s => `
         <div style="display:inline-block;margin:10px;text-align:center;">
             <img src="${s.imageUrl}" style="height:60px;border-radius:8px;">
             <br>
-            <button onclick="deleteSponsor('${id}')">🗑 Delete</button>
+            <button onclick="deleteSponsor('${s.id}')">🗑 Delete</button>
         </div>
     `).join("");
 });
@@ -279,11 +295,16 @@ onValue(ref(db, "omejan"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    omeList.innerHTML = Object.entries(data).map(([id, o]) => `
+    const items = Object.entries(data).map(([id, o]) => ({
+        id,
+        ...o
+    }));
+
+    omeList.innerHTML = items.map(o => `
         <div style="display:inline-block;margin:10px;text-align:center;">
             <img src="${o.imageUrl}" style="height:70px;border-radius:8px;">
             <br>
-            <button onclick="deleteOmeJan('${id}')">🗑 Delete</button>
+            <button onclick="deleteOmeJan('${o.id}')">🗑 Delete</button>
         </div>
     `).join("");
 });
