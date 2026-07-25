@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 CLUB100 V12 OK");
+console.log("🏺 CLUB100 LOADED");
 
 const clubList = document.getElementById("clubList");
 
@@ -10,7 +10,11 @@ onValue(ref(db, "club100"), (snapshot) => {
     const data = snapshot.val();
 
     if (!data) {
-        clubList.innerHTML = "<p style='color:white;text-align:center'>Geen leden</p>";
+        clubList.innerHTML = `
+            <div style="color:white;text-align:center;padding:20px;">
+                Nog geen Club van 100 leden
+            </div>
+        `;
         return;
     }
 
