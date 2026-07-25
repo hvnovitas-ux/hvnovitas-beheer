@@ -1,46 +1,49 @@
 import { db } from "./firebase.js";
-import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import {
+    ref,
+    onValue,
+    remove
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 Club van 100 loaded");
+console.log("🏺 Club100 loaded");
 
-const grid = document.getElementById("clubGrid");
+const clubList = document.getElementById("clubList");
 
-// ================= FIREBASE =================
+// ================= LOAD =================
 
 onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    if (!grid) return;
-
     const items = Object.entries(data)
-        .map(([id, value]) => value)
-        .filter(Boolean)
+        .map(([id, item]) => ({ id, ...item }))
         .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-    // ================= EMPTY =================
+    if (!clubList) return;
 
     if (items.length === 0) {
-        grid.innerHTML = `
-            <div style="
-                width:100%;
-                text-align:center;
-                color:gray;
-                font-style:italic;
-                padding:20px;
-            ">
-                Nog geen Club van 100 leden
-            </div>
-        `;
+        clubList.innerHTML = "<p>Geen leden</p>";
         return;
     }
 
-    // ================= RENDER TILES =================
-
-    grid.innerHTML = items.map(p => `
+    clubList.innerHTML = items.map(p => `
         <div class="tile">
-            ${p.name || ""}
+            ${p.name}
+
+            <br><br>
+
+            <button onclick="deleteClub('${p.id}')">
+                🗑 Delete
+            </button>
         </div>
     `).join("");
-
 });
+
+// ================= DELETE =================
+
+window.deleteClub = async (id) => {
+
+    console.log("delete club:", id);
+
+    await remove(ref(db, "club100/" + id));
+};
