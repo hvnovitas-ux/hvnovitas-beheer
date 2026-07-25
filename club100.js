@@ -1,25 +1,22 @@
-console.log("🏺 CLUB100 START");
+console.log("🏺 CLUB100 LOADED");
 
-// 🔥 JOUW FIREBASE CONFIG INVULLEN
-const firebaseConfig = {
-    apiKey: "JOUW_API_KEY",
-    authDomain: "JOUW_PROJECT.firebaseapp.com",
-    databaseURL: "https://JOUW_PROJECT.firebaseio.com",
-    projectId: "JOUW_PROJECT"
-};
-
-firebase.initializeApp(firebaseConfig);
-
+// 🔥 Firebase v8 global (komt uit HTML script tags)
 const db = firebase.database();
 const clubList = document.getElementById("clubList");
 
-// 🔄 LIVE DATA
-db.ref("club100").on("value", (snap) => {
+// LIVE DATA
+db.ref("club100").on("value", (snapshot) => {
 
-    const data = snap.val();
+    const data = snapshot.val();
+
+    console.log("CLUB100 DATA:", data);
 
     if (!data) {
-        clubList.innerHTML = "<p style='color:white'>Geen leden</p>";
+        clubList.innerHTML = `
+            <div style="color:white;text-align:center;padding:20px;">
+                Nog geen leden
+            </div>
+        `;
         return;
     }
 
