@@ -1,40 +1,46 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 Club100 JS geladen");
-
-// ================= GRID =================
+console.log("🏺 Club van 100 geladen");
 
 const grid = document.getElementById("clubGrid");
 
-if (!grid) {
-    console.error("❌ clubGrid niet gevonden in HTML");
-}
-
-// ================= FIREBASE LIVE DATA =================
+// ================= FIREBASE =================
 
 onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    const items = Object.entries(data)
-        .map(([id, value]) => ({
-            id,
-            ...value
-        }))
-        .sort((a, b) => (b.created || 0) - (a.created || 0));
-
     if (!grid) return;
 
+    const items = Object.entries(data)
+        .map(([id, value]) => value)
+        .filter(Boolean)
+        .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+    // ================= EMPTY =================
+
     if (items.length === 0) {
-        grid.innerHTML = "<p style='text-align:center;'>Nog geen Club van 100 leden</p>";
+        grid.innerHTML = `
+            <div style="
+                width:100%;
+                text-align:center;
+                color:gray;
+                font-style:italic;
+                padding:20px;
+            ">
+                🧱 Nog geen Club van 100 leden
+            </div>
+        `;
         return;
     }
+
+    // ================= TEGELS =================
 
     grid.innerHTML = items.map(p => `
         <div class="tile">
             🏺<br>
-            ${p.name}
+            ${p.name || ""}
         </div>
     `).join("");
 
