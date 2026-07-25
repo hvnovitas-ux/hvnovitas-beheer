@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Club van 100 - HV Novitas</title>
+<title>HV Novitas CMS</title>
 
 <style>
 
@@ -15,55 +15,164 @@ body {
     background: #f4f6f8;
 }
 
-.header {
-    background: #0b2a4a;
+.topbar {
+    background: #ff6a00;
     color: white;
-    text-align: center;
-    padding: 20px;
-    font-size: 22px;
-}
-
-/* 🏺 MUUR */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    padding: 20px;
-}
-
-/* 🏺 DELFTS BLAUWE TEGEL */
-.tile {
-    background: linear-gradient(135deg, #1f4b8f, #2e63b8);
-    color: white;
-
-    border: 3px solid #0b2a4a;
-    border-radius: 14px;
-
-    padding: 25px;
-    text-align: center;
-
-    font-family: "Segoe Script", "Brush Script MT", cursive;
-
+    padding: 15px;
     font-size: 20px;
-
-    box-shadow:
-        0 8px 15px rgba(0,0,0,0.25),
-        inset 0 0 15px rgba(255,255,255,0.15);
-
-    transition: 0.2s ease;
+    font-weight: bold;
 }
 
-.tile:hover {
-    transform: scale(1.05);
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-/* 📱 MOBILE */
-@media (max-width: 700px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
+.box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+button {
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.news-item {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+#sponsorList,
+#omejanList,
+#clubList,
+#highlightList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* 🏺 TEGEL STIJL */
+.tile {
+    background: #f8f4e8;
+    border: 2px solid #0b2a4a;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    font-family: Georgia, serif;
+    min-width: 120px;
 }
 
 </style>
 
 </head>
+
+<body>
+
+<div class="topbar">🧡 HV NOVITAS CMS</div>
+
+<div class="container">
+
+<!-- ================= NEWS ================= -->
+<div class="box">
+    <h2>📰 Nieuws</h2>
+
+    <form id="newsForm">
+        <input id="title" placeholder="Titel">
+        <textarea id="text" placeholder="Bericht"></textarea>
+        <input type="file" id="newsImage">
+        <button type="submit">Publiceren</button>
+    </form>
+
+    <div id="newsList"></div>
+</div>
+
+<!-- ================= HIGHLIGHTS ================= -->
+<div class="box">
+
+<h2>🏆 Highlights</h2>
+
+<input type="date" id="hlDate">
+<input id="hlTitle" placeholder="Titel">
+<textarea id="hlText" placeholder="Beschrijving"></textarea>
+
+<select id="hlType">
+  <option value="goal">Doelpunt</option>
+  <option value="win">Overwinning</option>
+  <option value="milestone">Mijlpaal</option>
+  <option value="event">Event</option>
+</select>
+
+<button id="saveHighlight">Opslaan</button>
+
+<div id="highlightList"></div>
+
+</div>
+
+<!-- ================= CLUB VAN 100 ================= -->
+<div class="box">
+
+<h2>🏺 Club van 100</h2>
+
+<input id="clubName" placeholder="Naam">
+<button id="saveClub100">Toevoegen</button>
+
+<div id="clubList"></div>
+
+</div>
+
+<!-- ================= SPONSORS ================= -->
+<div class="box">
+
+<h2>🤝 Sponsors</h2>
+
+<input type="file" id="logo">
+<button id="saveSponsor">Upload sponsor</button>
+
+<div id="sponsorList"></div>
+
+</div>
+
+<!-- ================= OME JAN ================= -->
+<div class="box">
+
+<h2>📸 Ome Jan</h2>
+
+<input type="file" id="omejanFile">
+<button id="saveOmejan">Upload foto</button>
+
+<div id="omejanList"></div>
+
+</div>
+
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script type="module" src="firebase.js"></script>
+<script type="module" src="cms.js"></script>
+
+</body>
+</html>
+🧠 WAT JE NU HEBT
