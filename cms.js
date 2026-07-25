@@ -146,7 +146,7 @@ window.deleteHighlight = async (id) => {
 };
 
 // =====================================================
-// 🧱 CLUB VAN 100 (🔥 FIXED 100%)
+// 🧱 CLUB VAN 100
 // =====================================================
 
 const clubInput = document.getElementById("clubName");
