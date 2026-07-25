@@ -1,6 +1,6 @@
-console.log("🏺 CLUB100 LOADED");
+console.log("🏺 CLUB100 START");
 
-// 🔥 Firebase config (INVULLEN MET JOUW GEGEVENS)
+// 🔥 JOUW FIREBASE CONFIG INVULLEN
 const firebaseConfig = {
     apiKey: "JOUW_API_KEY",
     authDomain: "JOUW_PROJECT.firebaseapp.com",
@@ -13,26 +13,19 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const clubList = document.getElementById("clubList");
 
-// 🧠 LIVE DATA
-db.ref("club100").on("value", (snapshot) => {
+// 🔄 LIVE DATA
+db.ref("club100").on("value", (snap) => {
 
-    const data = snapshot.val();
+    const data = snap.val();
 
     if (!data) {
-        clubList.innerHTML = `
-            <div style="color:white;text-align:center;padding:20px;">
-                Nog geen Club van 100 leden
-            </div>
-        `;
+        clubList.innerHTML = "<p style='color:white'>Geen leden</p>";
         return;
     }
 
-    const items = Object.entries(data).map(([id, item]) => ({
-        id,
-        ...item
-    }));
+    const items = Object.entries(data);
 
-    clubList.innerHTML = items.map(p => {
+    clubList.innerHTML = items.map(([id, p]) => {
 
         const parts = (p.name || "").split(" ");
         const first = parts[0] || "";
