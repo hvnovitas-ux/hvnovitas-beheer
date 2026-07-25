@@ -9,7 +9,7 @@ import {
 console.log("🧡 NOVITAS CMS FULL SYSTEM LOADED");
 
 // =====================================================
-// 🧱 NEWS
+// 📰 NEWS
 // =====================================================
 
 const newsForm = document.getElementById("newsForm");
@@ -65,24 +65,26 @@ onValue(ref(db, "news"), (snapshot) => {
 
     if (!newsList) return;
 
-    newsList.innerHTML = items.map(n => `
-        <div class="news-item">
-            <b>${n.title}</b><br>
+    newsList.innerHTML = items.length
+        ? items.map(n => `
+            <div class="news-item">
+                <b>${n.title}</b><br>
 
-            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
+                ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
 
-            <p>${n.text}</p>
+                <p>${n.text}</p>
 
-            <small>
-                📅 ${new Date(n.created).toLocaleDateString()}
-                🕒 ${new Date(n.created).toLocaleTimeString()}
-            </small>
+                <small>
+                    📅 ${new Date(n.created).toLocaleDateString()}
+                    🕒 ${new Date(n.created).toLocaleTimeString()}
+                </small>
 
-            <br><br>
+                <br><br>
 
-            <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
-        </div>
-    `).join("");
+                <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
+            </div>
+        `).join("")
+        : "<p>Geen nieuws</p>";
 });
 
 window.deleteNews = async (id) => {
@@ -90,7 +92,7 @@ window.deleteNews = async (id) => {
 };
 
 // =====================================================
-// 🏆 HIGHLIGHTS (HIGHLIGHTS.JS LOGICA)
+// 🏆 HIGHLIGHTS
 // =====================================================
 
 const hlDate = document.getElementById("hlDate");
@@ -144,7 +146,7 @@ window.deleteHighlight = async (id) => {
 };
 
 // =====================================================
-// 🧱 CLUB VAN 100 (FIXED + LIKE HIGHLIGHTS)
+// 🧱 CLUB VAN 100 (🔥 FIXED 100%)
 // =====================================================
 
 const clubInput = document.getElementById("clubName");
@@ -154,7 +156,6 @@ const clubList = document.getElementById("clubList");
 clubBtn?.addEventListener("click", async () => {
 
     const name = clubInput.value;
-
     if (!name) return;
 
     await push(ref(db, "club100"), {
@@ -178,11 +179,11 @@ onValue(ref(db, "club100"), (snapshot) => {
     clubList.innerHTML = items.length
         ? items.map(p => `
             <div class="tile">
-                ${p.name}
+                <div class="tile-name">
+                    <div>${p.name}</div>
+                </div>
 
-                <br><br>
-
-                <button onclick="deleteClub('${p.id}')">🗑 Delete</button>
+                <button onclick="deleteClub('${p.id}')">🗑</button>
             </div>
         `).join("")
         : "<p>Geen leden</p>";
