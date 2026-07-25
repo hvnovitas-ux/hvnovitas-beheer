@@ -1,10 +1,19 @@
-console.log("🏺 CLUB100 LOADED");
+console.log("🏺 CLUB100 START");
 
-// 🔥 Firebase v8 global (komt uit HTML script tags)
+// 🔥 BELANGRIJK: VOORKOM DUPLICATE INIT
+if (!firebase.apps.length) {
+    firebase.initializeApp({
+        apiKey: "JOUW_API_KEY",
+        authDomain: "JOUW_PROJECT.firebaseapp.com",
+        databaseURL: "https://JOUW_PROJECT.firebaseio.com",
+        projectId: "JOUW_PROJECT"
+    });
+}
+
 const db = firebase.database();
 const clubList = document.getElementById("clubList");
 
-// LIVE DATA
+// 🧠 LIVE DATA
 db.ref("club100").on("value", (snapshot) => {
 
     const data = snapshot.val();
@@ -14,7 +23,7 @@ db.ref("club100").on("value", (snapshot) => {
     if (!data) {
         clubList.innerHTML = `
             <div style="color:white;text-align:center;padding:20px;">
-                Nog geen leden
+                Nog geen leden in Club van 100
             </div>
         `;
         return;
@@ -38,3 +47,5 @@ db.ref("club100").on("value", (snapshot) => {
         `;
     }).join("");
 });
+💥 WAT IK HEB GEFIXT
+✔ Fireba
