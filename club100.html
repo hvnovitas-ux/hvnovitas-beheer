@@ -5,22 +5,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Club van 100</title>
+<title>Club van 100 - HV Novitas</title>
 
 <style>
 
-/* 🌑 MUSEUM ACHTERGROND */
+/* 🌑 achtergrond */
 body {
     margin: 0;
     font-family: Georgia;
-
-    background:
-        radial-gradient(circle at top, #111 0%, #070707 60%, #050505 100%);
+    background: radial-gradient(circle at top, #111, #070707, #050505);
 }
 
-/* 🧱 MUUR GRID */
-.grid {
-    display: grid;
+/* 🧱 GRID MUUR (BELANGRIJK) */
+#clubList {
+    display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 14px;
     padding: 18px;
@@ -43,19 +41,17 @@ body {
 
     position: relative;
 
+    font-family: Georgia;
     color: #1e4f8a;
 
-    box-shadow:
-        0 10px 22px rgba(0,0,0,0.6),
-        inset 0 0 10px rgba(255,255,255,0.3);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.5);
 
     opacity: 0;
-    transform: scale(0.95);
-
-    animation: fadeIn 0.4s ease forwards;
+    transform: scale(0.9);
+    animation: fadeIn 0.3s forwards;
 }
 
-/* ✨ fade-in */
+/* ✨ animatie */
 @keyframes fadeIn {
     to {
         opacity: 1;
@@ -87,22 +83,10 @@ body {
     font-size: 12px;
 }
 
-/* 🥇 VIP TILE */
-.tile.vip {
-    background: linear-gradient(145deg, #ffe9a6, #d4af37);
-    border: 6px solid #b8860b;
-    color: #5a4300;
-
-    box-shadow:
-        0 12px 28px rgba(212,175,55,0.4),
-        inset 0 0 12px rgba(255,255,255,0.3);
-}
-
-/* 📱 mobiel */
-@media (max-width: 600px) {
-    .grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* 💥 hover effect */
+.tile:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.6);
 }
 
 </style>
@@ -111,9 +95,9 @@ body {
 
 <body>
 
-<div class="grid" id="clubList"></div>
+<div id="clubList"></div>
 
-<script type="module" src="club100.js?v=4"></script>
+<script type="module" src="club100.js?v=10"></script>
 
 </body>
 
