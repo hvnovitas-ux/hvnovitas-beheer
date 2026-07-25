@@ -1,17 +1,18 @@
-console.log("🏺 CLUB100 START");
+import { db } from "./firebase.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-// Firebase bestaat NU zeker
-const db = firebase.database();
+console.log("🏺 CLUB100 V12 LOADED");
+
 const clubList = document.getElementById("clubList");
 
-db.ref("club100").on("value", (snapshot) => {
+onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val();
 
     if (!data) {
         clubList.innerHTML = `
             <div style="color:white;text-align:center;padding:20px;">
-                Nog geen leden
+                Nog geen leden in Club van 100
             </div>
         `;
         return;
