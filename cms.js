@@ -6,10 +6,10 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NOVITAS CMS FULL LOADED");
+console.log("🧡 NOVITAS CMS FULL SYSTEM LOADED");
 
 // =====================================================
-// 📰 NEWS
+// 🧱 NEWS
 // =====================================================
 
 const newsForm = document.getElementById("newsForm");
@@ -90,7 +90,7 @@ window.deleteNews = async (id) => {
 };
 
 // =====================================================
-// 🏆 HIGHLIGHTS
+// 🏆 HIGHLIGHTS (HIGHLIGHTS.JS LOGICA)
 // =====================================================
 
 const hlDate = document.getElementById("hlDate");
@@ -130,9 +130,7 @@ onValue(ref(db, "highlights"), (snapshot) => {
         ? items.map(h => `
             <div class="news-item">
                 <b>${h.title}</b><br>
-
                 <small>📅 ${h.date} | ⭐ ${h.type}</small>
-
                 <p>${h.text}</p>
 
                 <button onclick="deleteHighlight('${h.id}')">🗑 Delete</button>
@@ -146,7 +144,7 @@ window.deleteHighlight = async (id) => {
 };
 
 // =====================================================
-// 🧱 CLUB VAN 100 (FIXED - DELETE WERKT IN CMS)
+// 🧱 CLUB VAN 100 (FIXED + LIKE HIGHLIGHTS)
 // =====================================================
 
 const clubInput = document.getElementById("clubName");
@@ -156,6 +154,7 @@ const clubList = document.getElementById("clubList");
 clubBtn?.addEventListener("click", async () => {
 
     const name = clubInput.value;
+
     if (!name) return;
 
     await push(ref(db, "club100"), {
@@ -172,7 +171,7 @@ onValue(ref(db, "club100"), (snapshot) => {
 
     const items = Object.entries(data)
         .map(([id, item]) => ({ id, ...item }))
-        .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+        .sort((a, b) => (b.created || 0) - (a.created || 0));
 
     if (!clubList) return;
 
@@ -229,10 +228,7 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    const items = Object.entries(data).map(([id, s]) => ({
-        id,
-        ...s
-    }));
+    const items = Object.entries(data).map(([id, s]) => ({ id, ...s }));
 
     if (!sponsorList) return;
 
@@ -285,10 +281,7 @@ onValue(ref(db, "omejan"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    const items = Object.entries(data).map(([id, o]) => ({
-        id,
-        ...o
-    }));
+    const items = Object.entries(data).map(([id, o]) => ({ id, ...o }));
 
     if (!omeList) return;
 
