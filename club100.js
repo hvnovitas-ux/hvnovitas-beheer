@@ -5,20 +5,18 @@ console.log("🏺 CLUB100 LOADED");
 
 const clubList = document.getElementById("clubList");
 
-// ===============================
-// 🔥 LIVE FIREBASE DATA
-// ===============================
+/* 🥇 VIP check */
+function isVIP(name) {
+    return (name || "").toLowerCase().includes("vip");
+}
 
+/* 🔥 render */
 onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val();
 
     if (!data) {
-        clubList.innerHTML = `
-            <div style="color:white;text-align:center;padding:20px;">
-                Nog geen leden in Club van 100
-            </div>
-        `;
+        clubList.innerHTML = "<p style='color:white;text-align:center'>Geen leden</p>";
         return;
     }
 
@@ -26,20 +24,18 @@ onValue(ref(db, "club100"), (snapshot) => {
 
     clubList.innerHTML = items.map(([id, p]) => {
 
-        const fullName = p.name || "";
+        const name = p.name || "";
+        const parts = name.split(" ");
 
-        const parts = fullName.split(" ");
         const first = parts[0] || "";
         const last = parts.slice(1).join(" ") || "";
 
         return `
-            <div class="tile">
-
+            <div class="tile ${isVIP(name) ? "vip" : ""}">
                 <div class="tile-name">
                     <div>${first}</div>
                     <div>${last}</div>
                 </div>
-
             </div>
         `;
     }).join("");
