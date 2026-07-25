@@ -5,27 +5,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Club van 100</title>
+<title>Club van 100 - HV Novitas</title>
 
 <style>
+
+/* =========================
+   🌑 ACHTERGROND
+========================= */
 
 body {
     margin: 0;
     background: #0b0b0b;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
 }
 
-/* 🧱 MUUR GRID */
+/* =========================
+   🏺 HEADER
+========================= */
+
+.header {
+    background: #0b2a4a;
+    color: white;
+    text-align: center;
+    padding: 18px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* =========================
+   🧱 MUUR GRID
+========================= */
+
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+
+    /* 🔥 perfecte “100 tegels muur” */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+
     gap: 12px;
     padding: 15px;
+
+    max-width: 1200px;
+    margin: auto;
 }
 
-/* 🏺 TEGEL */
+/* =========================
+   🏺 TEGEL (DELFTS STIJL)
+========================= */
+
 .tile {
     background: #fbfaf6;
+
     border: 6px solid #1e4f8a;
     border-radius: 14px;
 
@@ -53,7 +83,10 @@ body {
     opacity: 0.25;
 }
 
-/* 🧠 tekst */
+/* =========================
+   🧠 TEKST
+========================= */
+
 .tile-name {
     text-align: center;
 }
@@ -67,15 +100,32 @@ body {
     font-size: 12px;
 }
 
+/* =========================
+   📱 MOBIEL
+========================= */
+
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 </style>
 
 </head>
 
 <body>
 
+<!-- 🏺 TITEL -->
+<div class="header">
+🏺 CLUB VAN 100 - HV NOVITAS
+</div>
+
+<!-- 🧱 TEGELS -->
 <div class="grid" id="clubList"></div>
 
-<script type="module" src="club100.js"></script>
+<!-- 🔥 FIREBASE SCRIPT -->
+<script type="module" src="club100.js?v=3"></script>
 
 </body>
 
