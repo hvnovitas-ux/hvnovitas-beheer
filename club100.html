@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Club van 100</title>
+
+<style>
+
+body {
+    margin:0;
+    font-family: Georgia;
+    background:#f4f6f8;
+}
+
+.header {
+    background:#0b2a4a;
+    color:white;
+    text-align:center;
+    padding:20px;
+    font-size:22px;
+}
+
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:15px;
+    padding:20px;
+}
+
+.tile {
+    background:#f8f4e8;
+    border:2px solid #0b2a4a;
+    border-radius:12px;
+    padding:25px;
+    text-align:center;
+    font-family:Georgia;
+    font-size:18px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.tile:hover {
+    transform:scale(1.05);
+    transition:0.2s;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+🏺 CLUB VAN 100 - HV NOVITAS
+</div>
+
+<div class="grid" id="clubGrid"></div>
+
+<script type="module" src="club100.js"></script>
+
+</body>
+
+</html>
