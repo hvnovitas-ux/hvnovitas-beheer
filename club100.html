@@ -5,11 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Club van 100 - HV Novitas</title>
+<title>Club van 100</title>
 
 <style>
 
-/* 🖤 MUSEUM MUUR */
 body {
     margin: 0;
     font-family: Arial;
@@ -24,7 +23,7 @@ body {
     font-size: 22px;
 }
 
-/* 🧱 MUUR */
+/* GRID */
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -32,61 +31,50 @@ body {
     padding: 20px;
 }
 
-/* 🏺 DELFTS SPREUKTEGEL (ORNAMENT STYLE) */
+/* 🏺 TILE */
 .tile {
     background: #fdfcf7;
-
     border: 6px solid #1e4f8a;
     border-radius: 14px;
 
-    padding: 30px;
+    padding: 25px;
     text-align: center;
 
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: Georgia, serif;
     font-style: italic;
     font-size: 20px;
+
     color: #1e4f8a;
 
-    position: relative;
-
     box-shadow:
-        0 10px 22px rgba(0,0,0,0.7),
-        inset 0 0 0 2px rgba(30,79,138,0.15),
-        inset 0 0 25px rgba(255,255,255,0.6);
-
-    transition: 0.2s ease;
+        0 8px 20px rgba(0,0,0,0.6),
+        inset 0 0 0 2px rgba(30,79,138,0.15);
 }
 
-/* 🧿 BINNENKADER */
-.tile::before {
-    content: "";
-    position: absolute;
-    inset: 8px;
-    border: 2px solid rgba(30,79,138,0.25);
-    border-radius: 10px;
-    pointer-events: none;
-}
-
-/* ❖ ORNAMENT HOEK */
-.tile::after {
-    content: "❖";
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    font-size: 14px;
-    color: rgba(30,79,138,0.35);
-}
-
-/* ✨ hover */
 .tile:hover {
-    transform: scale(1.04);
+    transform: scale(1.03);
+    transition: 0.2s;
 }
 
-/* 📱 MOBILE */
+/* MOBILE */
 @media (max-width: 700px) {
     .grid {
         grid-template-columns: 1fr;
     }
+}
+
+button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    background: #c0392b;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #a93226;
 }
 
 </style>
@@ -99,7 +87,7 @@ body {
 CLUB VAN 100 - HV NOVITAS
 </div>
 
-<div class="grid" id="clubGrid"></div>
+<div class="grid" id="clubList"></div>
 
 <script type="module" src="club100.js"></script>
 
