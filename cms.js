@@ -3,8 +3,7 @@ import {
     ref,
     push,
     onValue,
-    remove,
-    get
+    remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 console.log("🧡 NOVITAS CMS FULL SYSTEM LOADED");
@@ -44,7 +43,6 @@ newsForm?.addEventListener("submit", async (e) => {
         });
 
         newsForm.reset();
-        loadNews();
     };
 
     if (file) {
@@ -64,40 +62,35 @@ newsForm?.addEventListener("submit", async (e) => {
     }
 });
 
-function loadNews() {
+onValue(ref(db, "news"), (snapshot) => {
 
-    onValue(ref(db, "news"), (snapshot) => {
+    const data = snapshot.val() || {};
 
-        const data = snapshot.val() || {};
+    const items = Object.entries(data)
+        .map(([id, item]) => ({ id, ...item }))
+        .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-        const items = Object.entries(data)
-            .map(([id, item]) => ({ id, ...item }))
-            .sort((a, b) => (b.created || 0) - (a.created || 0));
+    if (!newsList) return;
 
-        if (!newsList) return;
+    newsList.innerHTML = items.map(n => `
+        <div class="news-item">
+            <b>${n.title}</b><br>
 
-        newsList.innerHTML = items.map(n => `
-            <div class="news-item">
-                <b>${n.title}</b><br>
+            ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
 
-                ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
+            <p>${n.text}</p>
 
-                <p>${n.text}</p>
+            <small>
+                📅 ${new Date(n.created).toLocaleDateString()}
+                🕒 ${new Date(n.created).toLocaleTimeString()}
+            </small>
 
-                <small>
-                    📅 ${new Date(n.created).toLocaleDateString()}
-                    🕒 ${new Date(n.created).toLocaleTimeString()}
-                </small>
+            <br><br>
 
-                <br><br>
-
-                <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
-            </div>
-        `).join("");
-    });
-}
-
-loadNews();
+            <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
+        </div>
+    `).join("");
+});
 
 window.deleteNews = async (id) => {
     await remove(ref(db, "news/" + id));
@@ -130,42 +123,37 @@ saveHighlight?.addEventListener("click", async () => {
     hlText.value = "";
 });
 
-function loadHighlights() {
+onValue(ref(db, "highlights"), (snapshot) => {
 
-    onValue(ref(db, "highlights"), (snapshot) => {
+    const data = snapshot.val() || {};
 
-        const data = snapshot.val() || {};
+    const items = Object.entries(data)
+        .map(([id, item]) => ({ id, ...item }))
+        .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-        const items = Object.entries(data)
-            .map(([id, item]) => ({ id, ...item }))
-            .sort((a, b) => (b.created || 0) - (a.created || 0));
+    if (!highlightList) return;
 
-        if (!highlightList) return;
+    highlightList.innerHTML = items.length
+        ? items.map(h => `
+            <div class="news-item">
+                <b>${h.title}</b><br>
 
-        highlightList.innerHTML = items.length
-            ? items.map(h => `
-                <div class="news-item">
-                    <b>${h.title}</b><br>
+                <small>📅 ${h.date} | ⭐ ${h.type}</small>
 
-                    <small>📅 ${h.date} | ⭐ ${h.type}</small>
+                <p>${h.text}</p>
 
-                    <p>${h.text}</p>
-
-                    <button onclick="deleteHighlight('${h.id}')">🗑 Delete</button>
-                </div>
-            `).join("")
-            : "<p>Geen highlights</p>";
-    });
-}
-
-loadHighlights();
+                <button onclick="deleteHighlight('${h.id}')">🗑 Delete</button>
+            </div>
+        `).join("")
+        : "<p>Geen highlights</p>";
+});
 
 window.deleteHighlight = async (id) => {
     await remove(ref(db, "highlights/" + id));
 };
 
 // =====================================================
-// 🧱 CLUB VAN 100
+// 🧱 CLUB VAN 100 (GEFIXT = ZELFDE STRUCTUUR ALS HIGHLIGHTS)
 // =====================================================
 
 const clubInput = document.getElementById("clubName");
