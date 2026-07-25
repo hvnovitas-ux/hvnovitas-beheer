@@ -1,9 +1,13 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 CLUB100 LOADED");
+console.log("🏺 CLUB VAN 100 LOADED");
 
 const clubList = document.getElementById("clubList");
+
+/* =========================
+   🔥 LIVE DATA
+========================= */
 
 onValue(ref(db, "club100"), (snapshot) => {
 
@@ -20,9 +24,15 @@ onValue(ref(db, "club100"), (snapshot) => {
 
     const items = Object.entries(data);
 
+    /* =========================
+       🧱 RENDER TILES
+    ========================= */
+
     clubList.innerHTML = items.map(([id, p]) => {
 
-        const parts = (p.name || "").split(" ");
+        const name = p.name || "";
+        const parts = name.split(" ");
+
         const first = parts[0] || "";
         const last = parts.slice(1).join(" ") || "";
 
