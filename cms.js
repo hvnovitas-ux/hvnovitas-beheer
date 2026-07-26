@@ -6,10 +6,10 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS LOADED OK");
+console.log("🧡 CMS SYSTEM LOADED");
 
 // =====================================================
-// ☁️ CLOUDINARY UPLOAD
+// ☁️ CLOUDINARY
 // =====================================================
 
 async function uploadImage(file) {
@@ -55,14 +55,11 @@ newsForm?.addEventListener("submit", async (e) => {
 });
 
 onValue(ref(db, "news"), (snap) => {
-
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
-
-    if (!newsList) return;
 
     newsList.innerHTML = items.map(n => `
         <div class="card">
@@ -97,14 +94,11 @@ document.getElementById("saveHighlight")?.addEventListener("click", async () => 
 });
 
 onValue(ref(db, "highlights"), (snap) => {
-
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
-
-    if (!highlightList) return;
 
     highlightList.innerHTML = items.map(h => `
         <div class="card">
@@ -134,18 +128,15 @@ document.getElementById("saveClub100")?.addEventListener("click", async () => {
 });
 
 onValue(ref(db, "club100"), (snap) => {
-
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    if (!clubList) return;
-
     clubList.innerHTML = items.map(p => `
         <div class="tile">
-            <div>${p.name}</div>
+            ${p.name}
         </div>
     `).join("");
 });
@@ -158,7 +149,6 @@ const sponsorList = document.getElementById("sponsorList");
 const omeList = document.getElementById("omejanList");
 
 onValue(ref(db, "sponsors"), (snap) => {
-
     const data = snap.val() || {};
 
     sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
@@ -170,7 +160,6 @@ onValue(ref(db, "sponsors"), (snap) => {
 });
 
 onValue(ref(db, "omejan"), (snap) => {
-
     const data = snap.val() || {};
 
     omeList.innerHTML = Object.entries(data).map(([id, o]) => `
@@ -182,7 +171,7 @@ onValue(ref(db, "omejan"), (snap) => {
 });
 
 // =====================================================
-// 🧹 UNIVERSE DELETE FIX (BELANGRIJK)
+// 🧹 DELETE FIX
 // =====================================================
 
 window.removeItem = (path, id) => {
