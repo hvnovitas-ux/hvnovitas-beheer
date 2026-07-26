@@ -8,67 +8,16 @@ import {
 
 console.log("CMS LOADED");
 
-// --------------------
-// NEWS
-// --------------------
-
-const newsList = document.getElementById("newsList");
-
-onValue(ref(db, "news"), (snap) => {
-
-    const data = snap.val() || {};
-
-    const items = Object.entries(data)
-        .map(([id, v]) => ({ id, ...v }))
-        .sort((a, b) => b.created - a.created);
-
-    newsList.innerHTML = items.map(n => `
-        <div class="card">
-            <b>${n.title}</b>
-            <p>${n.text}</p>
-            ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
-            <button onclick="del('news','${n.id}')">🗑</button>
-        </div>
-    `).join("");
-});
-
-// --------------------
-// HIGHLIGHTS
-// --------------------
-
-const highlightList = document.getElementById("highlightList");
-
-onValue(ref(db, "highlights"), (snap) => {
-
-    const data = snap.val() || {};
-
-    const items = Object.entries(data)
-        .map(([id, v]) => ({ id, ...v }))
-        .sort((a, b) => b.created - a.created);
-
-    highlightList.innerHTML = items.map(h => `
-        <div class="card">
-            <b>${h.title}</b>
-            <p>${h.text}</p>
-            <small>${h.date || ""}</small>
-            <button onclick="del('highlights','${h.id}')">🗑</button>
-        </div>
-    `).join("");
-});
-
-// --------------------
-// CLUB100
-// --------------------
+// =====================
+// 🧱 CLUB 100
+// =====================
 
 const clubList = document.getElementById("clubList");
 
 onValue(ref(db, "club100"), (snap) => {
-
     const data = snap.val() || {};
 
-    const items = Object.entries(data);
-
-    clubList.innerHTML = items.map(([id, p]) => `
+    clubList.innerHTML = Object.entries(data).map(([id, p]) => `
         <div class="tile">
             ${p.name}
             <button onclick="del('club100','${id}')">🗑</button>
@@ -76,12 +25,49 @@ onValue(ref(db, "club100"), (snap) => {
     `).join("");
 });
 
-// --------------------
-// SPONSORS + OME JAN
-// --------------------
+// =====================
+// 🏆 HIGHLIGHTS
+// =====================
+
+const highlightList = document.getElementById("highlightList");
+
+onValue(ref(db, "highlights"), (snap) => {
+    const data = snap.val() || {};
+
+    highlightList.innerHTML = Object.entries(data).map(([id, h]) => `
+        <div class="card">
+            <b>${h.title}</b>
+            <p>${h.text}</p>
+            <small>${h.date || ""}</small>
+            <button onclick="del('highlights','${id}')">🗑</button>
+        </div>
+    `).join("");
+});
+
+// =====================
+// 📰 NEWS
+// =====================
+
+const newsList = document.getElementById("newsList");
+
+onValue(ref(db, "news"), (snap) => {
+    const data = snap.val() || {};
+
+    newsList.innerHTML = Object.entries(data).map(([id, n]) => `
+        <div class="card">
+            <b>${n.title}</b>
+            <p>${n.text}</p>
+            ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
+            <button onclick="del('news','${id}')">🗑</button>
+        </div>
+    `).join("");
+});
+
+// =====================
+// 🤝 SPONSORS
+// =====================
 
 const sponsorList = document.getElementById("sponsorList");
-const omeList = document.getElementById("omejanList");
 
 onValue(ref(db, "sponsors"), (snap) => {
     const data = snap.val() || {};
@@ -94,6 +80,12 @@ onValue(ref(db, "sponsors"), (snap) => {
     `).join("");
 });
 
+// =====================
+// 📸 OME JAN
+// =====================
+
+const omeList = document.getElementById("omejanList");
+
 onValue(ref(db, "omejan"), (snap) => {
     const data = snap.val() || {};
 
@@ -105,9 +97,9 @@ onValue(ref(db, "omejan"), (snap) => {
     `).join("");
 });
 
-// --------------------
-// DELETE FIX
-// --------------------
+// =====================
+// 🧹 DELETE FIX
+// =====================
 
 window.del = (path, id) => {
     remove(ref(db, path + "/" + id));
