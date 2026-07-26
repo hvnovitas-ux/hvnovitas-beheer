@@ -6,7 +6,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🔥 CMS FINAL FULL LOADED");
+console.log("🔥 CMS FINAL STABLE LOADED");
 
 // =====================
 // ☁️ CLOUDINARY UPLOAD
@@ -84,7 +84,7 @@ onValue(ref(db,"highlights"), snap=>{
 });
 
 // =====================
-// 📰 NEWS (CLOUDINARY + FIX IMAGE)
+// 📰 NEWS (WERKT AL)
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
@@ -105,28 +105,6 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
 
     document.getElementById("newsTitle").value="";
     document.getElementById("newsText").value="";
-    if(document.getElementById("newsImage")) document.getElementById("newsImage").value="";
-});
-
-onValue(ref(db,"news"), snap=>{
-    const data = snap.val() || {};
-    const list = document.getElementById("newsList");
-
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
-
-        <div class="card">
-            <b>${v.title || ""}</b>
-            <p>${v.text || ""}</p>
-
-            ${(v.imageUrl || v.image)
-                ? `<img src="${v.imageUrl || v.image}">`
-                : ""
-            }
-
-            <button onclick="del('news','${id}')">🗑</button>
-        </div>
-
-    `).join("");
 });
 
 // =====================
@@ -144,8 +122,6 @@ document.getElementById("saveSponsor")?.addEventListener("click", async () => {
         imageUrl:url,
         created:Date.now()
     });
-
-    document.getElementById("sponsorImage").value="";
 });
 
 onValue(ref(db,"sponsors"), snap=>{
@@ -157,7 +133,7 @@ onValue(ref(db,"sponsors"), snap=>{
         <div class="card">
             ${(v.imageUrl || v.image)
                 ? `<img src="${v.imageUrl || v.image}">`
-                : "<div>Geen foto</div>"
+                : ""
             }
             <button onclick="del('sponsors','${id}')">🗑</button>
         </div>
@@ -180,8 +156,6 @@ document.getElementById("saveOmejan")?.addEventListener("click", async () => {
         imageUrl:url,
         created:Date.now()
     });
-
-    document.getElementById("omejanImage").value="";
 });
 
 onValue(ref(db,"omejan"), snap=>{
@@ -193,7 +167,7 @@ onValue(ref(db,"omejan"), snap=>{
         <div class="card">
             ${(v.imageUrl || v.image)
                 ? `<img src="${v.imageUrl || v.image}">`
-                : "<div>Geen foto</div>"
+                : ""
             }
             <button onclick="del('omejan','${id}')">🗑</button>
         </div>
@@ -202,7 +176,7 @@ onValue(ref(db,"omejan"), snap=>{
 });
 
 // =====================
-// 🧹 DELETE
+// 🧹 DELETE SYSTEM
 // =====================
 
 window.del = (path,id)=>{
