@@ -6,7 +6,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("CMS LOADED");
+console.log("CMS ORANGE LOADED");
 
 // =====================
 // 🧱 CLUB 100
@@ -19,8 +19,12 @@ onValue(ref(db, "club100"), (snap) => {
 
     clubList.innerHTML = Object.entries(data).map(([id, p]) => `
         <div class="tile">
-            ${p.name}
-            <button onclick="del('club100','${id}')">🗑</button>
+            <div>${p.name}</div>
+
+            <button class="delete-btn"
+                onclick="del('club100','${id}')">
+                🗑
+            </button>
         </div>
     `).join("");
 });
