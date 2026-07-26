@@ -1,91 +1,14 @@
-<!DOCTYPE html>
-<html lang="nl">
+<h2>CLUB100 TEST</h2>
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Club100 Test</title>
+<!-- 🧱 TEST DATA (BELANGRIJK) -->
+<div id="clubList">
+    <div>TINUS</div>
+    <div>UUUU</div>
+    <div>BOKKEPOT</div>
+    <div>HV NOVITAS</div>
+</div>
 
-<style>
-
-/* =========================
-   BASE
-========================= */
-
-body{
-    margin:0;
-    font-family:Georgia;
-    background:#fff3e0;
-}
-
-/* =========================
-   GRID
-========================= */
-
-#clubList{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
-    gap:14px;
-    padding:14px;
-}
-
-/* =========================
-   🟢 TEST: CLUB100 TEGELS GROEN
-========================= */
-
-#clubList > div{
-    aspect-ratio:1/1;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    background: green !important; /* 🔥 TEST */
-
-    color:white;
-    font-weight:bold;
-
-    border-radius:12px;
-
-    box-shadow:0 6px 14px rgba(0,0,0,0.2);
-}
-
-/* =========================
-   OTHER CMS SECTIONS (SAFE)
-========================= */
-
-#highlightList,
-#newsList,
-#sponsorList,
-#omejanList{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-    gap:12px;
-    padding:12px;
-}
-
-.card{
-    background:white;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #ccc;
-}
-
-.card img{
-    width:100%;
-    max-height:100px;
-    object-fit:cover;
-    border-radius:8px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<!-- 🧱 CLUB100 -->
-<div id="clubList"></div>
+<hr>
 
 <!-- CMS SECTIONS -->
 <div id="highlightList"></div>
