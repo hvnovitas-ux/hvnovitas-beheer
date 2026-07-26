@@ -1,0 +1,51 @@
+body{
+    margin:0;
+    background:#0b0b0b;
+    font-family: Georgia;
+}
+
+/* 🔥 BELANGRIJK: GRID (NIET FLEX, NIET MIXEN) */
+#clubList{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+    gap:14px;
+    padding:15px;
+    max-width:1100px;
+    margin:auto;
+}
+
+/* 🏺 TEGEL */
+.tile{
+    aspect-ratio:1/1;
+    background:linear-gradient(145deg,#fbfaf6,#efe9dd);
+    border:5px solid #1e4f8a;
+    border-radius:14px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:0 8px 18px rgba(0,0,0,0.4);
+    transition:0.2s;
+}
+
+/* ✨ hover */
+.tile:hover{
+    transform:scale(1.05);
+}
+
+/* 🧠 tekst netjes */
+.tile-text{
+    text-align:center;
+    color:#1e4f8a;
+}
+
+.first{
+    font-size:16px;
+    font-weight:bold;
+}
+
+.last{
+    font-size:12px;
+    opacity:0.8;
+}
