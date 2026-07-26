@@ -6,7 +6,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("CMS FINAL LOADED");
+console.log("CMS FULL FINAL LOADED");
 
 // =====================
 // ☁️ CLOUDINARY UPLOAD
@@ -56,15 +56,21 @@ onValue(ref(db,"club100"), snap=>{
 });
 
 // =====================
-// 🏆 HIGHLIGHTS (WITH DATE)
+// 🏆 HIGHLIGHTS (FIX: “vandaag geen highlights”)
 // =====================
 
 document.getElementById("saveHighlight")?.addEventListener("click", async () => {
 
+    const date = document.getElementById("hlDate").value;
+    const title = document.getElementById("hlTitle").value;
+    const text = document.getElementById("hlText").value;
+
+    if(!title) return;
+
     await push(ref(db,"highlights"),{
-        date: document.getElementById("hlDate").value,
-        title: document.getElementById("hlTitle").value,
-        text: document.getElementById("hlText").value,
+        date,
+        title,
+        text,
         created:Date.now()
     });
 });
@@ -73,25 +79,40 @@ onValue(ref(db,"highlights"), snap=>{
     const data = snap.val() || {};
     const list = document.getElementById("highlightList");
 
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
+    const items = Object.entries(data)
+        .map(([id,v]) => ({ id, ...v }))
+        .filter(h => h.date);
+
+    if(items.length === 0){
+        list.innerHTML = `
+            <div class="card">
+                Vandaag zijn er geen highlights uit het verleden
+            </div>
+        `;
+        return;
+    }
+
+    items.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    list.innerHTML = items.map(h=>`
         <div class="card">
-            <b>${v.title}</b>
-            <p>${v.text}</p>
-            <small>${v.date || ""}</small>
-            <button onclick="del('highlights','${id}')">🗑</button>
+            <b>${h.title}</b>
+            <p>${h.text}</p>
+            <small>${h.date}</small>
+            <button onclick="del('highlights','${h.id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 📰 NEWS (CLOUDINARY IMAGE)
+// 📰 NEWS (CLOUDINARY)
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
 
     const file = document.getElementById("newsImage")?.files[0];
-    let url = "";
 
+    let url = "";
     if(file){
         url = await uploadImage(file);
     }
@@ -102,26 +123,13 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
         imageUrl:url,
         created:Date.now()
     });
-});
 
-onValue(ref(db,"news"), snap=>{
-    const data = snap.val() || {};
-    const list = document.getElementById("newsList");
-
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
-        <div class="card">
-            <b>${v.title}</b>
-            <p>${v.text}</p>
-
-            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
-
-            <button onclick="del('news','${id}')">🗑</button>
-        </div>
-    `).join("");
+    document.getElementById("newsTitle").value="";
+    document.getElementById("newsText").value="";
 });
 
 // =====================
-// 🤝 SPONSORS (FIXED DELETE)
+// 🤝 SPONSORS (CLOUDINARY)
 // =====================
 
 document.getElementById("saveSponsor")?.addEventListener("click", async () => {
@@ -135,24 +143,10 @@ document.getElementById("saveSponsor")?.addEventListener("click", async () => {
         imageUrl:url,
         created:Date.now()
     });
-
-    document.getElementById("sponsorImage").value="";
-});
-
-onValue(ref(db,"sponsors"), snap=>{
-    const data = snap.val() || {};
-    const list = document.getElementById("sponsorList");
-
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
-        <div class="card">
-            <img src="${v.imageUrl}">
-            <button onclick="del('sponsors','${id}')">🗑</button>
-        </div>
-    `).join("");
 });
 
 // =====================
-// 📸 OME JAN (FIXED DELETE)
+// 📸 OME JAN (CLOUDINARY)
 // =====================
 
 document.getElementById("saveOmejan")?.addEventListener("click", async () => {
@@ -166,26 +160,12 @@ document.getElementById("saveOmejan")?.addEventListener("click", async () => {
         imageUrl:url,
         created:Date.now()
     });
-
-    document.getElementById("omejanImage").value="";
-});
-
-onValue(ref(db,"omejan"), snap=>{
-    const data = snap.val() || {};
-    const list = document.getElementById("omejanList");
-
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
-        <div class="card">
-            <img src="${v.imageUrl}">
-            <button onclick="del('omejan','${id}')">🗑</button>
-        </div>
-    `).join("");
 });
 
 // =====================
-// 🧹 DELETE (GLOBAL FIX)
+// 🧹 DELETE SYSTEM
 // =====================
 
 window.del = (path,id)=>{
-    remove(ref(db, path + "/" + id));
+    remove(ref(db,path+"/"+id));
 };
