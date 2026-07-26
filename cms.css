@@ -6,27 +6,22 @@ body{
     margin:0;
     font-family:Georgia;
     background: linear-gradient(135deg, #fff3e0, #ffe0b2);
-    color:#2b2b2b;
-}
-
-/* =========================
-   📦 CENTRALE CONTAINER (BELANGRIJK)
-========================= */
-
-body{
     display:flex;
     justify-content:center;
 }
 
-.section{
+/* 📦 CENTRALE WRAPPER */
+body > *{
     width:100%;
-    max-width:1000px;
+    max-width:1100px;
+}
+
+/* 📦 SECTIONS */
+.section{
     margin:12px;
     padding:14px;
-
     background:white;
     border-radius:12px;
-
     box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
@@ -36,21 +31,18 @@ body{
     font-size:18px;
 }
 
-/* =========================
-   ➕ INPUTS STRAK MAKEN
-========================= */
-
+/* ➕ INPUTS */
 input{
     padding:8px;
-    margin:4px 0;
+    margin:4px;
     border-radius:8px;
     border:1px solid #ccc;
-    width:200px;
+    width:180px;
 }
 
 button{
     padding:8px 12px;
-    margin:4px 0;
+    margin:4px;
     border-radius:8px;
     border:none;
     background:#1e4f8a;
@@ -58,10 +50,7 @@ button{
     cursor:pointer;
 }
 
-/* =========================
-   🔥 GRID FIX (BELANGRIJK)
-========================= */
-
+/* 🔥 GRID */
 #clubList,
 #highlightList,
 #newsList,
@@ -72,10 +61,7 @@ button{
     gap:10px;
 }
 
-/* =========================
-   🧱 CLUB100 TEGELS (NETTER)
-========================= */
-
+/* 🧱 CLUB100 */
 .tile{
     aspect-ratio:1/1;
     display:flex;
@@ -83,36 +69,27 @@ button{
     justify-content:center;
     flex-direction:column;
 
-    position:relative;
-
     background: linear-gradient(145deg, #fffaf0, #f3ead7);
     border:5px solid #1e4f8a;
     border-radius:14px;
 
-    box-shadow:0 6px 14px rgba(0,0,0,0.15);
-
     font-weight:bold;
     color:#1e4f8a;
 
-    text-align:center;
+    position:relative;
 }
 
-/* =========================
-   🧱 CARDS
-========================= */
-
+/* 🧱 CARDS */
 .card{
     background:white;
     border-radius:12px;
     padding:10px;
-
     display:flex;
     flex-direction:column;
     align-items:center;
-    text-align:center;
 }
 
-/* IMAGES */
+/* 🖼 IMAGES */
 .card img{
     width:100%;
     max-height:80px;
@@ -120,7 +97,7 @@ button{
     border-radius:8px;
 }
 
-/* DELETE BUTTON */
+/* 🗑 DELETE */
 button:hover{
     opacity:0.85;
 }
