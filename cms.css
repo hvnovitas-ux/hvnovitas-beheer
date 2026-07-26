@@ -1,0 +1,76 @@
+/* =========================
+   🌐 LAYOUT FIX (BELANGRIJK)
+========================= */
+
+#clubList,
+#highlightList,
+#newsList,
+#sponsorList,
+#omejanList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px;
+}
+
+/* =========================
+   🧱 CARD SYSTEM
+========================= */
+
+.card {
+    width: 150px;
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-family: Arial;
+    font-size: 13px;
+}
+
+/* =========================
+   🏺 CLUB TEGELS
+========================= */
+
+.tile {
+    width: 120px;
+    height: 120px;
+
+    background: #fbfaf6;
+    border: 5px solid #1e4f8a;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    font-family: Georgia;
+    color: #1e4f8a;
+    text-align: center;
+}
+
+/* =========================
+   🖼 AFBEELDINGEN
+========================= */
+
+.card img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* =========================
+   ✨ HOVER EFFECT
+========================= */
+
+.card:hover,
+.tile:hover {
+    transform: scale(1.03);
+    transition: 0.2s ease;
+}
