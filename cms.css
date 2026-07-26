@@ -1,58 +1,3 @@
-body{
-    margin:0;
-    font-family:Georgia;
-    background: linear-gradient(135deg, #fff3e0, #ffe9c7);
-    padding:20px;
-    color:#1b3f7a;
-}
-
-/* =========================
-   INPUTS & BUTTONS
-========================= */
-
-input, button{
-    padding:8px;
-    margin:5px;
-    border-radius:6px;
-    font-family:Georgia;
-}
-
-input{
-    border:1px solid #ccc;
-    background:white;
-}
-
-button{
-    background:#1b3f7a;
-    color:white;
-    border:none;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-button:hover{
-    background:#16335f;
-}
-
-/* =========================
-   GRID SYSTEM
-========================= */
-
-#clubList,
-#highlightList,
-#newsList,
-#sponsorList,
-#omejanList{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
-    gap:12px;
-    margin-top:10px;
-}
-
-/* =========================
-   🇳🇱 OUD-HOLLANDSE TEGEL
-========================= */
-
 .tile{
     aspect-ratio:1/1;
     display:flex;
@@ -75,9 +20,11 @@ button:hover{
 
     position:relative;
     overflow:hidden;
+
+    z-index:1;
 }
 
-/* glans effect */
+/* glans effect (SAFE VERSION) */
 .tile::before{
     content:"";
     position:absolute;
@@ -85,46 +32,15 @@ button:hover{
     left:-50%;
     width:200%;
     height:200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.5), transparent 60%);
+    background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 60%);
     transform:rotate(25deg);
+
+    z-index:0;
+    pointer-events:none;
 }
 
-/* =========================
-   CARDS (NEWS / SPONSORS / OME JAN)
-========================= */
-
-.card{
-    background:white;
-    padding:12px;
-    border-radius:12px;
-
-    border:2px solid #1b4f9c;
-
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-
-    text-align:center;
-}
-
-/* images netjes */
-.card img{
-    width:100%;
-    max-height:90px;
-    object-fit:cover;
-    border-radius:8px;
-
-    border:2px solid #1b4f9c;
-}
-
-/* =========================
-   EMPTY STATES / HIGHLIGHT MESSAGE
-========================= */
-
-.highlight-empty{
-    padding:15px;
-    text-align:center;
-    color:#666;
-    font-style:italic;
-    background:white;
-    border-radius:10px;
-    border:1px dashed #aaa;
+/* tekst altijd boven glans */
+.tile > *{
+    position:relative;
+    z-index:2;
 }
