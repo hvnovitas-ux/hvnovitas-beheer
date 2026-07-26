@@ -9,32 +9,73 @@ body{
     color:#2b2b2b;
 }
 
-/* 📦 SECTIONS */
+/* =========================
+   📦 CENTRALE CONTAINER (BELANGRIJK)
+========================= */
+
+body{
+    display:flex;
+    justify-content:center;
+}
+
 .section{
-    margin:20px;
-    padding:15px;
+    width:100%;
+    max-width:1000px;
+    margin:12px;
+    padding:14px;
+
     background:white;
     border-radius:12px;
+
     box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
+/* TITELS */
 .section h2{
+    margin:0 0 10px 0;
     font-size:18px;
-    margin-bottom:10px;
 }
 
-/* 🔥 GRID */
+/* =========================
+   ➕ INPUTS STRAK MAKEN
+========================= */
+
+input{
+    padding:8px;
+    margin:4px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+    width:200px;
+}
+
+button{
+    padding:8px 12px;
+    margin:4px 0;
+    border-radius:8px;
+    border:none;
+    background:#1e4f8a;
+    color:white;
+    cursor:pointer;
+}
+
+/* =========================
+   🔥 GRID FIX (BELANGRIJK)
+========================= */
+
 #clubList,
 #highlightList,
 #newsList,
 #sponsorList,
 #omejanList{
     display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
-    gap:12px;
+    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+    gap:10px;
 }
 
-/* 🧱 CLUB100 TILE (KERAMIEK STYLE) */
+/* =========================
+   🧱 CLUB100 TEGELS (NETTER)
+========================= */
+
 .tile{
     aspect-ratio:1/1;
     display:flex;
@@ -43,35 +84,23 @@ body{
     flex-direction:column;
 
     position:relative;
-    overflow:hidden;
 
     background: linear-gradient(145deg, #fffaf0, #f3ead7);
     border:5px solid #1e4f8a;
     border-radius:14px;
 
-    box-shadow:
-        inset 0 2px 6px rgba(255,255,255,0.8),
-        inset 0 -3px 8px rgba(0,0,0,0.15),
-        0 6px 16px rgba(0,0,0,0.2);
+    box-shadow:0 6px 14px rgba(0,0,0,0.15);
 
     font-weight:bold;
     color:#1e4f8a;
+
     text-align:center;
 }
 
-/* ✨ glans */
-.tile::before{
-    content:"";
-    position:absolute;
-    top:-30%;
-    left:-30%;
-    width:160%;
-    height:160%;
-    background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 60%);
-    transform:rotate(25deg);
-}
+/* =========================
+   🧱 CARDS
+========================= */
 
-/* 🧱 CARDS */
 .card{
     background:white;
     border-radius:12px;
@@ -83,16 +112,15 @@ body{
     text-align:center;
 }
 
-/* 🖼 IMAGES */
+/* IMAGES */
 .card img{
     width:100%;
-    max-height:85px;
+    max-height:80px;
     object-fit:cover;
     border-radius:8px;
 }
 
-/* 🗑 BUTTON */
-button{
-    margin-top:6px;
-    cursor:pointer;
+/* DELETE BUTTON */
+button:hover{
+    opacity:0.85;
 }
