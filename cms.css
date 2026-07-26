@@ -1,76 +1,46 @@
-/* =========================
-   🌐 GRID FIX (BELANGRIJK)
-========================= */
-
 #clubList,
 #highlightList,
 #newsList,
 #sponsorList,
-#omejanList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-    padding: 12px;
+#omejanList{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+    gap:12px;
+    padding:10px;
 }
 
-/* =========================
-   🧱 CLUB TEGELS
-========================= */
-
-.tile {
-    background: #fbfaf6;
-    border: 5px solid #1e4f8a;
-    border-radius: 12px;
-
-    aspect-ratio: 1 / 1;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-
-    color: #1e4f8a;
-    font-family: Georgia;
-    text-align: center;
-
-    box-sizing: border-box;
+/* 🧱 CLUB TILES */
+.tile{
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fbfaf6;
+    border:4px solid #1e4f8a;
+    border-radius:12px;
+    font-family:Georgia;
 }
 
-/* =========================
-   🧱 CARDS
-========================= */
-
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 10px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-
-    font-size: 13px;
+/* 🧱 CARDS */
+.card{
+    background:white;
+    border-radius:12px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
-/* =========================
-   🖼 FOTO FIX
-========================= */
-
-.card img {
-    width: 100%;
-    max-height: 85px;
-    object-fit: cover;
-    border-radius: 8px;
+/* 🖼 IMAGES */
+.card img{
+    width:100%;
+    max-height:85px;
+    object-fit:cover;
 }
 
-/* =========================
-   ✨ HOVER
-========================= */
-
+/* ✨ HOVER */
 .tile:hover,
-.card:hover {
-    transform: scale(1.03);
-    transition: 0.2s ease;
+.card:hover{
+    transform:scale(1.03);
+    transition:0.2s ease;
 }
