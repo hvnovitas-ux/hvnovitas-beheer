@@ -6,23 +6,40 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NOVITAS CMS FINAL LOADED");
+console.log("🧡 NOVITAS CMS FULL LOADED");
 
-// ===============================
-// 🧠 RENDER ENGINE (BELANGRIJK)
-// ===============================
+// =====================================================
+// 🧱 FORCE LAYOUT FIX (BELANGRIJK)
+// =====================================================
 
-function render(list, items, html) {
-    if (!list) return;
+function applyLayoutFix() {
 
-    list.innerHTML = items.length
-        ? items.map(html).join("")
-        : `<p style="opacity:0.6">Geen items</p>`;
+    const lists = [
+        "clubList",
+        "highlightList",
+        "newsList",
+        "sponsorList",
+        "omejanList"
+    ];
+
+    lists.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.style.display = "flex";
+        el.style.flexWrap = "wrap";
+        el.style.gap = "12px";
+        el.style.alignItems = "flex-start";
+    });
+
+    console.log("🧱 CMS LAYOUT FIX ACTIVE");
 }
 
-// ===============================
+applyLayoutFix();
+
+// =====================================================
 // 📰 NEWS
-// ===============================
+// =====================================================
 
 const newsForm = document.getElementById("newsForm");
 const title = document.getElementById("title");
@@ -64,28 +81,31 @@ newsForm?.addEventListener("submit", async (e) => {
 });
 
 onValue(ref(db, "news"), (snap) => {
+
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    render(newsList, items, (n) => `
-        <div class="card">
-            <b>${n.title}</b>
-            <p>${n.text}</p>
-            ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
-            <button onclick="deleteNews('${n.id}')">🗑</button>
-        </div>
-    `);
+    newsList.innerHTML = items.length
+        ? items.map(n => `
+            <div class="card">
+                <b>${n.title}</b>
+                <p>${n.text}</p>
+                ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
+                <button onclick="deleteNews('${n.id}')">🗑</button>
+            </div>
+        `).join("")
+        : "<p>Geen nieuws</p>";
 });
 
 window.deleteNews = (id) =>
     remove(ref(db, "news/" + id));
 
-// ===============================
+// =====================================================
 // 🏆 HIGHLIGHTS
-// ===============================
+// =====================================================
 
 const hlDate = document.getElementById("hlDate");
 const hlTitle = document.getElementById("hlTitle");
@@ -116,22 +136,24 @@ onValue(ref(db, "highlights"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    render(highlightList, items, (h) => `
-        <div class="card">
-            <b>${h.title}</b>
-            <p>${h.text}</p>
-            <small>${h.date}</small>
-            <button onclick="deleteHighlight('${h.id}')">🗑</button>
-        </div>
-    `);
+    highlightList.innerHTML = items.length
+        ? items.map(h => `
+            <div class="card">
+                <b>${h.title}</b>
+                <p>${h.text}</p>
+                <small>${h.date}</small>
+                <button onclick="deleteHighlight('${h.id}')">🗑</button>
+            </div>
+        `).join("")
+        : "<p>Geen highlights</p>";
 });
 
 window.deleteHighlight = (id) =>
     remove(ref(db, "highlights/" + id));
 
-// ===============================
+// =====================================================
 // 🧱 CLUB VAN 100
-// ===============================
+// =====================================================
 
 const clubInput = document.getElementById("clubName");
 const clubBtn = document.getElementById("saveClub100");
@@ -157,26 +179,28 @@ onValue(ref(db, "club100"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    render(clubList, items, (p) => {
+    clubList.innerHTML = items.length
+        ? items.map(p => {
 
-        const parts = p.name.split(" ");
+            const parts = p.name.split(" ");
 
-        return `
-            <div class="tile">
-                <div>${parts[0] || ""}</div>
-                <div>${parts.slice(1).join(" ")}</div>
-                <button onclick="deleteClub('${p.id}')">🗑</button>
-            </div>
-        `;
-    });
+            return `
+                <div class="tile">
+                    <div>${parts[0] || ""}</div>
+                    <div>${parts.slice(1).join(" ")}</div>
+                    <button onclick="deleteClub('${p.id}')">🗑</button>
+                </div>
+            `;
+        }).join("")
+        : "<p>Geen leden</p>";
 });
 
 window.deleteClub = (id) =>
     remove(ref(db, "club100/" + id));
 
-// ===============================
+// =====================================================
 // 🤝 SPONSORS
-// ===============================
+// =====================================================
 
 const sponsorList = document.getElementById("sponsorList");
 
@@ -187,20 +211,22 @@ onValue(ref(db, "sponsors"), (snap) => {
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }));
 
-    render(sponsorList, items, (s) => `
-        <div class="card">
-            <img src="${s.imageUrl}">
-            <button onclick="deleteSponsor('${s.id}')">🗑</button>
-        </div>
-    `);
+    sponsorList.innerHTML = items.length
+        ? items.map(s => `
+            <div class="card">
+                <img src="${s.imageUrl}">
+                <button onclick="deleteSponsor('${s.id}')">🗑</button>
+            </div>
+        `).join("")
+        : "<p>Geen sponsors</p>";
 });
 
 window.deleteSponsor = (id) =>
     remove(ref(db, "sponsors/" + id));
 
-// ===============================
+// =====================================================
 // 📸 OME JAN
-// ===============================
+// =====================================================
 
 const omeList = document.getElementById("omejanList");
 
@@ -211,12 +237,14 @@ onValue(ref(db, "omejan"), (snap) => {
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }));
 
-    render(omeList, items, (o) => `
-        <div class="card">
-            <img src="${o.imageUrl}">
-            <button onclick="deleteOmeJan('${o.id}')">🗑</button>
-        </div>
-    `);
+    omeList.innerHTML = items.length
+        ? items.map(o => `
+            <div class="card">
+                <img src="${o.imageUrl}">
+                <button onclick="deleteOmeJan('${o.id}')">🗑</button>
+            </div>
+        `).join("")
+        : "<p>Geen items</p>";
 });
 
 window.deleteOmeJan = (id) =>
