@@ -56,21 +56,15 @@ onValue(ref(db,"club100"), snap=>{
 });
 
 // =====================
-// 🏆 HIGHLIGHTS (MET DATUM)
+// 🏆 HIGHLIGHTS (WITH DATE)
 // =====================
 
 document.getElementById("saveHighlight")?.addEventListener("click", async () => {
 
-    const date = document.getElementById("hlDate").value;
-    const title = document.getElementById("hlTitle").value;
-    const text = document.getElementById("hlText").value;
-
-    if(!title) return;
-
     await push(ref(db,"highlights"),{
-        date,
-        title,
-        text,
+        date: document.getElementById("hlDate").value,
+        title: document.getElementById("hlTitle").value,
+        text: document.getElementById("hlText").value,
         created:Date.now()
     });
 });
@@ -90,28 +84,24 @@ onValue(ref(db,"highlights"), snap=>{
 });
 
 // =====================
-// 📰 NEWS + CLOUDINARY IMAGE FIX
+// 📰 NEWS (CLOUDINARY IMAGE)
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
 
     const file = document.getElementById("newsImage")?.files[0];
+    let url = "";
 
-    let imgUrl = "";
     if(file){
-        imgUrl = await uploadImage(file);
+        url = await uploadImage(file);
     }
 
     await push(ref(db,"news"),{
         title:document.getElementById("newsTitle").value,
         text:document.getElementById("newsText").value,
-        imageUrl:imgUrl,
+        imageUrl:url,
         created:Date.now()
     });
-
-    document.getElementById("newsTitle").value="";
-    document.getElementById("newsText").value="";
-    if(document.getElementById("newsImage")) document.getElementById("newsImage").value="";
 });
 
 onValue(ref(db,"news"), snap=>{
@@ -123,10 +113,7 @@ onValue(ref(db,"news"), snap=>{
             <b>${v.title}</b>
             <p>${v.text}</p>
 
-            ${v.imageUrl 
-                ? `<img src="${v.imageUrl}" onerror="this.style.display='none'">`
-                : ""
-            }
+            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
 
             <button onclick="del('news','${id}')">🗑</button>
         </div>
@@ -134,7 +121,7 @@ onValue(ref(db,"news"), snap=>{
 });
 
 // =====================
-// 🤝 SPONSORS (CLOUDINARY)
+// 🤝 SPONSORS (FIXED DELETE)
 // =====================
 
 document.getElementById("saveSponsor")?.addEventListener("click", async () => {
@@ -156,15 +143,16 @@ onValue(ref(db,"sponsors"), snap=>{
     const data = snap.val() || {};
     const list = document.getElementById("sponsorList");
 
-    list.innerHTML = Object.values(data).map(v=>`
+    list.innerHTML = Object.entries(data).map(([id,v])=>`
         <div class="card">
-            <img src="${v.imageUrl}" onerror="this.style.display='none'">
+            <img src="${v.imageUrl}">
+            <button onclick="del('sponsors','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 📸 OME JAN (CLOUDINARY)
+// 📸 OME JAN (FIXED DELETE)
 // =====================
 
 document.getElementById("saveOmejan")?.addEventListener("click", async () => {
@@ -186,17 +174,18 @@ onValue(ref(db,"omejan"), snap=>{
     const data = snap.val() || {};
     const list = document.getElementById("omejanList");
 
-    list.innerHTML = Object.values(data).map(v=>`
+    list.innerHTML = Object.entries(data).map(([id,v])=>`
         <div class="card">
-            <img src="${v.imageUrl}" onerror="this.style.display='none'">
+            <img src="${v.imageUrl}">
+            <button onclick="del('omejan','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 🧹 DELETE SYSTEM
+// 🧹 DELETE (GLOBAL FIX)
 // =====================
 
 window.del = (path,id)=>{
-    remove(ref(db,path+"/"+id));
+    remove(ref(db, path + "/" + id));
 };
