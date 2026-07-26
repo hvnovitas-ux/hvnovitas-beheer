@@ -1,20 +1,50 @@
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Club100 - HV Novitas</title>
+<style>
+body{
+    margin:0;
+    font-family:Georgia;
+    background: radial-gradient(circle at top, #fff3e0, #f7e6cc, #f2d9b8);
+}
 
-<!-- 🔥 JOUW CLUB100 CSS -->
-<link rel="stylesheet" href="club100.css">
+#clubList{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+    gap:16px;
+    padding:16px;
+}
 
-</head>
+#clubList > div{
+    aspect-ratio:1/1;
 
-<body>
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-<!-- 🧱 CLUB100 CONTAINER -->
-<div id="clubList"></div>
+    background: radial-gradient(circle at top left, #ffffff, #eef3ff);
+    border:6px solid #1b4f9c;
+    border-radius:16px;
 
-<!-- ⚙️ CLUB100 SCRIPT -->
-<script type="module" src="club100.js"></script>
+    font-weight:bold;
+    color:#1b3f7a;
 
-</body>
-</html>
+    box-shadow:
+        inset 0 0 0 2px #ffffff,
+        0 10px 22px rgba(0,0,0,0.18);
+
+    position:relative;
+    overflow:hidden;
+
+    transition:0.2s ease;
+}
+
+#clubList > div::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
+    pointer-events:none;
+}
+
+#clubList > div:hover{
+    transform:scale(1.05);
+}
+</style>
