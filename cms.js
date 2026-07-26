@@ -6,7 +6,19 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NOVITAS CMS FULL SYSTEM LOADED");
+console.log("🧡 NOVITAS CMS LOADED");
+
+// =====================================================
+// 🔥 UNIVERSELE RENDER HELPER (BELANGRIJK)
+// =====================================================
+
+function renderGrid(listElement, items, templateFn, emptyText) {
+    if (!listElement) return;
+
+    listElement.innerHTML = items.length
+        ? items.map(templateFn).join("")
+        : `<p style="opacity:0.7"> ${emptyText} </p>`;
+}
 
 // =====================================================
 // 📰 NEWS
@@ -21,16 +33,12 @@ const newsList = document.getElementById("newsList");
 newsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const t = title.value;
-    const tx = text.value;
     const file = image?.files?.[0];
-
-    if (!t || !tx) return;
 
     const save = async (imageUrl = "") => {
         await push(ref(db, "news"), {
-            title: t,
-            text: tx,
+            title: title.value,
+            text: text.value,
             imageUrl,
             created: Date.now()
         });
@@ -55,36 +63,25 @@ newsForm?.addEventListener("submit", async (e) => {
     }
 });
 
-onValue(ref(db, "news"), (snapshot) => {
+onValue(ref(db, "news"), (snap) => {
 
-    const data = snapshot.val() || {};
-
+    const data = snap.val() || {};
     const items = Object.entries(data)
-        .map(([id, item]) => ({ id, ...item }))
+        .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    newsList.innerHTML = items.length
-        ? items.map(n => `
-            <div class="card news">
-                <b>${n.title}</b>
-
-                ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
-
-                <p>${n.text}</p>
-
-                <small>
-                    📅 ${new Date(n.created).toLocaleDateString()}
-                </small>
-
-                <button onclick="deleteNews('${n.id}')">🗑</button>
-            </div>
-        `).join("")
-        : "<p>Geen nieuws</p>";
+    renderGrid(newsList, items, (n) => `
+        <div class="card">
+            <b>${n.title}</b>
+            ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
+            <p>${n.text}</p>
+            <button onclick="deleteNews('${n.id}')">🗑</button>
+        </div>
+    `, "Geen nieuws");
 });
 
-window.deleteNews = async (id) => {
-    await remove(ref(db, "news/" + id));
-};
+window.deleteNews = (id) =>
+    remove(ref(db, "news/" + id));
 
 // =====================================================
 // 🏆 HIGHLIGHTS
@@ -98,12 +95,12 @@ const highlightList = document.getElementById("highlightList");
 
 saveHighlight?.addEventListener("click", async () => {
 
-    if (!hlDate?.value || !hlTitle?.value) return;
+    if (!hlTitle.value) return;
 
     await push(ref(db, "highlights"), {
         date: hlDate.value,
         title: hlTitle.value,
-        text: hlText.value || "",
+        text: hlText.value,
         created: Date.now()
     });
 
@@ -111,33 +108,28 @@ saveHighlight?.addEventListener("click", async () => {
     hlText.value = "";
 });
 
-onValue(ref(db, "highlights"), (snapshot) => {
+onValue(ref(db, "highlights"), (snap) => {
 
-    const data = snapshot.val() || {};
-
+    const data = snap.val() || {};
     const items = Object.entries(data)
-        .map(([id, item]) => ({ id, ...item }))
+        .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    highlightList.innerHTML = items.length
-        ? items.map(h => `
-            <div class="card highlight">
-                <b>${h.title}</b>
-                <p>${h.text}</p>
-                <small>${h.date}</small>
-
-                <button onclick="deleteHighlight('${h.id}')">🗑</button>
-            </div>
-        `).join("")
-        : "<p>Geen highlights</p>";
+    renderGrid(highlightList, items, (h) => `
+        <div class="card">
+            <b>${h.title}</b>
+            <p>${h.text}</p>
+            <small>${h.date}</small>
+            <button onclick="deleteHighlight('${h.id}')">🗑</button>
+        </div>
+    `, "Geen highlights");
 });
 
-window.deleteHighlight = async (id) => {
-    await remove(ref(db, "highlights/" + id));
-};
+window.deleteHighlight = (id) =>
+    remove(ref(db, "highlights/" + id));
 
 // =====================================================
-// 🧱 CLUB VAN 100
+// 🧱 CLUB VAN 100 (FIXED GRID PROOF)
 // =====================================================
 
 const clubInput = document.getElementById("clubName");
@@ -146,38 +138,39 @@ const clubList = document.getElementById("clubList");
 
 clubBtn?.addEventListener("click", async () => {
 
-    const name = clubInput.value;
-    if (!name) return;
+    if (!clubInput.value) return;
 
     await push(ref(db, "club100"), {
-        name,
+        name: clubInput.value,
         created: Date.now()
     });
 
     clubInput.value = "";
 });
 
-onValue(ref(db, "club100"), (snapshot) => {
+onValue(ref(db, "club100"), (snap) => {
 
-    const data = snapshot.val() || {};
-
+    const data = snap.val() || {};
     const items = Object.entries(data)
-        .map(([id, item]) => ({ id, ...item }))
+        .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    clubList.innerHTML = items.length
-        ? items.map(p => `
+    renderGrid(clubList, items, (p) => {
+
+        const parts = (p.name || "").split(" ");
+
+        return `
             <div class="tile">
-                ${p.name}
+                <div>${parts[0] || ""}</div>
+                <div>${parts.slice(1).join(" ")}</div>
                 <button onclick="deleteClub('${p.id}')">🗑</button>
             </div>
-        `).join("")
-        : "<p>Geen leden</p>";
+        `;
+    }, "Geen leden");
 });
 
-window.deleteClub = async (id) => {
-    await remove(ref(db, "club100/" + id));
-};
+window.deleteClub = (id) =>
+    remove(ref(db, "club100/" + id));
 
 // =====================================================
 // 🤝 SPONSORS
@@ -211,21 +204,21 @@ sponsorBtn?.addEventListener("click", async () => {
     sponsorFile.value = "";
 });
 
-onValue(ref(db, "sponsors"), (snapshot) => {
+onValue(ref(db, "sponsors"), (snap) => {
 
-    const data = snapshot.val() || {};
+    const data = snap.val() || {};
+    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
 
-    sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
-        <div class="card sponsor">
+    renderGrid(sponsorList, items, (s) => `
+        <div class="card">
             <img src="${s.imageUrl}">
-            <button onclick="deleteSponsor('${id}')">🗑</button>
+            <button onclick="deleteSponsor('${s.id}')">🗑</button>
         </div>
-    `).join("");
+    `, "Geen sponsors");
 });
 
-window.deleteSponsor = async (id) => {
-    await remove(ref(db, "sponsors/" + id));
-};
+window.deleteSponsor = (id) =>
+    remove(ref(db, "sponsors/" + id));
 
 // =====================================================
 // 📸 OME JAN
@@ -259,18 +252,18 @@ omeBtn?.addEventListener("click", async () => {
     omeFile.value = "";
 });
 
-onValue(ref(db, "omejan"), (snapshot) => {
+onValue(ref(db, "omejan"), (snap) => {
 
-    const data = snapshot.val() || {};
+    const data = snap.val() || {};
+    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
 
-    omeList.innerHTML = Object.entries(data).map(([id, o]) => `
-        <div class="card ome">
+    renderGrid(omeList, items, (o) => `
+        <div class="card">
             <img src="${o.imageUrl}">
-            <button onclick="deleteOmeJan('${id}')">🗑</button>
+            <button onclick="deleteOmeJan('${o.id}')">🗑</button>
         </div>
-    `).join("");
+    `, "Geen items");
 });
 
-window.deleteOmeJan = async (id) => {
-    await remove(ref(db, "omejan/" + id));
-};
+window.deleteOmeJan = (id) =>
+    remove(ref(db, "omejan/" + id));
