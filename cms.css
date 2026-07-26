@@ -5,23 +5,16 @@
 body{
     margin:0;
     font-family:Georgia;
-
-    /* 🟧 warme achtergrond */
     background: linear-gradient(135deg, #fff3e0, #ffe0b2);
     color:#2b2b2b;
 }
 
-/* =========================
-   📦 SECTIONS
-========================= */
-
+/* 📦 SECTIONS */
 .section{
     margin:20px;
     padding:15px;
-
     background:white;
     border-radius:12px;
-
     box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
@@ -30,10 +23,7 @@ body{
     margin-bottom:10px;
 }
 
-/* =========================
-   🔥 GRID SYSTEM
-========================= */
-
+/* 🔥 GRID */
 #clubList,
 #highlightList,
 #newsList,
@@ -44,10 +34,7 @@ body{
     gap:12px;
 }
 
-/* =========================
-   🧱 CLUB100 TILE (JOUW MOOIE VERSIE)
-========================= */
-
+/* 🧱 CLUB100 TILE (KERAMIEK STYLE) */
 .tile{
     aspect-ratio:1/1;
     display:flex;
@@ -72,7 +59,7 @@ body{
     text-align:center;
 }
 
-/* ✨ glans effect */
+/* ✨ glans */
 .tile::before{
     content:"";
     position:absolute;
@@ -82,13 +69,9 @@ body{
     height:160%;
     background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 60%);
     transform:rotate(25deg);
-    pointer-events:none;
 }
 
-/* =========================
-   🧱 CARDS (NEWS / SPONSORS / ETC)
-========================= */
-
+/* 🧱 CARDS */
 .card{
     background:white;
     border-radius:12px;
@@ -100,10 +83,7 @@ body{
     text-align:center;
 }
 
-/* =========================
-   🖼 IMAGES
-========================= */
-
+/* 🖼 IMAGES */
 .card img{
     width:100%;
     max-height:85px;
@@ -111,12 +91,8 @@ body{
     border-radius:8px;
 }
 
-/* =========================
-   🗑 DELETE BUTTON
-========================= */
-
+/* 🗑 BUTTON */
 button{
     margin-top:6px;
-    font-size:12px;
     cursor:pointer;
 }
