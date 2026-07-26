@@ -6,48 +6,21 @@ body{
     margin:0;
     font-family:Georgia;
     background: linear-gradient(135deg, #fff3e0, #ffe0b2);
-    display:flex;
-    justify-content:center;
-}
-
-/* 📦 CENTRALE WRAPPER */
-body > *{
-    width:100%;
-    max-width:1100px;
+    color:#2b2b2b;
 }
 
 /* 📦 SECTIONS */
 .section{
-    margin:12px;
-    padding:14px;
+    margin:15px;
+    padding:15px;
     background:white;
     border-radius:12px;
     box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
-/* TITELS */
 .section h2{
     margin:0 0 10px 0;
     font-size:18px;
-}
-
-/* ➕ INPUTS */
-input{
-    padding:8px;
-    margin:4px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    width:180px;
-}
-
-button{
-    padding:8px 12px;
-    margin:4px;
-    border-radius:8px;
-    border:none;
-    background:#1e4f8a;
-    color:white;
-    cursor:pointer;
 }
 
 /* 🔥 GRID */
@@ -57,11 +30,11 @@ button{
 #sponsorList,
 #omejanList{
     display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-    gap:10px;
+    grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+    gap:12px;
 }
 
-/* 🧱 CLUB100 */
+/* 🧱 CLUB100 TILE */
 .tile{
     aspect-ratio:1/1;
     display:flex;
@@ -75,7 +48,6 @@ button{
 
     font-weight:bold;
     color:#1e4f8a;
-
     position:relative;
 }
 
@@ -84,20 +56,32 @@ button{
     background:white;
     border-radius:12px;
     padding:10px;
+
     display:flex;
     flex-direction:column;
     align-items:center;
+    text-align:center;
 }
 
 /* 🖼 IMAGES */
 .card img{
     width:100%;
-    max-height:80px;
+    max-height:85px;
     object-fit:cover;
     border-radius:8px;
 }
 
-/* 🗑 DELETE */
+/* 🗑 BUTTON */
+button{
+    margin-top:6px;
+    padding:6px 10px;
+    border:none;
+    border-radius:6px;
+    background:#1e4f8a;
+    color:white;
+    cursor:pointer;
+}
+
 button:hover{
     opacity:0.85;
 }
