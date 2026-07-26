@@ -3,14 +3,16 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 
 console.log("🏺 CLUB100 LOADED");
 
-const clubList = document.getElementById("clubList");
-
 onValue(ref(db, "club100"), (snapshot) => {
 
+    const clubList = document.getElementById("clubList");
+
+    if (!clubList) {
+        console.log("❌ clubList niet gevonden in DOM");
+        return;
+    }
+
     const data = snapshot.val() || {};
-
-    if (!clubList) return;
-
     const items = Object.entries(data);
 
     if (items.length === 0) {
@@ -23,4 +25,5 @@ onValue(ref(db, "club100"), (snapshot) => {
             <div>${p.name || ""}</div>
         </div>
     `).join("");
+
 });
