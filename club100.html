@@ -25,7 +25,7 @@ body{
     padding:18px;
 }
 
-/* 🟦 OUD-HOLLANDSE TEGELS (VERSIERD) */
+/* 🟦 OUD-HOLLANDSE TEGEL */
 #clubList > div{
     aspect-ratio:1/1;
 
@@ -55,7 +55,7 @@ body{
     transition:0.25s ease;
 }
 
-/* ✨ glans licht */
+/* ✨ glans */
 #clubList > div::before{
     content:"";
     position:absolute;
@@ -68,7 +68,7 @@ body{
     pointer-events:none;
 }
 
-/* 🧩 BINNENRANDE DETAIL */
+/* 🧩 binnenrand */
 #clubList > div::after{
     content:"";
     position:absolute;
@@ -77,23 +77,33 @@ body{
     border:1px solid rgba(27,79,156,0.25);
     border-radius:14px;
 
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.08);
-
     pointer-events:none;
 }
 
-/* 🧱 TEKST BOVEN EFFECT */
-#clubList > div > *{
+/* 🧱 TEXT LAYOUT */
+.tile-inner{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
     position:relative;
     z-index:2;
 }
 
-/* 🚀 HOVER */
+.first{
+    font-size:16px;
+    font-weight:bold;
+}
+
+.last{
+    font-size:14px;
+    opacity:0.85;
+}
+
+/* hover */
 #clubList > div:hover{
     transform:scale(1.06);
-    box-shadow:
-        inset 0 0 0 2px #ffffff,
-        0 18px 35px rgba(0,0,0,0.28);
 }
 
 </style>
@@ -126,15 +136,22 @@ onValue(ref(db, "club100"), (snapshot) => {
         return;
     }
 
-    clubList.innerHTML = items.map(([id, p]) => `
-        <div>
-            ${p.name || ""}
-        </div>
-    `).join("");
+    clubList.innerHTML = items.map(([id, p]) => {
+
+        const fullName = (p.name || "").trim();
+        const parts = fullName.split(" ");
+
+        const firstName = parts[0] || "";
+        const lastName = parts.slice(1).join(" ");
+
+        return `
+            <div>
+                <div class="tile-inner">
+                    <div class="first">${firstName}</div>
+                    <div class="last">${lastName}</div>
+                </div>
+            </div>
+        `;
+    }).join("");
 
 });
-
-</script>
-
-</body>
-</html>
