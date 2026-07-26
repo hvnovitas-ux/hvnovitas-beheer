@@ -4,90 +4,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Club van 100 - HV Novitas</title>
+<title>Club100 Test</title>
 
 <style>
 
 /* =========================
-   SAFE BASE
+   BASE
 ========================= */
 
 body{
     margin:0;
     font-family:Georgia;
     background:#fff3e0;
-    color:#1b3f7a;
 }
 
 /* =========================
-   GRID (UNCHANGED SAFE)
+   GRID
 ========================= */
 
-#clubList,
-#highlightList,
-#newsList,
-#sponsorList,
-#omejanList{
-    display:grid !important;
-    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-    gap:12px;
-    padding:12px;
+#clubList{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+    gap:14px;
+    padding:14px;
 }
 
 /* =========================
-   🟦 CLUB100 TEGELS (VERBETERD + MOOIER)
+   🟢 TEST: CLUB100 TEGELS GROEN
 ========================= */
 
-#clubList .tile{
+#clubList > div{
     aspect-ratio:1/1;
 
     display:flex;
     align-items:center;
     justify-content:center;
-    flex-direction:column;
 
-    background: radial-gradient(circle at top left, #ffffff, #eef3ff);
+    background: green !important; /* 🔥 TEST */
 
-    border:6px solid #1b4f9c;
-    border-radius:14px;
-
+    color:white;
     font-weight:bold;
-    color:#1b3f7a;
-    font-family:Georgia;
 
-    box-shadow:
-        inset 0 0 0 2px #ffffff,
-        0 8px 18px rgba(0,0,0,0.15);
+    border-radius:12px;
 
-    position:relative;
-    overflow:hidden;
-
-    transition:0.2s ease;
-}
-
-/* ✨ keramiek glans */
-#clubList .tile::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
-    pointer-events:none;
-}
-
-/* hover effect */
-#clubList .tile:hover{
-    transform:scale(1.04);
+    box-shadow:0 6px 14px rgba(0,0,0,0.2);
 }
 
 /* =========================
-   CARDS (OTHER CMS PARTS UNCHANGED)
+   OTHER CMS SECTIONS (SAFE)
 ========================= */
+
+#highlightList,
+#newsList,
+#sponsorList,
+#omejanList{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+    gap:12px;
+    padding:12px;
+}
 
 .card{
     background:white;
     padding:10px;
-    border-radius:12px;
-    border:2px solid #1b3f7a;
+    border-radius:10px;
+    border:1px solid #ccc;
 }
 
 .card img{
@@ -95,12 +76,6 @@ body{
     max-height:100px;
     object-fit:cover;
     border-radius:8px;
-}
-
-/* hover safe */
-.card:hover{
-    transform:scale(1.02);
-    transition:0.2s ease;
 }
 
 </style>
@@ -112,13 +87,11 @@ body{
 <!-- 🧱 CLUB100 -->
 <div id="clubList"></div>
 
-<!-- CMS SECTIES -->
+<!-- CMS SECTIONS -->
 <div id="highlightList"></div>
 <div id="newsList"></div>
 <div id="sponsorList"></div>
 <div id="omejanList"></div>
-
-<script type="module" src="club100.js"></script>
 
 </body>
 </html>
