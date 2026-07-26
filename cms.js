@@ -6,7 +6,33 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🔥 CMS SAFE MODE LOADED");
+console.log("🔥 CMS FINAL STABLE MODE ACTIVE");
+
+// =====================
+// ☁️ CLOUDINARY UPLOAD
+// =====================
+
+async function uploadImage(file){
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", "hvnovitas_upload");
+
+    const res = await fetch(
+        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
+        { method:"POST", body:form }
+    );
+
+    const data = await res.json();
+    return data.secure_url || "";
+}
+
+// =====================
+// 🧠 SAFE IMAGE HELPER
+// =====================
+
+function getImg(v){
+    return v?.imageUrl || v?.image || "";
+}
 
 // =====================
 // 🧱 CLUB100
@@ -25,7 +51,8 @@ document.getElementById("saveClub100")?.addEventListener("click", async () => {
     document.getElementById("clubName").value="";
 });
 
-onValue(ref(db,"club100"), snap=>{
+onValue(ref(db,"club100"), snap => {
+
     const list = document.getElementById("clubList");
     if(!list) return;
 
@@ -53,7 +80,8 @@ document.getElementById("saveHighlight")?.addEventListener("click", async () => 
     });
 });
 
-onValue(ref(db,"highlights"), snap=>{
+onValue(ref(db,"highlights"), snap => {
+
     const list = document.getElementById("highlightList");
     if(!list) return;
 
@@ -70,7 +98,7 @@ onValue(ref(db,"highlights"), snap=>{
 });
 
 // =====================
-// 📰 NEWS (SAFE IMAGES)
+// 📰 NEWS
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
@@ -79,17 +107,7 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
     let url = "";
 
     if(file){
-        const form = new FormData();
-        form.append("file", file);
-        form.append("upload_preset", "hvnovitas_upload");
-
-        const res = await fetch(
-            "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-            { method:"POST", body:form }
-        );
-
-        const data = await res.json();
-        url = data.secure_url || "";
+        url = await uploadImage(file);
     }
 
     await push(ref(db,"news"),{
@@ -100,7 +118,8 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
     });
 });
 
-onValue(ref(db,"news"), snap=>{
+onValue(ref(db,"news"), snap => {
+
     const list = document.getElementById("newsList");
     if(!list) return;
 
@@ -110,14 +129,16 @@ onValue(ref(db,"news"), snap=>{
         <div class="card">
             <b>${v.title || ""}</b>
             <p>${v.text || ""}</p>
-            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
+
+            ${getImg(v) ? `<img src="${getImg(v)}">` : ""}
+
             <button onclick="del('news','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 🤝 SPONSORS (NO CRASH)
+// 🤝 SPONSORS
 // =====================
 
 document.getElementById("saveSponsor")?.addEventListener("click", async () => {
@@ -125,24 +146,16 @@ document.getElementById("saveSponsor")?.addEventListener("click", async () => {
     const file = document.getElementById("sponsorImage")?.files[0];
     if(!file) return;
 
-    const form = new FormData();
-    form.append("file", file);
-    form.append("upload_preset", "hvnovitas_upload");
-
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-        { method:"POST", body:form }
-    );
-
-    const data = await res.json();
+    const url = await uploadImage(file);
 
     await push(ref(db,"sponsors"),{
-        imageUrl: data.secure_url || "",
+        imageUrl: url,
         created:Date.now()
     });
 });
 
-onValue(ref(db,"sponsors"), snap=>{
+onValue(ref(db,"sponsors"), snap => {
+
     const list = document.getElementById("sponsorList");
     if(!list) return;
 
@@ -150,14 +163,14 @@ onValue(ref(db,"sponsors"), snap=>{
 
     list.innerHTML = Object.entries(data).map(([id,v])=>`
         <div class="card">
-            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
+            ${getImg(v) ? `<img src="${getImg(v)}">` : "<div>Geen foto</div>"}
             <button onclick="del('sponsors','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 📸 OME JAN (NO CRASH)
+// 📸 OME JAN
 // =====================
 
 document.getElementById("saveOmejan")?.addEventListener("click", async () => {
@@ -165,24 +178,16 @@ document.getElementById("saveOmejan")?.addEventListener("click", async () => {
     const file = document.getElementById("omejanImage")?.files[0];
     if(!file) return;
 
-    const form = new FormData();
-    form.append("file", file);
-    form.append("upload_preset", "hvnovitas_upload");
-
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-        { method:"POST", body:form }
-    );
-
-    const data = await res.json();
+    const url = await uploadImage(file);
 
     await push(ref(db,"omejan"),{
-        imageUrl: data.secure_url || "",
+        imageUrl: url,
         created:Date.now()
     });
 });
 
-onValue(ref(db,"omejan"), snap=>{
+onValue(ref(db,"omejan"), snap => {
+
     const list = document.getElementById("omejanList");
     if(!list) return;
 
@@ -190,14 +195,14 @@ onValue(ref(db,"omejan"), snap=>{
 
     list.innerHTML = Object.entries(data).map(([id,v])=>`
         <div class="card">
-            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
+            ${getImg(v) ? `<img src="${getImg(v)}">` : "<div>Geen foto</div>"}
             <button onclick="del('omejan','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 🧹 DELETE SAFE
+// 🧹 DELETE SYSTEM
 // =====================
 
 window.del = (path,id)=>{
