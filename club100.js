@@ -1,46 +1,31 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 CLUB100 LOADED OK");
-
-// ===============================
-// 📦 GET CONTAINER
-// ===============================
+console.log("🏺 CLUB100 LIVE");
 
 const clubList = document.getElementById("clubList");
-
-// ===============================
-// 🔥 LIVE FIREBASE DATA
-// ===============================
 
 onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val();
 
     if (!data) {
-        clubList.innerHTML = `
-            <div style="color:white;text-align:center;padding:20px;">
-                Nog geen leden
-            </div>
-        `;
+        clubList.innerHTML = "<p>Geen leden</p>";
         return;
     }
 
     const items = Object.entries(data);
 
     clubList.innerHTML = items.map(([id, p]) => {
-
-        const name = p.name || "";
-        const parts = name.split(" ");
+        const parts = (p.name || "").split(" ");
 
         return `
             <div class="tile">
-                <div class="tile-name">
-                    <div>${parts[0] || ""}</div>
-                    <div>${parts.slice(1).join(" ")}</div>
+                <div class="tile-text">
+                    <div class="first">${parts[0] || ""}</div>
+                    <div class="last">${parts.slice(1).join(" ")}</div>
                 </div>
             </div>
         `;
     }).join("");
 });
-🎨 BELANG
