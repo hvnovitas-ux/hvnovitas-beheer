@@ -1,11 +1,35 @@
 import { db } from "./firebase.js";
-import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import {
+    ref,
+    push,
+    onValue,
+    remove
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NOVITAS CMS CLEAN LOADED");
+console.log("🧡 CMS RESET VERSION LOADED");
 
-// ===============================
-// 🧱 NEWS
-// ===============================
+// =====================================================
+// ☁️ CLOUDINARY UPLOAD
+// =====================================================
+
+const uploadImage = async (file) => {
+
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", "hvnovitas_upload");
+
+    const res = await fetch(
+        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
+        { method: "POST", body: fd }
+    );
+
+    const data = await res.json();
+    return data.secure_url || "";
+};
+
+// =====================================================
+// 📰 NEWS
+// =====================================================
 
 const newsForm = document.getElementById("newsForm");
 const title = document.getElementById("title");
@@ -16,10 +40,17 @@ const newsList = document.getElementById("newsList");
 newsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const file = image?.files?.[0];
+    let imageUrl = "";
+
+    if (file) {
+        imageUrl = await uploadImage(file);
+    }
+
     await push(ref(db, "news"), {
         title: title.value,
         text: text.value,
-        imageUrl: "",
+        imageUrl,
         created: Date.now()
     });
 
@@ -33,23 +64,22 @@ onValue(ref(db, "news"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    newsList.innerHTML = items.length
-        ? items.map(n => `
-            <div class="card">
-                <b>${n.title}</b>
-                <p>${n.text}</p>
-                <button onclick="deleteNews('${n.id}')">🗑</button>
-            </div>
-        `).join("")
-        : "<p>Geen nieuws</p>";
+    newsList.innerHTML = items.map(n => `
+        <div class="card">
+            <b>${n.title}</b>
+            <p>${n.text}</p>
+            ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
+            <button onclick="deleteNews('${n.id}')">🗑</button>
+        </div>
+    `).join("");
 });
 
 window.deleteNews = (id) =>
     remove(ref(db, "news/" + id));
 
-// ===============================
+// =====================================================
 // 🏆 HIGHLIGHTS
-// ===============================
+// =====================================================
 
 const hlDate = document.getElementById("hlDate");
 const hlTitle = document.getElementById("hlTitle");
@@ -77,24 +107,22 @@ onValue(ref(db, "highlights"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    highlightList.innerHTML = items.length
-        ? items.map(h => `
-            <div class="card">
-                <b>${h.title}</b>
-                <p>${h.text}</p>
-                <small>${h.date}</small>
-                <button onclick="deleteHighlight('${h.id}')">🗑</button>
-            </div>
-        `).join("")
-        : "<p>Geen highlights</p>";
+    highlightList.innerHTML = items.map(h => `
+        <div class="card">
+            <b>${h.title}</b>
+            <p>${h.text}</p>
+            <small>${h.date || ""}</small>
+            <button onclick="deleteHighlight('${h.id}')">🗑</button>
+        </div>
+    `).join("");
 });
 
 window.deleteHighlight = (id) =>
     remove(ref(db, "highlights/" + id));
 
-// ===============================
-// 🧱 CLUB VAN 100
-// ===============================
+// =====================================================
+// 🧱 CLUB VAN 100 (TEGELS)
+// =====================================================
 
 const clubInput = document.getElementById("clubName");
 const clubBtn = document.getElementById("saveClub100");
@@ -117,22 +145,24 @@ onValue(ref(db, "club100"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    clubList.innerHTML = items.length
-        ? items.map(p => `
+    clubList.innerHTML = items.map(p => {
+        const parts = (p.name || "").split(" ");
+
+        return `
             <div class="tile">
-                ${p.name}
-                <button onclick="deleteClub('${p.id}')">🗑</button>
+                <div>${parts[0] || ""}</div>
+                <div>${parts.slice(1).join(" ")}</div>
             </div>
-        `).join("")
-        : "<p>Geen leden</p>";
+        `;
+    }).join("");
 });
 
 window.deleteClub = (id) =>
     remove(ref(db, "club100/" + id));
 
-// ===============================
+// =====================================================
 // 🤝 SPONSORS
-// ===============================
+// =====================================================
 
 const sponsorList = document.getElementById("sponsorList");
 
@@ -142,22 +172,20 @@ onValue(ref(db, "sponsors"), (snap) => {
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }));
 
-    sponsorList.innerHTML = items.length
-        ? items.map(s => `
-            <div class="card">
-                <img src="${s.imageUrl}">
-                <button onclick="deleteSponsor('${s.id}')">🗑</button>
-            </div>
-        `).join("")
-        : "<p>Geen sponsors</p>";
+    sponsorList.innerHTML = items.map(s => `
+        <div class="card">
+            <img src="${s.imageUrl}">
+            <button onclick="deleteSponsor('${s.id}')">🗑</button>
+        </div>
+    `).join("");
 });
 
 window.deleteSponsor = (id) =>
     remove(ref(db, "sponsors/" + id));
 
-// ===============================
+// =====================================================
 // 📸 OME JAN
-// ===============================
+// =====================================================
 
 const omeList = document.getElementById("omejanList");
 
@@ -167,14 +195,12 @@ onValue(ref(db, "omejan"), (snap) => {
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }));
 
-    omeList.innerHTML = items.length
-        ? items.map(o => `
-            <div class="card">
-                <img src="${o.imageUrl}">
-                <button onclick="deleteOmeJan('${o.id}')">🗑</button>
-            </div>
-        `).join("")
-        : "<p>Geen items</p>";
+    omeList.innerHTML = items.map(o => `
+        <div class="card">
+            <img src="${o.imageUrl}">
+            <button onclick="deleteOmeJan('${o.id}')">🗑</button>
+        </div>
+    `).join("");
 });
 
 window.deleteOmeJan = (id) =>
