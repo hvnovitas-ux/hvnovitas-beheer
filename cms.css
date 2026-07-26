@@ -1,5 +1,5 @@
 /* =========================
-   🌐 LAYOUT (NO GRID PROBLEMS)
+   🔥 GRID FIX (BELANGRIJK)
 ========================= */
 
 #clubList,
@@ -7,18 +7,17 @@
 #newsList,
 #sponsorList,
 #omejanList {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
     padding: 10px;
 }
 
 /* =========================
-   🧱 CARD SYSTEM
+   🧱 CARDS
 ========================= */
 
 .card {
-    width: 140px;
     background: white;
     border-radius: 12px;
     padding: 10px;
@@ -30,7 +29,6 @@
     align-items: center;
 
     font-family: Arial;
-    font-size: 13px;
 }
 
 /* =========================
@@ -38,12 +36,11 @@
 ========================= */
 
 .tile {
-    width: 120px;
-    height: 120px;
-
     background: #fbfaf6;
     border: 5px solid #1e4f8a;
     border-radius: 12px;
+
+    aspect-ratio: 1 / 1;
 
     display: flex;
     align-items: center;
@@ -56,7 +53,7 @@
 }
 
 /* =========================
-   🖼 AFBEELDINGEN (FIX FOTO GROOTTE)
+   🖼 FOTO FIX
 ========================= */
 
 .card img {
@@ -67,7 +64,7 @@
 }
 
 /* =========================
-   ✨ HOVER EFFECT
+   ✨ HOVER
 ========================= */
 
 .card:hover,
