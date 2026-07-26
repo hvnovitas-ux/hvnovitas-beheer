@@ -7,24 +7,20 @@ const clubList = document.getElementById("clubList");
 
 onValue(ref(db, "club100"), (snapshot) => {
 
-    const data = snapshot.val();
+    const data = snapshot.val() || {};
 
-    if (!data) {
-        clubList.innerHTML = "<p style='color:white'>Geen leden</p>";
-        return;
-    }
+    if (!clubList) return;
 
     const items = Object.entries(data);
 
-    clubList.innerHTML = items.map(([id, p]) => {
+    if (items.length === 0) {
+        clubList.innerHTML = "<div class='tile'>Geen leden</div>";
+        return;
+    }
 
-        const parts = (p.name || "").split(" ");
-
-        return `
-            <div class="tile">
-                <div>${parts[0] || ""}</div>
-                <div>${parts.slice(1).join(" ")}</div>
-            </div>
-        `;
-    }).join("");
+    clubList.innerHTML = items.map(([id, p]) => `
+        <div class="tile">
+            <div>${p.name || ""}</div>
+        </div>
+    `).join("");
 });
