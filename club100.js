@@ -3,14 +3,26 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 
 console.log("🏺 CLUB100 LOADED OK");
 
+// ===============================
+// 📦 GET CONTAINER
+// ===============================
+
 const clubList = document.getElementById("clubList");
+
+// ===============================
+// 🔥 LIVE FIREBASE DATA
+// ===============================
 
 onValue(ref(db, "club100"), (snapshot) => {
 
     const data = snapshot.val();
 
     if (!data) {
-        clubList.innerHTML = "<p style='color:white;text-align:center'>Geen leden</p>";
+        clubList.innerHTML = `
+            <div style="color:white;text-align:center;padding:20px;">
+                Nog geen leden
+            </div>
+        `;
         return;
     }
 
@@ -31,3 +43,4 @@ onValue(ref(db, "club100"), (snapshot) => {
         `;
     }).join("");
 });
+🎨 BELANG
