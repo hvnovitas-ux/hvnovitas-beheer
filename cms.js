@@ -6,86 +6,62 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 NOVITAS CMS LOADED");
+console.log("🧡 CMS MASTER LOADED");
 
-// =====================================================
-// 🔥 UNIVERSELE RENDER HELPER (BELANGRIJK)
-// =====================================================
+// ===============================
+// 🔥 UNIVERSEEL RENDER SYSTEEM
+// ===============================
 
-function renderGrid(listElement, items, templateFn, emptyText) {
-    if (!listElement) return;
+function render(list, items, template, emptyText) {
+    if (!list) return;
 
-    listElement.innerHTML = items.length
-        ? items.map(templateFn).join("")
-        : `<p style="opacity:0.7"> ${emptyText} </p>`;
+    list.innerHTML = items.length
+        ? items.map(template).join("")
+        : `<p>${emptyText}</p>`;
 }
 
-// =====================================================
-// 📰 NEWS
-// =====================================================
+// ===============================
+// 🧱 CLUB VAN 100
+// ===============================
 
-const newsForm = document.getElementById("newsForm");
-const title = document.getElementById("title");
-const text = document.getElementById("text");
-const image = document.getElementById("newsImage");
-const newsList = document.getElementById("newsList");
+const clubInput = document.getElementById("clubName");
+const clubBtn = document.getElementById("saveClub100");
+const clubList = document.getElementById("clubList");
 
-newsForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
+clubBtn?.addEventListener("click", async () => {
 
-    const file = image?.files?.[0];
+    if (!clubInput.value) return;
 
-    const save = async (imageUrl = "") => {
-        await push(ref(db, "news"), {
-            title: title.value,
-            text: text.value,
-            imageUrl,
-            created: Date.now()
-        });
+    await push(ref(db, "club100"), {
+        name: clubInput.value,
+        created: Date.now()
+    });
 
-        newsForm.reset();
-    };
-
-    if (file) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("upload_preset", "hvnovitas_upload");
-
-        const res = await fetch(
-            "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-            { method: "POST", body: fd }
-        );
-
-        const data = await res.json();
-        save(data.secure_url || "");
-    } else {
-        save("");
-    }
+    clubInput.value = "";
 });
 
-onValue(ref(db, "news"), (snap) => {
+onValue(ref(db, "club100"), (snap) => {
 
     const data = snap.val() || {};
+
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    renderGrid(newsList, items, (n) => `
-        <div class="card">
-            <b>${n.title}</b>
-            ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
-            <p>${n.text}</p>
-            <button onclick="deleteNews('${n.id}')">🗑</button>
+    render(clubList, items, (p) => `
+        <div class="card tile">
+            ${p.name}
+            <button onclick="deleteClub('${p.id}')">🗑</button>
         </div>
-    `, "Geen nieuws");
+    `, "Geen leden");
 });
 
-window.deleteNews = (id) =>
-    remove(ref(db, "news/" + id));
+window.deleteClub = (id) =>
+    remove(ref(db, "club100/" + id));
 
-// =====================================================
+// ===============================
 // 🏆 HIGHLIGHTS
-// =====================================================
+// ===============================
 
 const hlDate = document.getElementById("hlDate");
 const hlTitle = document.getElementById("hlTitle");
@@ -111,11 +87,12 @@ saveHighlight?.addEventListener("click", async () => {
 onValue(ref(db, "highlights"), (snap) => {
 
     const data = snap.val() || {};
+
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    renderGrid(highlightList, items, (h) => `
+    render(highlightList, items, (h) => `
         <div class="card">
             <b>${h.title}</b>
             <p>${h.text}</p>
@@ -128,88 +105,63 @@ onValue(ref(db, "highlights"), (snap) => {
 window.deleteHighlight = (id) =>
     remove(ref(db, "highlights/" + id));
 
-// =====================================================
-// 🧱 CLUB VAN 100 (FIXED GRID PROOF)
-// =====================================================
+// ===============================
+// 📰 NEWS
+// ===============================
 
-const clubInput = document.getElementById("clubName");
-const clubBtn = document.getElementById("saveClub100");
-const clubList = document.getElementById("clubList");
+const newsForm = document.getElementById("newsForm");
+const title = document.getElementById("title");
+const text = document.getElementById("text");
+const image = document.getElementById("newsImage");
+const newsList = document.getElementById("newsList");
 
-clubBtn?.addEventListener("click", async () => {
+newsForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    if (!clubInput.value) return;
-
-    await push(ref(db, "club100"), {
-        name: clubInput.value,
+    await push(ref(db, "news"), {
+        title: title.value,
+        text: text.value,
+        imageUrl: "",
         created: Date.now()
     });
 
-    clubInput.value = "";
+    newsForm.reset();
 });
 
-onValue(ref(db, "club100"), (snap) => {
+onValue(ref(db, "news"), (snap) => {
 
     const data = snap.val() || {};
+
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    renderGrid(clubList, items, (p) => {
-
-        const parts = (p.name || "").split(" ");
-
-        return `
-            <div class="tile">
-                <div>${parts[0] || ""}</div>
-                <div>${parts.slice(1).join(" ")}</div>
-                <button onclick="deleteClub('${p.id}')">🗑</button>
-            </div>
-        `;
-    }, "Geen leden");
+    render(newsList, items, (n) => `
+        <div class="card">
+            <b>${n.title}</b>
+            <p>${n.text}</p>
+            <button onclick="deleteNews('${n.id}')">🗑</button>
+        </div>
+    `, "Geen nieuws");
 });
 
-window.deleteClub = (id) =>
-    remove(ref(db, "club100/" + id));
+window.deleteNews = (id) =>
+    remove(ref(db, "news/" + id));
 
-// =====================================================
-// 🤝 SPONSORS
-// =====================================================
+// ===============================
+// 🤝 SPONSORS (BLIJFT GOED)
+// ===============================
 
-const sponsorFile = document.getElementById("logo");
-const sponsorBtn = document.getElementById("saveSponsor");
 const sponsorList = document.getElementById("sponsorList");
-
-sponsorBtn?.addEventListener("click", async () => {
-
-    const file = sponsorFile?.files?.[0];
-    if (!file) return;
-
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", "hvnovitas_upload");
-
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-        { method: "POST", body: fd }
-    );
-
-    const data = await res.json();
-
-    await push(ref(db, "sponsors"), {
-        imageUrl: data.secure_url,
-        created: Date.now()
-    });
-
-    sponsorFile.value = "";
-});
 
 onValue(ref(db, "sponsors"), (snap) => {
 
     const data = snap.val() || {};
-    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
 
-    renderGrid(sponsorList, items, (s) => `
+    const items = Object.entries(data)
+        .map(([id, v]) => ({ id, ...v }));
+
+    render(sponsorList, items, (s) => `
         <div class="card">
             <img src="${s.imageUrl}">
             <button onclick="deleteSponsor('${s.id}')">🗑</button>
@@ -220,44 +172,20 @@ onValue(ref(db, "sponsors"), (snap) => {
 window.deleteSponsor = (id) =>
     remove(ref(db, "sponsors/" + id));
 
-// =====================================================
+// ===============================
 // 📸 OME JAN
-// =====================================================
+// ===============================
 
-const omeFile = document.getElementById("omejanFile");
-const omeBtn = document.getElementById("saveOmejan");
 const omeList = document.getElementById("omejanList");
-
-omeBtn?.addEventListener("click", async () => {
-
-    const file = omeFile?.files?.[0];
-    if (!file) return;
-
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", "hvnovitas_upload");
-
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-        { method: "POST", body: fd }
-    );
-
-    const data = await res.json();
-
-    await push(ref(db, "omejan"), {
-        imageUrl: data.secure_url,
-        created: Date.now()
-    });
-
-    omeFile.value = "";
-});
 
 onValue(ref(db, "omejan"), (snap) => {
 
     const data = snap.val() || {};
-    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }));
 
-    renderGrid(omeList, items, (o) => `
+    const items = Object.entries(data)
+        .map(([id, v]) => ({ id, ...v }));
+
+    render(omeList, items, (o) => `
         <div class="card">
             <img src="${o.imageUrl}">
             <button onclick="deleteOmeJan('${o.id}')">🗑</button>
