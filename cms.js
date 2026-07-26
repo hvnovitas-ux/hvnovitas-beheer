@@ -6,11 +6,24 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("CMS LOADED");
+console.log("CMS FULL LOADED");
 
 // =====================
 // 🧱 CLUB100
 // =====================
+
+const clubName = document.getElementById("clubName");
+document.getElementById("saveClub100")?.addEventListener("click", async () => {
+
+    if (!clubName.value) return;
+
+    await push(ref(db, "club100"), {
+        name: clubName.value,
+        created: Date.now()
+    });
+
+    clubName.value = "";
+});
 
 const clubList = document.getElementById("clubList");
 
@@ -29,6 +42,23 @@ onValue(ref(db, "club100"), (snap) => {
 // 🏆 HIGHLIGHTS
 // =====================
 
+const hlTitle = document.getElementById("hlTitle");
+const hlText = document.getElementById("hlText");
+
+document.getElementById("saveHighlight")?.addEventListener("click", async () => {
+
+    if (!hlTitle.value) return;
+
+    await push(ref(db, "highlights"), {
+        title: hlTitle.value,
+        text: hlText.value,
+        created: Date.now()
+    });
+
+    hlTitle.value = "";
+    hlText.value = "";
+});
+
 const highlightList = document.getElementById("highlightList");
 
 onValue(ref(db, "highlights"), (snap) => {
@@ -38,7 +68,6 @@ onValue(ref(db, "highlights"), (snap) => {
         <div class="card">
             <b>${h.title}</b>
             <p>${h.text}</p>
-            <small>${h.date || ""}</small>
             <button onclick="del('highlights','${id}')">🗑</button>
         </div>
     `).join("");
@@ -47,6 +76,23 @@ onValue(ref(db, "highlights"), (snap) => {
 // =====================
 // 📰 NEWS
 // =====================
+
+const newsTitle = document.getElementById("newsTitle");
+const newsText = document.getElementById("newsText");
+
+document.getElementById("saveNews")?.addEventListener("click", async () => {
+
+    if (!newsTitle.value) return;
+
+    await push(ref(db, "news"), {
+        title: newsTitle.value,
+        text: newsText.value,
+        created: Date.now()
+    });
+
+    newsTitle.value = "";
+    newsText.value = "";
+});
 
 const newsList = document.getElementById("newsList");
 
@@ -98,7 +144,7 @@ onValue(ref(db, "omejan"), (snap) => {
 });
 
 // =====================
-// 🧹 DELETE FIX
+// 🧹 DELETE
 // =====================
 
 window.del = (path, id) => {
