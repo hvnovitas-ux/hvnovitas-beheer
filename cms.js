@@ -1,12 +1,19 @@
 import { db } from "./firebase.js";
-import {
-    ref,
-    push,
-    onValue,
-    remove
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS RESET VERSION LOADED");
+console.log("🧡 CMS FINAL STABLE LOADED");
+
+// =====================================================
+// 🧠 RENDER HELPER
+// =====================================================
+
+function render(container, items, tpl) {
+    if (!container) return;
+
+    container.innerHTML = items.length
+        ? items.map(tpl).join("")
+        : "<p>Geen items</p>";
+}
 
 // =====================================================
 // ☁️ CLOUDINARY UPLOAD
@@ -58,20 +65,21 @@ newsForm?.addEventListener("submit", async (e) => {
 });
 
 onValue(ref(db, "news"), (snap) => {
+
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    newsList.innerHTML = items.map(n => `
+    render(newsList, items, (n) => `
         <div class="card">
             <b>${n.title}</b>
             <p>${n.text}</p>
             ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
             <button onclick="deleteNews('${n.id}')">🗑</button>
         </div>
-    `).join("");
+    `);
 });
 
 window.deleteNews = (id) =>
@@ -101,20 +109,21 @@ saveHighlight?.addEventListener("click", async () => {
 });
 
 onValue(ref(db, "highlights"), (snap) => {
+
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    highlightList.innerHTML = items.map(h => `
+    render(highlightList, items, (h) => `
         <div class="card">
             <b>${h.title}</b>
             <p>${h.text}</p>
             <small>${h.date || ""}</small>
             <button onclick="deleteHighlight('${h.id}')">🗑</button>
         </div>
-    `).join("");
+    `);
 });
 
 window.deleteHighlight = (id) =>
@@ -139,13 +148,15 @@ clubBtn?.addEventListener("click", async () => {
 });
 
 onValue(ref(db, "club100"), (snap) => {
+
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    clubList.innerHTML = items.map(p => {
+    render(clubList, items, (p) => {
+
         const parts = (p.name || "").split(" ");
 
         return `
@@ -154,11 +165,8 @@ onValue(ref(db, "club100"), (snap) => {
                 <div>${parts.slice(1).join(" ")}</div>
             </div>
         `;
-    }).join("");
+    });
 });
-
-window.deleteClub = (id) =>
-    remove(ref(db, "club100/" + id));
 
 // =====================================================
 // 🤝 SPONSORS
@@ -167,17 +175,18 @@ window.deleteClub = (id) =>
 const sponsorList = document.getElementById("sponsorList");
 
 onValue(ref(db, "sponsors"), (snap) => {
+
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }));
 
-    sponsorList.innerHTML = items.map(s => `
+    render(sponsorList, items, (s) => `
         <div class="card">
             <img src="${s.imageUrl}">
             <button onclick="deleteSponsor('${s.id}')">🗑</button>
         </div>
-    `).join("");
+    `);
 });
 
 window.deleteSponsor = (id) =>
@@ -190,17 +199,18 @@ window.deleteSponsor = (id) =>
 const omeList = document.getElementById("omejanList");
 
 onValue(ref(db, "omejan"), (snap) => {
+
     const data = snap.val() || {};
 
     const items = Object.entries(data)
         .map(([id, v]) => ({ id, ...v }));
 
-    omeList.innerHTML = items.map(o => `
+    render(omeList, items, (o) => `
         <div class="card">
             <img src="${o.imageUrl}">
             <button onclick="deleteOmeJan('${o.id}')">🗑</button>
         </div>
-    `).join("");
+    `);
 });
 
 window.deleteOmeJan = (id) =>
