@@ -6,16 +6,18 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("CMS FULL LOADED");
+console.log("CMS FINAL LOADED");
 
 // =====================
 // 🧱 CLUB100
 // =====================
 
 const clubName = document.getElementById("clubName");
-document.getElementById("saveClub100")?.addEventListener("click", async () => {
+const saveClub100 = document.getElementById("saveClub100");
+const clubList = document.getElementById("clubList");
 
-    if (!clubName.value) return;
+saveClub100?.addEventListener("click", async () => {
+    if (!clubName?.value) return;
 
     await push(ref(db, "club100"), {
         name: clubName.value,
@@ -25,10 +27,9 @@ document.getElementById("saveClub100")?.addEventListener("click", async () => {
     clubName.value = "";
 });
 
-const clubList = document.getElementById("clubList");
-
 onValue(ref(db, "club100"), (snap) => {
     const data = snap.val() || {};
+    if (!clubList) return;
 
     clubList.innerHTML = Object.entries(data).map(([id, p]) => `
         <div class="tile">
@@ -44,10 +45,11 @@ onValue(ref(db, "club100"), (snap) => {
 
 const hlTitle = document.getElementById("hlTitle");
 const hlText = document.getElementById("hlText");
+const saveHighlight = document.getElementById("saveHighlight");
+const highlightList = document.getElementById("highlightList");
 
-document.getElementById("saveHighlight")?.addEventListener("click", async () => {
-
-    if (!hlTitle.value) return;
+saveHighlight?.addEventListener("click", async () => {
+    if (!hlTitle?.value) return;
 
     await push(ref(db, "highlights"), {
         title: hlTitle.value,
@@ -59,15 +61,14 @@ document.getElementById("saveHighlight")?.addEventListener("click", async () => 
     hlText.value = "";
 });
 
-const highlightList = document.getElementById("highlightList");
-
 onValue(ref(db, "highlights"), (snap) => {
     const data = snap.val() || {};
+    if (!highlightList) return;
 
     highlightList.innerHTML = Object.entries(data).map(([id, h]) => `
         <div class="card">
-            <b>${h.title}</b>
-            <p>${h.text}</p>
+            <b>${h.title || ""}</b>
+            <p>${h.text || ""}</p>
             <button onclick="del('highlights','${id}')">🗑</button>
         </div>
     `).join("");
@@ -79,10 +80,11 @@ onValue(ref(db, "highlights"), (snap) => {
 
 const newsTitle = document.getElementById("newsTitle");
 const newsText = document.getElementById("newsText");
+const saveNews = document.getElementById("saveNews");
+const newsList = document.getElementById("newsList");
 
-document.getElementById("saveNews")?.addEventListener("click", async () => {
-
-    if (!newsTitle.value) return;
+saveNews?.addEventListener("click", async () => {
+    if (!newsTitle?.value) return;
 
     await push(ref(db, "news"), {
         title: newsTitle.value,
@@ -94,16 +96,14 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
     newsText.value = "";
 });
 
-const newsList = document.getElementById("newsList");
-
 onValue(ref(db, "news"), (snap) => {
     const data = snap.val() || {};
+    if (!newsList) return;
 
     newsList.innerHTML = Object.entries(data).map(([id, n]) => `
         <div class="card">
-            <b>${n.title}</b>
-            <p>${n.text}</p>
-            ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
+            <b>${n.title || ""}</b>
+            <p>${n.text || ""}</p>
             <button onclick="del('news','${id}')">🗑</button>
         </div>
     `).join("");
@@ -117,10 +117,11 @@ const sponsorList = document.getElementById("sponsorList");
 
 onValue(ref(db, "sponsors"), (snap) => {
     const data = snap.val() || {};
+    if (!sponsorList) return;
 
     sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
         <div class="card">
-            <img src="${s.imageUrl}">
+            ${s.imageUrl ? `<img src="${s.imageUrl}">` : ""}
             <button onclick="del('sponsors','${id}')">🗑</button>
         </div>
     `).join("");
@@ -134,17 +135,18 @@ const omeList = document.getElementById("omejanList");
 
 onValue(ref(db, "omejan"), (snap) => {
     const data = snap.val() || {};
+    if (!omeList) return;
 
     omeList.innerHTML = Object.entries(data).map(([id, o]) => `
         <div class="card">
-            <img src="${o.imageUrl}">
+            ${o.imageUrl ? `<img src="${o.imageUrl}">` : ""}
             <button onclick="del('omejan','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 🧹 DELETE
+// 🧹 DELETE SYSTEM
 // =====================
 
 window.del = (path, id) => {
