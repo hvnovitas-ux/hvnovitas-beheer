@@ -1,75 +1,77 @@
+body{
+    margin:0;
+    font-family: Georgia;
+}
+
 /* =========================
-   🌐 LAYOUT (NIET ROMMELIG)
+   🔥 ALLES GRID (CMS FIX)
 ========================= */
 
 #clubList,
 #highlightList,
 #newsList,
 #sponsorList,
-#omejanList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+#omejanList{
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
-    padding: 10px;
+    padding: 12px;
 }
 
 /* =========================
-   🧱 CARD
+   🧱 TILES (CLUB100)
 ========================= */
 
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 10px;
+.tile{
+    background:#fbfaf6;
+    border:5px solid #1e4f8a;
+    border-radius:12px;
 
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    aspect-ratio:1/1;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
 
-    font-family: Arial;
-    font-size: 13px;
+    color:#1e4f8a;
+    text-align:center;
 }
 
 /* =========================
-   🏺 TEGELS CLUB100
+   🧱 CARDS (CMS SECTIES)
 ========================= */
 
-.tile {
-    background: #fbfaf6;
-    border: 5px solid #1e4f8a;
-    border-radius: 12px;
+.card{
+    background:white;
+    border-radius:12px;
+    padding:10px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.15);
 
-    aspect-ratio: 1 / 1;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-
-    font-family: Georgia;
-    color: #1e4f8a;
-    text-align: center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 /* =========================
-   🖼 FOTO'S (BELANGRIJK FIX)
+   🖼 BELANGRIJK: FOTO FIX
 ========================= */
 
-.card img {
-    width: 100%;
-    max-height: 90px;
-    object-fit: cover;
-    border-radius: 8px;
+.card img,
+#sponsorList img,
+#omejanList img{
+    width:100%;
+    max-height:90px;
+    object-fit:contain;
+    border-radius:8px;
 }
 
 /* =========================
    ✨ HOVER
 ========================= */
 
-.card:hover,
-.tile:hover {
-    transform: scale(1.03);
-    transition: 0.2s ease;
+.tile:hover,
+.card:hover{
+    transform:scale(1.03);
+    transition:0.2s ease;
 }
