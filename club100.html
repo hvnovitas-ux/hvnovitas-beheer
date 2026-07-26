@@ -1,50 +1,139 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Club100 - HV Novitas</title>
+
 <style>
+
+/* 🌅 WARME OUD-HOLLANDSE ACHTERGROND */
 body{
     margin:0;
     font-family:Georgia;
-    background: radial-gradient(circle at top, #fff3e0, #f7e6cc, #f2d9b8);
+
+    background:
+        radial-gradient(circle at top, #fff3e0 0%, #f7e6cc 45%, #f2d9b8 100%);
 }
 
+/* 🧱 GRID MUUR */
 #clubList{
     display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
-    gap:16px;
-    padding:16px;
+    grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
+    gap:18px;
+    padding:18px;
 }
 
+/* 🟦 OUD-HOLLANDSE TEGEL */
 #clubList > div{
     aspect-ratio:1/1;
 
     display:flex;
     align-items:center;
     justify-content:center;
+    text-align:center;
 
-    background: radial-gradient(circle at top left, #ffffff, #eef3ff);
-    border:6px solid #1b4f9c;
-    border-radius:16px;
-
+    font-family:Georgia;
     font-weight:bold;
+
     color:#1b3f7a;
 
-    box-shadow:
-        inset 0 0 0 2px #ffffff,
-        0 10px 22px rgba(0,0,0,0.18);
+    background:
+        radial-gradient(circle at 30% 20%, #ffffff 0%, #f6f9ff 50%, #e7eefc 100%);
+
+    border:7px solid #1b4f9c;
+    border-radius:18px;
 
     position:relative;
     overflow:hidden;
 
-    transition:0.2s ease;
+    box-shadow:
+        inset 0 0 0 2px #ffffff,
+        inset 0 0 20px rgba(27,79,156,0.15),
+        0 10px 22px rgba(0,0,0,0.18);
+
+    transition:0.25s ease;
 }
 
+/* ✨ keramiek glans */
 #clubList > div::before{
     content:"";
     position:absolute;
-    inset:0;
-    background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
+    inset:-60%;
+
+    background:
+        radial-gradient(circle, rgba(255,255,255,0.55), transparent 60%);
+
+    transform:rotate(25deg);
     pointer-events:none;
 }
 
+/* 🧩 BINNENKADER (VERSIERING) */
+#clubList > div::after{
+    content:"";
+    position:absolute;
+    inset:10px;
+
+    border:1px solid rgba(27,79,156,0.25);
+    border-radius:14px;
+
+    pointer-events:none;
+}
+
+/* 🧱 TEKST BOVEN EFFECT */
+#clubList > div > *{
+    position:relative;
+    z-index:2;
+}
+
+/* 🚀 HOVER (LEVENDE TEGEL) */
 #clubList > div:hover{
     transform:scale(1.05);
+    box-shadow:
+        inset 0 0 0 2px #ffffff,
+        0 14px 30px rgba(0,0,0,0.25);
 }
+
 </style>
+
+</head>
+
+<body>
+
+<!-- 🧱 CLUB100 -->
+<div id="clubList"></div>
+
+<script type="module">
+
+import { db } from "./firebase.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+console.log("🏺 CLUB100 LOADED");
+
+onValue(ref(db, "club100"), (snapshot) => {
+
+    const clubList = document.getElementById("clubList");
+
+    const data = snapshot.val() || {};
+    const items = Object.entries(data);
+
+    if (!clubList) return;
+
+    if (items.length === 0) {
+        clubList.innerHTML = "<div>Geen leden</div>";
+        return;
+    }
+
+    clubList.innerHTML = items.map(([id, p]) => `
+        <div>
+            ${p.name || ""}
+        </div>
+    `).join("");
+
+});
+
+</script>
+
+</body>
+</html>
