@@ -1,18 +1,12 @@
 body{
     margin:0;
     font-family:Georgia;
-
-    /* 🟡 veilige oud-Hollandse achtergrond */
     background:#fff3e0;
-
     color:#1b3f7a;
     padding:20px;
 }
 
-/* =========================
-   INPUTS & BUTTONS
-========================= */
-
+/* INPUTS */
 input, button{
     padding:8px;
     margin:5px;
@@ -26,10 +20,7 @@ button{
     cursor:pointer;
 }
 
-/* =========================
-   GRID SYSTEM
-========================= */
-
+/* GRID */
 #clubList,
 #highlightList,
 #newsList,
@@ -40,65 +31,31 @@ button{
     gap:12px;
 }
 
-/* =========================
-   🇳🇱 OUD-HOLLANDSE TEGEL
-========================= */
-
+/* TILES */
 .tile{
     aspect-ratio:1/1;
-
     display:flex;
     align-items:center;
     justify-content:center;
     flex-direction:column;
 
-    background:
-        radial-gradient(circle at top left, #ffffff, #eef3ff);
-
-    border:5px solid #1b4f9c;
+    background:white;
+    border:4px solid #1b4f9c;
     border-radius:12px;
-
     font-weight:bold;
     color:#1b3f7a;
-
-    position:relative;
-    overflow:hidden;
-
-    box-shadow:
-        inset 0 0 0 2px #ffffff,
-        0 4px 12px rgba(0,0,0,0.12);
 }
 
-/* ✨ keramiek glans */
-.tile::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 60%);
-    pointer-events:none;
-}
-
-/* tekst boven glans */
-.tile > *{
-    position:relative;
-    z-index:2;
-}
-
-/* =========================
-   CARDS
-========================= */
-
+/* CARDS */
 .card{
     background:white;
     padding:10px;
-    border-radius:12px;
+    border-radius:10px;
     border:2px solid #1b3f7a;
 }
 
-/* images veilig */
 .card img{
     width:100%;
     max-height:100px;
     object-fit:cover;
-    border-radius:8px;
 }
