@@ -1,22 +1,29 @@
 body{
     margin:0;
     font-family:Georgia;
-    background:#0b0b0b;
-    color:white;
+
+    /* 🟧 LICHT ORANJE ACHTERGROND */
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    color:#2b2b2b;
 }
 
-/* 📦 SECTIONS */
+/* 📦 SECTIES */
 .section{
     margin:20px;
-    padding:10px;
+    padding:15px;
+
+    background:white;
+    border-radius:12px;
+
+    box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
 .section h2{
-    font-size:18px;
     margin-bottom:10px;
+    font-size:18px;
 }
 
-/* 🔥 GRID SYSTEM */
+/* 🔥 GRID */
 #clubList,
 #highlightList,
 #newsList,
@@ -27,22 +34,24 @@ body{
     gap:12px;
 }
 
-/* 🧱 CLUB TILES */
+/* 🧱 TILES */
 .tile{
     aspect-ratio:1/1;
     display:flex;
     align-items:center;
     justify-content:center;
+    flex-direction:column;
+
     background:#fbfaf6;
     border-radius:12px;
-    color:#1e4f8a;
     font-weight:bold;
+    color:#1e4f8a;
+    position:relative;
 }
 
 /* 🧱 CARDS */
 .card{
     background:white;
-    color:black;
     border-radius:12px;
     padding:10px;
 
@@ -59,9 +68,16 @@ body{
     border-radius:8px;
 }
 
-/* ✨ HOVER */
-.tile:hover,
-.card:hover{
-    transform:scale(1.03);
-    transition:0.2s;
-}
+/* 🗑 DELETE BUTTON */
+.delete-btn{
+    position:absolute;
+    bottom:6px;
+    right:6px;
+
+    background:#ff4d4d;
+    color:white;
+    border:none;
+    border-radius:6px;
+    width:24px;
+    height:24px;
+    cursor:pointer;
