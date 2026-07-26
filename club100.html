@@ -9,21 +9,18 @@
 <style>
 
 /* =========================
-   SAFE BASE (NIET KAPOT MAKEN)
+   SAFE BASE
 ========================= */
 
 body{
     margin:0;
     font-family:Georgia;
-
-    /* ✅ OUD-HOLLANDS (VEILIG + ZICHTBAAR) */
     background:#fff3e0;
-
     color:#1b3f7a;
 }
 
 /* =========================
-   GRID (NIET VERANDEREN)
+   GRID (UNCHANGED SAFE)
 ========================= */
 
 #clubList,
@@ -38,11 +35,12 @@ body{
 }
 
 /* =========================
-   🇳🇱 OUD-HOLLANDSE TEGELS (VEILIG)
+   🟦 CLUB100 TEGELS (VERBETERD + MOOIER)
 ========================= */
 
-.tile{
+#clubList .tile{
     aspect-ratio:1/1;
+
     display:flex;
     align-items:center;
     justify-content:center;
@@ -50,37 +48,39 @@ body{
 
     background: radial-gradient(circle at top left, #ffffff, #eef3ff);
 
-    border:5px solid #1b4f9c;
-    border-radius:12px;
+    border:6px solid #1b4f9c;
+    border-radius:14px;
 
-    color:#1b3f7a;
     font-weight:bold;
+    color:#1b3f7a;
+    font-family:Georgia;
 
     box-shadow:
         inset 0 0 0 2px #ffffff,
-        0 4px 12px rgba(0,0,0,0.12);
+        0 8px 18px rgba(0,0,0,0.15);
 
     position:relative;
     overflow:hidden;
+
+    transition:0.2s ease;
 }
 
-/* veilige glans */
-.tile::before{
+/* ✨ keramiek glans */
+#clubList .tile::before{
     content:"";
     position:absolute;
     inset:0;
-    background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 60%);
+    background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
     pointer-events:none;
 }
 
-/* tekst boven alles */
-.tile > *{
-    position:relative;
-    z-index:2;
+/* hover effect */
+#clubList .tile:hover{
+    transform:scale(1.04);
 }
 
 /* =========================
-   CARDS
+   CARDS (OTHER CMS PARTS UNCHANGED)
 ========================= */
 
 .card{
@@ -90,7 +90,6 @@ body{
     border:2px solid #1b3f7a;
 }
 
-/* images veilig */
 .card img{
     width:100%;
     max-height:100px;
@@ -99,7 +98,6 @@ body{
 }
 
 /* hover safe */
-.tile:hover,
 .card:hover{
     transform:scale(1.02);
     transition:0.2s ease;
