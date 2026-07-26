@@ -1,7 +1,12 @@
 import { db } from "./firebase.js";
-import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import {
+    ref,
+    push,
+    onValue,
+    remove
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS FULL LOADED");
+console.log("🧡 CMS CLEAN VERSION LOADED");
 
 // =====================================================
 // ☁️ CLOUDINARY UPLOAD
