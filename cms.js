@@ -6,14 +6,13 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🧡 CMS FINAL LOADED");
+console.log("🧡 CMS LOADED OK");
 
 // =====================================================
 // ☁️ CLOUDINARY UPLOAD
 // =====================================================
 
-const uploadImage = async (file) => {
-
+async function uploadImage(file) {
     const fd = new FormData();
     fd.append("file", file);
     fd.append("upload_preset", "hvnovitas_upload");
@@ -25,29 +24,29 @@ const uploadImage = async (file) => {
 
     const data = await res.json();
     return data.secure_url || "";
-};
+}
 
 // =====================================================
 // 📰 NEWS
 // =====================================================
 
 const newsForm = document.getElementById("newsForm");
-const title = document.getElementById("title");
-const text = document.getElementById("text");
-const image = document.getElementById("newsImage");
+const newsTitle = document.getElementById("title");
+const newsText = document.getElementById("text");
+const newsImage = document.getElementById("newsImage");
 const newsList = document.getElementById("newsList");
 
 newsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     let imageUrl = "";
-    const file = image?.files?.[0];
+    const file = newsImage?.files?.[0];
 
     if (file) imageUrl = await uploadImage(file);
 
     await push(ref(db, "news"), {
-        title: title.value,
-        text: text.value,
+        title: newsTitle.value,
+        text: newsText.value,
         imageUrl,
         created: Date.now()
     });
@@ -63,18 +62,17 @@ onValue(ref(db, "news"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
+    if (!newsList) return;
+
     newsList.innerHTML = items.map(n => `
         <div class="card">
             <b>${n.title}</b>
             <p>${n.text}</p>
             ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
-            <button onclick="deleteNews('${n.id}')">🗑</button>
+            <button onclick="removeItem('news','${n.id}')">🗑</button>
         </div>
     `).join("");
 });
-
-window.deleteNews = (id) =>
-    remove(ref(db, "news/" + id));
 
 // =====================================================
 // 🏆 HIGHLIGHTS
@@ -83,10 +81,9 @@ window.deleteNews = (id) =>
 const hlDate = document.getElementById("hlDate");
 const hlTitle = document.getElementById("hlTitle");
 const hlText = document.getElementById("hlText");
-const saveHighlight = document.getElementById("saveHighlight");
 const highlightList = document.getElementById("highlightList");
 
-saveHighlight?.addEventListener("click", async () => {
+document.getElementById("saveHighlight")?.addEventListener("click", async () => {
 
     await push(ref(db, "highlights"), {
         date: hlDate.value,
@@ -107,28 +104,26 @@ onValue(ref(db, "highlights"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
+    if (!highlightList) return;
+
     highlightList.innerHTML = items.map(h => `
         <div class="card">
             <b>${h.title}</b>
             <p>${h.text}</p>
             <small>${h.date || ""}</small>
-            <button onclick="deleteHighlight('${h.id}')">🗑</button>
+            <button onclick="removeItem('highlights','${h.id}')">🗑</button>
         </div>
     `).join("");
 });
-
-window.deleteHighlight = (id) =>
-    remove(ref(db, "highlights/" + id));
 
 // =====================================================
 // 🧱 CLUB VAN 100
 // =====================================================
 
 const clubInput = document.getElementById("clubName");
-const clubBtn = document.getElementById("saveClub100");
 const clubList = document.getElementById("clubList");
 
-clubBtn?.addEventListener("click", async () => {
+document.getElementById("saveClub100")?.addEventListener("click", async () => {
 
     await push(ref(db, "club100"), {
         name: clubInput.value,
@@ -146,62 +141,50 @@ onValue(ref(db, "club100"), (snap) => {
         .map(([id, v]) => ({ id, ...v }))
         .sort((a, b) => b.created - a.created);
 
-    clubList.innerHTML = items.map(p => {
-        const parts = (p.name || "").split(" ");
+    if (!clubList) return;
 
-        return `
-            <div class="tile">
-                <div>${parts[0] || ""}</div>
-                <div>${parts.slice(1).join(" ")}</div>
-            </div>
-        `;
-    }).join("");
+    clubList.innerHTML = items.map(p => `
+        <div class="tile">
+            <div>${p.name}</div>
+        </div>
+    `).join("");
 });
 
 // =====================================================
-// 🤝 SPONSORS
+// 🤝 SPONSORS + OME JAN
 // =====================================================
 
 const sponsorList = document.getElementById("sponsorList");
+const omeList = document.getElementById("omejanList");
 
 onValue(ref(db, "sponsors"), (snap) => {
 
     const data = snap.val() || {};
 
-    const items = Object.entries(data)
-        .map(([id, v]) => ({ id, ...v }));
-
-    sponsorList.innerHTML = items.map(s => `
+    sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
         <div class="card">
             <img src="${s.imageUrl}">
-            <button onclick="deleteSponsor('${s.id}')">🗑</button>
+            <button onclick="removeItem('sponsors','${id}')">🗑</button>
         </div>
     `).join("");
 });
-
-window.deleteSponsor = (id) =>
-    remove(ref(db, "sponsors/" + id));
-
-// =====================================================
-// 📸 OME JAN
-// =====================================================
-
-const omeList = document.getElementById("omejanList");
 
 onValue(ref(db, "omejan"), (snap) => {
 
     const data = snap.val() || {};
 
-    const items = Object.entries(data)
-        .map(([id, v]) => ({ id, ...v }));
-
-    omeList.innerHTML = items.map(o => `
+    omeList.innerHTML = Object.entries(data).map(([id, o]) => `
         <div class="card">
             <img src="${o.imageUrl}">
-            <button onclick="deleteOmeJan('${o.id}')">🗑</button>
+            <button onclick="removeItem('omejan','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
-window.deleteOmeJan = (id) =>
-    remove(ref(db, "omejan/" + id));
+// =====================================================
+// 🧹 UNIVERSE DELETE FIX (BELANGRIJK)
+// =====================================================
+
+window.removeItem = (path, id) => {
+    remove(ref(db, path + "/" + id));
+};
