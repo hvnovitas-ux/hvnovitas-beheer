@@ -4,19 +4,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Club van 100 - HV Novitas</title>
 
-<link rel="stylesheet" href="club100.css">
+<!-- 🔥 INLINE CSS FIX (BELANGRIJK: lost jouw probleem op) -->
+<style>
+
+body{
+    margin:0;
+    font-family:Georgia;
+    background:#0b0b0b;
+}
+
+/* =========================
+   🔥 GRID FIX (ALLE SECTIES)
+========================= */
+
+#clubList,
+#highlightList,
+#newsList,
+#sponsorList,
+#omejanList{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+    gap:12px;
+    padding:12px;
+}
+
+/* =========================
+   🧱 CLUB TEGELS
+========================= */
+
+.tile{
+    background:#fbfaf6;
+    border:5px solid #1e4f8a;
+    border-radius:12px;
+
+    aspect-ratio:1/1;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+
+    color:#1e4f8a;
+    text-align:center;
+}
+
+/* =========================
+   🧱 CARDS (CMS SECTIES)
+========================= */
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:10px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.15);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+/* =========================
+   🖼 FOTO FIX
+========================= */
+
+.card img,
+#sponsorList img,
+#omejanList img{
+    width:100%;
+    max-height:90px;
+    object-fit:contain;
+    border-radius:8px;
+}
+
+/* =========================
+   ✨ HOVER
+========================= */
+
+.tile:hover,
+.card:hover{
+    transform:scale(1.03);
+    transition:0.2s ease;
+}
+
+</style>
 
 </head>
 
 <body>
 
+<!-- 🧱 CLUB100 -->
 <div id="clubList"></div>
+
+<!-- 🧠 CMS SECTIES -->
+<div id="highlightList"></div>
+<div id="newsList"></div>
+<div id="sponsorList"></div>
+<div id="omejanList"></div>
 
 <script type="module" src="club100.js"></script>
 
 </body>
-
 </html>
