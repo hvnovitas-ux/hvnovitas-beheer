@@ -6,7 +6,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🔥 CMS STABLE LOADED");
+console.log("🔥 CMS SAFE MODE LOADED");
 
 // =====================
 // 🧱 CLUB100
@@ -14,7 +14,7 @@ console.log("🔥 CMS STABLE LOADED");
 
 document.getElementById("saveClub100")?.addEventListener("click", async () => {
 
-    const name = document.getElementById("clubName").value;
+    const name = document.getElementById("clubName")?.value;
     if(!name) return;
 
     await push(ref(db,"club100"),{
@@ -26,8 +26,10 @@ document.getElementById("saveClub100")?.addEventListener("click", async () => {
 });
 
 onValue(ref(db,"club100"), snap=>{
-    const data = snap.val() || {};
     const list = document.getElementById("clubList");
+    if(!list) return;
+
+    const data = snap.val() || {};
 
     list.innerHTML = Object.entries(data).map(([id,v])=>`
         <div class="tile">
@@ -44,16 +46,18 @@ onValue(ref(db,"club100"), snap=>{
 document.getElementById("saveHighlight")?.addEventListener("click", async () => {
 
     await push(ref(db,"highlights"),{
-        date: document.getElementById("hlDate").value,
-        title: document.getElementById("hlTitle").value,
-        text: document.getElementById("hlText").value,
+        date: document.getElementById("hlDate")?.value,
+        title: document.getElementById("hlTitle")?.value,
+        text: document.getElementById("hlText")?.value,
         created:Date.now()
     });
 });
 
 onValue(ref(db,"highlights"), snap=>{
-    const data = snap.val() || {};
     const list = document.getElementById("highlightList");
+    if(!list) return;
+
+    const data = snap.val() || {};
 
     list.innerHTML = Object.entries(data).map(([id,v])=>`
         <div class="card">
@@ -66,7 +70,7 @@ onValue(ref(db,"highlights"), snap=>{
 });
 
 // =====================
-// 📰 NEWS
+// 📰 NEWS (SAFE IMAGES)
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
@@ -89,16 +93,18 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
     }
 
     await push(ref(db,"news"),{
-        title:document.getElementById("newsTitle").value,
-        text:document.getElementById("newsText").value,
-        imageUrl:url,
+        title: document.getElementById("newsTitle")?.value,
+        text: document.getElementById("newsText")?.value,
+        imageUrl: url,
         created:Date.now()
     });
 });
 
 onValue(ref(db,"news"), snap=>{
-    const data = snap.val() || {};
     const list = document.getElementById("newsList");
+    if(!list) return;
+
+    const data = snap.val() || {};
 
     list.innerHTML = Object.entries(data).map(([id,v])=>`
         <div class="card">
@@ -111,7 +117,7 @@ onValue(ref(db,"news"), snap=>{
 });
 
 // =====================
-// 🤝 SPONSORS
+// 🤝 SPONSORS (NO CRASH)
 // =====================
 
 document.getElementById("saveSponsor")?.addEventListener("click", async () => {
@@ -131,13 +137,27 @@ document.getElementById("saveSponsor")?.addEventListener("click", async () => {
     const data = await res.json();
 
     await push(ref(db,"sponsors"),{
-        imageUrl:data.secure_url || "",
+        imageUrl: data.secure_url || "",
         created:Date.now()
     });
 });
 
+onValue(ref(db,"sponsors"), snap=>{
+    const list = document.getElementById("sponsorList");
+    if(!list) return;
+
+    const data = snap.val() || {};
+
+    list.innerHTML = Object.entries(data).map(([id,v])=>`
+        <div class="card">
+            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
+            <button onclick="del('sponsors','${id}')">🗑</button>
+        </div>
+    `).join("");
+});
+
 // =====================
-// 📸 OME JAN
+// 📸 OME JAN (NO CRASH)
 // =====================
 
 document.getElementById("saveOmejan")?.addEventListener("click", async () => {
@@ -157,13 +177,27 @@ document.getElementById("saveOmejan")?.addEventListener("click", async () => {
     const data = await res.json();
 
     await push(ref(db,"omejan"),{
-        imageUrl:data.secure_url || "",
+        imageUrl: data.secure_url || "",
         created:Date.now()
     });
 });
 
+onValue(ref(db,"omejan"), snap=>{
+    const list = document.getElementById("omejanList");
+    if(!list) return;
+
+    const data = snap.val() || {};
+
+    list.innerHTML = Object.entries(data).map(([id,v])=>`
+        <div class="card">
+            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
+            <button onclick="del('omejan','${id}')">🗑</button>
+        </div>
+    `).join("");
+});
+
 // =====================
-// 🧹 DELETE
+// 🧹 DELETE SAFE
 // =====================
 
 window.del = (path,id)=>{
