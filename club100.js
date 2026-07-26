@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("🏺 CLUB100 DISPLAY LOADED");
+console.log("🏺 CLUB100 CLEAN LOADED");
 
 onValue(ref(db, "club100"), (snapshot) => {
 
@@ -9,16 +9,28 @@ onValue(ref(db, "club100"), (snapshot) => {
     if (!clubList) return;
 
     const data = snapshot.val() || {};
-    const items = Object.entries(data);
 
+    // 🛡️ FILTER RARE / TEST DATA
+    const items = Object.entries(data).filter(([id, v]) => {
+
+        const name = (v.name || "").trim();
+
+        // ❌ blokkeer rommel / test tekst
+        if (!name) return false;
+        if (name.toLowerCase() === "wat je nu krijgt") return false;
+
+        return true;
+    });
+
+    // 🧱 lege staat
     if (items.length === 0) {
         clubList.innerHTML = "<div class='tile'>Geen leden</div>";
         return;
     }
 
+    // 🟦 render tegels
     clubList.innerHTML = items.map(([id, v]) => {
 
-        // 🧠 naam split
         const fullName = (v.name || "").trim();
         const parts = fullName.split(" ");
 
@@ -34,4 +46,5 @@ onValue(ref(db, "club100"), (snapshot) => {
             </div>
         `;
     }).join("");
+
 });
