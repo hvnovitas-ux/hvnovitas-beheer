@@ -7,89 +7,7 @@
 
 <title>Club van 100 - HV Novitas</title>
 
-<style>
-
-/* 🌑 achtergrond */
-body {
-    margin: 0;
-    font-family: Georgia;
-    background: radial-gradient(circle at top, #111, #070707, #050505);
-}
-
-/* 🧱 GRID MUUR (BELANGRIJK) */
-#clubList {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 14px;
-    padding: 18px;
-    max-width: 1200px;
-    margin: auto;
-}
-
-/* 🏺 TEGEL */
-.tile {
-    background: linear-gradient(145deg, #fbfaf6, #f0ece4);
-
-    border: 6px solid #1e4f8a;
-    border-radius: 14px;
-
-    aspect-ratio: 1 / 1;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-
-    font-family: Georgia;
-    color: #1e4f8a;
-
-    box-shadow: 0 10px 22px rgba(0,0,0,0.5);
-
-    opacity: 0;
-    transform: scale(0.9);
-    animation: fadeIn 0.3s forwards;
-}
-
-/* ✨ animatie */
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* ❖ decoratie */
-.tile::after {
-    content: "❖";
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    font-size: 10px;
-    opacity: 0.25;
-}
-
-/* 🧠 tekst */
-.tile-name {
-    text-align: center;
-}
-
-.tile-name div:first-child {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.tile-name div:last-child {
-    font-size: 12px;
-}
-
-/* 💥 hover effect */
-.tile:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.6);
-}
-
-</style>
+<link rel="stylesheet" href="club100.css">
 
 </head>
 
@@ -97,7 +15,7 @@ body {
 
 <div id="clubList"></div>
 
-<script type="module" src="club100.js?v=10"></script>
+<script type="module" src="club100.js"></script>
 
 </body>
 
