@@ -6,7 +6,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("CMS CLOUDINARY LOADED");
+console.log("CMS FINAL LOADED");
 
 // =====================
 // ☁️ CLOUDINARY UPLOAD
@@ -23,7 +23,7 @@ async function uploadImage(file){
     );
 
     const data = await res.json();
-    return data.secure_url;
+    return data.secure_url || "";
 }
 
 // =====================
@@ -31,6 +31,7 @@ async function uploadImage(file){
 // =====================
 
 document.getElementById("saveClub100")?.addEventListener("click", async () => {
+
     const name = document.getElementById("clubName").value;
     if(!name) return;
 
@@ -59,10 +60,17 @@ onValue(ref(db,"club100"), snap=>{
 // =====================
 
 document.getElementById("saveHighlight")?.addEventListener("click", async () => {
+
+    const date = document.getElementById("hlDate").value;
+    const title = document.getElementById("hlTitle").value;
+    const text = document.getElementById("hlText").value;
+
+    if(!title) return;
+
     await push(ref(db,"highlights"),{
-        date: document.getElementById("hlDate").value,
-        title: document.getElementById("hlTitle").value,
-        text: document.getElementById("hlText").value,
+        date,
+        title,
+        text,
         created:Date.now()
     });
 });
@@ -82,15 +90,17 @@ onValue(ref(db,"highlights"), snap=>{
 });
 
 // =====================
-// 📰 NEWS + CLOUDINARY
+// 📰 NEWS + CLOUDINARY IMAGE FIX
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
 
-    const file = document.getElementById("newsImage").files[0];
-    let imgUrl = "";
+    const file = document.getElementById("newsImage")?.files[0];
 
-    if(file) imgUrl = await uploadImage(file);
+    let imgUrl = "";
+    if(file){
+        imgUrl = await uploadImage(file);
+    }
 
     await push(ref(db,"news"),{
         title:document.getElementById("newsTitle").value,
@@ -98,6 +108,10 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
         imageUrl:imgUrl,
         created:Date.now()
     });
+
+    document.getElementById("newsTitle").value="";
+    document.getElementById("newsText").value="";
+    if(document.getElementById("newsImage")) document.getElementById("newsImage").value="";
 });
 
 onValue(ref(db,"news"), snap=>{
@@ -108,7 +122,12 @@ onValue(ref(db,"news"), snap=>{
         <div class="card">
             <b>${v.title}</b>
             <p>${v.text}</p>
-            ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
+
+            ${v.imageUrl 
+                ? `<img src="${v.imageUrl}" onerror="this.style.display='none'">`
+                : ""
+            }
+
             <button onclick="del('news','${id}')">🗑</button>
         </div>
     `).join("");
@@ -120,7 +139,7 @@ onValue(ref(db,"news"), snap=>{
 
 document.getElementById("saveSponsor")?.addEventListener("click", async () => {
 
-    const file = document.getElementById("sponsorImage").files[0];
+    const file = document.getElementById("sponsorImage")?.files[0];
     if(!file) return;
 
     const url = await uploadImage(file);
@@ -129,6 +148,8 @@ document.getElementById("saveSponsor")?.addEventListener("click", async () => {
         imageUrl:url,
         created:Date.now()
     });
+
+    document.getElementById("sponsorImage").value="";
 });
 
 onValue(ref(db,"sponsors"), snap=>{
@@ -137,7 +158,7 @@ onValue(ref(db,"sponsors"), snap=>{
 
     list.innerHTML = Object.values(data).map(v=>`
         <div class="card">
-            <img src="${v.imageUrl}">
+            <img src="${v.imageUrl}" onerror="this.style.display='none'">
         </div>
     `).join("");
 });
@@ -148,7 +169,7 @@ onValue(ref(db,"sponsors"), snap=>{
 
 document.getElementById("saveOmejan")?.addEventListener("click", async () => {
 
-    const file = document.getElementById("omejanImage").files[0];
+    const file = document.getElementById("omejanImage")?.files[0];
     if(!file) return;
 
     const url = await uploadImage(file);
@@ -157,6 +178,8 @@ document.getElementById("saveOmejan")?.addEventListener("click", async () => {
         imageUrl:url,
         created:Date.now()
     });
+
+    document.getElementById("omejanImage").value="";
 });
 
 onValue(ref(db,"omejan"), snap=>{
@@ -165,13 +188,13 @@ onValue(ref(db,"omejan"), snap=>{
 
     list.innerHTML = Object.values(data).map(v=>`
         <div class="card">
-            <img src="${v.imageUrl}">
+            <img src="${v.imageUrl}" onerror="this.style.display='none'">
         </div>
     `).join("");
 });
 
 // =====================
-// 🧹 DELETE
+// 🧹 DELETE SYSTEM
 // =====================
 
 window.del = (path,id)=>{
