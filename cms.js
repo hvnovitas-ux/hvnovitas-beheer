@@ -9,7 +9,7 @@ import {
 console.log("🔥 CMS CORE LOADED");
 
 // =====================
-// 🧱 CLUB100 (DATA ONLY)
+// 🧱 CLUB100 (FIXED SAFE RENDER)
 // =====================
 
 document.getElementById("saveClub100")?.addEventListener("click", async () => {
@@ -25,22 +25,23 @@ document.getElementById("saveClub100")?.addEventListener("click", async () => {
     document.getElementById("clubName").value="";
 });
 
-onValue(ref(db,"club100"), snap=>{
+onValue(ref(db,"club100"), snap => {
+
     const list = document.getElementById("clubList");
     if(!list) return;
 
     const data = snap.val() || {};
 
     list.innerHTML = Object.entries(data).map(([id,v])=>`
-        <div>
-            ${v.name || ""}
+        <div class="tile">
+            <span>${v.name || ""}</span>
             <button onclick="del('club100','${id}')">🗑</button>
         </div>
     `).join("");
 });
 
 // =====================
-// 🏆 HIGHLIGHTS
+// 🏆 HIGHLIGHTS (SAFE)
 // =====================
 
 document.getElementById("saveHighlight")?.addEventListener("click", async () => {
@@ -54,6 +55,7 @@ document.getElementById("saveHighlight")?.addEventListener("click", async () => 
 });
 
 onValue(ref(db,"highlights"), snap=>{
+
     const list = document.getElementById("highlightList");
     if(!list) return;
 
@@ -70,7 +72,7 @@ onValue(ref(db,"highlights"), snap=>{
 });
 
 // =====================
-// 📰 NEWS
+// 📰 NEWS (SAFE IMAGE HANDLING)
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
@@ -101,6 +103,7 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
 });
 
 onValue(ref(db,"news"), snap=>{
+
     const list = document.getElementById("newsList");
     if(!list) return;
 
@@ -117,7 +120,7 @@ onValue(ref(db,"news"), snap=>{
 });
 
 // =====================
-// 🤝 SPONSORS
+// 🤝 SPONSORS (SAFE IMAGE FIX)
 // =====================
 
 document.getElementById("saveSponsor")?.addEventListener("click", async () => {
@@ -143,6 +146,7 @@ document.getElementById("saveSponsor")?.addEventListener("click", async () => {
 });
 
 onValue(ref(db,"sponsors"), snap=>{
+
     const list = document.getElementById("sponsorList");
     if(!list) return;
 
@@ -157,7 +161,7 @@ onValue(ref(db,"sponsors"), snap=>{
 });
 
 // =====================
-// 📸 OME JAN
+// 📸 OME JAN (SAFE IMAGE FIX)
 // =====================
 
 document.getElementById("saveOmejan")?.addEventListener("click", async () => {
@@ -183,6 +187,7 @@ document.getElementById("saveOmejan")?.addEventListener("click", async () => {
 });
 
 onValue(ref(db,"omejan"), snap=>{
+
     const list = document.getElementById("omejanList");
     if(!list) return;
 
@@ -197,7 +202,7 @@ onValue(ref(db,"omejan"), snap=>{
 });
 
 // =====================
-// 🧹 DELETE
+// 🧹 DELETE SYSTEM
 // =====================
 
 window.del = (path,id)=>{
