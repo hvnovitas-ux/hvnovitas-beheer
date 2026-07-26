@@ -1,5 +1,5 @@
 /* =========================
-   🌐 GRID LAYOUT (BELANGRIJK)
+   🌐 LAYOUT (NIET ROMMELIG)
 ========================= */
 
 #clubList,
@@ -8,13 +8,13 @@
 #sponsorList,
 #omejanList {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
     padding: 10px;
 }
 
 /* =========================
-   🧱 CARDS
+   🧱 CARD
 ========================= */
 
 .card {
@@ -33,7 +33,7 @@
 }
 
 /* =========================
-   🏺 CLUB TEGELS
+   🏺 TEGELS CLUB100
 ========================= */
 
 .tile {
@@ -54,7 +54,7 @@
 }
 
 /* =========================
-   🖼 AFBEELDINGEN
+   🖼 FOTO'S (BELANGRIJK FIX)
 ========================= */
 
 .card img {
@@ -65,7 +65,7 @@
 }
 
 /* =========================
-   ✨ HOVER EFFECT
+   ✨ HOVER
 ========================= */
 
 .card:hover,
