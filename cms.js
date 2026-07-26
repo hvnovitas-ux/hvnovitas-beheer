@@ -63,25 +63,20 @@ onValue(ref(db, "news"), (snapshot) => {
         .map(([id, item]) => ({ id, ...item }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    if (!newsList) return;
-
     newsList.innerHTML = items.length
         ? items.map(n => `
-            <div class="news-item">
-                <b>${n.title}</b><br>
+            <div class="card news">
+                <b>${n.title}</b>
 
-                ${n.imageUrl ? `<img src="${n.imageUrl}" style="width:100%;border-radius:10px;">` : ""}
+                ${n.imageUrl ? `<img src="${n.imageUrl}">` : ""}
 
                 <p>${n.text}</p>
 
                 <small>
                     📅 ${new Date(n.created).toLocaleDateString()}
-                    🕒 ${new Date(n.created).toLocaleTimeString()}
                 </small>
 
-                <br><br>
-
-                <button onclick="deleteNews('${n.id}')">🗑 Delete</button>
+                <button onclick="deleteNews('${n.id}')">🗑</button>
             </div>
         `).join("")
         : "<p>Geen nieuws</p>";
@@ -98,7 +93,6 @@ window.deleteNews = async (id) => {
 const hlDate = document.getElementById("hlDate");
 const hlTitle = document.getElementById("hlTitle");
 const hlText = document.getElementById("hlText");
-const hlType = document.getElementById("hlType");
 const saveHighlight = document.getElementById("saveHighlight");
 const highlightList = document.getElementById("highlightList");
 
@@ -110,7 +104,6 @@ saveHighlight?.addEventListener("click", async () => {
         date: hlDate.value,
         title: hlTitle.value,
         text: hlText.value || "",
-        type: hlType.value || "milestone",
         created: Date.now()
     });
 
@@ -126,16 +119,14 @@ onValue(ref(db, "highlights"), (snapshot) => {
         .map(([id, item]) => ({ id, ...item }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    if (!highlightList) return;
-
     highlightList.innerHTML = items.length
         ? items.map(h => `
-            <div class="news-item">
-                <b>${h.title}</b><br>
-                <small>📅 ${h.date} | ⭐ ${h.type}</small>
+            <div class="card highlight">
+                <b>${h.title}</b>
                 <p>${h.text}</p>
+                <small>${h.date}</small>
 
-                <button onclick="deleteHighlight('${h.id}')">🗑 Delete</button>
+                <button onclick="deleteHighlight('${h.id}')">🗑</button>
             </div>
         `).join("")
         : "<p>Geen highlights</p>";
@@ -174,15 +165,10 @@ onValue(ref(db, "club100"), (snapshot) => {
         .map(([id, item]) => ({ id, ...item }))
         .sort((a, b) => (b.created || 0) - (a.created || 0));
 
-    if (!clubList) return;
-
     clubList.innerHTML = items.length
         ? items.map(p => `
             <div class="tile">
-                <div class="tile-name">
-                    <div>${p.name}</div>
-                </div>
-
+                ${p.name}
                 <button onclick="deleteClub('${p.id}')">🗑</button>
             </div>
         `).join("")
@@ -229,15 +215,10 @@ onValue(ref(db, "sponsors"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    const items = Object.entries(data).map(([id, s]) => ({ id, ...s }));
-
-    if (!sponsorList) return;
-
-    sponsorList.innerHTML = items.map(s => `
-        <div style="display:inline-block;margin:10px;text-align:center;">
-            <img src="${s.imageUrl}" style="height:60px;border-radius:8px;">
-            <br>
-            <button onclick="deleteSponsor('${s.id}')">🗑 Delete</button>
+    sponsorList.innerHTML = Object.entries(data).map(([id, s]) => `
+        <div class="card sponsor">
+            <img src="${s.imageUrl}">
+            <button onclick="deleteSponsor('${id}')">🗑</button>
         </div>
     `).join("");
 });
@@ -282,15 +263,10 @@ onValue(ref(db, "omejan"), (snapshot) => {
 
     const data = snapshot.val() || {};
 
-    const items = Object.entries(data).map(([id, o]) => ({ id, ...o }));
-
-    if (!omeList) return;
-
-    omeList.innerHTML = items.map(o => `
-        <div style="display:inline-block;margin:10px;text-align:center;">
-            <img src="${o.imageUrl}" style="height:70px;border-radius:8px;">
-            <br>
-            <button onclick="deleteOmeJan('${o.id}')">🗑 Delete</button>
+    omeList.innerHTML = Object.entries(data).map(([id, o]) => `
+        <div class="card ome">
+            <img src="${o.imageUrl}">
+            <button onclick="deleteOmeJan('${id}')">🗑</button>
         </div>
     `).join("");
 });
