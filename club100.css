@@ -1,6 +1,8 @@
-/* 🌅 ALLEEN CLUB100 PAGINA ACHTERGROND */
-#club100-page{
-    background: radial-gradient(circle at top, #fff3e0 0%, #f7ead6 60%, #f2dfc2 100%);
+/* 🌅 ACHTERGROND */
+body{
+    margin:0;
+    font-family:Georgia;
+    background: radial-gradient(circle at top, #fff3e0, #f7ead6, #f2dfc2);
 }
 
 /* 🧱 GRID MUUR */
@@ -11,19 +13,14 @@
     padding:16px;
 }
 
-/* 🟦 OUD HOLLANDSE TEGEL */
-#clubList > div{
+/* 🟦 OUD-HOLLANDSE TEGEL */
+.tile{
     aspect-ratio:1/1;
 
     display:flex;
     align-items:center;
     justify-content:center;
-
     text-align:center;
-    font-weight:bold;
-    font-family:Georgia;
-
-    color:#1b3f7a;
 
     background: radial-gradient(circle at top left, #ffffff, #eef3ff);
 
@@ -32,7 +29,11 @@
 
     box-shadow:
         inset 0 0 0 2px #ffffff,
-        0 8px 18px rgba(0,0,0,0.18);
+        0 10px 22px rgba(0,0,0,0.18);
+
+    font-family:Georgia;
+    font-weight:bold;
+    color:#1b3f7a;
 
     position:relative;
     overflow:hidden;
@@ -41,7 +42,7 @@
 }
 
 /* ✨ keramiek glans */
-#clubList > div::before{
+.tile::before{
     content:"";
     position:absolute;
     inset:0;
@@ -49,7 +50,19 @@
     pointer-events:none;
 }
 
+/* tekst boven glans */
+.tile-text{
+    position:relative;
+    z-index:2;
+}
+
 /* hover effect */
-#clubList > div:hover{
-    transform:scale(1.04);
+.tile:hover{
+    transform:scale(1.05);
+}
+
+/* lege state */
+.tile.empty{
+    opacity:0.6;
+    font-style:italic;
 }
