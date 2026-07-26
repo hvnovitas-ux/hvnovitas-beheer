@@ -6,17 +6,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Club van 100 - HV Novitas</title>
 
-<!-- 🔥 INLINE CSS FIX (BELANGRIJK: lost jouw probleem op) -->
 <style>
+
+/* =========================
+   SAFE BASE (NIET KAPOT MAKEN)
+========================= */
 
 body{
     margin:0;
     font-family:Georgia;
-    background:#0b0b0b;
+
+    /* ✅ OUD-HOLLANDS (VEILIG + ZICHTBAAR) */
+    background:#fff3e0;
+
+    color:#1b3f7a;
 }
 
 /* =========================
-   🔥 GRID FIX (ALLE SECTIES)
+   GRID (NIET VERANDEREN)
 ========================= */
 
 #clubList,
@@ -31,60 +38,70 @@ body{
 }
 
 /* =========================
-   🧱 CLUB TEGELS
+   🇳🇱 OUD-HOLLANDSE TEGELS (VEILIG)
 ========================= */
 
 .tile{
-    background:#fbfaf6;
-    border:5px solid #1e4f8a;
-    border-radius:12px;
-
     aspect-ratio:1/1;
-
     display:flex;
     align-items:center;
     justify-content:center;
     flex-direction:column;
 
-    color:#1e4f8a;
-    text-align:center;
+    background: radial-gradient(circle at top left, #ffffff, #eef3ff);
+
+    border:5px solid #1b4f9c;
+    border-radius:12px;
+
+    color:#1b3f7a;
+    font-weight:bold;
+
+    box-shadow:
+        inset 0 0 0 2px #ffffff,
+        0 4px 12px rgba(0,0,0,0.12);
+
+    position:relative;
+    overflow:hidden;
+}
+
+/* veilige glans */
+.tile::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 60%);
+    pointer-events:none;
+}
+
+/* tekst boven alles */
+.tile > *{
+    position:relative;
+    z-index:2;
 }
 
 /* =========================
-   🧱 CARDS (CMS SECTIES)
+   CARDS
 ========================= */
 
 .card{
     background:white;
-    border-radius:12px;
     padding:10px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.15);
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+    border-radius:12px;
+    border:2px solid #1b3f7a;
 }
 
-/* =========================
-   🖼 FOTO FIX
-========================= */
-
-.card img,
-#sponsorList img,
-#omejanList img{
+/* images veilig */
+.card img{
     width:100%;
-    max-height:90px;
-    object-fit:contain;
+    max-height:100px;
+    object-fit:cover;
     border-radius:8px;
 }
 
-/* =========================
-   ✨ HOVER
-========================= */
-
+/* hover safe */
 .tile:hover,
 .card:hover{
-    transform:scale(1.03);
+    transform:scale(1.02);
     transition:0.2s ease;
 }
 
@@ -97,7 +114,7 @@ body{
 <!-- 🧱 CLUB100 -->
 <div id="clubList"></div>
 
-<!-- 🧠 CMS SECTIES -->
+<!-- CMS SECTIES -->
 <div id="highlightList"></div>
 <div id="newsList"></div>
 <div id="sponsorList"></div>
