@@ -5,7 +5,7 @@ const container = document.getElementById("highlightList");
 
 console.log("🏆 Highlights loaded");
 
-// ================= FIREBASE LISTENER =================
+// ================= FIREBASE =================
 
 onValue(ref(db, "highlights"), (snapshot) => {
 
@@ -13,14 +13,19 @@ onValue(ref(db, "highlights"), (snapshot) => {
 
     if (!container) return;
 
+    const today = new Date().toISOString().split("T")[0];
+
     const items = Object.entries(data)
         .map(([id, value]) => value)
-        .filter(Boolean)
-        .sort((a, b) => (b.created || 0) - (a.created || 0));
+        .filter(h => h && h.date);
+
+    // ================= FILTER: ALLEEN VANDAAG =================
+
+    const todayItems = items.filter(h => h.date === today);
 
     // ================= EMPTY STATE =================
 
-    if (items.length === 0) {
+    if (todayItems.length === 0) {
         container.innerHTML = `
             <div style="
                 padding:15px;
@@ -28,15 +33,19 @@ onValue(ref(db, "highlights"), (snapshot) => {
                 color:gray;
                 font-style:italic;
             ">
-                🧡 Geen highlights op dit moment
+                🧡 Vandaag zijn er geen highlights uit het verleden
             </div>
         `;
         return;
     }
 
+    // ================= SORT =================
+
+    todayItems.sort((a, b) => (b.created || 0) - (a.created || 0));
+
     // ================= RENDER =================
 
-    container.innerHTML = items.map(h => `
+    container.innerHTML = todayItems.map(h => `
         <div class="highlight">
 
             <h3>${h.title || ""}</h3>
