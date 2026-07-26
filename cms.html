@@ -1,226 +1,23 @@
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>HV Novitas CMS</title>
 
-<style>
-
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #f4f6f8;
-}
-
-/* =========================
-   🟧 TOPBAR
-========================= */
-
-.topbar {
-    background: #ff6a00;
-    color: white;
-    padding: 15px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* =========================
-   📦 CONTAINER
-========================= */
-
-.container {
-    max-width: 1000px;
-    margin: auto;
-    padding: 20px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* =========================
-   🧱 BOX
-========================= */
-
-.box {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-}
-
-/* =========================
-   ✏️ INPUTS
-========================= */
-
-input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
-
-/* =========================
-   🔘 BUTTON
-========================= */
-
-button {
-    background: #ff6a00;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-/* =========================
-   📰 NEWS ITEM
-========================= */
-
-.news-item {
-    background: #fff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-/* =========================
-   🤝 SPONSORS / OME JAN
-========================= */
-
-#sponsorList,
-#omejanList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-/* =========================
-   🏺 CLUB VAN 100 TEGELS
-========================= */
-
-.tile {
-    background: #fbfaf6;
-    border: 5px solid #1e4f8a;
-    border-radius: 12px;
-
-    width: 120px;
-    height: 120px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-family: Georgia;
-    color: #1e4f8a;
-
-    position: relative;
-}
-
-/* decoratie */
-.tile::after {
-    content: "❖";
-    position: absolute;
-    top: 5px;
-    right: 7px;
-    font-size: 10px;
-    opacity: 0.3;
-}
-
-</style>
+<link rel="stylesheet" href="cms.css">
 
 </head>
 
 <body>
 
-<div class="topbar">🧡 HV NOVITAS CMS</div>
+<div id="clubList"></div>
+<div id="highlightList"></div>
+<div id="newsList"></div>
+<div id="sponsorList"></div>
+<div id="omejanList"></div>
 
-<div class="container">
-
-<!-- ================= NEWS ================= -->
-<div class="box">
-
-    <h2>📰 Nieuws</h2>
-
-    <form id="newsForm">
-        <input id="title" placeholder="Titel">
-        <textarea id="text" placeholder="Bericht"></textarea>
-        <input type="file" id="newsImage">
-        <button type="submit">Publiceren</button>
-    </form>
-
-    <div id="newsList"></div>
-
-</div>
-
-<!-- ================= HIGHLIGHTS ================= -->
-<div class="box">
-
-    <h2>🏆 Highlights</h2>
-
-    <input id="hlDate" type="date">
-    <input id="hlTitle" placeholder="Titel">
-    <textarea id="hlText" placeholder="Beschrijving"></textarea>
-
-    <select id="hlType">
-        <option value="goal">Goal</option>
-        <option value="win">Win</option>
-        <option value="milestone">Milestone</option>
-    </select>
-
-    <button id="saveHighlight">Opslaan</button>
-
-    <div id="highlightList"></div>
-
-</div>
-
-<!-- ================= CLUB VAN 100 ================= -->
-<div class="box">
-
-    <h2>🏺 Club van 100</h2>
-
-    <input id="clubName" placeholder="Naam">
-    <button id="saveClub100">Toevoegen</button>
-
-    <div id="clubList"></div>
-
-</div>
-
-<!-- ================= SPONSORS ================= -->
-<div class="box">
-
-    <h2>🤝 Sponsors</h2>
-
-    <input type="file" id="logo">
-    <button id="saveSponsor">Upload sponsor</button>
-
-    <div id="sponsorList"></div>
-
-</div>
-
-<!-- ================= OME JAN ================= -->
-<div class="box">
-
-    <h2>📸 Ome Jan</h2>
-
-    <input type="file" id="omejanFile">
-    <button id="saveOmejan">Upload foto</button>
-
-    <div id="omejanList"></div>
-
-</div>
-
-</div>
-
-<!-- ================= SCRIPT ================= -->
 <script type="module" src="cms.js"></script>
 
 </body>
-
 </html>
