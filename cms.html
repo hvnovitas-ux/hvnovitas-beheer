@@ -11,6 +11,17 @@
 
 <body>
 
+<!-- 🔐 LOGIN STATUS + LOGOUT (NIEUW, MINIMALE TOEVOEGING) -->
+<div id="userStatus"></div>
+<button onclick="logout()">Uitloggen</button>
+
+<!-- 🎮 CHALLENGE KNOP (NIEUW) -->
+<button onclick="window.location.href='challenge/index.html'">
+    🎮 Ga naar Challenge
+</button>
+
+<hr>
+
 <h2>🧱 Club100</h2>
 <input id="clubName">
 <button id="saveClub100">Toevoegen</button>
@@ -48,6 +59,7 @@
 <button id="saveOmejan">Toevoegen</button>
 <div id="omejanList"></div>
 
+<!-- 🔥 CMS SCRIPT -->
 <script type="module" src="cms.js"></script>
 
 </body>
