@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { db, auth } from "./firebase.js";
 import {
     ref,
     push,
@@ -6,33 +6,67 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
 console.log("🔥 CMS CORE LOADED");
 
 // =====================
-// 🧱 CLUB100 (FIXED SAFE RENDER)
+// 🔐 AUTH CHECK (BELANGRIJK)
+// =====================
+
+onAuthStateChanged(auth, (user) => {
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    console.log("👤 Ingelogd als:", user.displayName || user.email);
+
+    // optionele status (als element bestaat)
+    const status = document.getElementById("userStatus");
+    if (status) {
+        status.innerHTML = `👋 Welkom ${user.displayName || "Admin"}`;
+    }
+});
+
+// =====================
+// 🚪 LOGOUT
+// =====================
+
+window.logout = async function () {
+    await signOut(auth);
+    window.location.href = "login.html";
+};
+
+// =====================
+// 🧱 CLUB100
 // =====================
 
 document.getElementById("saveClub100")?.addEventListener("click", async () => {
 
     const name = document.getElementById("clubName")?.value;
-    if(!name) return;
+    if (!name) return;
 
-    await push(ref(db,"club100"),{
+    await push(ref(db, "club100"), {
         name,
-        created:Date.now()
+        created: Date.now()
     });
 
-    document.getElementById("clubName").value="";
+    document.getElementById("clubName").value = "";
 });
 
-onValue(ref(db,"club100"), snap => {
+onValue(ref(db, "club100"), snap => {
 
     const list = document.getElementById("clubList");
-    if(!list) return;
+    if (!list) return;
 
     const data = snap.val() || {};
 
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
+    list.innerHTML = Object.entries(data).map(([id, v]) => `
         <div class="tile">
             <span>${v.name || ""}</span>
             <button onclick="del('club100','${id}')">🗑</button>
@@ -41,27 +75,27 @@ onValue(ref(db,"club100"), snap => {
 });
 
 // =====================
-// 🏆 HIGHLIGHTS (SAFE)
+// 🏆 HIGHLIGHTS
 // =====================
 
 document.getElementById("saveHighlight")?.addEventListener("click", async () => {
 
-    await push(ref(db,"highlights"),{
+    await push(ref(db, "highlights"), {
         date: document.getElementById("hlDate")?.value,
         title: document.getElementById("hlTitle")?.value,
         text: document.getElementById("hlText")?.value,
-        created:Date.now()
+        created: Date.now()
     });
 });
 
-onValue(ref(db,"highlights"), snap=>{
+onValue(ref(db, "highlights"), snap => {
 
     const list = document.getElementById("highlightList");
-    if(!list) return;
+    if (!list) return;
 
     const data = snap.val() || {};
 
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
+    list.innerHTML = Object.entries(data).map(([id, v]) => `
         <div class="card">
             <b>${v.title || ""}</b>
             <p>${v.text || ""}</p>
@@ -72,7 +106,7 @@ onValue(ref(db,"highlights"), snap=>{
 });
 
 // =====================
-// 📰 NEWS (SAFE IMAGE HANDLING)
+// 📰 NEWS
 // =====================
 
 document.getElementById("saveNews")?.addEventListener("click", async () => {
@@ -80,36 +114,36 @@ document.getElementById("saveNews")?.addEventListener("click", async () => {
     const file = document.getElementById("newsImage")?.files[0];
     let url = "";
 
-    if(file){
+    if (file) {
         const form = new FormData();
         form.append("file", file);
         form.append("upload_preset", "hvnovitas_upload");
 
         const res = await fetch(
             "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-            { method:"POST", body:form }
+            { method: "POST", body: form }
         );
 
         const data = await res.json();
         url = data.secure_url || "";
     }
 
-    await push(ref(db,"news"),{
+    await push(ref(db, "news"), {
         title: document.getElementById("newsTitle")?.value,
         text: document.getElementById("newsText")?.value,
         imageUrl: url,
-        created:Date.now()
+        created: Date.now()
     });
 });
 
-onValue(ref(db,"news"), snap=>{
+onValue(ref(db, "news"), snap => {
 
     const list = document.getElementById("newsList");
-    if(!list) return;
+    if (!list) return;
 
     const data = snap.val() || {};
 
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
+    list.innerHTML = Object.entries(data).map(([id, v]) => `
         <div class="card">
             <b>${v.title || ""}</b>
             <p>${v.text || ""}</p>
@@ -120,13 +154,13 @@ onValue(ref(db,"news"), snap=>{
 });
 
 // =====================
-// 🤝 SPONSORS (SAFE IMAGE FIX)
+// 🤝 SPONSORS
 // =====================
 
 document.getElementById("saveSponsor")?.addEventListener("click", async () => {
 
     const file = document.getElementById("sponsorImage")?.files[0];
-    if(!file) return;
+    if (!file) return;
 
     const form = new FormData();
     form.append("file", file);
@@ -134,25 +168,25 @@ document.getElementById("saveSponsor")?.addEventListener("click", async () => {
 
     const res = await fetch(
         "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-        { method:"POST", body:form }
+        { method: "POST", body: form }
     );
 
     const data = await res.json();
 
-    await push(ref(db,"sponsors"),{
+    await push(ref(db, "sponsors"), {
         imageUrl: data.secure_url || "",
-        created:Date.now()
+        created: Date.now()
     });
 });
 
-onValue(ref(db,"sponsors"), snap=>{
+onValue(ref(db, "sponsors"), snap => {
 
     const list = document.getElementById("sponsorList");
-    if(!list) return;
+    if (!list) return;
 
     const data = snap.val() || {};
 
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
+    list.innerHTML = Object.entries(data).map(([id, v]) => `
         <div class="card">
             ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
             <button onclick="del('sponsors','${id}')">🗑</button>
@@ -161,13 +195,13 @@ onValue(ref(db,"sponsors"), snap=>{
 });
 
 // =====================
-// 📸 OME JAN (SAFE IMAGE FIX)
+// 📸 OME JAN
 // =====================
 
 document.getElementById("saveOmejan")?.addEventListener("click", async () => {
 
     const file = document.getElementById("omejanImage")?.files[0];
-    if(!file) return;
+    if (!file) return;
 
     const form = new FormData();
     form.append("file", file);
@@ -175,25 +209,25 @@ document.getElementById("saveOmejan")?.addEventListener("click", async () => {
 
     const res = await fetch(
         "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-        { method:"POST", body:form }
+        { method: "POST", body: form }
     );
 
     const data = await res.json();
 
-    await push(ref(db,"omejan"),{
+    await push(ref(db, "omejan"), {
         imageUrl: data.secure_url || "",
-        created:Date.now()
+        created: Date.now()
     });
 });
 
-onValue(ref(db,"omejan"), snap=>{
+onValue(ref(db, "omejan"), snap => {
 
     const list = document.getElementById("omejanList");
-    if(!list) return;
+    if (!list) return;
 
     const data = snap.val() || {};
 
-    list.innerHTML = Object.entries(data).map(([id,v])=>`
+    list.innerHTML = Object.entries(data).map(([id, v]) => `
         <div class="card">
             ${v.imageUrl ? `<img src="${v.imageUrl}">` : ""}
             <button onclick="del('omejan','${id}')">🗑</button>
@@ -202,9 +236,15 @@ onValue(ref(db,"omejan"), snap=>{
 });
 
 // =====================
-// 🧹 DELETE SYSTEM
+// 🧹 DELETE (SAFE + AUTH CHECK)
 // =====================
 
-window.del = (path,id)=>{
-    remove(ref(db,path+"/"+id));
+window.del = (path, id) => {
+
+    if (!auth.currentUser) {
+        alert("Niet ingelogd");
+        return;
+    }
+
+    remove(ref(db, path + "/" + id));
 };
