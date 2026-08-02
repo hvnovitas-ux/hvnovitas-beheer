@@ -15,16 +15,18 @@ body {
     background: #f4f6f8;
 }
 
+/* TOPBAR */
 .topbar {
     background: #ff6a00;
     color: white;
     padding: 15px;
     font-weight: bold;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+/* MENU */
 .menu {
     max-width: 700px;
     margin: auto;
@@ -46,11 +48,21 @@ body {
     background: #eee;
 }
 
+/* USER BOX */
+.userbox {
+    font-size: 14px;
+}
+
 button {
-    padding:6px 10px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.logout {
+    background: white;
+    color: black;
 }
 
 </style>
@@ -59,15 +71,19 @@ button {
 
 <body>
 
+<!-- 🔐 TOPBAR -->
 <div class="topbar">
+
     <div>🧡 HV NOVITAS DASHBOARD</div>
 
-    <!-- 🔐 USER INFO -->
-    <div id="userInfo">Laden...</div>
+    <div class="userbox">
+        <span id="userInfo">Laden...</span>
+        <button class="logout" onclick="logout()">Uitloggen</button>
+    </div>
 
-    <button onclick="logout()">Uitloggen</button>
 </div>
 
+<!-- 📦 MENU -->
 <div class="menu">
 
     <a href="cms.html">📰 Nieuws beheren</a>
@@ -78,13 +94,17 @@ button {
 
     <a href="instellingen.html">⚙️ Instellingen</a>
 
+    <a href="challenge/index.html">🎮 Challenge</a>
+
 </div>
 
-<!-- 🔐 AUTH SCRIPT -->
+<!-- 🔐 FIREBASE AUTH -->
 <script type="module">
 
 import { auth } from "./firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+console.log("🧡 Dashboard loaded");
 
 onAuthStateChanged(auth, (user) => {
 
