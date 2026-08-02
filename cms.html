@@ -11,17 +11,15 @@
 
 <body>
 
-<!-- 🔐 LOGIN STATUS + LOGOUT (NIEUW, MINIMALE TOEVOEGING) -->
+<!-- 🔐 STATUS (komt uit dashboard/login flow later) -->
 <div id="userStatus"></div>
-<button onclick="logout()">Uitloggen</button>
 
-<!-- 🎮 CHALLENGE KNOP (NIEUW) -->
-<button onclick="window.location.href='challenge/index.html'">
-    🎮 Ga naar Challenge
-</button>
+<!-- 🚪 LOGOUT (werkt met cms.js) -->
+<button onclick="logout()">Uitloggen</button>
 
 <hr>
 
+<!-- 🧱 CLUB100 -->
 <h2>🧱 Club100</h2>
 <input id="clubName">
 <button id="saveClub100">Toevoegen</button>
@@ -29,6 +27,7 @@
 
 <hr>
 
+<!-- 🏆 HIGHLIGHTS -->
 <h2>🏆 Highlights</h2>
 <input id="hlDate" type="date">
 <input id="hlTitle">
@@ -38,6 +37,7 @@
 
 <hr>
 
+<!-- 📰 NEWS -->
 <h2>📰 News</h2>
 <input id="newsTitle">
 <input id="newsText">
@@ -47,6 +47,7 @@
 
 <hr>
 
+<!-- 🤝 SPONSORS -->
 <h2>🤝 Sponsors</h2>
 <input type="file" id="sponsorImage">
 <button id="saveSponsor">Toevoegen</button>
@@ -54,6 +55,7 @@
 
 <hr>
 
+<!-- 📸 OME JAN -->
 <h2>📸 Ome Jan</h2>
 <input type="file" id="omejanImage">
 <button id="saveOmejan">Toevoegen</button>
