@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HV Novitas Login</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+button {
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #e85f00;
+}
+
+small {
+    display:block;
+    margin-top:10px;
+    color:#666;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>🧡 HV Novitas Login</h2>
+
+    <button id="loginBtn">🔐 Inloggen met Google</button>
+
+    <small>Alleen beheerders</small>
+
+</div>
+
+<script type="module">
+
+import { auth, provider } from "./firebase.js";
+
+import { signInWithPopup } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+// =====================
+// LOGIN
+// =====================
+
+document.getElementById("loginBtn").addEventListener("click", async () => {
+
+    try {
+
+        const result = await signInWithPopup(auth, provider);
+
+        const user = result.user;
+
+        console.log("Ingelogd:", user.email);
+
+        // naar dashboard
+        window.location.href = "dashboard.html";
+
+    } catch (error) {
+
+        console.error(error);
+        alert("Login mislukt");
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
