@@ -1,4 +1,5 @@
 import { db, auth } from "./firebase.js";
+
 import {
     ref,
     push,
@@ -14,7 +15,7 @@ import {
 console.log("🔥 CMS CORE LOADED");
 
 // =====================
-// 🔐 AUTH CHECK (BELANGRIJK)
+// 🔐 LOGIN CHECK
 // =====================
 
 onAuthStateChanged(auth, (user) => {
@@ -24,12 +25,11 @@ onAuthStateChanged(auth, (user) => {
         return;
     }
 
-    console.log("👤 Ingelogd als:", user.displayName || user.email);
+    console.log("Ingelogd:", user.displayName);
 
-    // optionele status (als element bestaat)
     const status = document.getElementById("userStatus");
     if (status) {
-        status.innerHTML = `👋 Welkom ${user.displayName || "Admin"}`;
+        status.innerHTML = "👋 Welkom " + (user.displayName || "Admin");
     }
 });
 
@@ -236,7 +236,7 @@ onValue(ref(db, "omejan"), snap => {
 });
 
 // =====================
-// 🧹 DELETE (SAFE + AUTH CHECK)
+// 🧹 DELETE
 // =====================
 
 window.del = (path, id) => {
