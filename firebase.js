@@ -1,5 +1,11 @@
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+import { 
+    getAuth, 
+    GoogleAuthProvider 
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
@@ -13,4 +19,13 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
+// =====================
+// DATABASE
+// =====================
 export const db = getDatabase(app);
+
+// =====================
+// AUTH (FIX VOOR DASHBOARD)
+// =====================
+export const auth = getAuth(app);
+export const provider = new GoogleAuthProvider();
