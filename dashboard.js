@@ -1,18 +1,11 @@
-// ==========================================
-// HV NOVITAS - DASHBOARD
-// ==========================================
-
-const dashboard = {
-    nieuws: 0,
-    proeftrainingen: 0,
-    contact: 0,
-    vrijwilligers: 0,
-    agenda: 0,
-    sponsors: 0
-};
+import { db } from "./firebase.js";
+import {
+    ref,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 // ==========================================
-// Start
+// START DASHBOARD
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,29 +13,64 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// Dashboard laden
+// DASHBOARD INIT
 // ==========================================
 
 function laadDashboard() {
-    updateKaarten();
+
     console.log("🧡 Dashboard geladen");
+
+    // NEWS
+    onValue(ref(db, "news"), (snap) => {
+        setBadge("nieuws", countItems(snap));
+    });
+
+    // PROEFTRAININGEN
+    onValue(ref(db, "proeftrainingen"), (snap) => {
+        setBadge("proeftrainingen", countItems(snap));
+    });
+
+    // CONTACT
+    onValue(ref(db, "contact"), (snap) => {
+        setBadge("contact", countItems(snap));
+    });
+
+    // VRIJWILLIGERS
+    onValue(ref(db, "vrijwilligers"), (snap) => {
+        setBadge("vrijwilligers", countItems(snap));
+    });
+
+    // AGENDA
+    onValue(ref(db, "agenda"), (snap) => {
+        setBadge("agenda", countItems(snap));
+    });
+
+    // SPONSORS
+    onValue(ref(db, "sponsors"), (snap) => {
+        setBadge("sponsors", countItems(snap));
+    });
+
+    // CLUB100 (extra handig voor jou)
+    onValue(ref(db, "club100"), (snap) => {
+        setBadge("club100", countItems(snap));
+    });
 }
 
 // ==========================================
-// Kaarten updaten
+// COUNT FUNCTIE
 // ==========================================
 
-function updateKaarten() {
-    setBadge("nieuws", dashboard.nieuws);
-    setBadge("proeftrainingen", dashboard.proeftrainingen);
-    setBadge("contact", dashboard.contact);
-    setBadge("vrijwilligers", dashboard.vrijwilligers);
-    setBadge("agenda", dashboard.agenda);
-    setBadge("sponsors", dashboard.sponsors);
+function countItems(snapshot) {
+
+    const data = snapshot.val();
+
+    if (!data) return 0;
+
+    return Object.keys(data).length;
 }
 
 // ==========================================
-// Badge zetten
+// BADGE UPDATER
 // ==========================================
 
 function setBadge(id, waarde) {
