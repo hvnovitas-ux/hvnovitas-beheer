@@ -2,9 +2,9 @@ import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebase
 
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-import { 
-    getAuth, 
-    GoogleAuthProvider 
+import {
+    getAuth,
+    GoogleAuthProvider
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -19,13 +19,9 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// =====================
 // DATABASE
-// =====================
 export const db = getDatabase(app);
 
-// =====================
-// AUTH (FIX VOOR DASHBOARD)
-// =====================
+// AUTH (BELANGRIJK)
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
