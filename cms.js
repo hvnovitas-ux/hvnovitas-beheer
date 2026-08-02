@@ -1,5 +1,4 @@
-import { db, auth } from "./firebase.js";
-
+import { db } from "./firebase.js";
 import {
     ref,
     push,
@@ -7,40 +6,7 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-import {
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 console.log("🔥 CMS CORE LOADED");
-
-// =====================
-// 🔐 LOGIN CHECK
-// =====================
-
-onAuthStateChanged(auth, (user) => {
-
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    console.log("Ingelogd:", user.displayName);
-
-    const status = document.getElementById("userStatus");
-    if (status) {
-        status.innerHTML = "👋 Welkom " + (user.displayName || "Admin");
-    }
-});
-
-// =====================
-// 🚪 LOGOUT
-// =====================
-
-window.logout = async function () {
-    await signOut(auth);
-    window.location.href = "login.html";
-};
 
 // =====================
 // 🧱 CLUB100
@@ -240,11 +206,5 @@ onValue(ref(db, "omejan"), snap => {
 // =====================
 
 window.del = (path, id) => {
-
-    if (!auth.currentUser) {
-        alert("Niet ingelogd");
-        return;
-    }
-
     remove(ref(db, path + "/" + id));
 };
