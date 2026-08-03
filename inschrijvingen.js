@@ -15,132 +15,148 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("📋 Inschrijvingen gestart");
-
-// ======================================================
+// =====================================================
 // ELEMENTEN
-// ======================================================
+// =====================================================
 
 const container =
-    document.getElementById(
-        "inschrijvingenContainer"
-    );
+    document.getElementById("inschrijvingenContainer");
 
 const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
+    document.getElementById("searchInput");
 
 const detailModal =
-    document.getElementById(
-        "detailModal"
-    );
+    document.getElementById("detailModal");
 
 const detailContent =
-    document.getElementById(
-        "detailContent"
-    );
+    document.getElementById("detailContent");
 
 const closeModal =
-    document.getElementById(
-        "closeModal"
-    );
+    document.getElementById("closeModal");
 
-// ======================================================
+const printButton =
+    document.getElementById("printButton");
+
+const deleteButton =
+    document.getElementById("deleteButton");
+
+// =====================================================
 // GEGEVENS
-// ======================================================
+// =====================================================
 
 let inschrijvingen = [];
 
-// ======================================================
-// MODAL
-// ======================================================
+let huidigeInschrijving = null;
 
-closeModal.addEventListener(
-    "click",
-    sluitPopup
-);
+// =====================================================
+// INITIALISEREN
+// =====================================================
 
-window.addEventListener(
-    "click",
-    e => {
+init();
 
-        if (e.target === detailModal) {
+function init() {
 
-            sluitPopup();
+    laadInschrijvingen();
+
+    closeModal.addEventListener(
+        "click",
+        sluitPopup
+    );
+
+    window.addEventListener(
+        "click",
+        e => {
+
+            if (e.target === detailModal) {
+
+                sluitPopup();
+
+            }
 
         }
+    );
 
-    }
-);
+    searchInput.addEventListener(
+        "input",
+        zoeken
+    );
+
+    printButton.addEventListener(
+        "click",
+        printInschrijving
+    );
+
+    deleteButton.addEventListener(
+        "click",
+        verwijderInschrijving
+    );
+
+}
 
 function sluitPopup() {
 
     detailModal.style.display = "none";
 
 }
+// =====================================================
+// FIREBASE LADEN
+// =====================================================
 
-// ======================================================
-// FIREBASE
-// ======================================================
+function laadInschrijvingen() {
 
-const inschrijvingenRef =
-    ref(db, "inschrijvingen");
+    onValue(
 
-onValue(
+        ref(db, "inschrijvingen"),
 
-    inschrijvingenRef,
+        snapshot => {
 
-    snapshot => {
+            inschrijvingen = [];
 
-        inschrijvingen = [];
+            if (!snapshot.exists()) {
 
-        if (!snapshot.exists()) {
+                container.innerHTML = `
 
-            container.innerHTML = `
+                    <div class="inschrijving-card">
 
-                <div class="inschrijving-card">
+                        <h3>
 
-                    <h3>
+                            Er zijn nog geen inschrijvingen.
 
-                        Er zijn nog geen inschrijvingen.
+                        </h3>
 
-                    </h3>
+                    </div>
 
-                </div>
+                `;
 
-            `;
+                return;
 
-            return;
+            }
 
-        }
+            snapshot.forEach(item => {
 
-        snapshot.forEach(item => {
+                inschrijvingen.push({
 
-            inschrijvingen.push({
+                    id: item.key,
 
-                id: item.key,
+                    ...item.val()
 
-                ...item.val()
+                });
 
             });
 
-        });
+            toonKaarten(inschrijvingen);
 
-        toonInschrijvingen(
-            inschrijvingen
-        );
+        }
 
-    }
+    );
 
-);
+}
 
-console.log("✅ Firebase verbonden");
-// ======================================================
-// KAARTEN TONEN
-// ======================================================
+// =====================================================
+// KAARTEN
+// =====================================================
 
-function toonInschrijvingen(lijst) {
+function toonKaarten(lijst) {
 
     container.innerHTML = "";
 
@@ -151,36 +167,38 @@ function toonInschrijvingen(lijst) {
             <div class="inschrijving-card">
 
                 <h3>
+
                     👤 ${item.voornaam} ${item.achternaam}
+
                 </h3>
 
                 <p>
+
                     📅 ${item.geboortedatum}
+
                 </p>
 
                 <p>
+
                     📍 ${item.woonplaats}
+
                 </p>
 
                 <p>
+
                     📧 ${item.email}
+
                 </p>
 
                 <div class="card-buttons">
 
                     <button
+
                         class="openButton"
+
                         data-id="${item.id}">
 
                         Open
-
-                    </button>
-
-                    <button
-                        class="deleteButton"
-                        data-id="${item.id}">
-
-                        Verwijderen
 
                     </button>
 
@@ -194,187 +212,169 @@ function toonInschrijvingen(lijst) {
 
 }
 
-// ======================================================
+// =====================================================
 // ZOEKEN
-// ======================================================
+// =====================================================
 
-searchInput.addEventListener("input", () => {
+function zoeken() {
 
-    const zoek =
-        searchInput.value.trim().toLowerCase();
+    const tekst =
+        searchInput.value
+        .trim()
+        .toLowerCase();
 
-    if (zoek === "") {
+    if (tekst === "") {
 
-        toonInschrijvingen(inschrijvingen);
+        toonKaarten(inschrijvingen);
 
         return;
 
     }
 
-    const resultaat =
-        inschrijvingen.filter(item => {
+    const resultaat = inschrijvingen.filter(item => {
 
-            const naam =
-                `${item.voornaam} ${item.achternaam}`
-                .toLowerCase();
+        const naam =
 
-            return naam.includes(zoek);
+            `${item.voornaam} ${item.achternaam}`
+            .toLowerCase();
 
-        });
+        return naam.includes(tekst);
 
-    toonInschrijvingen(resultaat);
+    });
 
-});
+    toonKaarten(resultaat);
 
-console.log("✅ Kaarten en zoeken gereed");
-// ======================================================
-// ACTIES (OPEN / PRINT / VERWIJDEREN)
-// ======================================================
+}
+// =====================================================
+// OPEN INSCHRIJVING
+// =====================================================
 
-container.addEventListener("click", async (e) => {
+container.addEventListener("click", e => {
 
-    const knop = e.target.closest("button");
+    const knop = e.target.closest(".openButton");
 
     if (!knop) return;
 
     const id = knop.dataset.id;
 
-    const gegevens = inschrijvingen.find(
-        item => item.id === id
-    );
-
-    if (!gegevens) return;
-
-    // ==========================================
-    // OPEN
-    // ==========================================
-
-    if (knop.classList.contains("openButton")) {
-
-        detailContent.innerHTML = `
-
-<h2>HV Novitas - Inschrijfformulier</h2>
-
-<p><b>Naam:</b> ${gegevens.voornaam} ${gegevens.achternaam}</p>
-
-<hr>
-
-<h3>👤 Persoonsgegevens</h3>
-
-<p><b>Voornaam:</b> ${gegevens.voornaam || ""}</p>
-<p><b>Achternaam:</b> ${gegevens.achternaam || ""}</p>
-<p><b>Geslacht:</b> ${gegevens.geslacht || ""}</p>
-<p><b>Geboortedatum:</b> ${gegevens.geboortedatum || ""}</p>
-<p><b>Geboorteplaats:</b> ${gegevens.geboorteplaats || ""}</p>
-<p><b>Nationaliteit:</b> ${gegevens.nationaliteit || ""}</p>
-
-<hr>
-
-<h3>🏠 Adres</h3>
-
-<p><b>Straat:</b> ${gegevens.straat || ""}</p>
-<p><b>Huisnummer:</b> ${gegevens.huisnummer || ""}</p>
-<p><b>Postcode:</b> ${gegevens.postcode || ""}</p>
-<p><b>Woonplaats:</b> ${gegevens.woonplaats || ""}</p>
-
-<hr>
-
-<h3>☎ Contact</h3>
-
-<p><b>E-mail:</b> ${gegevens.email || ""}</p>
-<p><b>Telefoon:</b> ${gegevens.telefoon || ""}</p>
-
-<hr>
-
-<h3>🤾 Handbal</h3>
-
-<p><b>Eerder lid:</b> ${gegevens.eerderLid || ""}</p>
-<p><b>Vereniging:</b> ${gegevens.vereniging || "-"}</p>
-
-<hr>
-
-<h3>👨 Ouder / Verzorger</h3>
-
-<p><b>Naam:</b> ${gegevens.ouderNaam || "-"}</p>
-<p><b>E-mail:</b> ${gegevens.ouderEmail || "-"}</p>
-<p><b>Telefoon:</b> ${gegevens.ouderTelefoon || "-"}</p>
-
-<hr>
-
-<h3>✍ Handtekening</h3>
-
-<img
-    src="${gegevens.handtekening || ""}"
-    style="
-        max-width:320px;
-        border:1px solid #ccc;
-        padding:10px;
-        background:#fff;
-    ">
-
-<hr>
-
-<div class="detail-buttons">
-
-<button id="printButton">
-
-🖨 Afdrukken / Opslaan als PDF
-
-</button>
-
-</div>
-
-`;
-
-        detailModal.style.display = "block";
-
-        document
-            .getElementById("printButton")
-            .onclick = () => window.print();
-
-        return;
-
-    }
-
-    // ==========================================
-    // VERWIJDEREN
-    // ==========================================
-
-    if (knop.classList.contains("deleteButton")) {
-
-        const antwoord = confirm(
-
-            `Wilt u ${gegevens.voornaam} ${gegevens.achternaam} verwijderen?`
-
+    huidigeInschrijving =
+        inschrijvingen.find(
+            item => item.id === id
         );
 
-        if (!antwoord) return;
+    if (!huidigeInschrijving) return;
 
-        try {
+    detailContent.innerHTML = `
 
-            await remove(
+        <h2>HV Novitas - Inschrijfformulier</h2>
 
-                ref(
-                    db,
-                    "inschrijvingen/" + id
-                )
+        <hr>
 
-            );
+        <h3>👤 Persoonsgegevens</h3>
 
-            alert("Inschrijving verwijderd.");
+        <p><b>Voornaam:</b> ${huidigeInschrijving.voornaam || ""}</p>
+        <p><b>Achternaam:</b> ${huidigeInschrijving.achternaam || ""}</p>
+        <p><b>Geslacht:</b> ${huidigeInschrijving.geslacht || ""}</p>
+        <p><b>Geboortedatum:</b> ${huidigeInschrijving.geboortedatum || ""}</p>
+        <p><b>Geboorteplaats:</b> ${huidigeInschrijving.geboorteplaats || ""}</p>
+        <p><b>Nationaliteit:</b> ${huidigeInschrijving.nationaliteit || ""}</p>
 
-        }
+        <hr>
 
-        catch (error) {
+        <h3>🏠 Adres</h3>
 
-            console.error(error);
+        <p><b>Straat:</b> ${huidigeInschrijving.straat || ""}</p>
+        <p><b>Huisnummer:</b> ${huidigeInschrijving.huisnummer || ""}</p>
+        <p><b>Postcode:</b> ${huidigeInschrijving.postcode || ""}</p>
+        <p><b>Woonplaats:</b> ${huidigeInschrijving.woonplaats || ""}</p>
 
-            alert("Verwijderen mislukt.");
+        <hr>
 
-        }
+        <h3>☎ Contact</h3>
 
-    }
+        <p><b>E-mail:</b> ${huidigeInschrijving.email || ""}</p>
+        <p><b>Telefoon:</b> ${huidigeInschrijving.telefoon || ""}</p>
+
+        <hr>
+
+        <h3>🤾 Handbal</h3>
+
+        <p><b>Eerder lid:</b> ${huidigeInschrijving.eerderLid || ""}</p>
+        <p><b>Vereniging:</b> ${huidigeInschrijving.vereniging || "-"}</p>
+
+        <hr>
+
+        <h3>👨 Ouder / Verzorger</h3>
+
+        <p><b>Naam:</b> ${huidigeInschrijving.ouderNaam || "-"}</p>
+        <p><b>E-mail:</b> ${huidigeInschrijving.ouderEmail || "-"}</p>
+        <p><b>Telefoon:</b> ${huidigeInschrijving.ouderTelefoon || "-"}</p>
+
+        <hr>
+
+        <h3>✍ Handtekening</h3>
+
+        <img
+            src="${huidigeInschrijving.handtekening || ""}"
+            style="max-width:320px;border:1px solid #ccc;padding:10px;">
+
+    `;
+
+    detailModal.style.display = "block";
 
 });
 
-console.log("✅ Module Inschrijvingen gereed.");
+// =====================================================
+// PRINTEN
+// =====================================================
+
+function printInschrijving() {
+
+    window.print();
+
+}
+
+// =====================================================
+// VERWIJDEREN
+// =====================================================
+
+async function verwijderInschrijving() {
+
+    if (!huidigeInschrijving) return;
+
+    const antwoord = confirm(
+
+        `Wilt u ${huidigeInschrijving.voornaam} ${huidigeInschrijving.achternaam} verwijderen?`
+
+    );
+
+    if (!antwoord) return;
+
+    try {
+
+        await remove(
+
+            ref(
+                db,
+                "inschrijvingen/" + huidigeInschrijving.id
+            )
+
+        );
+
+        detailModal.style.display = "none";
+
+        alert("✅ Inschrijving verwijderd.");
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert("❌ Verwijderen mislukt.");
+
+    }
+
+}
+
+console.log("✅ Inschrijvingen gereed.");
