@@ -2,7 +2,7 @@
    HV NOVITAS
    Module : Inschrijvingen
    Bestand: inschrijvingen.css
-   Versie : 1.0
+   Versie : 2.0
 ========================================================= */
 
 /* ======================================================
@@ -35,27 +35,27 @@ body{
 
 .page-header p{
 
-    margin-top:8px;
+    margin-top:10px;
     color:#666;
 
 }
 
 /* ======================================================
-   ZOEKBALK
+   ZOEKEN
 ====================================================== */
 
 .search-section{
 
-    padding:20px;
     display:flex;
     justify-content:center;
+    padding:20px;
 
 }
 
 #searchInput{
 
     width:100%;
-    max-width:500px;
+    max-width:550px;
 
     padding:12px;
 
@@ -80,7 +80,7 @@ body{
 }
 
 /* ======================================================
-   LIJST
+   INSCHRIJVINGEN
 ====================================================== */
 
 .inschrijvingen-container{
@@ -93,7 +93,7 @@ body{
 
     display:grid;
 
-    gap:18px;
+    gap:20px;
 
 }
 
@@ -109,9 +109,9 @@ body{
 
     border-radius:10px;
 
-    padding:18px;
+    padding:20px;
 
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
 
 }
 
@@ -133,23 +133,19 @@ body{
 
 .card-buttons{
 
-    display:flex;
-
-    gap:10px;
-
-    margin-top:18px;
+    margin-top:20px;
 
 }
 
 .card-buttons button{
 
-    flex:1;
+    width:100%;
 
     padding:12px;
 
     border:none;
 
-    border-radius:6px;
+    border-radius:8px;
 
     cursor:pointer;
 
@@ -165,11 +161,23 @@ body{
 
 }
 
+.openButton:hover{
+
+    background:#0b5ed7;
+
+}
+
 .deleteButton{
 
-    background:#d93025;
+    background:#dc3545;
 
     color:white;
+
+}
+
+.deleteButton:hover{
+
+    background:#bb2d3b;
 
 }
 
@@ -185,7 +193,7 @@ body{
 
     inset:0;
 
-    background:rgba(0,0,0,.45);
+    background:rgba(0,0,0,.55);
 
     z-index:999;
 
@@ -193,23 +201,23 @@ body{
 
 .modal-content{
 
-    background:white;
-
-    width:90%;
+    width:92%;
 
     max-width:850px;
 
-    max-height:90vh;
+    max-height:92vh;
 
     overflow-y:auto;
 
-    margin:30px auto;
+    margin:25px auto;
 
-    border-radius:10px;
+    background:white;
+
+    border-radius:12px;
 
     padding:25px;
 
-    box-shadow:0 6px 20px rgba(0,0,0,.25);
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
 
 }
 
@@ -245,7 +253,7 @@ body{
 
 .modal-body h3{
 
-    margin-top:25px;
+    margin-top:30px;
 
     padding-bottom:5px;
 
@@ -255,7 +263,7 @@ body{
 
 .modal-body p{
 
-    margin:6px 0;
+    margin:7px 0;
 
 }
 
@@ -276,16 +284,16 @@ body{
 }
 
 /* ======================================================
-   ACTIEKNOPPEN
+   POPUP BUTTONS
 ====================================================== */
 
 .detail-buttons{
 
-    margin-top:25px;
-
     display:flex;
 
-    gap:10px;
+    gap:15px;
+
+    margin-top:30px;
 
 }
 
@@ -302,10 +310,6 @@ body{
     border-radius:8px;
 
     cursor:pointer;
-
-    background:#0d6efd;
-
-    color:white;
 
 }
 
@@ -333,25 +337,19 @@ body{
 
     }
 
-    .card-buttons{
+    .modal-content{
 
-        flex-direction:column;
+        width:96%;
+
+        margin:10px auto;
+
+        padding:18px;
 
     }
 
     .detail-buttons{
 
         flex-direction:column;
-
-    }
-
-    .modal-content{
-
-        width:96%;
-
-        margin:15px auto;
-
-        padding:18px;
 
     }
 
@@ -392,13 +390,9 @@ body{
 
         max-width:100%;
 
-        max-height:none;
-
         margin:0;
 
         padding:0;
-
-        overflow:visible;
 
         border:none;
 
@@ -406,23 +400,17 @@ body{
 
         box-shadow:none;
 
-    }
+        overflow:visible;
 
-    .close-button{
-
-        display:none;
+        max-height:none;
 
     }
+
+    .close-button,
 
     .detail-buttons{
 
         display:none;
-
-    }
-
-    hr{
-
-        margin:18px 0;
 
     }
 
