@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HV Novitas - Online Inschrijven</title>
+
+    <link rel="stylesheet" href="inschrijven.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header class="page-header">
+
+            <h1>🤾‍♂️ HV Novitas Online Inschrijven</h1>
+
+            <p>
+                Leuk dat je lid wilt worden van HV Novitas!
+                Vul onderstaand formulier volledig in.
+                Na verzending ontvang je automatisch een bevestiging
+                en een kopie van je inschrijfformulier per e-mail.
+            </p>
+
+        </header>
+
+
+        <!-- ===================================================== -->
+        <!-- Persoonlijke gegevens -->
+        <!-- ===================================================== -->
+
+        <section class="card">
+
+            <h2>👤 Persoonlijke gegevens</h2>
+
+            <div class="grid">
+
+                <div class="field">
+                    <label for="voornaam">Voornaam *</label>
+                    <input type="text" id="voornaam" required>
+                </div>
+
+                <div class="field">
+                    <label for="achternaam">Achternaam *</label>
+                    <input type="text" id="achternaam" required>
+                </div>
+
+                <div class="field">
+                    <label for="geslacht">Geslacht *</label>
+
+                    <select id="geslacht" required>
+                        <option value="">Maak een keuze</option>
+                        <option>Man</option>
+                        <option>Vrouw</option>
+                        <option>Anders</option>
+                    </select>
+
+                </div>
+
+                <div class="field">
+                    <label for="geboortedatum">Geboortedatum *</label>
+                    <input type="date" id="geboortedatum" required>
+                </div>
+
+                <div class="field">
+                    <label for="geboorteplaats">Geboorteplaats *</label>
+                    <input type="text" id="geboorteplaats" required>
+                </div>
+
+                <div class="field">
+                    <label for="nationaliteit">Nationaliteit *</label>
+                    <input type="text" id="nationaliteit" required>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- Adresgegevens -->
+        <!-- ===================================================== -->
+
+        <section class="card">
+
+            <h2>🏠 Adresgegevens</h2>
+
+            <div class="grid">
+
+                <div class="field field-large">
+                    <label for="straat">Straat *</label>
+                    <input type="text" id="straat" required>
+                </div>
+
+                <div class="field">
+                    <label for="huisnummer">Huisnummer *</label>
+                    <input type="text" id="huisnummer" required>
+                </div>
+
+                <div class="field">
+                    <label for="postcode">Postcode *</label>
+                    <input type="text" id="postcode" required>
+                </div>
+
+                <div class="field field-large">
+                    <label for="woonplaats">Woonplaats *</label>
+                    <input type="text" id="woonplaats" required>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- Contact -->
+        <!-- ===================================================== -->
+
+        <section class="card">
+
+            <h2>📞 Contactgegevens</h2>
+
+            <div class="grid">
+
+                <div class="field field-large">
+                    <label for="email">E-mailadres *</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="field">
+                    <label for="telefoon">Telefoonnummer *</label>
+                    <input type="tel" id="telefoon" required>
+                </div>
+
+            </div>
+
+        </section>
+         <!-- ===================================================== -->
+        <!-- Handbalinformatie -->
+        <!-- ===================================================== -->
+
+        <section class="card">
+
+            <h2>🤾 Handbalinformatie</h2>
+
+            <div class="grid">
+
+                <div class="field">
+                    <label for="eerderLid">Eerder lid geweest van een handbalvereniging?</label>
+
+                    <select id="eerderLid">
+                        <option value="nee">Nee</option>
+                        <option value="ja">Ja</option>
+                    </select>
+
+                </div>
+
+                <div class="field field-large">
+                    <label for="vereniging">Zo ja, welke vereniging?</label>
+                    <input type="text" id="vereniging">
+                </div>
+
+                <div class="field field-large">
+                    <label for="team">Gewenst team (optioneel)</label>
+
+                    <select id="team">
+                        <option value="">Nog niet bekend</option>
+                        <option>Mini's</option>
+                        <option>F-jeugd</option>
+                        <option>E-jeugd</option>
+                        <option>D-jeugd</option>
+                        <option>C-jeugd</option>
+                        <option>B-jeugd</option>
+                        <option>A-jeugd</option>
+                        <option>Dames</option>
+                        <option>Heren</option>
+                        <option>Recreanten</option>
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- Ouder / Verzorger -->
+        <!-- ===================================================== -->
+
+        <section class="card" id="ouderCard">
+
+            <h2>👨‍👩‍👧 Ouder / Verzorger</h2>
+
+            <p class="info">
+                Indien het lid jonger is dan 18 jaar verzoeken wij een ouder of
+                verzorger onderstaande gegevens in te vullen.
+            </p>
+
+            <div class="grid">
+
+                <div class="field">
+                    <label for="ouderNaam">Naam ouder / verzorger</label>
+                    <input type="text" id="ouderNaam">
+                </div>
+
+                <div class="field">
+                    <label for="ouderTelefoon">Telefoonnummer</label>
+                    <input type="tel" id="ouderTelefoon">
+                </div>
+
+                <div class="field field-large">
+                    <label for="ouderEmail">E-mailadres ouder / verzorger</label>
+                    <input type="email" id="ouderEmail">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- Akkoord -->
+        <!-- ===================================================== -->
+
+        <section class="card">
+
+            <h2>✅ Verklaring en akkoord</h2>
+
+            <div class="checkbox-group">
+
+                <label>
+                    <input type="checkbox" id="privacy" required>
+                    Ik ga akkoord met het privacybeleid van HV Novitas.
+                </label>
+
+                <label>
+                    <input type="checkbox" id="statuten" required>
+                    Ik ga akkoord met de statuten en het huishoudelijk reglement van HV Novitas.
+                </label>
+
+                <label>
+                    <input type="checkbox" id="verenigingjaar" required>
+                    Ik begrijp dat het verenigingsjaar loopt van
+                    <strong>1 juli tot en met 30 juni.</strong>
+                </label>
+
+                <label>
+                    <input type="checkbox" id="contributie" required>
+                    Ik begrijp dat bij opzegging tijdens het lopende
+                    verenigingsjaar de contributie voor het volledige
+                    verenigingsjaar verschuldigd blijft, behoudens overmacht.
+                </label>
+
+            </div>
+
+            <div class="notice">
+
+                <h3>Opzegging van het lidmaatschap</h3>
+
+                <p>
+                    Het lidmaatschap kan worden opgezegd door een e-mail
+                    te sturen naar
+                    <strong>hvnovitas@gmail.com</strong>.
+                </p>
+
+                <p>
+                    <strong>Let op:</strong>
+                    Het verenigingsjaar van HV Novitas loopt van
+                    <strong>1 juli tot en met 30 juni</strong>.
+                    Bij opzegging tijdens het lopende verenigingsjaar blijft
+                    de contributie voor het volledige verenigingsjaar
+                    verschuldigd, behoudens overmacht.
+                </p>
+
+            </div>
+
+        </section>
+         <!-- ===================================================== -->
+        <!-- Digitale handtekening -->
+        <!-- ===================================================== -->
+
+        <section class="card">
+
+            <h2>✍️ Digitale handtekening</h2>
+
+            <p class="info">
+                Door onderstaande handtekening te plaatsen verklaar ik dat
+                alle ingevulde gegevens juist zijn en dat ik akkoord ga met
+                de voorwaarden van HV Novitas.
+            </p>
+
+            <div class="signature-wrapper">
+
+                <canvas id="signatureCanvas"
+                        width="900"
+                        height="250">
+                </canvas>
+
+            </div>
+
+            <div class="signature-buttons">
+
+                <button
+                    type="button"
+                    id="clearSignature"
+                    class="btn-secondary">
+
+                    Handtekening wissen
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- Verzenden -->
+        <!-- ===================================================== -->
+
+        <section class="card">
+
+            <button
+                id="sendForm"
+                class="btn-submit">
+
+                📨 Inschrijving verzenden
+
+            </button>
+
+            <div id="message" class="message"></div>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- Footer -->
+        <!-- ===================================================== -->
+
+        <footer class="footer">
+
+            <p>
+                HV Novitas Hulst<br>
+                Online Inschrijfformulier
+            </p>
+
+            <small>
+                Na verzending ontvang je automatisch een bevestiging
+                en een kopie van je inschrijfformulier per e-mail.
+            </small>
+
+        </footer>
+
+    </div>
+
+    <script type="module" src="inschrijven.js"></script>
+
+</body>
+
+</html>
