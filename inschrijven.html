@@ -1,347 +1,711 @@
-<!DOCTYPE html>
-<html lang="nl">
+/*
+=========================================================
+HV NOVITAS
+Module : Inschrijven
+Bestand: inschrijven.js
+Versie : 1.0
+=========================================================
+*/
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+import { db } from "./firebase.js";
 
-    <title>HV Novitas - Online Inschrijven</title>
+import {
+    ref,
+    push
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-    <link rel="stylesheet" href="inschrijven.css">
-</head>
+console.log("📋 Module Inschrijven geladen");
 
-<body>
+// ======================================================
+// ELEMENTEN
+// ======================================================
 
-    <div class="container">
+const geboortedatum =
+    document.getElementById("geboortedatum");
 
-        <header class="page-header">
+const ouderCard =
+    document.getElementById("ouderCard");
 
-            <h1>🤾‍♂️ HV Novitas Online Inschrijven</h1>
+const canvas =
+    document.getElementById("signatureCanvas");
 
-            <p>
-                Leuk dat je lid wilt worden van HV Novitas!
-                Vul onderstaand formulier volledig in.
-                Na verzending ontvang je automatisch een bevestiging
-                en een kopie van je inschrijfformulier per e-mail.
-            </p>
+const ctx =
+    canvas.getContext("2d");
 
-        </header>
+const clearButton =
+    document.getElementById("clearSignature");
 
+const sendButton =
+    document.getElementById("sendForm");
 
-        <!-- ===================================================== -->
-        <!-- Persoonlijke gegevens -->
-        <!-- ===================================================== -->
+const message =
+    document.getElementById("message");
 
-        <section class="card">
+let tekenen = false;
 
-            <h2>👤 Persoonlijke gegevens</h2>
+// ======================================================
+// MELDINGEN
+// ======================================================
 
-            <div class="grid">
+function toonMelding(
+    tekst,
+    type = "success"
+){
 
-                <div class="field">
-                    <label for="voornaam">Voornaam *</label>
-                    <input type="text" id="voornaam" required>
-                </div>
+    message.className = "message";
 
-                <div class="field">
-                    <label for="achternaam">Achternaam *</label>
-                    <input type="text" id="achternaam" required>
-                </div>
+    message.classList.add(type);
 
-                <div class="field">
-                    <label for="geslacht">Geslacht *</label>
+    message.textContent = tekst;
 
-                    <select id="geslacht" required>
-                        <option value="">Maak een keuze</option>
-                        <option>Man</option>
-                        <option>Vrouw</option>
-                        <option>Anders</option>
-                    </select>
+    message.style.display = "block";
 
-                </div>
+}
 
-                <div class="field">
-                    <label for="geboortedatum">Geboortedatum *</label>
-                    <input type="date" id="geboortedatum" required>
-                </div>
+// ======================================================
+// LEEFTIJD
+// ======================================================
 
-                <div class="field">
-                    <label for="geboorteplaats">Geboorteplaats *</label>
-                    <input type="text" id="geboorteplaats" required>
-                </div>
+function berekenLeeftijd(datum){
 
-                <div class="field">
-                    <label for="nationaliteit">Nationaliteit *</label>
-                    <input type="text" id="nationaliteit" required>
-                </div>
+    if(!datum) return 99;
 
-            </div>
+    const geboorte =
+        new Date(datum);
 
-        </section>
+    const vandaag =
+        new Date();
 
+    let leeftijd =
+        vandaag.getFullYear() -
+        geboorte.getFullYear();
 
-        <!-- ===================================================== -->
-        <!-- Adresgegevens -->
-        <!-- ===================================================== -->
+    const maand =
+        vandaag.getMonth() -
+        geboorte.getMonth();
 
-        <section class="card">
+    if(
 
-            <h2>🏠 Adresgegevens</h2>
+        maand < 0 ||
 
-            <div class="grid">
+        (
 
-                <div class="field field-large">
-                    <label for="straat">Straat *</label>
-                    <input type="text" id="straat" required>
-                </div>
+            maand === 0 &&
 
-                <div class="field">
-                    <label for="huisnummer">Huisnummer *</label>
-                    <input type="text" id="huisnummer" required>
-                </div>
+            vandaag.getDate() <
+            geboorte.getDate()
 
-                <div class="field">
-                    <label for="postcode">Postcode *</label>
-                    <input type="text" id="postcode" required>
-                </div>
+        )
 
-                <div class="field field-large">
-                    <label for="woonplaats">Woonplaats *</label>
-                    <input type="text" id="woonplaats" required>
-                </div>
+    ){
 
-            </div>
+        leeftijd--;
 
-        </section>
+    }
 
+    return leeftijd;
 
-        <!-- ===================================================== -->
-        <!-- Contact -->
-        <!-- ===================================================== -->
+}
 
-        <section class="card">
+// ======================================================
+// OUDERBLOK
+// ======================================================
 
-            <h2>📞 Contactgegevens</h2>
+function updateOuderBlok(){
 
-            <div class="grid">
+    const leeftijd =
+        berekenLeeftijd(
+            geboortedatum.value
+        );
 
-                <div class="field field-large">
-                    <label for="email">E-mailadres *</label>
-                    <input type="email" id="email" required>
-                </div>
+    if(leeftijd < 18){
 
-                <div class="field">
-                    <label for="telefoon">Telefoonnummer *</label>
-                    <input type="tel" id="telefoon" required>
-                </div>
+        ouderCard.style.display =
+            "block";
 
-            </div>
+    }else{
 
-        </section>
-         <!-- ===================================================== -->
-        <!-- Handbalinformatie -->
-        <!-- ===================================================== -->
+        ouderCard.style.display =
+            "none";
 
-        <section class="card">
+    }
 
-            <h2>🤾 Handbalinformatie</h2>
+}
 
-            <div class="grid">
+geboortedatum.addEventListener(
 
-                <div class="field">
-                    <label for="eerderLid">Eerder lid geweest van een handbalvereniging?</label>
+    "change",
 
-                    <select id="eerderLid">
-                        <option value="nee">Nee</option>
-                        <option value="ja">Ja</option>
-                    </select>
+    updateOuderBlok
 
-                </div>
+);
 
-                <div class="field field-large">
-                    <label for="vereniging">Zo ja, welke vereniging?</label>
-                    <input type="text" id="vereniging">
-                </div>
+updateOuderBlok();
 
-               
+// ======================================================
+// HANDTEKENING
+// ======================================================
 
-            </div>
+ctx.lineWidth = 2;
+ctx.lineCap = "round";
+ctx.strokeStyle = "#000";
 
-        </section>
+function positie(e){
 
+    const rect =
+        canvas.getBoundingClientRect();
 
-        <!-- ===================================================== -->
-        <!-- Ouder / Verzorger -->
-        <!-- ===================================================== -->
+    return{
 
-        <section class="card" id="ouderCard">
+        x:e.clientX-rect.left,
 
-            <h2>👨‍👩‍👧 Ouder / Verzorger</h2>
+        y:e.clientY-rect.top
 
-            <p class="info">
-                Indien het lid jonger is dan 18 jaar verzoeken wij een ouder of
-                verzorger onderstaande gegevens in te vullen.
-            </p>
+    };
 
-            <div class="grid">
+}
 
-                <div class="field">
-                    <label for="ouderNaam">Naam ouder / verzorger</label>
-                    <input type="text" id="ouderNaam">
-                </div>
+// -----------------------------
+// MUIS
+// -----------------------------
 
-                <div class="field">
-                    <label for="ouderTelefoon">Telefoonnummer</label>
-                    <input type="tel" id="ouderTelefoon">
-                </div>
+canvas.addEventListener(
 
-                <div class="field field-large">
-                    <label for="ouderEmail">E-mailadres ouder / verzorger</label>
-                    <input type="email" id="ouderEmail">
-                </div>
+    "mousedown",
 
-            </div>
+    e=>{
 
-        </section>
+        tekenen = true;
 
+        const p =
+            positie(e);
 
-        <!-- ===================================================== -->
-        <!-- Akkoord -->
-        <!-- ===================================================== -->
+        ctx.beginPath();
 
-        <section class="card">
+        ctx.moveTo(
+            p.x,
+            p.y
+        );
 
-            <h2>✅ Verklaring en akkoord</h2>
+    }
 
-            <div class="checkbox-group">
+);
 
-                <label>
-                    <input type="checkbox" id="privacy" required>
-                    Ik ga akkoord met het privacybeleid van HV Novitas.
-                </label>
+canvas.addEventListener(
 
-                <label>
-                    <input type="checkbox" id="statuten" required>
-                    Ik ga akkoord met de statuten en het huishoudelijk reglement van HV Novitas.
-                </label>
+    "mousemove",
 
-                <label>
-                    <input type="checkbox" id="verenigingjaar" required>
-                    Ik begrijp dat het verenigingsjaar loopt van
-                    <strong>1 juli tot en met 30 juni.</strong>
-                </label>
+    e=>{
 
-                <label>
-                    <input type="checkbox" id="contributie" required>
-                    Ik begrijp dat bij opzegging tijdens het lopende
-                    verenigingsjaar de contributie voor het volledige
-                    verenigingsjaar verschuldigd blijft, behoudens overmacht.
-                </label>
+        if(!tekenen) return;
 
-            </div>
+        const p =
+            positie(e);
 
-            <div class="notice">
+        ctx.lineTo(
+            p.x,
+            p.y
+        );
 
-                <h3>Opzegging van het lidmaatschap</h3>
+        ctx.stroke();
 
-                <p>
-                    Het lidmaatschap kan worden opgezegd door een e-mail
-                    te sturen naar
-                    <strong>hvnovitas@gmail.com</strong>.
-                </p>
+    }
 
-                <p>
-                    <strong>Let op:</strong>
-                    Het verenigingsjaar van HV Novitas loopt van
-                    <strong>1 juli tot en met 30 juni</strong>.
-                    Bij opzegging tijdens het lopende verenigingsjaar blijft
-                    de contributie voor het volledige verenigingsjaar
-                    verschuldigd, behoudens overmacht.
-                </p>
+);
 
-            </div>
+canvas.addEventListener(
 
-        </section>
-         <!-- ===================================================== -->
-        <!-- Digitale handtekening -->
-        <!-- ===================================================== -->
+    "mouseup",
 
-        <section class="card">
+    ()=>{
 
-            <h2>✍️ Digitale handtekening</h2>
+        tekenen = false;
 
-            <p class="info">
-                Door onderstaande handtekening te plaatsen verklaar ik dat
-                alle ingevulde gegevens juist zijn en dat ik akkoord ga met
-                de voorwaarden van HV Novitas.
-            </p>
+    }
 
-            <div class="signature-wrapper">
+);
 
-                <canvas id="signatureCanvas"
-                        width="900"
-                        height="250">
-                </canvas>
+canvas.addEventListener(
 
-            </div>
+    "mouseleave",
 
-            <div class="signature-buttons">
+    ()=>{
 
-                <button
-                    type="button"
-                    id="clearSignature"
-                    class="btn-secondary">
+        tekenen = false;
 
-                    Handtekening wissen
+    }
 
-                </button>
+);
 
-            </div>
+// -----------------------------
+// TOUCH
+// -----------------------------
 
-        </section>
+canvas.addEventListener(
 
+    "touchstart",
 
-        <!-- ===================================================== -->
-        <!-- Verzenden -->
-        <!-- ===================================================== -->
+    e=>{
 
-        <section class="card">
+        e.preventDefault();
 
-            <button
-                id="sendForm"
-                class="btn-submit">
+        tekenen = true;
 
-                📨 Inschrijving verzenden
+        const touch =
+            e.touches[0];
 
-            </button>
+        const p =
+            positie(touch);
 
-            <div id="message" class="message"></div>
+        ctx.beginPath();
 
-        </section>
+        ctx.moveTo(
+            p.x,
+            p.y
+        );
 
+    }
 
-        <!-- ===================================================== -->
-        <!-- Footer -->
-        <!-- ===================================================== -->
+);
 
-        <footer class="footer">
+canvas.addEventListener(
 
-            <p>
-                HV Novitas Hulst<br>
-                Online Inschrijfformulier
-            </p>
+    "touchmove",
 
-            <small>
-                Na verzending ontvang je automatisch een bevestiging
-                en een kopie van je inschrijfformulier per e-mail.
-            </small>
+    e=>{
 
-        </footer>
+        e.preventDefault();
 
-    </div>
+        if(!tekenen) return;
 
-    <script type="module" src="inschrijven.js"></script>
+        const touch =
+            e.touches[0];
 
-</body>
+        const p =
+            positie(touch);
 
-</html>
+        ctx.lineTo(
+            p.x,
+            p.y
+        );
+
+        ctx.stroke();
+
+    }
+
+);
+
+canvas.addEventListener(
+
+    "touchend",
+
+    ()=>{
+
+        tekenen = false;
+
+    }
+
+);
+
+// -----------------------------
+// WISSEN
+// -----------------------------
+
+clearButton.addEventListener(
+
+    "click",
+
+    ()=>{
+
+        ctx.clearRect(
+
+            0,
+            0,
+            canvas.width,
+            canvas.height
+
+        );
+
+    }
+
+);
+
+// ======================================================
+// HANDTEKENING CONTROLEREN
+// ======================================================
+
+function heeftHandtekening(){
+
+    const pixels =
+        ctx.getImageData(
+
+            0,
+            0,
+            canvas.width,
+            canvas.height
+
+        ).data;
+
+    for(
+
+        let i = 3;
+
+        i < pixels.length;
+
+        i += 4
+
+    ){
+
+        if(pixels[i] !== 0){
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+
+}
+              // ======================================================
+// FORMULIER CONTROLEREN
+// ======================================================
+
+function controleerFormulier() {
+
+    const verplichteVelden = [
+
+        "voornaam",
+        "achternaam",
+        "geslacht",
+        "geboortedatum",
+        "geboorteplaats",
+        "nationaliteit",
+        "straat",
+        "huisnummer",
+        "postcode",
+        "woonplaats",
+        "email",
+        "telefoon"
+
+    ];
+
+    for (const id of verplichteVelden) {
+
+        const veld = document.getElementById(id);
+
+        if (!veld || !veld.value.trim()) {
+
+            if (veld) veld.focus();
+
+            toonMelding(
+                "Vul alle verplichte velden in.",
+                "error"
+            );
+
+            return false;
+
+        }
+
+    }
+
+    if (berekenLeeftijd(geboortedatum.value) < 18) {
+
+        const ouderNaam =
+            document.getElementById("ouderNaam");
+
+        const ouderEmail =
+            document.getElementById("ouderEmail");
+
+        if (
+            !ouderNaam.value.trim() ||
+            !ouderEmail.value.trim()
+        ) {
+
+            toonMelding(
+                "Vul de gegevens van de ouder/verzorger in.",
+                "error"
+            );
+
+            return false;
+
+        }
+
+    }
+
+    if (!document.getElementById("voorwaarden").checked) {
+
+        toonMelding(
+            "Ga akkoord met de voorwaarden.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+    if (!heeftHandtekening()) {
+
+        toonMelding(
+            "Plaats eerst een digitale handtekening.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+// ======================================================
+// FIREBASE OPSLAAN
+// ======================================================
+
+async function opslaanInFirebase() {
+
+    const inschrijving = {
+
+        voornaam:
+            document.getElementById("voornaam").value.trim(),
+
+        achternaam:
+            document.getElementById("achternaam").value.trim(),
+
+        geslacht:
+            document.getElementById("geslacht").value,
+
+        geboortedatum:
+            document.getElementById("geboortedatum").value,
+
+        geboorteplaats:
+            document.getElementById("geboorteplaats").value.trim(),
+
+        nationaliteit:
+            document.getElementById("nationaliteit").value.trim(),
+
+        straat:
+            document.getElementById("straat").value.trim(),
+
+        huisnummer:
+            document.getElementById("huisnummer").value.trim(),
+
+        postcode:
+            document.getElementById("postcode").value.trim(),
+
+        woonplaats:
+            document.getElementById("woonplaats").value.trim(),
+
+        email:
+            document.getElementById("email").value.trim(),
+
+        telefoon:
+            document.getElementById("telefoon").value.trim(),
+
+        eerderLid:
+            document.getElementById("eerderLid").value,
+
+        vereniging:
+            document.getElementById("vereniging").value.trim(),
+
+        ouderNaam:
+            document.getElementById("ouderNaam").value.trim(),
+
+        ouderTelefoon:
+            document.getElementById("ouderTelefoon").value.trim(),
+
+        ouderEmail:
+            document.getElementById("ouderEmail").value.trim(),
+
+        voorwaarden:
+            document.getElementById("voorwaarden").checked,
+
+        handtekening:
+            canvas.toDataURL("image/png"),
+
+        created:
+            Date.now()
+
+    };
+
+    await push(
+        ref(db, "inschrijvingen"),
+        inschrijving
+    );
+
+}
+
+// ======================================================
+// E-MAIL CONTROLEREN
+// ======================================================
+
+const email =
+    document.getElementById("email");
+
+email.addEventListener("blur", () => {
+
+    const regex =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (
+        email.value &&
+        !regex.test(email.value)
+    ) {
+
+        toonMelding(
+            "Voer een geldig e-mailadres in.",
+            "error"
+        );
+
+    }
+
+});
+
+// ======================================================
+// POSTCODE
+// ======================================================
+
+const postcode =
+    document.getElementById("postcode");
+
+postcode.addEventListener("input", () => {
+
+    postcode.value =
+        postcode.value.toUpperCase();
+
+});
+
+// ======================================================
+// TELEFOON
+// ======================================================
+
+const telefoon =
+    document.getElementById("telefoon");
+
+telefoon.addEventListener("input", () => {
+
+    telefoon.value =
+        telefoon.value.replace(
+            /[^0-9+\-\s]/g,
+            ""
+        );
+
+});
+        // ======================================================
+// FORMULIER LEEGMAKEN
+// ======================================================
+
+function resetFormulier() {
+
+    document.querySelectorAll("input").forEach(input => {
+
+        if (input.type === "checkbox") {
+
+            input.checked = false;
+
+        } else {
+
+            input.value = "";
+
+        }
+
+    });
+
+    document.querySelectorAll("select").forEach(select => {
+
+        select.selectedIndex = 0;
+
+    });
+
+    document.querySelectorAll("textarea").forEach(textarea => {
+
+        textarea.value = "";
+
+    });
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    updateOuderBlok();
+
+}
+
+// ======================================================
+// VERZENDEN
+// ======================================================
+
+sendButton.addEventListener("click", async () => {
+
+    message.style.display = "none";
+
+    if (!controleerFormulier()) {
+
+        return;
+
+    }
+
+    sendButton.disabled = true;
+
+    sendButton.textContent =
+        "⏳ Inschrijving opslaan...";
+
+    try {
+
+        await opslaanInFirebase();
+
+        toonMelding(
+            "✅ Bedankt! Je inschrijving is succesvol ontvangen.",
+            "success"
+        );
+
+        resetFormulier();
+
+    } catch (error) {
+
+        console.error(error);
+
+        toonMelding(
+            "❌ Er is een fout opgetreden tijdens het opslaan.",
+            "error"
+        );
+
+    }
+
+    sendButton.disabled = false;
+
+    sendButton.textContent =
+        "📨 Inschrijving verzenden";
+
+});
+
+// ======================================================
+// ENTER BLOKKEREN
+// ======================================================
+
+document.addEventListener("keydown", e => {
+
+    if (
+
+        e.key === "Enter" &&
+        e.target.tagName !== "TEXTAREA"
+
+    ) {
+
+        e.preventDefault();
+
+    }
+
+});
+
+// ======================================================
+// PAGINA START
+// ======================================================
+
+updateOuderBlok();
+
+console.log("✅ Inschrijfformulier gereed.");
