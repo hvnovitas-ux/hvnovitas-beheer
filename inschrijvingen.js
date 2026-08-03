@@ -3,7 +3,7 @@
 HV NOVITAS
 Module : Inschrijvingen
 Bestand: inschrijvingen.js
-Versie : 1.0
+Versie : 2.0
 =========================================================
 */
 
@@ -15,26 +15,36 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("📋 Module Inschrijvingen geladen");
+console.log("📋 Inschrijvingen gestart");
 
 // ======================================================
 // ELEMENTEN
 // ======================================================
 
 const container =
-    document.getElementById("inschrijvingenContainer");
+    document.getElementById(
+        "inschrijvingenContainer"
+    );
 
 const searchInput =
-    document.getElementById("searchInput");
+    document.getElementById(
+        "searchInput"
+    );
 
 const detailModal =
-    document.getElementById("detailModal");
+    document.getElementById(
+        "detailModal"
+    );
 
 const detailContent =
-    document.getElementById("detailContent");
+    document.getElementById(
+        "detailContent"
+    );
 
 const closeModal =
-    document.getElementById("closeModal");
+    document.getElementById(
+        "closeModal"
+    );
 
 // ======================================================
 // GEGEVENS
@@ -46,35 +56,44 @@ let inschrijvingen = [];
 // MODAL
 // ======================================================
 
-closeModal.addEventListener("click", () => {
+closeModal.addEventListener(
+    "click",
+    sluitPopup
+);
+
+window.addEventListener(
+    "click",
+    e => {
+
+        if (e.target === detailModal) {
+
+            sluitPopup();
+
+        }
+
+    }
+);
+
+function sluitPopup() {
 
     detailModal.style.display = "none";
 
-});
-
-window.addEventListener("click", e => {
-
-    if (e.target === detailModal) {
-
-        detailModal.style.display = "none";
-
-    }
-
-});
+}
 
 // ======================================================
 // FIREBASE
 // ======================================================
 
+const inschrijvingenRef =
+    ref(db, "inschrijvingen");
+
 onValue(
 
-    ref(db, "inschrijvingen"),
+    inschrijvingenRef,
 
     snapshot => {
 
         inschrijvingen = [];
-
-        container.innerHTML = "";
 
         if (!snapshot.exists()) {
 
@@ -108,13 +127,15 @@ onValue(
 
         });
 
-        toonInschrijvingen(inschrijvingen);
+        toonInschrijvingen(
+            inschrijvingen
+        );
 
     }
 
 );
 
-console.log("✅ Firebase gekoppeld.");
+console.log("✅ Firebase verbonden");
 // ======================================================
 // KAARTEN TONEN
 // ======================================================
@@ -130,16 +151,20 @@ function toonInschrijvingen(lijst) {
             <div class="inschrijving-card">
 
                 <h3>
-
                     👤 ${item.voornaam} ${item.achternaam}
-
                 </h3>
 
-                <p>📅 ${item.geboortedatum}</p>
+                <p>
+                    📅 ${item.geboortedatum}
+                </p>
 
-                <p>📍 ${item.woonplaats}</p>
+                <p>
+                    📍 ${item.woonplaats}
+                </p>
 
-                <p>📧 ${item.email}</p>
+                <p>
+                    📧 ${item.email}
+                </p>
 
                 <div class="card-buttons">
 
@@ -176,14 +201,24 @@ function toonInschrijvingen(lijst) {
 searchInput.addEventListener("input", () => {
 
     const zoek =
-        searchInput.value.toLowerCase();
+        searchInput.value.trim().toLowerCase();
+
+    if (zoek === "") {
+
+        toonInschrijvingen(inschrijvingen);
+
+        return;
+
+    }
 
     const resultaat =
         inschrijvingen.filter(item => {
 
-            return (`${item.voornaam} ${item.achternaam}`)
-                .toLowerCase()
-                .includes(zoek);
+            const naam =
+                `${item.voornaam} ${item.achternaam}`
+                .toLowerCase();
+
+            return naam.includes(zoek);
 
         });
 
@@ -191,118 +226,12 @@ searchInput.addEventListener("input", () => {
 
 });
 
+console.log("✅ Kaarten en zoeken gereed");
 // ======================================================
-// POPUP OPENEN
-// ======================================================
-
-container.addEventListener("click", e => {
-
-    const knop =
-        e.target.closest("button");
-
-    if (!knop) return;
-
-    if (!knop.classList.contains("openButton")) return;
-
-    const gegevens =
-        inschrijvingen.find(
-
-            item => item.id === knop.dataset.id
-
-        );
-
-    if (!gegevens) return;
-
-    detailContent.innerHTML = `
-
-        <h2>
-
-            ${gegevens.voornaam}
-            ${gegevens.achternaam}
-
-        </h2>
-
-        <hr>
-
-        <h3>👤 Persoonsgegevens</h3>
-
-        <p><b>Voornaam:</b> ${gegevens.voornaam}</p>
-
-        <p><b>Achternaam:</b> ${gegevens.achternaam}</p>
-
-        <p><b>Geslacht:</b> ${gegevens.geslacht}</p>
-
-        <p><b>Geboortedatum:</b> ${gegevens.geboortedatum}</p>
-
-        <p><b>Geboorteplaats:</b> ${gegevens.geboorteplaats}</p>
-
-        <p><b>Nationaliteit:</b> ${gegevens.nationaliteit}</p>
-
-        <hr>
-
-        <h3>🏠 Adres</h3>
-
-        <p><b>Straat:</b> ${gegevens.straat}</p>
-
-        <p><b>Huisnummer:</b> ${gegevens.huisnummer}</p>
-
-        <p><b>Postcode:</b> ${gegevens.postcode}</p>
-
-        <p><b>Woonplaats:</b> ${gegevens.woonplaats}</p>
-
-        <hr>
-
-        <h3>☎ Contact</h3>
-
-        <p><b>E-mail:</b> ${gegevens.email}</p>
-
-        <p><b>Telefoon:</b> ${gegevens.telefoon}</p>
-
-        <hr>
-
-        <h3>🤾 Handbal</h3>
-
-        <p><b>Eerder lid:</b> ${gegevens.eerderLid}</p>
-
-        <p><b>Vereniging:</b> ${gegevens.vereniging || "-"}</p>
-
-        <hr>
-
-        <h3>👨 Ouder / Verzorger</h3>
-
-        <p><b>Naam:</b> ${gegevens.ouderNaam || "-"}</p>
-
-        <p><b>E-mail:</b> ${gegevens.ouderEmail || "-"}</p>
-
-        <p><b>Telefoon:</b> ${gegevens.ouderTelefoon || "-"}</p>
-
-        <hr>
-
-        <h3>✍ Handtekening</h3>
-
-        <img
-            src="${gegevens.handtekening}"
-            style="
-                max-width:320px;
-                border:1px solid #ccc;
-                padding:10px;
-                background:white;
-            ">
-
-        <hr>
-
-        <div id="actieKnoppen"></div>
-
-    `;
-
-    detailModal.style.display = "block";
-
-});
-// ======================================================
-// ACTIES
+// ACTIES (OPEN / PRINT / VERWIJDEREN)
 // ======================================================
 
-container.addEventListener("click", async e => {
+container.addEventListener("click", async (e) => {
 
     const knop = e.target.closest("button");
 
@@ -310,10 +239,102 @@ container.addEventListener("click", async e => {
 
     const id = knop.dataset.id;
 
-    const gegevens =
-        inschrijvingen.find(item => item.id === id);
+    const gegevens = inschrijvingen.find(
+        item => item.id === id
+    );
 
     if (!gegevens) return;
+
+    // ==========================================
+    // OPEN
+    // ==========================================
+
+    if (knop.classList.contains("openButton")) {
+
+        detailContent.innerHTML = `
+
+<h2>HV Novitas - Inschrijfformulier</h2>
+
+<p><b>Naam:</b> ${gegevens.voornaam} ${gegevens.achternaam}</p>
+
+<hr>
+
+<h3>👤 Persoonsgegevens</h3>
+
+<p><b>Voornaam:</b> ${gegevens.voornaam || ""}</p>
+<p><b>Achternaam:</b> ${gegevens.achternaam || ""}</p>
+<p><b>Geslacht:</b> ${gegevens.geslacht || ""}</p>
+<p><b>Geboortedatum:</b> ${gegevens.geboortedatum || ""}</p>
+<p><b>Geboorteplaats:</b> ${gegevens.geboorteplaats || ""}</p>
+<p><b>Nationaliteit:</b> ${gegevens.nationaliteit || ""}</p>
+
+<hr>
+
+<h3>🏠 Adres</h3>
+
+<p><b>Straat:</b> ${gegevens.straat || ""}</p>
+<p><b>Huisnummer:</b> ${gegevens.huisnummer || ""}</p>
+<p><b>Postcode:</b> ${gegevens.postcode || ""}</p>
+<p><b>Woonplaats:</b> ${gegevens.woonplaats || ""}</p>
+
+<hr>
+
+<h3>☎ Contact</h3>
+
+<p><b>E-mail:</b> ${gegevens.email || ""}</p>
+<p><b>Telefoon:</b> ${gegevens.telefoon || ""}</p>
+
+<hr>
+
+<h3>🤾 Handbal</h3>
+
+<p><b>Eerder lid:</b> ${gegevens.eerderLid || ""}</p>
+<p><b>Vereniging:</b> ${gegevens.vereniging || "-"}</p>
+
+<hr>
+
+<h3>👨 Ouder / Verzorger</h3>
+
+<p><b>Naam:</b> ${gegevens.ouderNaam || "-"}</p>
+<p><b>E-mail:</b> ${gegevens.ouderEmail || "-"}</p>
+<p><b>Telefoon:</b> ${gegevens.ouderTelefoon || "-"}</p>
+
+<hr>
+
+<h3>✍ Handtekening</h3>
+
+<img
+    src="${gegevens.handtekening || ""}"
+    style="
+        max-width:320px;
+        border:1px solid #ccc;
+        padding:10px;
+        background:#fff;
+    ">
+
+<hr>
+
+<div class="detail-buttons">
+
+<button id="printButton">
+
+🖨 Afdrukken / Opslaan als PDF
+
+</button>
+
+</div>
+
+`;
+
+        detailModal.style.display = "block";
+
+        document
+            .getElementById("printButton")
+            .onclick = () => window.print();
+
+        return;
+
+    }
 
     // ==========================================
     // VERWIJDEREN
@@ -323,7 +344,7 @@ container.addEventListener("click", async e => {
 
         const antwoord = confirm(
 
-            `Wilt u de inschrijving van ${gegevens.voornaam} ${gegevens.achternaam} verwijderen?`
+            `Wilt u ${gegevens.voornaam} ${gegevens.achternaam} verwijderen?`
 
         );
 
@@ -332,10 +353,15 @@ container.addEventListener("click", async e => {
         try {
 
             await remove(
-                ref(db, "inschrijvingen/" + id)
+
+                ref(
+                    db,
+                    "inschrijvingen/" + id
+                )
+
             );
 
-            alert("✅ Inschrijving verwijderd.");
+            alert("Inschrijving verwijderd.");
 
         }
 
@@ -343,7 +369,7 @@ container.addEventListener("click", async e => {
 
             console.error(error);
 
-            alert("❌ Verwijderen mislukt.");
+            alert("Verwijderen mislukt.");
 
         }
 
@@ -351,55 +377,4 @@ container.addEventListener("click", async e => {
 
 });
 
-// ======================================================
-// PRINTKNOP
-// ======================================================
-
-detailContent.addEventListener("click", e => {
-
-    if (e.target.id !== "printButton") return;
-
-    window.print();
-
-});
-
-// ======================================================
-// PRINTKNOP TOEVOEGEN
-// ======================================================
-
-const observer = new MutationObserver(() => {
-
-    const actie =
-        document.getElementById("actieKnoppen");
-
-    if (!actie) return;
-
-    actie.innerHTML = `
-
-        <button
-            id="printButton"
-            class="openButton">
-
-            🖨 Afdrukken / Opslaan als PDF
-
-        </button>
-
-    `;
-
-});
-
-observer.observe(detailContent, {
-
-    childList: true,
-
-    subtree: true
-
-});
-
-// ======================================================
-// EINDE
-// ======================================================
-
-console.log(
-    "✅ Module Inschrijvingen gereed."
-);
+console.log("✅ Module Inschrijvingen gereed.");
