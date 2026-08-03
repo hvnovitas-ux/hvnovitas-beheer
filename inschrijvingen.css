@@ -23,7 +23,6 @@ body{
 .page-header{
 
     padding:25px;
-
     text-align:center;
 
 }
@@ -37,7 +36,6 @@ body{
 .page-header p{
 
     margin-top:8px;
-
     color:#666;
 
 }
@@ -49,9 +47,7 @@ body{
 .search-section{
 
     padding:20px;
-
     display:flex;
-
     justify-content:center;
 
 }
@@ -77,14 +73,14 @@ body{
 
 .content{
 
-    height:calc(100vh - 190px);
+    height:calc(100vh - 180px);
 
     overflow:hidden;
 
 }
 
 /* ======================================================
-   SCROLLBARE LIJST
+   LIJST
 ====================================================== */
 
 .inschrijvingen-container{
@@ -107,7 +103,7 @@ body{
 
 .inschrijving-card{
 
-    background:#fff;
+    background:white;
 
     border:1px solid #ddd;
 
@@ -132,7 +128,7 @@ body{
 }
 
 /* ======================================================
-   KNOPPEN
+   BUTTONS
 ====================================================== */
 
 .card-buttons{
@@ -141,27 +137,29 @@ body{
 
     gap:10px;
 
-    margin-top:15px;
+    margin-top:18px;
 
 }
 
 .card-buttons button{
 
-    padding:10px 18px;
+    flex:1;
 
-    cursor:pointer;
+    padding:12px;
 
     border:none;
 
     border-radius:6px;
 
-    font-size:14px;
+    cursor:pointer;
+
+    font-size:15px;
 
 }
 
 .openButton{
 
-    background:#1b7cff;
+    background:#0d6efd;
 
     color:white;
 
@@ -176,7 +174,7 @@ body{
 }
 
 /* ======================================================
-   POPUP
+   MODAL
 ====================================================== */
 
 .modal{
@@ -199,17 +197,19 @@ body{
 
     width:90%;
 
-    max-width:700px;
+    max-width:850px;
 
     max-height:90vh;
 
     overflow-y:auto;
 
-    margin:40px auto;
+    margin:30px auto;
 
     border-radius:10px;
 
     padding:25px;
+
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
 
 }
 
@@ -227,13 +227,19 @@ body{
 
 .close-button{
 
-    border:none;
-
     background:none;
 
-    font-size:22px;
+    border:none;
+
+    font-size:24px;
 
     cursor:pointer;
+
+}
+
+.modal-body h2{
+
+    margin-top:0;
 
 }
 
@@ -241,41 +247,65 @@ body{
 
     margin-top:25px;
 
+    padding-bottom:5px;
+
+    border-bottom:1px solid #ddd;
+
+}
+
+.modal-body p{
+
+    margin:6px 0;
+
 }
 
 .modal-body img{
 
-    max-width:100%;
+    display:block;
+
+    margin-top:15px;
+
+    max-width:320px;
+
+    border:1px solid #bbb;
+
+    background:white;
+
+    padding:10px;
 
 }
 
 /* ======================================================
-   LOADER
+   ACTIEKNOPPEN
 ====================================================== */
 
-.loading{
+.detail-buttons{
 
-    text-align:center;
+    margin-top:25px;
 
-    padding:30px;
+    display:flex;
 
-    color:#666;
+    gap:10px;
 
 }
 
-/* ======================================================
-   GEEN RESULTATEN
-====================================================== */
+.detail-buttons button{
 
-.geen-resultaten{
+    flex:1;
 
-    display:none;
+    padding:14px;
 
-    text-align:center;
+    font-size:16px;
 
-    padding:30px;
+    border:none;
 
-    color:#888;
+    border-radius:8px;
+
+    cursor:pointer;
+
+    background:#0d6efd;
+
+    color:white;
 
 }
 
@@ -309,17 +339,96 @@ body{
 
     }
 
-    .card-buttons button{
+    .detail-buttons{
 
-        width:100%;
+        flex-direction:column;
 
     }
 
     .modal-content{
 
-        width:95%;
+        width:96%;
 
-        margin:20px auto;
+        margin:15px auto;
+
+        padding:18px;
+
+    }
+
+}
+
+/* ======================================================
+   PRINT
+====================================================== */
+
+@media print{
+
+    body *{
+
+        visibility:hidden;
+
+    }
+
+    .modal,
+    .modal *{
+
+        visibility:visible;
+
+    }
+
+    .modal{
+
+        position:absolute;
+
+        inset:0;
+
+        background:white;
+
+    }
+
+    .modal-content{
+
+        width:100%;
+
+        max-width:100%;
+
+        max-height:none;
+
+        margin:0;
+
+        padding:0;
+
+        overflow:visible;
+
+        border:none;
+
+        border-radius:0;
+
+        box-shadow:none;
+
+    }
+
+    .close-button{
+
+        display:none;
+
+    }
+
+    .detail-buttons{
+
+        display:none;
+
+    }
+
+    hr{
+
+        margin:18px 0;
+
+    }
+
+    img{
+
+        max-width:300px;
 
     }
 
