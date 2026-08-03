@@ -7,6 +7,13 @@ Versie : 1.0
 =========================================================
 */
 
+import { db } from "./firebase.js";
+
+import {
+    ref,
+    push
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
 console.log("📋 Module Inschrijven geladen");
 
 // ======================================================
@@ -17,34 +24,54 @@ const geboortedatum = document.getElementById("geboortedatum");
 const ouderCard = document.getElementById("ouderCard");
 
 const canvas = document.getElementById("signatureCanvas");
-const clearButton = document.getElementById("clearSignature");
+const ctx = canvas.getContext("2d");
 
+const clearButton = document.getElementById("clearSignature");
 const sendButton = document.getElementById("sendForm");
 const message = document.getElementById("message");
 
+let tekenen = false;
+
 // ======================================================
-// LEEFTIJD BEREKENEN
+// MELDINGEN
 // ======================================================
 
-function berekenLeeftijd(datum){
+function toonMelding(tekst, type = "success") {
 
-    if(!datum) return 99;
+    message.className = "message";
+    message.classList.add(type);
+    message.textContent = tekst;
+    message.style.display = "block";
+
+}
+
+// ======================================================
+// LEEFTIJD
+// ======================================================
+
+function berekenLeeftijd(datum) {
+
+    if (!datum) return 99;
 
     const geboorte = new Date(datum);
     const vandaag = new Date();
 
-    let leeftijd = vandaag.getFullYear() - geboorte.getFullYear();
+    let leeftijd =
+        vandaag.getFullYear() -
+        geboorte.getFullYear();
 
     const maand =
-        vandaag.getMonth() - geboorte.getMonth();
+        vandaag.getMonth() -
+        geboorte.getMonth();
 
-    if(
+    if (
         maand < 0 ||
         (
             maand === 0 &&
-            vandaag.getDate() < geboorte.getDate()
+            vandaag.getDate() <
+            geboorte.getDate()
         )
-    ){
+    ) {
 
         leeftijd--;
 
@@ -55,19 +82,21 @@ function berekenLeeftijd(datum){
 }
 
 // ======================================================
-// OUDERBLOK TONEN
+// OUDER / VERZORGER
 // ======================================================
 
-function updateOuderBlok(){
+function updateOuderBlok() {
 
     const leeftijd =
-        berekenLeeftijd(geboortedatum.value);
+        berekenLeeftijd(
+            geboortedatum.value
+        );
 
-    if(leeftijd < 18){
+    if (leeftijd < 18) {
 
         ouderCard.style.display = "block";
 
-    }else{
+    } else {
 
         ouderCard.style.display = "none";
 
@@ -75,77 +104,118 @@ function updateOuderBlok(){
 
 }
 
-geboortedatum?.addEventListener(
+geboortedatum.addEventListener(
     "change",
     updateOuderBlok
 );
 
 updateOuderBlok();
 
-
 // ======================================================
 // HANDTEKENING
 // ======================================================
-
-const ctx = canvas.getContext("2d");
-
-let tekenen = false;
 
 ctx.lineWidth = 2;
 ctx.lineCap = "round";
 ctx.strokeStyle = "#000";
 
-function positie(e){
+function positie(e) {
 
     const rect =
         canvas.getBoundingClientRect();
 
-    return{
+    return {
 
-        x:e.clientX-rect.left,
-        y:e.clientY-rect.top
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
 
     };
 
 }
 
-canvas.addEventListener("mousedown",(e)=>{
+// ---------------------
+// MUIS
+// ---------------------
+
+canvas.addEventListener("mousedown", e => {
 
     tekenen = true;
 
     const p = positie(e);
 
     ctx.beginPath();
-
-    ctx.moveTo(p.x,p.y);
+    ctx.moveTo(p.x, p.y);
 
 });
 
-canvas.addEventListener("mousemove",(e)=>{
+canvas.addEventListener("mousemove", e => {
 
-    if(!tekenen) return;
+    if (!tekenen) return;
 
     const p = positie(e);
 
-    ctx.lineTo(p.x,p.y);
-
+    ctx.lineTo(p.x, p.y);
     ctx.stroke();
 
 });
 
-canvas.addEventListener("mouseup",()=>{
+canvas.addEventListener("mouseup", () => {
 
     tekenen = false;
 
 });
 
-canvas.addEventListener("mouseleave",()=>{
+canvas.addEventListener("mouseleave", () => {
 
     tekenen = false;
 
 });
 
-clearButton.addEventListener("click",()=>{
+// ---------------------
+// TOUCH
+// ---------------------
+
+canvas.addEventListener("touchstart", e => {
+
+    e.preventDefault();
+
+    tekenen = true;
+
+    const touch = e.touches[0];
+
+    const p = positie(touch);
+
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+
+});
+
+canvas.addEventListener("touchmove", e => {
+
+    e.preventDefault();
+
+    if (!tekenen) return;
+
+    const touch = e.touches[0];
+
+    const p = positie(touch);
+
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+
+});
+
+canvas.addEventListener("touchend", () => {
+
+    tekenen = false;
+
+});
+
+// ---------------------
+// WISSEN
+// ---------------------
+
+clearButton.addEventListener("click", () => {
 
     ctx.clearRect(
         0,
@@ -155,31 +225,20 @@ clearButton.addEventListener("click",()=>{
     );
 
 });
-// ======================================================
-// MELDINGEN
-// ======================================================
-
-function toonMelding(tekst, type = "success") {
-
-    message.className = "message";
-    message.classList.add(type);
-
-    message.textContent = tekst;
-
-}
 
 // ======================================================
-// CONTROLE HANDTEKENING
+// HANDTEKENING CONTROLEREN
 // ======================================================
 
 function heeftHandtekening() {
 
-    const pixels = ctx.getImageData(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    ).data;
+    const pixels =
+        ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        ).data;
 
     for (let i = 3; i < pixels.length; i += 4) {
 
@@ -194,7 +253,6 @@ function heeftHandtekening() {
     return false;
 
 }
-
 // ======================================================
 // FORMULIER CONTROLEREN
 // ======================================================
@@ -272,10 +330,7 @@ function controleerFormulier() {
 
     for (const id of akkoord) {
 
-        const checkbox =
-            document.getElementById(id);
-
-        if (!checkbox.checked) {
+        if (!document.getElementById(id).checked) {
 
             toonMelding(
                 "Ga akkoord met alle voorwaarden.",
@@ -301,63 +356,96 @@ function controleerFormulier() {
 
     return true;
 
-} 
+}
+
 // ======================================================
-// VERZENDEN
+// FIREBASE OPSLAAN
 // ======================================================
 
-sendButton.addEventListener("click", async () => {
+async function opslaanInFirebase() {
 
-    message.style.display = "none";
+    const inschrijving = {
 
-    if (!controleerFormulier()) {
+        voornaam:
+            document.getElementById("voornaam").value.trim(),
 
-        return;
+        achternaam:
+            document.getElementById("achternaam").value.trim(),
 
-    }
+        geslacht:
+            document.getElementById("geslacht").value,
 
-    sendButton.disabled = true;
+        geboortedatum:
+            document.getElementById("geboortedatum").value,
 
-    sendButton.textContent =
-        "⏳ Inschrijving controleren...";
+        geboorteplaats:
+            document.getElementById("geboorteplaats").value.trim(),
 
-    await new Promise(resolve => {
+        nationaliteit:
+            document.getElementById("nationaliteit").value.trim(),
 
-        setTimeout(resolve, 1000);
+        straat:
+            document.getElementById("straat").value.trim(),
 
-    });
+        huisnummer:
+            document.getElementById("huisnummer").value.trim(),
 
-    toonMelding(
-        "✅ Formulier is volledig ingevuld en gereed voor verzending.",
-        "success"
+        postcode:
+            document.getElementById("postcode").value.trim(),
+
+        woonplaats:
+            document.getElementById("woonplaats").value.trim(),
+
+        email:
+            document.getElementById("email").value.trim(),
+
+        telefoon:
+            document.getElementById("telefoon").value.trim(),
+
+        eerderLid:
+            document.getElementById("eerderLid").value,
+
+        vereniging:
+            document.getElementById("vereniging").value.trim(),
+
+        team:
+            document.getElementById("team").value,
+
+        ouderNaam:
+            document.getElementById("ouderNaam").value.trim(),
+
+        ouderTelefoon:
+            document.getElementById("ouderTelefoon").value.trim(),
+
+        ouderEmail:
+            document.getElementById("ouderEmail").value.trim(),
+
+        privacy:
+            document.getElementById("privacy").checked,
+
+        statuten:
+            document.getElementById("statuten").checked,
+
+        verenigingsjaar:
+            document.getElementById("verenigingjaar").checked,
+
+        contributie:
+            document.getElementById("contributie").checked,
+
+        handtekening:
+            canvas.toDataURL("image/png"),
+
+        created:
+            Date.now()
+
+    };
+
+    await push(
+        ref(db, "inschrijvingen"),
+        inschrijving
     );
 
-    sendButton.disabled = false;
-
-    sendButton.textContent =
-        "📨 Inschrijving verzenden";
-
-});
-
-
-// ======================================================
-// ENTER BLOKKEREN
-// ======================================================
-
-document.addEventListener("keydown", (e) => {
-
-    if (e.key === "Enter") {
-
-        if (e.target.tagName !== "TEXTAREA") {
-
-            e.preventDefault();
-
-        }
-
-    }
-
-});
-
+}
 
 // ======================================================
 // E-MAIL CONTROLEREN
@@ -385,7 +473,6 @@ email.addEventListener("blur", () => {
 
 });
 
-
 // ======================================================
 // POSTCODE
 // ======================================================
@@ -399,7 +486,6 @@ postcode.addEventListener("input", () => {
         postcode.value.toUpperCase();
 
 });
-
 
 // ======================================================
 // TELEFOON
@@ -417,12 +503,104 @@ telefoon.addEventListener("input", () => {
         );
 
 });
+// ======================================================
+// FORMULIER LEEGMAKEN
+// ======================================================
 
+function resetFormulier() {
+
+    document.querySelectorAll("input").forEach(input => {
+
+        if (input.type === "checkbox") {
+
+            input.checked = false;
+
+        } else {
+
+            input.value = "";
+
+        }
+
+    });
+
+    document.querySelectorAll("select").forEach(select => {
+
+        select.selectedIndex = 0;
+
+    });
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    updateOuderBlok();
+
+}
+
+// ======================================================
+// VERZENDEN
+// ======================================================
+
+sendButton.addEventListener("click", async () => {
+
+    message.style.display = "none";
+
+    if (!controleerFormulier()) return;
+
+    sendButton.disabled = true;
+    sendButton.textContent = "⏳ Inschrijving opslaan...";
+
+    try {
+
+        await opslaanInFirebase();
+
+        toonMelding(
+            "✅ Inschrijving succesvol opgeslagen.",
+            "success"
+        );
+
+        resetFormulier();
+
+    } catch (error) {
+
+        console.error(error);
+
+        toonMelding(
+            "❌ Er is een fout opgetreden tijdens het opslaan.",
+            "error"
+        );
+
+    }
+
+    sendButton.disabled = false;
+    sendButton.textContent = "📨 Inschrijving verzenden";
+
+});
+
+// ======================================================
+// ENTER BLOKKEREN
+// ======================================================
+
+document.addEventListener("keydown", e => {
+
+    if (
+        e.key === "Enter" &&
+        e.target.tagName !== "TEXTAREA"
+    ) {
+
+        e.preventDefault();
+
+    }
+
+});
 
 // ======================================================
 // START
 // ======================================================
 
-console.log(
-    "✅ Inschrijfformulier gereed."
-);
+console.log("✅ Inschrijfformulier gereed.");
+
+updateOuderBlok();
