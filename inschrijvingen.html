@@ -24,27 +24,21 @@
 <body>
 
     <!-- ========================================= -->
-    <!-- HEADER                                    -->
+    <!-- PAGINA HEADER                             -->
     <!-- ========================================= -->
 
     <header class="page-header">
 
-        <h1>
-
-            📋 Inschrijvingen
-
-        </h1>
+        <h1>📋 Inschrijvingen</h1>
 
         <p>
-
             Beheer alle online inschrijvingen van HV Novitas.
-
         </p>
 
     </header>
 
     <!-- ========================================= -->
-    <!-- ZOEKBALK                                  -->
+    <!-- ZOEKEN                                    -->
     <!-- ========================================= -->
 
     <section class="search-section">
@@ -57,27 +51,27 @@
 
             placeholder="🔍 Zoek op naam..."
 
-            autocomplete="off"
-
-        >
+            autocomplete="off">
 
     </section>
-      <!-- ========================================= -->
-    <!-- LIJST INSCHRIJVINGEN                      -->
+     <!-- ========================================= -->
+    <!-- INSCHRIJVINGEN                            -->
     <!-- ========================================= -->
 
     <main class="content">
 
         <section
+
             id="inschrijvingenContainer"
+
             class="inschrijvingen-container">
 
             <!--
-            ========================================
-            Alle inschrijvingen worden hier
-            automatisch geladen door
-            inschrijvingen.js
-            ========================================
+
+                Hier worden automatisch
+                alle inschrijvingen geplaatst
+                door inschrijvingen.js
+
             -->
 
         </section>
@@ -85,11 +79,13 @@
     </main>
 
     <!-- ========================================= -->
-    <!-- DETAILS POPUP                             -->
+    <!-- DETAILS                                   -->
     <!-- ========================================= -->
 
     <div
+
         id="detailModal"
+
         class="modal">
 
         <div class="modal-content">
@@ -98,12 +94,14 @@
 
                 <h2>
 
-                    👤 Inschrijving
+                    Inschrijving
 
                 </h2>
 
                 <button
+
                     id="closeModal"
+
                     class="close-button">
 
                     ✖
@@ -113,13 +111,10 @@
             </div>
 
             <div
-                id="detailContent"
-                class="modal-body">
 
-                <!--
-                Wordt automatisch gevuld
-                door inschrijvingen.js
-                -->
+                id="detailContent"
+
+                class="modal-body">
 
             </div>
 
@@ -127,66 +122,17 @@
 
     </div>
      <!-- ========================================= -->
-    <!-- LIJST INSCHRIJVINGEN                      -->
+    <!-- JAVASCRIPT                                -->
     <!-- ========================================= -->
 
-    <main class="content">
+    <script
 
-        <section
-            id="inschrijvingenContainer"
-            class="inschrijvingen-container">
+        type="module"
 
-            <!--
-            ========================================
-            Alle inschrijvingen worden hier
-            automatisch geladen door
-            inschrijvingen.js
-            ========================================
-            -->
+        src="inschrijvingen.js">
 
-        </section>
+    </script>
 
-    </main>
+</body>
 
-    <!-- ========================================= -->
-    <!-- DETAILS POPUP                             -->
-    <!-- ========================================= -->
-
-    <div
-        id="detailModal"
-        class="modal">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h2>
-
-                    👤 Inschrijving
-
-                </h2>
-
-                <button
-                    id="closeModal"
-                    class="close-button">
-
-                    ✖
-
-                </button>
-
-            </div>
-
-            <div
-                id="detailContent"
-                class="modal-body">
-
-                <!--
-                Wordt automatisch gevuld
-                door inschrijvingen.js
-                -->
-
-            </div>
-
-        </div>
-
-    </div>
+</html>
