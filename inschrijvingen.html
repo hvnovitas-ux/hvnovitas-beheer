@@ -24,30 +24,36 @@
 <body>
 
     <!-- ========================================= -->
-    <!-- PAGINA HEADER                             -->
+    <!-- HEADER                                    -->
     <!-- ========================================= -->
 
     <header class="page-header">
 
-        <h1>📋 Inschrijvingen</h1>
+        <h1>
+
+            📋 Inschrijvingen
+
+        </h1>
 
         <p>
-            Beheer alle online inschrijvingen van HV Novitas.
+
+            Overzicht van alle online inschrijvingen.
+
         </p>
 
     </header>
 
     <!-- ========================================= -->
-    <!-- ZOEKEN                                    -->
+    <!-- ZOEKBALK                                  -->
     <!-- ========================================= -->
 
     <section class="search-section">
 
         <input
 
-            type="text"
-
             id="searchInput"
+
+            type="text"
 
             placeholder="🔍 Zoek op naam..."
 
@@ -61,31 +67,19 @@
     <main class="content">
 
         <section
-
             id="inschrijvingenContainer"
-
             class="inschrijvingen-container">
-
-            <!--
-
-                Hier worden automatisch
-                alle inschrijvingen geplaatst
-                door inschrijvingen.js
-
-            -->
 
         </section>
 
     </main>
 
     <!-- ========================================= -->
-    <!-- DETAILS                                   -->
+    <!-- POPUP                                     -->
     <!-- ========================================= -->
 
     <div
-
         id="detailModal"
-
         class="modal">
 
         <div class="modal-content">
@@ -94,14 +88,12 @@
 
                 <h2>
 
-                    Inschrijving
+                    Inschrijfformulier
 
                 </h2>
 
                 <button
-
                     id="closeModal"
-
                     class="close-button">
 
                     ✖
@@ -111,10 +103,30 @@
             </div>
 
             <div
-
                 id="detailContent"
-
                 class="modal-body">
+
+                <!-- Wordt gevuld door JavaScript -->
+
+            </div>
+
+            <div class="detail-buttons">
+
+                <button
+                    id="printButton"
+                    class="openButton">
+
+                    🖨 Afdrukken / Opslaan als PDF
+
+                </button>
+
+                <button
+                    id="deleteButton"
+                    class="deleteButton">
+
+                    🗑 Verwijderen
+
+                </button>
 
             </div>
 
@@ -126,9 +138,7 @@
     <!-- ========================================= -->
 
     <script
-
         type="module"
-
         src="inschrijvingen.js">
 
     </script>
