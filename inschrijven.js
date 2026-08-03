@@ -3,7 +3,7 @@
 HV NOVITAS
 Module : Inschrijven
 Bestand: inschrijven.js
-Versie : 1.2
+Versie : 2.0
 =========================================================
 */
 
@@ -88,11 +88,9 @@ function berekenLeeftijd(datum) {
         maand < 0 ||
 
         (
-
             maand === 0 &&
             vandaag.getDate() <
             geboorte.getDate()
-
         )
 
     ) {
@@ -146,149 +144,106 @@ function positie(e) {
     return {
 
         x: e.clientX - rect.left,
+
         y: e.clientY - rect.top
 
     };
 
 }
-
-// -----------------------------
+// ======================================================
 // MUIS
-// -----------------------------
+// ======================================================
 
-canvas.addEventListener(
-    "mousedown",
-    e => {
+canvas.addEventListener("mousedown", e => {
 
-        tekenen = true;
+    tekenen = true;
 
-        const p = positie(e);
+    const p = positie(e);
 
-        ctx.beginPath();
+    ctx.beginPath();
 
-        ctx.moveTo(
-            p.x,
-            p.y
-        );
+    ctx.moveTo(p.x, p.y);
 
-    }
-);
+});
 
-canvas.addEventListener(
-    "mousemove",
-    e => {
+canvas.addEventListener("mousemove", e => {
 
-        if (!tekenen) return;
+    if (!tekenen) return;
 
-        const p =
-            positie(e);
+    const p = positie(e);
 
-        ctx.lineTo(
-            p.x,
-            p.y
-        );
+    ctx.lineTo(p.x, p.y);
 
-        ctx.stroke();
+    ctx.stroke();
 
-    }
-);
+});
 
-canvas.addEventListener(
-    "mouseup",
-    () => {
+canvas.addEventListener("mouseup", () => {
 
-        tekenen = false;
+    tekenen = false;
 
-    }
-);
+});
 
-canvas.addEventListener(
-    "mouseleave",
-    () => {
+canvas.addEventListener("mouseleave", () => {
 
-        tekenen = false;
+    tekenen = false;
 
-    }
-);
+});
 
-// -----------------------------
+// ======================================================
 // TOUCH
-// -----------------------------
+// ======================================================
 
-canvas.addEventListener(
-    "touchstart",
-    e => {
+canvas.addEventListener("touchstart", e => {
 
-        e.preventDefault();
+    e.preventDefault();
 
-        tekenen = true;
+    tekenen = true;
 
-        const touch =
-            e.touches[0];
+    const p = positie(e.touches[0]);
 
-        const p =
-            positie(touch);
+    ctx.beginPath();
 
-        ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
 
-        ctx.moveTo(
-            p.x,
-            p.y
-        );
+}, { passive: false });
 
-    }
-);
+canvas.addEventListener("touchmove", e => {
 
-canvas.addEventListener(
-    "touchmove",
-    e => {
+    e.preventDefault();
 
-        e.preventDefault();
+    if (!tekenen) return;
 
-        if (!tekenen) return;
+    const p = positie(e.touches[0]);
 
-        const touch =
-            e.touches[0];
+    ctx.lineTo(p.x, p.y);
 
-        const p =
-            positie(touch);
+    ctx.stroke();
 
-        ctx.lineTo(
-            p.x,
-            p.y
-        );
+}, { passive: false });
 
-        ctx.stroke();
+canvas.addEventListener("touchend", () => {
 
-    }
-);
+    tekenen = false;
 
-canvas.addEventListener(
-    "touchend",
-    () => {
-
-        tekenen = false;
-
-    }
-);
+});
 
 // ======================================================
 // HANDTEKENING WISSEN
 // ======================================================
 
-clearButton.addEventListener(
-    "click",
-    () => {
+clearButton.addEventListener("click", () => {
 
-        ctx.clearRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
+    ctx.clearRect(
 
-    }
-);
+        0,
+        0,
+        canvas.width,
+        canvas.height
+
+    );
+
+});
 
 // ======================================================
 // HANDTEKENING CONTROLEREN
@@ -297,11 +252,14 @@ clearButton.addEventListener(
 function heeftHandtekening() {
 
     const pixels =
+
         ctx.getImageData(
+
             0,
             0,
             canvas.width,
             canvas.height
+
         ).data;
 
     for (
@@ -325,6 +283,7 @@ function heeftHandtekening() {
     return false;
 
 }
+
 // ======================================================
 // FORMULIER CONTROLEREN
 // ======================================================
@@ -350,16 +309,22 @@ function controleerFormulier() {
 
     for (const id of verplichteVelden) {
 
-        const veld =
-            document.getElementById(id);
+        const veld = document.getElementById(id);
 
         if (!veld || !veld.value.trim()) {
 
-            if (veld) veld.focus();
+            if (veld) {
+
+                veld.focus();
+
+            }
 
             toonMelding(
+
                 "Vul alle verplichte velden in.",
+
                 "error"
+
             );
 
             return false;
@@ -368,23 +333,21 @@ function controleerFormulier() {
 
     }
 
-    // ==================================================
-    // OUDER / VERZORGER
-    // ==================================================
+    if (
 
-    if (berekenLeeftijd(geboortedatum.value) < 18) {
+        berekenLeeftijd(
 
-        const ouderNaam =
-            document.getElementById("ouderNaam");
+            geboortedatum.value
 
-        const ouderEmail =
-            document.getElementById("ouderEmail");
+        ) < 18
+
+    ) {
 
         if (
 
-            !ouderNaam.value.trim() ||
+            !document.getElementById("ouderNaam").value.trim() ||
 
-            !ouderEmail.value.trim()
+            !document.getElementById("ouderEmail").value.trim()
 
         ) {
 
@@ -402,18 +365,9 @@ function controleerFormulier() {
 
     }
 
-    // ==================================================
-    // VOORWAARDEN
-    // ==================================================
-
-    const voorwaarden =
-        document.getElementById("voorwaarden");
-
     if (
 
-        !voorwaarden ||
-
-        !voorwaarden.checked
+        !document.getElementById("voorwaarden").checked
 
     ) {
 
@@ -428,10 +382,6 @@ function controleerFormulier() {
         return false;
 
     }
-
-    // ==================================================
-    // HANDTEKENING
-    // ==================================================
 
     if (!heeftHandtekening()) {
 
@@ -450,7 +400,6 @@ function controleerFormulier() {
     return true;
 
 }
-
 // ======================================================
 // GEGEVENS VERZAMELEN
 // ======================================================
@@ -459,62 +408,31 @@ function verzamelGegevens() {
 
     return {
 
-        voornaam:
-            document.getElementById("voornaam").value.trim(),
+        voornaam: document.getElementById("voornaam").value.trim(),
+        achternaam: document.getElementById("achternaam").value.trim(),
+        geslacht: document.getElementById("geslacht").value,
+        geboortedatum: document.getElementById("geboortedatum").value,
+        geboorteplaats: document.getElementById("geboorteplaats").value.trim(),
+        nationaliteit: document.getElementById("nationaliteit").value.trim(),
 
-        achternaam:
-            document.getElementById("achternaam").value.trim(),
+        straat: document.getElementById("straat").value.trim(),
+        huisnummer: document.getElementById("huisnummer").value.trim(),
+        postcode: document.getElementById("postcode").value.trim(),
+        woonplaats: document.getElementById("woonplaats").value.trim(),
 
-        geslacht:
-            document.getElementById("geslacht").value,
+        email: document.getElementById("email").value.trim(),
+        telefoon: document.getElementById("telefoon").value.trim(),
 
-        geboortedatum:
-            document.getElementById("geboortedatum").value,
+        eerderLid: document.getElementById("eerderLid").value,
+        vereniging: document.getElementById("vereniging").value.trim(),
 
-        geboorteplaats:
-            document.getElementById("geboorteplaats").value.trim(),
+        ouderNaam: document.getElementById("ouderNaam").value.trim(),
+        ouderTelefoon: document.getElementById("ouderTelefoon").value.trim(),
+        ouderEmail: document.getElementById("ouderEmail").value.trim(),
 
-        nationaliteit:
-            document.getElementById("nationaliteit").value.trim(),
+        voorwaarden: document.getElementById("voorwaarden").checked,
 
-        straat:
-            document.getElementById("straat").value.trim(),
-
-        huisnummer:
-            document.getElementById("huisnummer").value.trim(),
-
-        postcode:
-            document.getElementById("postcode").value.trim(),
-
-        woonplaats:
-            document.getElementById("woonplaats").value.trim(),
-
-        email:
-            document.getElementById("email").value.trim(),
-
-        telefoon:
-            document.getElementById("telefoon").value.trim(),
-
-        eerderLid:
-            document.getElementById("eerderLid").value,
-
-        vereniging:
-            document.getElementById("vereniging").value.trim(),
-
-        ouderNaam:
-            document.getElementById("ouderNaam").value.trim(),
-
-        ouderTelefoon:
-            document.getElementById("ouderTelefoon").value.trim(),
-
-        ouderEmail:
-            document.getElementById("ouderEmail").value.trim(),
-
-        voorwaarden:
-            document.getElementById("voorwaarden").checked,
-
-        handtekening:
-            canvas.toDataURL("image/png"),
+        handtekening: canvas.toDataURL("image/png"),
 
         status: "Nieuw",
 
@@ -525,16 +443,16 @@ function verzamelGegevens() {
 }
 
 // ======================================================
-// FIREBASE OPSLAAN
+// FIREBASE
 // ======================================================
 
-async function opslaanInFirebase(gegevens) {
+async function opslaanInFirebase(data) {
 
     const resultaat = await push(
 
         ref(db, "inschrijvingen"),
 
-        gegevens
+        data
 
     );
 
@@ -543,48 +461,61 @@ async function opslaanInFirebase(gegevens) {
 }
 
 // ======================================================
-// PDF GENEREREN
+// PDF
 // ======================================================
 
-async function genereerPDF(gegevens) {
+async function downloadPDF(data) {
 
-    return await maakPDF(gegevens);
+    try {
 
-}
-// ======================================================
-// FORMULIER LEEGMAKEN
-// ======================================================
+        const pdfBytes =
+            await maakPDF(data);
 
-function resetFormulier() {
+        const blob =
+            new Blob(
 
-    document.querySelectorAll("input").forEach(input => {
+                [pdfBytes],
 
-        if (input.type === "checkbox") {
+                {
+                    type: "application/pdf"
+                }
 
-            input.checked = false;
+            );
 
-        } else {
+        const url =
+            URL.createObjectURL(blob);
 
-            input.value = "";
+        const link =
+            document.createElement("a");
 
-        }
+        link.href = url;
 
-    });
+        link.download =
+            `HV-Novitas-Inschrijving-${data.achternaam}.pdf`;
 
-    document.querySelectorAll("select").forEach(select => {
+        document.body.appendChild(link);
 
-        select.selectedIndex = 0;
+        link.click();
 
-    });
+        document.body.removeChild(link);
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+        URL.revokeObjectURL(url);
 
-    updateOuderBlok();
+        console.log("📄 PDF opgeslagen");
+
+    }
+
+    catch (error) {
+
+        console.error(
+
+            "⚠ PDF kon niet worden gemaakt:",
+
+            error
+
+        );
+
+    }
 
 }
 
@@ -603,88 +534,45 @@ sendButton.addEventListener("click", async () => {
     }
 
     sendButton.disabled = true;
+
     sendButton.textContent =
         "⏳ Inschrijving verwerken...";
 
     try {
 
-        // ------------------------------------------
-        // GEGEVENS
-        // ------------------------------------------
-
         const gegevens =
             verzamelGegevens();
 
-        // ------------------------------------------
+        // ======================================
         // FIREBASE
-        // ------------------------------------------
+        // ======================================
 
-        const firebaseKey =
+        const id =
             await opslaanInFirebase(
                 gegevens
             );
 
-        gegevens.id = firebaseKey;
+        gegevens.id = id;
 
-        console.log(
-            "✅ Opgeslagen in Firebase"
-        );
+        console.log("✅ Firebase opgeslagen");
 
-        // ------------------------------------------
-        // PDF
-        // ------------------------------------------
-
-        const pdfBytes =
-            await genereerPDF(
-                gegevens
-            );
-
-        console.log(
-            "📄 PDF gemaakt"
-        );
-
-        // ------------------------------------------
-        // EMAILJS
-        // ------------------------------------------
+        // ======================================
+        // EMAIL
+        // ======================================
 
         await verstuurMails(
             gegevens
         );
 
-        console.log(
-            "📧 Mails verzonden"
+        console.log("📧 Email verzonden");
+
+        // ======================================
+        // PDF
+        // ======================================
+
+        await downloadPDF(
+            gegevens
         );
-
-        // ------------------------------------------
-        // PDF DOWNLOAD
-        // ------------------------------------------
-
-        const blob =
-            new Blob(
-                [pdfBytes],
-                {
-                    type: "application/pdf"
-                }
-            );
-
-        const url =
-            URL.createObjectURL(blob);
-
-        const link =
-            document.createElement("a");
-
-        link.href = url;
-
-        link.download =
-            `HV-Novitas-Inschrijving-${gegevens.achternaam}.pdf`;
-
-        link.click();
-
-        URL.revokeObjectURL(url);
-
-        // ------------------------------------------
-        // SUCCES
-        // ------------------------------------------
 
         toonMelding(
 
@@ -704,7 +592,7 @@ sendButton.addEventListener("click", async () => {
 
         toonMelding(
 
-            "❌ Er is een fout opgetreden tijdens het verwerken van de inschrijving.",
+            "❌ " + error.message,
 
             "error"
 
@@ -722,6 +610,46 @@ sendButton.addEventListener("click", async () => {
     }
 
 });
+// ======================================================
+// FORMULIER LEEGMAKEN
+// ======================================================
+
+function resetFormulier() {
+
+    document.querySelectorAll("input").forEach(input => {
+
+        if (input.type === "checkbox") {
+
+            input.checked = false;
+
+        }
+
+        else {
+
+            input.value = "";
+
+        }
+
+    });
+
+    document.querySelectorAll("select").forEach(select => {
+
+        select.selectedIndex = 0;
+
+    });
+
+    ctx.clearRect(
+
+        0,
+        0,
+        canvas.width,
+        canvas.height
+
+    );
+
+    updateOuderBlok();
+
+}
 
 // ======================================================
 // E-MAIL CONTROLEREN
@@ -736,13 +664,18 @@ email.addEventListener("blur", () => {
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (
+
         email.value &&
         !regex.test(email.value)
+
     ) {
 
         toonMelding(
+
             "Voer een geldig e-mailadres in.",
+
             "error"
+
         );
 
     }
@@ -774,8 +707,11 @@ telefoon.addEventListener("input", () => {
 
     telefoon.value =
         telefoon.value.replace(
+
             /[^0-9+\-\s]/g,
+
             ""
+
         );
 
 });
@@ -787,8 +723,11 @@ telefoon.addEventListener("input", () => {
 document.addEventListener("keydown", e => {
 
     if (
+
         e.key === "Enter" &&
+
         e.target.tagName !== "TEXTAREA"
+
     ) {
 
         e.preventDefault();
@@ -804,5 +743,7 @@ document.addEventListener("keydown", e => {
 updateOuderBlok();
 
 console.log(
-    "✅ Inschrijfformulier gereed."
+
+    "✅ Inschrijfformulier versie 2.0 gereed."
+
 );
