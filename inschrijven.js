@@ -3,12 +3,13 @@
 HV NOVITAS
 Module : Inschrijven
 Bestand: inschrijven.js
-Versie : 1.1
+Versie : 1.2
 =========================================================
 */
 
 import { db } from "./firebase.js";
 import { maakPDF } from "./pdf.js";
+import { verstuurMails } from "./mail.js";
 
 import {
     ref,
@@ -48,7 +49,10 @@ let tekenen = false;
 // MELDINGEN
 // ======================================================
 
-function toonMelding(tekst, type = "success") {
+function toonMelding(
+    tekst,
+    type = "success"
+) {
 
     message.className = "message";
     message.classList.add(type);
@@ -65,8 +69,11 @@ function berekenLeeftijd(datum) {
 
     if (!datum) return 99;
 
-    const geboorte = new Date(datum);
-    const vandaag = new Date();
+    const geboorte =
+        new Date(datum);
+
+    const vandaag =
+        new Date();
 
     let leeftijd =
         vandaag.getFullYear() -
@@ -117,11 +124,8 @@ function updateOuderBlok() {
 }
 
 geboortedatum.addEventListener(
-
     "change",
-
     updateOuderBlok
-
 );
 
 updateOuderBlok();
@@ -142,7 +146,6 @@ function positie(e) {
     return {
 
         x: e.clientX - rect.left,
-
         y: e.clientY - rect.top
 
     };
@@ -153,116 +156,139 @@ function positie(e) {
 // MUIS
 // -----------------------------
 
-canvas.addEventListener("mousedown", e => {
+canvas.addEventListener(
+    "mousedown",
+    e => {
 
-    tekenen = true;
+        tekenen = true;
 
-    const p = positie(e);
+        const p = positie(e);
 
-    ctx.beginPath();
+        ctx.beginPath();
 
-    ctx.moveTo(
-        p.x,
-        p.y
-    );
+        ctx.moveTo(
+            p.x,
+            p.y
+        );
 
-});
+    }
+);
 
-canvas.addEventListener("mousemove", e => {
+canvas.addEventListener(
+    "mousemove",
+    e => {
 
-    if (!tekenen) return;
+        if (!tekenen) return;
 
-    const p = positie(e);
+        const p =
+            positie(e);
 
-    ctx.lineTo(
-        p.x,
-        p.y
-    );
+        ctx.lineTo(
+            p.x,
+            p.y
+        );
 
-    ctx.stroke();
+        ctx.stroke();
 
-});
+    }
+);
 
-canvas.addEventListener("mouseup", () => {
+canvas.addEventListener(
+    "mouseup",
+    () => {
 
-    tekenen = false;
+        tekenen = false;
 
-});
+    }
+);
 
-canvas.addEventListener("mouseleave", () => {
+canvas.addEventListener(
+    "mouseleave",
+    () => {
 
-    tekenen = false;
+        tekenen = false;
 
-});
+    }
+);
 
 // -----------------------------
 // TOUCH
 // -----------------------------
 
-canvas.addEventListener("touchstart", e => {
+canvas.addEventListener(
+    "touchstart",
+    e => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    tekenen = true;
+        tekenen = true;
 
-    const touch =
-        e.touches[0];
+        const touch =
+            e.touches[0];
 
-    const p =
-        positie(touch);
+        const p =
+            positie(touch);
 
-    ctx.beginPath();
+        ctx.beginPath();
 
-    ctx.moveTo(
-        p.x,
-        p.y
-    );
+        ctx.moveTo(
+            p.x,
+            p.y
+        );
 
-});
+    }
+);
 
-canvas.addEventListener("touchmove", e => {
+canvas.addEventListener(
+    "touchmove",
+    e => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    if (!tekenen) return;
+        if (!tekenen) return;
 
-    const touch =
-        e.touches[0];
+        const touch =
+            e.touches[0];
 
-    const p =
-        positie(touch);
+        const p =
+            positie(touch);
 
-    ctx.lineTo(
-        p.x,
-        p.y
-    );
+        ctx.lineTo(
+            p.x,
+            p.y
+        );
 
-    ctx.stroke();
+        ctx.stroke();
 
-});
+    }
+);
 
-canvas.addEventListener("touchend", () => {
+canvas.addEventListener(
+    "touchend",
+    () => {
 
-    tekenen = false;
+        tekenen = false;
 
-});
+    }
+);
 
 // ======================================================
 // HANDTEKENING WISSEN
 // ======================================================
 
-clearButton.addEventListener("click", () => {
+clearButton.addEventListener(
+    "click",
+    () => {
 
-    ctx.clearRect(
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
-        0,
-        0,
-        canvas.width,
-        canvas.height
-
-    );
-
-});
+    }
+);
 
 // ======================================================
 // HANDTEKENING CONTROLEREN
@@ -272,12 +298,10 @@ function heeftHandtekening() {
 
     const pixels =
         ctx.getImageData(
-
             0,
             0,
             canvas.width,
             canvas.height
-
         ).data;
 
     for (
@@ -329,9 +353,9 @@ function controleerFormulier() {
         const veld =
             document.getElementById(id);
 
-        if (!veld.value.trim()) {
+        if (!veld || !veld.value.trim()) {
 
-            veld.focus();
+            if (veld) veld.focus();
 
             toonMelding(
                 "Vul alle verplichte velden in.",
@@ -358,9 +382,9 @@ function controleerFormulier() {
 
         if (
 
-            ouderNaam.value.trim() === "" ||
+            !ouderNaam.value.trim() ||
 
-            ouderEmail.value.trim() === ""
+            !ouderEmail.value.trim()
 
         ) {
 
@@ -382,11 +406,14 @@ function controleerFormulier() {
     // VOORWAARDEN
     // ==================================================
 
+    const voorwaarden =
+        document.getElementById("voorwaarden");
+
     if (
 
-        !document
-            .getElementById("voorwaarden")
-            .checked
+        !voorwaarden ||
+
+        !voorwaarden.checked
 
     ) {
 
@@ -484,9 +511,7 @@ function verzamelGegevens() {
             document.getElementById("ouderEmail").value.trim(),
 
         voorwaarden:
-            document
-                .getElementById("voorwaarden")
-                .checked,
+            document.getElementById("voorwaarden").checked,
 
         handtekening:
             canvas.toDataURL("image/png"),
@@ -505,14 +530,13 @@ function verzamelGegevens() {
 
 async function opslaanInFirebase(gegevens) {
 
-    const resultaat =
-        await push(
+    const resultaat = await push(
 
-            ref(db, "inschrijvingen"),
+        ref(db, "inschrijvingen"),
 
-            gegevens
+        gegevens
 
-        );
+    );
 
     return resultaat.key;
 
@@ -524,12 +548,9 @@ async function opslaanInFirebase(gegevens) {
 
 async function genereerPDF(gegevens) {
 
-    const pdfBytes =
-        await maakPDF(gegevens);
+    return await maakPDF(gegevens);
 
-    return pdfBytes;
-
-} 
+}
 // ======================================================
 // FORMULIER LEEGMAKEN
 // ======================================================
@@ -557,12 +578,10 @@ function resetFormulier() {
     });
 
     ctx.clearRect(
-
         0,
         0,
         canvas.width,
         canvas.height
-
     );
 
     updateOuderBlok();
@@ -584,21 +603,20 @@ sendButton.addEventListener("click", async () => {
     }
 
     sendButton.disabled = true;
-
     sendButton.textContent =
         "⏳ Inschrijving verwerken...";
 
     try {
 
         // ------------------------------------------
-        // Gegevens verzamelen
+        // GEGEVENS
         // ------------------------------------------
 
         const gegevens =
             verzamelGegevens();
 
         // ------------------------------------------
-        // Firebase
+        // FIREBASE
         // ------------------------------------------
 
         const firebaseKey =
@@ -608,8 +626,12 @@ sendButton.addEventListener("click", async () => {
 
         gegevens.id = firebaseKey;
 
+        console.log(
+            "✅ Opgeslagen in Firebase"
+        );
+
         // ------------------------------------------
-        // PDF maken
+        // PDF
         // ------------------------------------------
 
         const pdfBytes =
@@ -618,24 +640,31 @@ sendButton.addEventListener("click", async () => {
             );
 
         console.log(
-            "📄 PDF gemaakt:",
-            pdfBytes.length,
-            "bytes"
+            "📄 PDF gemaakt"
         );
 
         // ------------------------------------------
-        // Download (tijdelijk)
+        // EMAILJS
+        // ------------------------------------------
+
+        await verstuurMails(
+            gegevens
+        );
+
+        console.log(
+            "📧 Mails verzonden"
+        );
+
+        // ------------------------------------------
+        // PDF DOWNLOAD
         // ------------------------------------------
 
         const blob =
             new Blob(
-
                 [pdfBytes],
-
                 {
                     type: "application/pdf"
                 }
-
             );
 
         const url =
@@ -654,17 +683,12 @@ sendButton.addEventListener("click", async () => {
         URL.revokeObjectURL(url);
 
         // ------------------------------------------
-        // Hier komt straks de e-mailfunctie
+        // SUCCES
         // ------------------------------------------
-
-        // await verstuurMail(
-        //     gegevens,
-        //     pdfBytes
-        // );
 
         toonMelding(
 
-            "✅ Inschrijving succesvol opgeslagen.",
+            "✅ Bedankt! Uw inschrijving is succesvol ontvangen. Er is een bevestigingsmail verzonden.",
 
             "success"
 
@@ -680,7 +704,7 @@ sendButton.addEventListener("click", async () => {
 
         toonMelding(
 
-            "❌ Er is een fout opgetreden.",
+            "❌ Er is een fout opgetreden tijdens het verwerken van de inschrijving.",
 
             "error"
 
@@ -688,10 +712,14 @@ sendButton.addEventListener("click", async () => {
 
     }
 
-    sendButton.disabled = false;
+    finally {
 
-    sendButton.textContent =
-        "📨 Inschrijving verzenden";
+        sendButton.disabled = false;
+
+        sendButton.textContent =
+            "📨 Inschrijving verzenden";
+
+    }
 
 });
 
@@ -708,18 +736,13 @@ email.addEventListener("blur", () => {
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (
-
         email.value &&
         !regex.test(email.value)
-
     ) {
 
         toonMelding(
-
             "Voer een geldig e-mailadres in.",
-
             "error"
-
         );
 
     }
@@ -751,11 +774,8 @@ telefoon.addEventListener("input", () => {
 
     telefoon.value =
         telefoon.value.replace(
-
             /[^0-9+\-\s]/g,
-
             ""
-
         );
 
 });
@@ -767,10 +787,8 @@ telefoon.addEventListener("input", () => {
 document.addEventListener("keydown", e => {
 
     if (
-
         e.key === "Enter" &&
         e.target.tagName !== "TEXTAREA"
-
     ) {
 
         e.preventDefault();
