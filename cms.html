@@ -2,67 +2,175 @@
 <html lang="nl">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>HV Novitas CMS</title>
 
 <link rel="stylesheet" href="cms.css">
+
 </head>
 
 <body>
 
-<!-- 🔐 STATUS (komt uit dashboard/login flow later) -->
+<!-- =====================================================
+STATUS
+===================================================== -->
+
 <div id="userStatus"></div>
 
-<!-- 🚪 LOGOUT (werkt met cms.js) -->
-<button onclick="logout()">Uitloggen</button>
+<button onclick="logout()">
+
+    Uitloggen
+
+</button>
 
 <hr>
 
-<!-- 🧱 CLUB100 -->
+<!-- =====================================================
+CLUB100
+===================================================== -->
+
 <h2>🧱 Club100</h2>
-<input id="clubName">
-<button id="saveClub100">Toevoegen</button>
+
+<input
+    id="clubName">
+
+<button
+    id="saveClub100">
+
+    Toevoegen
+
+</button>
+
 <div id="clubList"></div>
 
 <hr>
 
-<!-- 🏆 HIGHLIGHTS -->
+<!-- =====================================================
+HIGHLIGHTS
+===================================================== -->
+
 <h2>🏆 Highlights</h2>
-<input id="hlDate" type="date">
-<input id="hlTitle">
-<input id="hlText">
-<button id="saveHighlight">Toevoegen</button>
+
+<input
+    id="hlDate"
+    type="date">
+
+<input
+    id="hlTitle"
+    placeholder="Titel">
+
+<input
+    id="hlText"
+    placeholder="Tekst">
+
+<button
+    id="saveHighlight">
+
+    Toevoegen
+
+</button>
+
 <div id="highlightList"></div>
 
 <hr>
 
-<!-- 📰 NEWS -->
-<h2>📰 News</h2>
-<input id="newsTitle">
-<input id="newsText">
-<input type="file" id="newsImage">
-<button id="saveNews">Toevoegen</button>
+<!-- =====================================================
+NEWS
+===================================================== -->
+
+<h2>📰 Nieuws</h2>
+
+<input
+    id="newsTitle"
+    placeholder="Titel">
+
+<input
+    id="newsText"
+    placeholder="Tekst">
+
+<input
+    type="file"
+    id="newsImage">
+
+<button
+    id="saveNews">
+
+    Toevoegen
+
+</button>
+
 <div id="newsList"></div>
 
 <hr>
 
-<!-- 🤝 SPONSORS -->
+<!-- =====================================================
+SPONSORS
+===================================================== -->
+
 <h2>🤝 Sponsors</h2>
-<input type="file" id="sponsorImage">
-<button id="saveSponsor">Toevoegen</button>
+
+<input
+    id="sponsorNaam"
+    type="text"
+    placeholder="Bedrijfsnaam">
+
+<br>
+
+<input
+    id="sponsorWebsite"
+    type="url"
+    placeholder="https://www.bedrijf.nl">
+
+<br>
+
+<input
+    type="file"
+    id="sponsorImage">
+
+<br>
+
+<button
+    id="saveSponsor">
+
+    Sponsor toevoegen
+
+</button>
+
 <div id="sponsorList"></div>
 
 <hr>
 
-<!-- 📸 OME JAN -->
+<!-- =====================================================
+OME JAN
+===================================================== -->
+
 <h2>📸 Ome Jan</h2>
-<input type="file" id="omejanImage">
-<button id="saveOmejan">Toevoegen</button>
+
+<input
+    type="file"
+    id="omejanImage">
+
+<button
+    id="saveOmejan">
+
+    Toevoegen
+
+</button>
+
 <div id="omejanList"></div>
 
-<!-- 🔥 CMS SCRIPT -->
-<script type="module" src="cms.js"></script>
+<!-- =====================================================
+SCRIPT
+===================================================== -->
+
+<script
+    type="module"
+    src="cms.js">
+
+</script>
 
 </body>
 </html>
