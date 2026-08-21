@@ -1,0 +1,309 @@
+/* =====================================================
+   HV NOVITAS
+   SPONSOR VAN DE WEEK
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+html,
+body {
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    background: transparent !important;
+
+    font-family: Arial, sans-serif;
+
+}
+
+
+/* =====================================================
+   BANNER
+===================================================== */
+
+.sponsor-week {
+
+    width: 100%;
+
+    padding: 0;
+
+    background: transparent;
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.sponsor-week-header {
+
+    width: 100%;
+
+    text-align: center;
+
+    margin-bottom: 10px;
+
+}
+
+
+/* =====================================================
+   TITEL
+===================================================== */
+
+.sponsor-week-label {
+
+    display: inline-block;
+
+    padding: 8px 22px;
+
+    border-radius: 6px;
+
+    background: #f47b20;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.sponsor-week-content {
+
+    width: 100%;
+
+    min-height: 190px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    background: white;
+
+    box-shadow:
+        0 2px 10px rgba(0,0,0,0.10);
+
+}
+
+
+/* =====================================================
+   SPONSOR LINK
+===================================================== */
+
+.sponsor-week-link {
+
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    text-decoration: none;
+
+    color: inherit;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.sponsor-week-logo {
+
+    display: block;
+
+    width: auto;
+
+    height: 120px;
+
+    max-width: 80%;
+
+    object-fit: contain;
+
+    transition:
+        transform 0.25s ease;
+
+}
+
+
+/* =====================================================
+   HOVER
+===================================================== */
+
+.sponsor-week-link:hover
+.sponsor-week-logo {
+
+    transform: scale(1.04);
+
+}
+
+
+/* =====================================================
+   SPONSORNAAM
+===================================================== */
+
+.sponsor-week-name {
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    text-align: center;
+
+}
+
+
+/* =====================================================
+   WEBSITE TEKST
+===================================================== */
+
+.sponsor-week-visit {
+
+    font-size: 14px;
+
+    color: #666;
+
+}
+
+
+/* =====================================================
+   GEEN LINK
+===================================================== */
+
+.sponsor-week-no-link {
+
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+/* =====================================================
+   LOADING / FOUT
+===================================================== */
+
+.loading,
+.error {
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 15px;
+
+}
+
+
+/* =====================================================
+   MOBIEL
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .sponsor-week-label {
+
+        font-size: 16px;
+
+        padding: 7px 18px;
+
+    }
+
+
+    .sponsor-week-content {
+
+        min-height: 160px;
+
+        padding: 15px;
+
+    }
+
+
+    .sponsor-week-logo {
+
+        height: 90px;
+
+        max-width: 85%;
+
+    }
+
+
+    .sponsor-week-name {
+
+        font-size: 18px;
+
+    }
+
+}
+
+
+/* =====================================================
+   KLEINE TELEFOONS
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .sponsor-week-label {
+
+        font-size: 14px;
+
+    }
+
+
+    .sponsor-week-content {
+
+        min-height: 140px;
+
+    }
+
+
+    .sponsor-week-logo {
+
+        height: 75px;
+
+    }
+
+}
