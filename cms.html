@@ -1,48 +1,183 @@
+<!DOCTYPE html>
+<html lang="nl">
+
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<title>HV Novitas CMS</title>
 
-    <title>HV Novitas Sponsors</title>
-
-    <link
-        rel="stylesheet"
-        href="sponsors.css"
-    >
+<link rel="stylesheet" href="cms.css">
 
 </head>
 
-
 <body>
 
-
 <!-- =====================================================
-     SPONSOR SLIDER
+STATUS
 ===================================================== -->
 
-<div class="slider">
+<div id="userStatus"></div>
 
-    <div
-        class="track"
-        id="sponsorTrack"
-    ></div>
+<button onclick="logout()">
 
-</div>
+    Uitloggen
+
+</button>
+
+<hr>
 
 
 <!-- =====================================================
-     JAVASCRIPT
+CLUB100
+===================================================== -->
+
+<h2>🧱 Club100</h2>
+
+<input
+    id="clubName">
+
+<button
+    id="saveClub100">
+
+    Toevoegen
+
+</button>
+
+<div id="clubList"></div>
+
+<hr>
+
+
+<!-- =====================================================
+HIGHLIGHTS
+===================================================== -->
+
+<h2>🏆 Highlights</h2>
+
+<input
+    id="hlDate"
+    type="date">
+
+<input
+    id="hlTitle"
+    placeholder="Titel">
+
+<input
+    id="hlText"
+    placeholder="Tekst">
+
+<button
+    id="saveHighlight">
+
+    Toevoegen
+
+</button>
+
+<div id="highlightList"></div>
+
+<hr>
+
+
+<!-- =====================================================
+NEWS
+===================================================== -->
+
+<h2>📰 Nieuws</h2>
+
+<input
+    id="newsTitle"
+    placeholder="Titel">
+
+<input
+    id="newsText"
+    placeholder="Tekst">
+
+<input
+    type="file"
+    id="newsImage">
+
+<button
+    id="saveNews">
+
+    Toevoegen
+
+</button>
+
+<div id="newsList"></div>
+
+<hr>
+
+
+<!-- =====================================================
+SPONSORS
+===================================================== -->
+
+<h2>🤝 Sponsors</h2>
+
+<input
+    id="sponsorName"
+    type="text"
+    placeholder="Bedrijfsnaam">
+
+<br>
+
+<input
+    id="sponsorWebsite"
+    type="url"
+    placeholder="https://www.bedrijf.nl">
+
+<br>
+
+<input
+    type="file"
+    id="sponsorImage"
+    accept="image/*">
+
+<br>
+
+<button
+    id="saveSponsor">
+
+    Sponsor toevoegen
+
+</button>
+
+<div id="sponsorList"></div>
+
+<hr>
+
+
+<!-- =====================================================
+OME JAN
+===================================================== -->
+
+<h2>📸 Ome Jan</h2>
+
+<input
+    type="file"
+    id="omejanImage">
+
+<button
+    id="saveOmejan">
+
+    Toevoegen
+
+</button>
+
+<div id="omejanList"></div>
+
+
+<!-- =====================================================
+SCRIPT
 ===================================================== -->
 
 <script
     type="module"
-    src="sponsors.js"
-></script>
+    src="cms.js">
 
+</script>
 
 </body>
 
