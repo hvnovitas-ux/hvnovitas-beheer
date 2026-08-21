@@ -1,6 +1,5 @@
 /* =====================================================
-   HV NOVITAS SPONSOR SYSTEM
-   Sponsor Slider + Sponsor van de Week
+   HV NOVITAS SPONSOR SLIDER
 ===================================================== */
 
 import { db } from "./firebase.js";
@@ -11,17 +10,28 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 
-console.log("🤝 HV Novitas Sponsor System geladen");
+console.log("🤝 Sponsor slider geladen");
 
 
 // =====================================================
-// ELEMENTEN
+// ELEMENT
 // =====================================================
 
-const track = document.getElementById("sponsorTrack");
+const track =
+    document.getElementById("sponsorTrack");
 
-const sponsorWeekBanner =
-    document.getElementById("sponsorWeekBanner");
+
+// =====================================================
+// CONTROLEREN
+// =====================================================
+
+if (!track) {
+
+    console.error(
+        "❌ sponsorTrack niet gevonden in HTML"
+    );
+
+}
 
 
 // =====================================================
@@ -43,11 +53,15 @@ async function loadSponsors() {
 
     try {
 
-        console.log("🔄 Sponsors worden geladen...");
+        console.log(
+            "🔄 Sponsors laden..."
+        );
 
 
         const snapshot =
-            await get(ref(db, "sponsors"));
+            await get(
+                ref(db, "sponsors")
+            );
 
 
         const data =
@@ -55,7 +69,7 @@ async function loadSponsors() {
 
 
         // =================================================
-        // FIREBASE DATA OMZETTEN NAAR LIJST
+        // FIREBASE DATA OMZETTEN
         // =================================================
 
         const list =
@@ -63,11 +77,12 @@ async function loadSponsors() {
 
                 .map(([id, sponsor]) => ({
 
-                    id,
+                    id: id,
 
                     name:
                         sponsor.name ||
-                        sponsor.title ||
+                        sponsor.sponsorName ||
+                        sponsor.sponsorNaam ||
                         "",
 
                     imageUrl:
@@ -85,11 +100,19 @@ async function loadSponsors() {
 
                 }))
 
-                // Alleen actieve sponsors
-                .filter(sponsor => sponsor.active)
 
-                // Sponsors zonder afbeelding niet tonen
-                .filter(sponsor => sponsor.imageUrl);
+                // Alleen actieve sponsors
+                .filter(
+                    sponsor =>
+                        sponsor.active
+                )
+
+
+                // Alleen sponsors met logo
+                .filter(
+                    sponsor =>
+                        sponsor.imageUrl
+                );
 
 
         console.log(
@@ -103,42 +126,52 @@ async function loadSponsors() {
 
         if (list.length === 0) {
 
-            if (track) {
-
-                track.innerHTML =
-                    "<p>Geen sponsors beschikbaar</p>";
-
-            }
-
-            if (sponsorWeekBanner) {
-
-                sponsorWeekBanner.innerHTML =
-                    `<div class="sponsor-week-empty">
-                        Geen sponsor beschikbaar
-                    </div>`;
-
-            }
+            track.innerHTML =
+                "<p>Geen sponsors</p>";
 
             return;
+
         }
 
 
         // =================================================
-        // SPONSOR VAN DE WEEK
+        // DUBBEL VOOR ONEINDIGE SLIDER
         // =================================================
 
-        showSponsorOfTheWeek(list);
+        const items =
+            [
+                ...list,
+                ...list
+            ];
 
 
         // =================================================
-        // NORMALE SLIDER
+        // HTML MAKEN
         // =================================================
 
-        createSponsorSlider(list);
+        track.innerHTML =
+            items
+                .map(
+                    sponsor =>
+                        createSponsorHTML(
+                            sponsor
+                        )
+                )
+                .join("");
 
-    }
 
-    catch (error) {
+        // =================================================
+        // SLIDER STARTEN
+        // =================================================
+
+        requestAnimationFrame(() => {
+
+            startSlider();
+
+        });
+
+
+    } catch (error) {
 
         console.error(
             "❌ Fout bij laden sponsors:",
@@ -146,22 +179,8 @@ async function loadSponsors() {
         );
 
 
-        if (track) {
-
-            track.innerHTML =
-                "<p>Sponsors konden niet worden geladen.</p>";
-
-        }
-
-
-        if (sponsorWeekBanner) {
-
-            sponsorWeekBanner.innerHTML =
-                `<div class="sponsor-week-empty">
-                    Sponsors tijdelijk niet beschikbaar
-                </div>`;
-
-        }
+        track.innerHTML =
+            "<p>Sponsors konden niet worden geladen.</p>";
 
     }
 
@@ -169,179 +188,15 @@ async function loadSponsors() {
 
 
 // =====================================================
-// SPONSOR VAN DE WEEK
-// =====================================================
-
-function showSponsorOfTheWeek(list) {
-
-    if (!sponsorWeekBanner) {
-        return;
-    }
-
-
-    // =================================================
-    // WEEKNUMMER
-    // =================================================
-
-    const weekNumber =
-        getISOWeekNumber(new Date());
-
-
-    // =================================================
-    // SPONSOR INDEX
-    // =================================================
-
-    const sponsorIndex =
-        (weekNumber - 1) % list.length;
-
-
-    const sponsor =
-        list[sponsorIndex];
-
-
-    console.log(
-        "🏆 Sponsor van de week:",
-        sponsor.name || sponsor.id
-    );
-
-
-    // =================================================
-    // WEBSITE NORMALISEREN
-    // =================================================
-
-    const website =
-        normalizeUrl(sponsor.website);
-
-
-    // =================================================
-    // BANNER MAKEN
-    // =================================================
-
-    const image =
-        escapeAttribute(sponsor.imageUrl);
-
-
-    const name =
-        escapeHtml(
-            sponsor.name ||
-            "Sponsor van de week"
-        );
-
-
-    let html = "";
-
-
-    // =================================================
-    // MET WEBSITE
-    // =================================================
-
-    if (website) {
-
-        html = `
-            <a
-                href="${escapeAttribute(website)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="${name}"
-            >
-                <img
-                    src="${image}"
-                    alt="${name}"
-                >
-            </a>
-        `;
-
-    }
-
-    // =================================================
-    // ZONDER WEBSITE
-    // =================================================
-
-    else {
-
-        html = `
-            <img
-                src="${image}"
-                alt="${name}"
-                title="${name}"
-            >
-        `;
-
-    }
-
-
-    sponsorWeekBanner.innerHTML = html;
-
-
-    // =================================================
-    // SPONSORNAAM
-    // =================================================
-
-    if (sponsor.name) {
-
-        const nameElement =
-            document.createElement("div");
-
-        nameElement.className =
-            "sponsor-week-name";
-
-        nameElement.textContent =
-            sponsor.name;
-
-
-        sponsorWeekBanner
-            .parentElement
-            .appendChild(nameElement);
-
-    }
-
-}
-
-
-// =====================================================
-// SPONSOR SLIDER MAKEN
-// =====================================================
-
-function createSponsorSlider(list) {
-
-    if (!track) {
-        return;
-    }
-
-
-    // =================================================
-    // TWEE KEER DE LIJST
-    // VOOR ONEINDIGE SCROLL
-    // =================================================
-
-    const items =
-        [...list, ...list];
-
-
-    track.innerHTML =
-        items
-            .map(sponsor => createSponsorHTML(sponsor))
-            .join("");
-
-
-    // Even wachten totdat afbeeldingen geladen zijn
-    requestAnimationFrame(() => {
-
-        startSlider();
-
-    });
-
-}
-
-
-// =====================================================
-// HTML VOOR NORMALE SPONSOR
+// SPONSOR HTML
 // =====================================================
 
 function createSponsorHTML(sponsor) {
 
-    const image =
-        escapeAttribute(sponsor.imageUrl);
+    const imageUrl =
+        escapeAttribute(
+            sponsor.imageUrl
+        );
 
 
     const name =
@@ -352,16 +207,19 @@ function createSponsorHTML(sponsor) {
 
 
     const website =
-        normalizeUrl(sponsor.website);
+        normalizeUrl(
+            sponsor.website
+        );
 
 
     // =================================================
-    // MET LINK
+    // SPONSOR MET WEBSITE
     // =================================================
 
     if (website) {
 
         return `
+
             <div class="sponsor">
 
                 <a
@@ -372,34 +230,35 @@ function createSponsorHTML(sponsor) {
                 >
 
                     <img
-                        src="${image}"
+                        src="${imageUrl}"
                         alt="${name}"
-                        loading="lazy"
                     >
 
                 </a>
 
             </div>
+
         `;
 
     }
 
 
     // =================================================
-    // ZONDER LINK
+    // SPONSOR ZONDER WEBSITE
     // =================================================
 
     return `
+
         <div class="sponsor no-link">
 
             <img
-                src="${image}"
+                src="${imageUrl}"
                 alt="${name}"
                 title="${name}"
-                loading="lazy"
             >
 
         </div>
+
     `;
 
 }
@@ -411,7 +270,9 @@ function createSponsorHTML(sponsor) {
 
 function startSlider() {
 
-    cancelAnimationFrame(animationId);
+    cancelAnimationFrame(
+        animationId
+    );
 
 
     position = 0;
@@ -430,7 +291,10 @@ function startSlider() {
             `translateX(${position}px)`;
 
 
-        if (Math.abs(position) >= halfWidth) {
+        if (
+            Math.abs(position) >=
+            halfWidth
+        ) {
 
             position = 0;
 
@@ -438,7 +302,9 @@ function startSlider() {
 
 
         animationId =
-            requestAnimationFrame(animate);
+            requestAnimationFrame(
+                animate
+            );
 
     }
 
@@ -449,60 +315,15 @@ function startSlider() {
 
 
 // =====================================================
-// ISO WEEKNUMMER
-// =====================================================
-
-function getISOWeekNumber(date) {
-
-    const tempDate =
-        new Date(
-            Date.UTC(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate()
-            )
-        );
-
-
-    const day =
-        tempDate.getUTCDay() || 7;
-
-
-    tempDate.setUTCDate(
-        tempDate.getUTCDate() + 4 - day
-    );
-
-
-    const yearStart =
-        new Date(
-            Date.UTC(
-                tempDate.getUTCFullYear(),
-                0,
-                1
-            )
-        );
-
-
-    return Math.ceil(
-        (
-            (
-                tempDate -
-                yearStart
-            ) / 86400000 + 1
-        ) / 7
-    );
-
-}
-
-
-// =====================================================
-// URL CONTROLEREN
+// URL NORMALISEREN
 // =====================================================
 
 function normalizeUrl(url) {
 
     if (!url) {
+
         return "";
+
     }
 
 
@@ -511,11 +332,16 @@ function normalizeUrl(url) {
 
 
     if (!url) {
+
         return "";
+
     }
 
 
-    // https://
+    // ---------------------------------------------
+    // HTTPS / HTTP
+    // ---------------------------------------------
+
     if (
         url.startsWith("https://") ||
         url.startsWith("http://")
@@ -526,21 +352,35 @@ function normalizeUrl(url) {
     }
 
 
-    // www.
-    if (url.startsWith("www.")) {
+    // ---------------------------------------------
+    // WWW
+    // ---------------------------------------------
 
-        return "https://" + url;
+    if (
+        url.startsWith("www.")
+    ) {
+
+        return (
+            "https://" +
+            url
+        );
 
     }
 
 
-    // Gewone domeinnaam
+    // ---------------------------------------------
+    // NORMALE DOMEINNAAM
+    // ---------------------------------------------
+
     if (
         url.includes(".") &&
         !url.includes(" ")
     ) {
 
-        return "https://" + url;
+        return (
+            "https://" +
+            url
+        );
 
     }
 
@@ -551,23 +391,43 @@ function normalizeUrl(url) {
 
 
 // =====================================================
-// HTML ESCAPE
+// HTML VEILIG MAKEN
 // =====================================================
 
 function escapeHtml(value) {
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
 // =====================================================
-// ATTRIBUTE ESCAPE
+// ATTRIBUTE VEILIG MAKEN
 // =====================================================
 
 function escapeAttribute(value) {
