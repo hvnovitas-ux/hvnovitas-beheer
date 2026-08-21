@@ -1,6 +1,5 @@
 /* =====================================================
-   HV NOVITAS SPONSOR SYSTEM
-   Slider + Sponsor van de Week
+   HV NOVITAS SPONSOR SLIDER
 ===================================================== */
 
 * {
@@ -16,8 +15,9 @@
 
 html,
 body {
+
     width: 100%;
-    min-height: 100%;
+    height: 100%;
 
     background: transparent !important;
 
@@ -25,153 +25,7 @@ body {
     overflow-y: visible;
 
     font-family: Arial, sans-serif;
-}
 
-
-/* =====================================================
-   SPONSOR VAN DE WEEK - SECTION
-===================================================== */
-
-.sponsor-week-section {
-    width: 100%;
-    padding: 10px 10px 15px;
-
-    background: transparent !important;
-
-    text-align: center;
-}
-
-
-/* =====================================================
-   TITEL
-===================================================== */
-
-.sponsor-week-title {
-    display: inline-block;
-
-    margin-bottom: 10px;
-    padding: 6px 16px;
-
-    font-size: 18px;
-    font-weight: 700;
-
-    letter-spacing: 1px;
-
-    color: #ff6600;
-
-    background: transparent;
-}
-
-
-/* =====================================================
-   GROTE BANNER
-===================================================== */
-
-.sponsor-week-banner {
-    width: 100%;
-    max-width: 900px;
-
-    min-height: 150px;
-
-    margin: 0 auto;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-
-    background: transparent;
-
-    border-radius: 10px;
-
-    transition:
-        transform 0.25s ease,
-        opacity 0.25s ease;
-}
-
-
-/* =====================================================
-   KLIKBARE BANNER
-===================================================== */
-
-.sponsor-week-banner a {
-    display: flex;
-
-    width: 100%;
-    min-height: 150px;
-
-    align-items: center;
-    justify-content: center;
-
-    text-decoration: none;
-
-    cursor: pointer;
-}
-
-
-/* =====================================================
-   SPONSOR VAN DE WEEK AFBEELDING
-===================================================== */
-
-.sponsor-week-banner img {
-    display: block;
-
-    width: 100%;
-    max-width: 900px;
-
-    height: 150px;
-
-    object-fit: contain;
-
-    background: transparent;
-
-    transition: transform 0.3s ease;
-}
-
-
-.sponsor-week-banner a:hover img {
-    transform: scale(1.02);
-}
-
-
-/* =====================================================
-   SPONSORNAAM
-===================================================== */
-
-.sponsor-week-name {
-    margin-top: 8px;
-
-    font-size: 15px;
-    font-weight: 700;
-
-    color: #333;
-}
-
-
-/* =====================================================
-   LOADING
-===================================================== */
-
-.sponsor-week-loading {
-    padding: 30px;
-
-    font-size: 14px;
-
-    color: #777;
-}
-
-
-/* =====================================================
-   GEEN SPONSOR
-===================================================== */
-
-.sponsor-week-empty {
-    padding: 30px;
-
-    font-size: 14px;
-
-    color: #777;
 }
 
 
@@ -180,6 +34,7 @@ body {
 ===================================================== */
 
 .slider {
+
     width: 100%;
 
     overflow: hidden;
@@ -189,14 +44,16 @@ body {
     padding: 10px 0;
 
     background: transparent !important;
+
 }
 
 
 /* =====================================================
-   TRACK
+   MOVING TRACK
 ===================================================== */
 
 .track {
+
     display: flex;
 
     align-items: center;
@@ -208,6 +65,7 @@ body {
     will-change: transform;
 
     background: transparent !important;
+
 }
 
 
@@ -216,14 +74,17 @@ body {
 ===================================================== */
 
 .sponsor {
+
     flex: 0 0 auto;
 
     display: flex;
 
     justify-content: center;
+
     align-items: center;
 
     background: transparent !important;
+
 }
 
 
@@ -232,6 +93,7 @@ body {
 ===================================================== */
 
 .sponsor a {
+
     display: flex;
 
     justify-content: center;
@@ -240,14 +102,16 @@ body {
     text-decoration: none;
 
     cursor: pointer;
+
 }
 
 
 /* =====================================================
-   LOGO
+   SPONSOR LOGO
 ===================================================== */
 
 .sponsor img {
+
     display: block;
 
     height: 70px;
@@ -260,7 +124,9 @@ body {
 
     background: transparent !important;
 
-    transition: transform 0.25s ease;
+    transition:
+        transform 0.25s ease;
+
 }
 
 
@@ -269,16 +135,20 @@ body {
 ===================================================== */
 
 .sponsor a:hover img {
+
     transform: scale(1.05);
+
 }
 
 
 /* =====================================================
-   SPONSOR ZONDER LINK
+   SPONSOR ZONDER WEBSITE
 ===================================================== */
 
 .sponsor.no-link img {
+
     cursor: default;
+
 }
 
 
@@ -288,47 +158,21 @@ body {
 
 @media (max-width: 768px) {
 
-    .sponsor-week-section {
-        padding: 8px 5px 12px;
-    }
-
-
-    .sponsor-week-title {
-        font-size: 15px;
-
-        margin-bottom: 7px;
-
-        padding: 5px 12px;
-    }
-
-
-    .sponsor-week-banner {
-        min-height: 100px;
-
-        border-radius: 7px;
-    }
-
-
-    .sponsor-week-banner a {
-        min-height: 100px;
-    }
-
-
-    .sponsor-week-banner img {
-        height: 100px;
-    }
-
-
     .track {
+
         gap: 30px;
+
     }
 
 
     .sponsor img {
+
         height: 50px;
 
         max-width: 160px;
+
     }
+
 }
 
 
@@ -338,29 +182,19 @@ body {
 
 @media (max-width: 480px) {
 
-    .sponsor-week-banner {
-        min-height: 80px;
-    }
+    .track {
 
+        gap: 25px;
 
-    .sponsor-week-banner a {
-        min-height: 80px;
-    }
-
-
-    .sponsor-week-banner img {
-        height: 80px;
     }
 
 
     .sponsor img {
+
         height: 45px;
 
         max-width: 140px;
+
     }
 
-
-    .track {
-        gap: 25px;
-    }
 }
