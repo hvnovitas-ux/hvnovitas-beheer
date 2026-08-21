@@ -1,6 +1,6 @@
 body{
     margin:0;
-    font-family:Georgia;
+    font-family:Georgia, serif;
     background:#fff3e0;
     color:#1b3f7a;
     padding:20px;
@@ -18,6 +18,10 @@ button{
     color:white;
     border:none;
     cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
 }
 
 /* GRID */
@@ -58,4 +62,24 @@ button{
     width:100%;
     max-height:100px;
     object-fit:cover;
+}
+
+/* =====================================================
+   EXTERNE ONDERDELEN CMS
+===================================================== */
+
+.external-section{
+    background:white;
+    border:2px solid #1b3f7a;
+    border-radius:12px;
+    padding:15px;
+    margin:15px 0;
+}
+
+.external-section h2{
+    margin-top:0;
+}
+
+.external-section p{
+    color:#333;
 }
