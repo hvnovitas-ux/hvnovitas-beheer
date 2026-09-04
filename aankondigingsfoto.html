@@ -3,114 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aankondigingsfoto</title>
-    <link rel="stylesheet" href="./aankondigingsfoto.css">
+    <title>HV Novitas - Aankondiging</title>
+    <link rel="stylesheet" href="./aankondiging.css">
 </head>
 <body>
-    <main class="page">
-        <header class="page-header">
-            <div>
-                <h1>📷 Aankondigingsfoto</h1>
-                <p>Beheer de 3 basisfoto's en plan een tijdelijke speciale foto.</p>
-            </div>
-            <a class="back-link" href="./dashboard.html">← Dashboard</a>
-        </header>
 
-        <section class="panel">
-            <div class="panel-title">
-                <div>
-                    <h2>Basisfoto's</h2>
-                    <p>Kies één van de drie foto's als standaardfoto.</p>
-                </div>
-                <span id="baseStatus" class="status neutral">Laden…</span>
-            </div>
+<main class="announcement-page">
 
-            <div id="basePhotos" class="photo-grid"></div>
-        </section>
+    <div class="announcement-card">
+        <div id="loading" class="message">
+            Aankondiging laden…
+        </div>
 
-        <section class="panel">
-            <div class="panel-title">
-                <div>
-                    <h2>Speciale foto</h2>
-                    <p>De speciale foto vervangt automatisch de basisfoto binnen de ingestelde periode.</p>
-                </div>
-                <span id="specialStatus" class="status neutral">Geen speciale foto</span>
-            </div>
+        <img
+            id="announcementImage"
+            class="announcement-image"
+            alt="HV Novitas aankondiging"
+            hidden
+        >
 
-            <div class="special-grid">
-                <div class="special-preview">
-                    <img id="specialPreview" alt="Speciale foto" hidden>
-                    <div id="specialEmpty" class="empty-preview">Nog geen speciale foto ingesteld</div>
-                </div>
+        <div id="empty" class="message" hidden>
+            Geen aankondigingsfoto beschikbaar.
+        </div>
+    </div>
 
-                <div class="special-controls">
-                    <label class="file-button">
-                        📤 Speciale foto uploaden
-                        <input id="specialFile" type="file" accept="image/*" hidden>
-                    </label>
+</main>
 
-                    <div id="uploadProgress" class="progress" hidden>
-                        <div id="uploadProgressBar"></div>
-                    </div>
+<script type="module" src="./aankondiging.js"></script>
 
-                    <div class="date-grid">
-                        <label>
-                            Startdatum
-                            <input id="specialStartDate" type="date">
-                        </label>
-                        <label>
-                            Starttijd
-                            <input id="specialStartTime" type="time" value="00:00">
-                        </label>
-                        <label>
-                            Einddatum
-                            <input id="specialEndDate" type="date">
-                        </label>
-                        <label>
-                            Eindtijd
-                            <input id="specialEndTime" type="time" value="23:59">
-                        </label>
-                    </div>
-
-                    <div class="button-row">
-                        <button id="saveSpecial" class="primary">💾 Speciale foto inplannen</button>
-                        <button id="clearSpecial" class="danger-outline">🗑️ Speciale foto verwijderen</button>
-                    </div>
-
-                    <p class="hint">
-                        Geen speciale foto ingesteld? Dan blijft de gekozen basisfoto gewoon actief.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section class="panel status-panel">
-            <div class="panel-title">
-                <div>
-                    <h2>Actuele status</h2>
-                    <p>De website gebruikt automatisch de juiste foto op basis van datum en tijd.</p>
-                </div>
-            </div>
-
-            <div class="live-status">
-                <div>
-                    <span class="label">Foto die nu actief is</span>
-                    <strong id="currentPhotoLabel">—</strong>
-                </div>
-                <div>
-                    <span class="label">Reden</span>
-                    <strong id="currentReason">—</strong>
-                </div>
-                <div>
-                    <span class="label">Laatste update</span>
-                    <strong id="lastUpdate">—</strong>
-                </div>
-            </div>
-        </section>
-
-        <div id="message" class="message" role="status" aria-live="polite"></div>
-    </main>
-
-    <script type="module" src="./aankondigingsfoto.js"></script>
 </body>
 </html>
