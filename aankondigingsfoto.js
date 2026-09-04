@@ -1,53 +1,29 @@
 import { db } from "./firebase.js";
+
 import {
     ref,
     onValue,
     set,
-    remove,
-    update
+    remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("📷 Aankondigingsfoto module geladen");
+console.log("📷 Aankondigingsfoto geladen");
 
 // =====================================================
-// CLOUDINARY CONFIGURATIE
-// Vul hier dezelfde Cloudinary gegevens in die jullie
-// bestaande uploadscript gebruikt.
+// CLOUDINARY — DEZELFDE INSTELLINGEN ALS JULLIE CMS
 // =====================================================
 
-const CLOUDINARY_CLOUD_NAME = "VUL_HIER_JOUW_CLOUD_NAME_IN";
-const CLOUDINARY_UPLOAD_PRESET = "VUL_HIER_JOUW_UNSIGNED_UPLOAD_PRESET_IN";
-const CLOUDINARY_FOLDER = "hvnovitas/aankondigingsfoto";
+const CLOUDINARY_CLOUD_NAME = "hwxe3jzg";
+const CLOUDINARY_UPLOAD_PRESET = "hvnovitas_upload";
+const CLOUDINARY_UPLOAD_URL =
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-// Firebase locatie van deze zelfstandige module
+// Eigen Firebase-node. Deze module raakt de andere nodes niet.
 const DB_PATH = "aankondigingsfoto";
 
-const basePhotosEl = document.getElementById("basePhotos");
-const baseStatusEl = document.getElementById("baseStatus");
-const specialStatusEl = document.getElementById("specialStatus");
+const BASE_SLOTS = ["foto1", "foto2", "foto3"];
 
-const specialPreviewEl = document.getElementById("specialPreview");
-const specialEmptyEl = document.getElementById("specialEmpty");
-
-const specialFileEl = document.getElementById("specialFile");
-const startDateEl = document.getElementById("specialStartDate");
-const startTimeEl = document.getElementById("specialStartTime");
-const endDateEl = document.getElementById("specialEndDate");
-const endTimeEl = document.getElementById("specialEndTime");
-
-const saveSpecialBtn = document.getElementById("saveSpecial");
-const clearSpecialBtn = document.getElementById("clearSpecial");
-
-const progressEl = document.getElementById("uploadProgress");
-const progressBarEl = document.getElementById("uploadProgressBar");
-
-const currentPhotoLabelEl = document.getElementById("currentPhotoLabel");
-const currentReasonEl = document.getElementById("currentReason");
-const lastUpdateEl = document.getElementById("lastUpdate");
-
-const messageEl = document.getElementById("message");
-
-let moduleData = {
+let state = {
     basePhotos: {
         foto1: null,
         foto2: null,
@@ -56,24 +32,52 @@ let moduleData = {
     selectedBase: "foto1",
     special: {
         imageUrl: "",
-        publicId: "",
-        deleteToken: "",
+        created: 0,
         start: "",
         end: ""
     }
 };
 
-let specialUpload = null;
+let pendingSpecialUpload = null;
 let messageTimer = null;
 
 // =====================================================
-// FIREBASE DATA
+// ELEMENTEN
+// =====================================================
+
+const basePhotosEl = document.getElementById("basePhotos");
+const baseStatusEl = document.getElementById("baseStatus");
+
+const specialFileEl = document.getElementById("specialFile");
+const specialPreviewEl = document.getElementById("specialPreview");
+const specialEmptyEl = document.getElementById("specialEmpty");
+const specialStatusEl = document.getElementById("specialStatus");
+
+const startDateEl = document.getElementById("specialStartDate");
+const startTimeEl = document.getElementById("specialStartTime");
+const endDateEl = document.getElementById("specialEndDate");
+const endTimeEl = document.getElementById("specialEndTime");
+
+const saveSpecialBtn = document.getElementById("saveSpecial");
+const clearSpecialBtn = document.getElementById("clearSpecial");
+
+const uploadProgressEl = document.getElementById("uploadProgress");
+const uploadProgressBarEl = document.getElementById("uploadProgressBar");
+
+const currentPhotoLabelEl = document.getElementById("currentPhotoLabel");
+const currentReasonEl = document.getElementById("currentReason");
+const lastCheckEl = document.getElementById("lastCheck");
+
+const messageEl = document.getElementById("message");
+
+// =====================================================
+// FIREBASE LEZEN
 // =====================================================
 
 onValue(ref(db, DB_PATH), (snapshot) => {
     const data = snapshot.val() || {};
 
-    moduleData = {
+    state = {
         basePhotos: {
             foto1: data.basePhotos?.foto1 || null,
             foto2: data.basePhotos?.foto2 || null,
@@ -82,8 +86,7 @@ onValue(ref(db, DB_PATH), (snapshot) => {
         selectedBase: data.selectedBase || "foto1",
         special: {
             imageUrl: data.special?.imageUrl || "",
-            publicId: data.special?.publicId || "",
-            deleteToken: data.special?.deleteToken || "",
+            created: data.special?.created || 0,
             start: data.special?.start || "",
             end: data.special?.end || ""
         }
@@ -91,33 +94,43 @@ onValue(ref(db, DB_PATH), (snapshot) => {
 
     renderBasePhotos();
     renderSpecial();
-    renderCurrentStatus();
+    renderCurrent();
 });
 
+// =====================================================
+// BASISFOTO'S
+// =====================================================
+
 function renderBasePhotos() {
-    if (!basePhotosEl) return;
-
-    const slots = ["foto1", "foto2", "foto3"];
-
-    basePhotosEl.innerHTML = slots.map((slot, index) => {
-        const photo = moduleData.basePhotos[slot];
-        const slotName = `Foto ${index + 1}`;
-        const active = moduleData.selectedBase === slot;
+    const cards = BASE_SLOTS.map((slot, index) => {
+        const photo = state.basePhotos[slot];
+        const active = state.selectedBase === slot;
 
         return `
-            <article class="photo-card ${active ? "active" : ""}">
-                <div class="photo-preview">
+            <article class="af-photo-card ${active ? "active" : ""}">
+                <div class="af-photo-preview">
                     ${
                         photo?.imageUrl
-                            ? `<img src="${escapeAttribute(photo.imageUrl)}" alt="${slotName}">`
-                            : `<div class="empty-preview">Nog geen foto<br>voor deze positie</div>`
+                            ? `
+                                <img
+                                    src="${escapeAttribute(photo.imageUrl)}"
+                                    alt="Basisfoto ${index + 1}"
+                                >
+                            `
+                            : `
+                                <div class="af-empty">
+                                    <span>📷</span>
+                                    <strong>Geen foto</strong>
+                                    <small>Upload een basisfoto.</small>
+                                </div>
+                            `
                     }
                 </div>
 
-                <div class="photo-card-body">
-                    <div class="photo-card-title">${slotName}</div>
+                <div class="af-photo-body">
+                    <div class="af-photo-title">Foto ${index + 1}</div>
 
-                    <label class="radio-wrap">
+                    <label class="af-radio-row">
                         <input
                             type="radio"
                             name="selectedBase"
@@ -128,25 +141,22 @@ function renderBasePhotos() {
                         Gebruik als basisfoto
                     </label>
 
-                    <label class="file-button">
+                    <label class="af-file-label">
                         📤 ${photo?.imageUrl ? "Foto vervangen" : "Foto uploaden"}
                         <input
-                            class="base-file-input"
-                            data-slot="${slot}"
                             type="file"
                             accept="image/*"
-                            hidden
+                            data-base-slot="${slot}"
                         >
                     </label>
 
                     ${
                         photo?.imageUrl
                             ? `
-                                <div style="height:10px"></div>
                                 <button
-                                    class="danger-outline delete-base-btn"
-                                    data-slot="${slot}"
                                     type="button"
+                                    class="af-btn af-btn-danger af-delete-slot"
+                                    data-delete-base="${slot}"
                                 >
                                     🗑️ Verwijderen
                                 </button>
@@ -158,95 +168,109 @@ function renderBasePhotos() {
         `;
     }).join("");
 
+    basePhotosEl.innerHTML = cards;
+
     basePhotosEl.querySelectorAll('input[name="selectedBase"]').forEach((radio) => {
         radio.addEventListener("change", async (event) => {
             const slot = event.target.value;
+
             try {
                 await set(ref(db, `${DB_PATH}/selectedBase`), slot);
-                showMessage("Basisfoto gewijzigd.", "success");
+                showMessage("Basisfoto ingesteld.", "success");
             } catch (error) {
                 console.error(error);
-                showMessage("Basisfoto kon niet worden opgeslagen.", "error");
+                showMessage("De basisfoto kon niet worden opgeslagen.", "error");
             }
         });
     });
 
-    basePhotosEl.querySelectorAll(".base-file-input").forEach((input) => {
+    basePhotosEl.querySelectorAll("[data-base-slot]").forEach((input) => {
         input.addEventListener("change", async (event) => {
             const file = event.target.files?.[0];
-            const slot = event.target.dataset.slot;
+            const slot = event.target.dataset.baseSlot;
 
-            if (!file || !slot) return;
+            if (!file) return;
 
             try {
-                showMessage(`${capitalize(slot)} wordt geüpload…`);
+                showMessage("Foto wordt geüpload…");
+
                 const uploaded = await uploadToCloudinary(file);
 
                 await set(ref(db, `${DB_PATH}/basePhotos/${slot}`), {
                     imageUrl: uploaded.secure_url,
                     publicId: uploaded.public_id || "",
-                    deleteToken: uploaded.delete_token || ""
+                    created: Date.now()
                 });
 
-                showMessage("Foto geüpload.", "success");
+                showMessage(`Foto ${slot.replace("foto", "")} opgeslagen.`, "success");
             } catch (error) {
                 console.error(error);
                 showMessage(error.message || "Upload mislukt.", "error");
             } finally {
-                input.value = "";
+                event.target.value = "";
             }
         });
     });
 
-    basePhotosEl.querySelectorAll(".delete-base-btn").forEach((button) => {
+    basePhotosEl.querySelectorAll("[data-delete-base]").forEach((button) => {
         button.addEventListener("click", async () => {
-            const slot = button.dataset.slot;
-            const photo = moduleData.basePhotos[slot];
+            const slot = button.dataset.deleteBase;
+            const photo = state.basePhotos[slot];
 
-            if (!photo) return;
+            if (!photo?.imageUrl) return;
 
-            const confirmed = window.confirm(
-                `Wil je ${capitalize(slot)} echt verwijderen?`
+            const approved = window.confirm(
+                `Wil je Foto ${slot.replace("foto", "")} verwijderen?`
             );
 
-            if (!confirmed) return;
+            if (!approved) return;
 
             try {
-                await tryDeleteByToken(photo.deleteToken);
-
                 await remove(ref(db, `${DB_PATH}/basePhotos/${slot}`));
 
-                if (moduleData.selectedBase === slot) {
-                    const fallback = ["foto1", "foto2", "foto3"]
-                        .find((item) => item !== slot && moduleData.basePhotos[item]?.imageUrl);
+                // Als de verwijderde foto de actieve basisfoto was,
+                // kies automatisch de eerste overgebleven foto.
+                if (state.selectedBase === slot) {
+                    const fallback = BASE_SLOTS.find(
+                        (item) =>
+                            item !== slot &&
+                            state.basePhotos[item]?.imageUrl
+                    );
 
-                    await set(ref(db, `${DB_PATH}/selectedBase`), fallback || "foto1");
+                    await set(
+                        ref(db, `${DB_PATH}/selectedBase`),
+                        fallback || "foto1"
+                    );
                 }
 
-                showMessage("Foto verwijderd.", "success");
+                showMessage("Foto verwijderd uit de Aankondigingsfoto-module.", "success");
             } catch (error) {
                 console.error(error);
-                showMessage(
-                    "Foto is uit de module verwijderd. Permanente verwijdering uit Cloudinary is alleen mogelijk met een geldig delete-token of een beveiligde serverfunctie.",
-                    "error"
-                );
+                showMessage("Verwijderen mislukt.", "error");
             }
         });
     });
 
-    const filled = slots.filter((slot) => moduleData.basePhotos[slot]?.imageUrl).length;
+    const count = BASE_SLOTS.filter(
+        (slot) => state.basePhotos[slot]?.imageUrl
+    ).length;
 
-    if (filled === 0) {
-        baseStatusEl.textContent = "Nog geen basisfoto's";
-        baseStatusEl.className = "status neutral";
+    if (count === 0) {
+        baseStatusEl.textContent = "Nog geen basisfoto";
+        baseStatusEl.className = "af-badge af-badge-neutral";
     } else {
-        baseStatusEl.textContent = `${capitalize(moduleData.selectedBase)} actief`;
-        baseStatusEl.className = "status success";
+        baseStatusEl.textContent =
+            `${capitalize(state.selectedBase)} actief`;
+        baseStatusEl.className = "af-badge af-badge-good";
     }
 }
 
+// =====================================================
+// SPECIALE FOTO
+// =====================================================
+
 function renderSpecial() {
-    const special = moduleData.special;
+    const special = state.special;
 
     if (special.imageUrl) {
         specialPreviewEl.src = special.imageUrl;
@@ -258,91 +282,13 @@ function renderSpecial() {
         specialEmptyEl.hidden = false;
     }
 
-    startDateEl.value = special.start?.slice(0, 10) || "";
-    startTimeEl.value = special.start?.slice(11, 16) || "00:00";
-    endDateEl.value = special.end?.slice(0, 10) || "";
-    endTimeEl.value = special.end?.slice(11, 16) || "23:59";
+    startDateEl.value = getDatePart(special.start);
+    startTimeEl.value = getTimePart(special.start, "00:00");
+    endDateEl.value = getDatePart(special.end);
+    endTimeEl.value = getTimePart(special.end, "23:59");
 
-    const active = isSpecialActive();
-
-    if (!special.imageUrl) {
-        specialStatusEl.textContent = "Geen speciale foto";
-        specialStatusEl.className = "status neutral";
-    } else if (active) {
-        specialStatusEl.textContent = "🟢 Nu actief";
-        specialStatusEl.className = "status success";
-    } else if (special.start && Date.now() < parseDate(special.start)) {
-        specialStatusEl.textContent = "🟡 Gepland";
-        specialStatusEl.className = "status warning";
-    } else {
-        specialStatusEl.textContent = "⚪ Verlopen";
-        specialStatusEl.className = "status neutral";
-    }
+    updateSpecialStatus();
 }
-
-function renderCurrentStatus() {
-    const current = getActivePhoto();
-
-    currentPhotoLabelEl.textContent = current.label;
-    currentReasonEl.textContent = current.reason;
-    lastUpdateEl.textContent = new Date().toLocaleString("nl-NL");
-}
-
-function getActivePhoto() {
-    const special = moduleData.special;
-
-    if (special.imageUrl && isSpecialActive()) {
-        return {
-            imageUrl: special.imageUrl,
-            label: "Speciale foto",
-            reason: "Binnen geplande periode"
-        };
-    }
-
-    const selected = moduleData.basePhotos[moduleData.selectedBase];
-
-    if (selected?.imageUrl) {
-        return {
-            imageUrl: selected.imageUrl,
-            label: capitalize(moduleData.selectedBase),
-            reason: "Gekozen basisfoto"
-        };
-    }
-
-    const fallback = ["foto1", "foto2", "foto3"]
-        .map((slot) => ({ slot, photo: moduleData.basePhotos[slot] }))
-        .find((item) => item.photo?.imageUrl);
-
-    if (fallback) {
-        return {
-            imageUrl: fallback.photo.imageUrl,
-            label: capitalize(fallback.slot),
-            reason: "Eerste beschikbare basisfoto"
-        };
-    }
-
-    return {
-        imageUrl: "",
-        label: "Geen foto",
-        reason: "Er is nog geen foto ingesteld"
-    };
-}
-
-function isSpecialActive() {
-    const { imageUrl, start, end } = moduleData.special;
-
-    if (!imageUrl || !start || !end) return false;
-
-    const now = Date.now();
-    const startMs = parseDate(start);
-    const endMs = parseDate(end);
-
-    return now >= startMs && now <= endMs;
-}
-
-// =====================================================
-// SPECIALE FOTO
-// =====================================================
 
 specialFileEl.addEventListener("change", async (event) => {
     const file = event.target.files?.[0];
@@ -351,182 +297,308 @@ specialFileEl.addEventListener("change", async (event) => {
 
     try {
         showMessage("Speciale foto wordt geüpload…");
-        specialUpload = await uploadToCloudinary(file);
 
-        specialPreviewEl.src = specialUpload.secure_url;
+        pendingSpecialUpload = await uploadToCloudinary(file);
+
+        specialPreviewEl.src = pendingSpecialUpload.secure_url;
         specialPreviewEl.hidden = false;
         specialEmptyEl.hidden = true;
 
-        showMessage("Speciale foto geüpload. Stel nu de periode in.", "success");
+        showMessage(
+            "Speciale foto geüpload. Stel nu de periode in en sla op.",
+            "success"
+        );
     } catch (error) {
         console.error(error);
         showMessage(error.message || "Upload mislukt.", "error");
     } finally {
-        specialFileEl.value = "";
+        event.target.value = "";
     }
 });
 
 saveSpecialBtn.addEventListener("click", async () => {
-    const imageUrl = specialUpload?.secure_url || moduleData.special.imageUrl;
-    const publicId = specialUpload?.public_id || moduleData.special.publicId;
-    const deleteToken = specialUpload?.delete_token || moduleData.special.deleteToken;
+    const imageUrl =
+        pendingSpecialUpload?.secure_url ||
+        state.special.imageUrl;
 
     if (!imageUrl) {
         showMessage("Upload eerst een speciale foto.", "error");
         return;
     }
 
-    const start = combineDateTime(startDateEl.value, startTimeEl.value);
-    const end = combineDateTime(endDateEl.value, endTimeEl.value);
+    const start = combineDateTime(
+        startDateEl.value,
+        startTimeEl.value || "00:00"
+    );
+
+    const end = combineDateTime(
+        endDateEl.value,
+        endTimeEl.value || "23:59"
+    );
 
     if (!start || !end) {
-        showMessage("Vul start- en einddatum/tijd in.", "error");
+        showMessage(
+            "Vul zowel start- als einddatum in.",
+            "error"
+        );
         return;
     }
 
-    if (parseDate(end) <= parseDate(start)) {
-        showMessage("De einddatum/tijd moet na de startdatum/tijd liggen.", "error");
+    if (toTimestamp(end) <= toTimestamp(start)) {
+        showMessage(
+            "De einddatum/tijd moet na de startdatum/tijd liggen.",
+            "error"
+        );
         return;
     }
 
     try {
         await set(ref(db, `${DB_PATH}/special`), {
             imageUrl,
-            publicId,
-            deleteToken,
+            publicId:
+                pendingSpecialUpload?.public_id ||
+                state.special.publicId ||
+                "",
+            created:
+                pendingSpecialUpload
+                    ? Date.now()
+                    : state.special.created || Date.now(),
             start,
             end
         });
 
-        specialUpload = null;
+        pendingSpecialUpload = null;
 
         showMessage("Speciale foto ingepland.", "success");
     } catch (error) {
         console.error(error);
-        showMessage("De planning kon niet worden opgeslagen.", "error");
+        showMessage(
+            "De speciale foto kon niet worden opgeslagen.",
+            "error"
+        );
     }
 });
 
 clearSpecialBtn.addEventListener("click", async () => {
-    if (!moduleData.special.imageUrl) {
-        showMessage("Er is geen speciale foto om te verwijderen.");
+    if (!state.special.imageUrl) {
+        showMessage("Er is geen speciale foto ingesteld.");
         return;
     }
 
-    const confirmed = window.confirm(
+    const approved = window.confirm(
         "Wil je de speciale foto en de planning verwijderen?"
     );
 
-    if (!confirmed) return;
+    if (!approved) return;
 
     try {
-        await tryDeleteByToken(moduleData.special.deleteToken);
         await remove(ref(db, `${DB_PATH}/special`));
+        pendingSpecialUpload = null;
 
-        specialUpload = null;
-        showMessage("Speciale foto verwijderd. De basisfoto blijft actief.", "success");
+        showMessage(
+            "Speciale foto verwijderd. De basisfoto blijft actief.",
+            "success"
+        );
     } catch (error) {
         console.error(error);
-        await remove(ref(db, `${DB_PATH}/special`));
         showMessage(
-            "De speciale foto is uit de module verwijderd. Permanente verwijdering uit Cloudinary vereist een geldig delete-token of beveiligde serverfunctie.",
+            "De speciale foto kon niet worden verwijderd.",
             "error"
         );
     }
 });
 
 // =====================================================
+// STATUS
+// =====================================================
+
+function renderCurrent() {
+    const active = getActivePhoto();
+
+    currentPhotoLabelEl.textContent = active.label;
+    currentReasonEl.textContent = active.reason;
+    lastCheckEl.textContent = new Date().toLocaleString("nl-NL");
+}
+
+function getActivePhoto() {
+    if (isSpecialActive()) {
+        return {
+            label: "Speciale foto",
+            reason: "Nu actief"
+        };
+    }
+
+    const selected = state.basePhotos[state.selectedBase];
+
+    if (selected?.imageUrl) {
+        return {
+            label: capitalize(state.selectedBase),
+            reason: "Gekozen basisfoto"
+        };
+    }
+
+    const firstAvailable = BASE_SLOTS.find(
+        (slot) => state.basePhotos[slot]?.imageUrl
+    );
+
+    if (firstAvailable) {
+        return {
+            label: capitalize(firstAvailable),
+            reason: "Eerste beschikbare basisfoto"
+        };
+    }
+
+    return {
+        label: "Geen foto",
+        reason: "Nog niets ingesteld"
+    };
+}
+
+function updateSpecialStatus() {
+    if (!state.special.imageUrl) {
+        specialStatusEl.textContent = "Geen speciale foto";
+        specialStatusEl.className = "af-badge af-badge-neutral";
+        return;
+    }
+
+    const now = Date.now();
+    const start = toTimestamp(state.special.start);
+    const end = toTimestamp(state.special.end);
+
+    if (!start || !end) {
+        specialStatusEl.textContent = "Foto aanwezig – nog niet gepland";
+        specialStatusEl.className = "af-badge af-badge-warn";
+        return;
+    }
+
+    if (now < start) {
+        specialStatusEl.textContent = "🟡 Gepland";
+        specialStatusEl.className = "af-badge af-badge-warn";
+        return;
+    }
+
+    if (now <= end) {
+        specialStatusEl.textContent = "🟢 Nu actief";
+        specialStatusEl.className = "af-badge af-badge-good";
+        return;
+    }
+
+    specialStatusEl.textContent = "⚪ Verlopen";
+    specialStatusEl.className = "af-badge af-badge-neutral";
+}
+
+function isSpecialActive() {
+    if (
+        !state.special.imageUrl ||
+        !state.special.start ||
+        !state.special.end
+    ) {
+        return false;
+    }
+
+    const now = Date.now();
+    const start = toTimestamp(state.special.start);
+    const end = toTimestamp(state.special.end);
+
+    return now >= start && now <= end;
+}
+
+// Houd status actueel zonder de pagina opnieuw te laden.
+setInterval(() => {
+    updateSpecialStatus();
+    renderCurrent();
+}, 30_000);
+
+// =====================================================
 // CLOUDINARY UPLOAD
+// Zelfde uploadmethode als jullie bestaande CMS.
 // =====================================================
 
 async function uploadToCloudinary(file) {
-    if (
-        !CLOUDINARY_CLOUD_NAME ||
-        CLOUDINARY_CLOUD_NAME.includes("VUL_HIER") ||
-        !CLOUDINARY_UPLOAD_PRESET ||
-        CLOUDINARY_UPLOAD_PRESET.includes("VUL_HIER")
-    ) {
-        throw new Error(
-            "Vul eerst CLOUDINARY_CLOUD_NAME en CLOUDINARY_UPLOAD_PRESET in aankondigingsfoto.js in."
-        );
-    }
-
     if (!file.type.startsWith("image/")) {
-        throw new Error("Alleen afbeeldingsbestanden zijn toegestaan.");
+        throw new Error("Alleen afbeeldingen zijn toegestaan.");
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    formData.append("folder", CLOUDINARY_FOLDER);
-    formData.append("return_delete_token", "true");
+    const form = new FormData();
 
-    progressEl.hidden = false;
-    progressBarEl.style.width = "0%";
+    form.append("file", file);
+    form.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
-    const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${encodeURIComponent(CLOUDINARY_CLOUD_NAME)}/image/upload`,
-        {
-            method: "POST",
-            body: formData
+    uploadProgressEl.hidden = false;
+    uploadProgressBarEl.style.width = "20%";
+
+    try {
+        const response = await fetch(
+            CLOUDINARY_UPLOAD_URL,
+            {
+                method: "POST",
+                body: form
+            }
+        );
+
+        uploadProgressBarEl.style.width = "80%";
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data?.error?.message ||
+                "Cloudinary upload mislukt."
+            );
         }
-    );
 
-    progressBarEl.style.width = "100%";
+        if (!data.secure_url) {
+            throw new Error(
+                "Cloudinary gaf geen afbeelding-URL terug."
+            );
+        }
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Cloudinary upload mislukt: ${errorText}`);
+        uploadProgressBarEl.style.width = "100%";
+
+        return data;
+    } finally {
+        setTimeout(() => {
+            uploadProgressEl.hidden = true;
+            uploadProgressBarEl.style.width = "0%";
+        }, 350);
     }
-
-    const result = await response.json();
-
-    progressEl.hidden = true;
-    return result;
-}
-
-async function tryDeleteByToken(deleteToken) {
-    if (!deleteToken) return false;
-
-    const response = await fetch(
-        "https://api.cloudinary.com/v1_1/delete_by_token",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                token: deleteToken
-            })
-        }
-    );
-
-    return response.ok;
 }
 
 // =====================================================
-// HELPERS
+// DATUM / TIJD
 // =====================================================
 
 function combineDateTime(date, time) {
     if (!date) return "";
-    return `${date}T${time || "00:00"}:00`;
+
+    return `${date}T${time}:00`;
 }
 
-function parseDate(value) {
-    const date = new Date(value);
+function toTimestamp(value) {
+    if (!value) return 0;
 
-    if (Number.isNaN(date.getTime())) {
-        return 0;
-    }
+    const timestamp = new Date(value).getTime();
 
-    return date.getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function getDatePart(value) {
+    return value ? value.slice(0, 10) : "";
+}
+
+function getTimePart(value, fallback) {
+    return value ? value.slice(11, 16) : fallback;
 }
 
 function capitalize(value) {
     if (!value) return "";
+
     return value.charAt(0).toUpperCase() + value.slice(1);
 }
+
+// =====================================================
+// VEILIG WEERGEVEN
+// =====================================================
 
 function escapeAttribute(value) {
     return String(value)
@@ -536,24 +608,17 @@ function escapeAttribute(value) {
         .replaceAll(">", "&gt;");
 }
 
+// =====================================================
+// MELDING
+// =====================================================
+
 function showMessage(text, type = "") {
     clearTimeout(messageTimer);
 
     messageEl.textContent = text;
-    messageEl.className = `message show ${type}`;
+    messageEl.className = `af-message show ${type}`;
 
     messageTimer = setTimeout(() => {
-        messageEl.className = "message";
+        messageEl.className = "af-message";
     }, 4500);
 }
-
-// =====================================================
-// STATUS AUTOMATISCH BIJWERKEN
-// =====================================================
-
-setInterval(() => {
-    if (moduleData) {
-        renderSpecial();
-        renderCurrentStatus();
-    }
-}, 30_000);
