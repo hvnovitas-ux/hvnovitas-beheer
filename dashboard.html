@@ -1,1 +1,79 @@
-<!DOCTYPE html> <html lang="nl"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>HV Novitas Dashboard</title> <style> body { margin: 0; font-family: Arial; background: #f4f6f8; } /* TOPBAR */ .topbar { background: #ff6a00; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; } /* MENU */ .menu { max-width: 700px; margin: auto; padding: 20px; } .menu a { display: block; background: white; color: black; text-decoration: none; padding: 15px; margin-bottom: 10px; border-radius: 10px; border-left: 4px solid #ff6a00; } .menu a:hover { background: #eee; } /* USER BOX */ .userbox { font-size: 14px; } button { padding: 6px 10px; border: none; border-radius: 6px; cursor: pointer; } .logout { background: white; color: black; } </style> </head> <body> <!-- ========================================= --> <!-- TOPBAR --> <!-- ========================================= --> <div class="topbar"> <div> 🧡 HV NOVITAS DASHBOARD </div> <div class="userbox"> <span id="userInfo"> Laden... </span> <button class="logout" onclick="logout()"> Uitloggen </button> </div> </div> <!-- ========================================= --> <!-- MENU --> <!-- ========================================= --> <div class="menu"> <a href="cms.html"> 📰 Nieuws beheren </a> <a href="proeftrainingen.html"> 🏃 Proeftrainingen </a> <a href="inschrijvingen.html"> 📋 Inschrijvingen </a> <a href="sponsors.html"> 🤝 Sponsors </a> <!-- NIEUW --> <a href="aankondigingsfoto.html"> 📷 Aankondigingsfoto </a> <a href="instellingen.html"> ⚙️ Instellingen </a> <a href="challenge/index.html"> 🎮 Challenge </a> <a href="https://hvnovitas-ux.github.io/hvnovitas-mail-cms/"> 📧 Mail CMS </a> </div> <!-- ========================================= --> <!-- FIREBASE AUTH --> <!-- ========================================= --> <script type="module"> import { auth } from "./firebase.js"; import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js"; console.log("🧡 Dashboard geladen"); onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = "login.html"; return; } document.getElementById("userInfo").innerText = "👋 " + (user.displayName || "Admin"); }); window.logout = async function () { await signOut(auth); window.location.href = "login.html"; }; </script> </body> </html>
+<!DOCTYPE html>
+
+<html lang="nl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HV Novitas Dashboard</title>
+
+<style> body { margin: 0; font-family: Arial; background: #f4f6f8; } .topbar { background: #ff6a00; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; } .menu { max-width: 700px; margin: auto; padding: 20px; } .menu a { display: block; background: white; color: black; text-decoration: none; padding: 15px; margin-bottom: 10px; border-radius: 10px; border-left: 4px solid #ff6a00; } .menu a:hover { background: #eee; } .userbox { font-size: 14px; } button { padding: 6px 10px; border: none; border-radius: 6px; cursor: pointer; } .logout { background: white; color: black; } </style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+<div>
+    🧡 HV NOVITAS DASHBOARD
+</div>
+
+<div class="userbox">
+
+    <span id="userInfo">
+        Laden...
+    </span>
+
+    <button class="logout" onclick="logout()">
+        Uitloggen
+    </button>
+
+</div>
+
+</div>
+
+<div class="menu">
+
+<a href="cms.html">
+    📰 Nieuws beheren
+</a>
+
+<a href="proeftrainingen.html">
+    🏃 Proeftrainingen
+</a>
+
+<a href="inschrijvingen.html">
+    📋 Inschrijvingen
+</a>
+
+<a href="sponsors.html">
+    🤝 Sponsors
+</a>
+
+<a href="aankondigingsfoto.html">
+    📷 Aankondigingsfoto
+</a>
+
+<a href="instellingen.html">
+    ⚙️ Instellingen
+</a>
+
+<a href="challenge/index.html">
+    🎮 Challenge
+</a>
+
+<a href="https://hvnovitas-ux.github.io/hvnovitas-mail-cms/">
+    📧 Mail CMS
+</a>
+
+</div>
+
+<script type="module"> import { auth } from "./firebase.js"; import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js"; console.log("🧡 Dashboard geladen"); onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = "login.html"; return; } document.getElementById("userInfo").innerText = "👋 " + (user.displayName || "Admin"); }); window.logout = async function () { await signOut(auth); window.location.href = "login.html"; }; </script>
+
+</body>
+
+</html>
