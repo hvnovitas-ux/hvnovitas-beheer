@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HV Novitas - Aankondiging</title>
+    <title>HV Novitas – Aankondiging</title>
     <link rel="stylesheet" href="./aankondiging.css">
 </head>
+
 <body>
 
-<main class="announcement-page">
+<div class="page">
 
-    <div class="announcement-card">
-        <div id="loading" class="message">
-            Aankondiging laden…
-        </div>
-
-        <img
-            id="announcementImage"
-            class="announcement-image"
-            alt="HV Novitas aankondiging"
-            hidden
-        >
-
-        <div id="empty" class="message" hidden>
-            Geen aankondigingsfoto beschikbaar.
-        </div>
+    <div id="loading" class="message">
+        Aankondiging laden…
     </div>
 
-</main>
+    <img
+        id="aankondigingFoto"
+        class="photo"
+        alt="HV Novitas aankondiging"
+        hidden
+    >
+
+    <div id="geenFoto" class="message" hidden>
+        Geen aankondigingsfoto ingesteld.
+    </div>
+
+</div>
 
 <script type="module" src="./aankondiging.js"></script>
 
