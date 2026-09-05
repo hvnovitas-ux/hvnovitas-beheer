@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HV Novitas – Aankondigingsfoto</title>
+    <link rel="stylesheet" href="./aankondigingsfoto.css">
+</head>
+<body>
+
+<main class="af-page">
+
+    <header class="af-header">
+        <div>
+            <div class="af-kicker">HV NOVITAS CMS</div>
+            <h1>📷 Aankondigingsfoto</h1>
+            <p>Beheer drie vaste basisfoto's en één tijdelijke speciale foto.</p>
+        </div>
+        <a class="af-back" href="./dashboard.html">← Dashboard</a>
+    </header>
+
+    <section class="af-panel">
+        <div class="af-panel-head">
+            <div>
+                <h2>Basisfoto's</h2>
+                <p>Kies één van de drie foto's als standaard. Die foto wordt getoond wanneer er geen speciale foto actief is.</p>
+            </div>
+            <span id="baseStatus" class="af-badge af-badge-neutral">Laden…</span>
+        </div>
+
+        <!-- De drie vakken staan al in HTML. Daardoor blijft de beheerpagina zichtbaar,
+             ook als Firebase/JavaScript tijdelijk niet geladen wordt. -->
+        <div id="basePhotos" class="af-photo-grid">
+
+            <article class="af-photo-card" data-slot="foto1">
+                <div class="af-photo-preview">
+                    <div class="af-empty">
+                        <span>📷</span>
+                        <strong>Foto 1</strong>
+                        <small>Nog geen foto</small>
+                    </div>
+                </div>
+                <div class="af-photo-body">
+                    <div class="af-photo-title">Foto 1</div>
+                    <label class="af-radio-row">
+                        <input type="radio" name="selectedBase" value="foto1" disabled>
+                        Gebruik als basisfoto
+                    </label>
+                    <label class="af-file-label">
+                        📤 Foto uploaden
+                        <input type="file" accept="image/*" data-base-slot="foto1">
+                    </label>
+                    <button type="button" class="af-btn af-btn-danger af-delete-slot" data-delete-base="foto1" hidden>
+                        🗑️ Verwijderen
+                    </button>
+                </div>
+            </article>
+
+            <article class="af-photo-card" data-slot="foto2">
+                <div class="af-photo-preview">
+                    <div class="af-empty">
+                        <span>📷</span>
+                        <strong>Foto 2</strong>
+                        <small>Nog geen foto</small>
+                    </div>
+                </div>
+                <div class="af-photo-body">
+                    <div class="af-photo-title">Foto 2</div>
+                    <label class="af-radio-row">
+                        <input type="radio" name="selectedBase" value="foto2" disabled>
+                        Gebruik als basisfoto
+                    </label>
+                    <label class="af-file-label">
+                        📤 Foto uploaden
+                        <input type="file" accept="image/*" data-base-slot="foto2">
+                    </label>
+                    <button type="button" class="af-btn af-btn-danger af-delete-slot" data-delete-base="foto2" hidden>
+                        🗑️ Verwijderen
+                    </button>
+                </div>
+            </article>
+
+            <article class="af-photo-card" data-slot="foto3">
+                <div class="af-photo-preview">
+                    <div class="af-empty">
+                        <span>📷</span>
+                        <strong>Foto 3</strong>
+                        <small>Nog geen foto</small>
+                    </div>
+                </div>
+                <div class="af-photo-body">
+                    <div class="af-photo-title">Foto 3</div>
+                    <label class="af-radio-row">
+                        <input type="radio" name="selectedBase" value="foto3" disabled>
+                        Gebruik als basisfoto
+                    </label>
+                    <label class="af-file-label">
+                        📤 Foto uploaden
+                        <input type="file" accept="image/*" data-base-slot="foto3">
+                    </label>
+                    <button type="button" class="af-btn af-btn-danger af-delete-slot" data-delete-base="foto3" hidden>
+                        🗑️ Verwijderen
+                    </button>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <section class="af-panel">
+        <div class="af-panel-head">
+            <div>
+                <h2>Speciale foto</h2>
+                <p>Deze foto neemt tijdens de geplande periode automatisch de plaats in van de gekozen basisfoto.</p>
+            </div>
+            <span id="specialStatus" class="af-badge af-badge-neutral">Geen speciale foto</span>
+        </div>
+
+        <div class="af-special-layout">
+
+            <div class="af-special-preview">
+                <img id="specialPreview" alt="Speciale foto" hidden>
+                <div id="specialEmpty" class="af-empty">
+                    <span>📷</span>
+                    <strong>Geen speciale foto</strong>
+                    <small>Upload hier de tijdelijke foto.</small>
+                </div>
+            </div>
+
+            <div class="af-special-form">
+
+                <label class="af-file-label">
+                    📤 Speciale foto kiezen
+                    <input id="specialFile" type="file" accept="image/*">
+                </label>
+
+                <div id="uploadProgress" class="af-progress" hidden>
+                    <div id="uploadProgressBar"></div>
+                </div>
+
+                <div class="af-date-grid">
+                    <label>
+                        Startdatum
+                        <input id="specialStartDate" type="date">
+                    </label>
+
+                    <label>
+                        Starttijd
+                        <input id="specialStartTime" type="time" value="00:00">
+                    </label>
+
+                    <label>
+                        Einddatum
+                        <input id="specialEndDate" type="date">
+                    </label>
+
+                    <label>
+                        Eindtijd
+                        <input id="specialEndTime" type="time" value="23:59">
+                    </label>
+                </div>
+
+                <div class="af-actions">
+                    <button id="saveSpecial" class="af-btn af-btn-primary" type="button">
+                        💾 Speciale foto opslaan / inplannen
+                    </button>
+
+                    <button id="clearSpecial" class="af-btn af-btn-danger" type="button">
+                        🗑️ Speciale foto verwijderen
+                    </button>
+                </div>
+
+                <div class="af-note">
+                    Zonder speciale foto blijft altijd de gekozen basisfoto zichtbaar.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="af-panel">
+        <div class="af-panel-head">
+            <div>
+                <h2>Huidige situatie</h2>
+                <p>Hier zie je welke foto de publieke pagina op dit moment hoort te tonen.</p>
+            </div>
+        </div>
+
+        <div class="af-current">
+            <div>
+                <span>Actieve foto</span>
+                <strong id="currentPhotoLabel">Bezig met laden…</strong>
+            </div>
+            <div>
+                <span>Waarom</span>
+                <strong id="currentReason">Bezig met laden…</strong>
+            </div>
+            <div>
+                <span>Laatste controle</span>
+                <strong id="lastCheck">—</strong>
+            </div>
+        </div>
+    </section>
+
+    <div id="message" class="af-message" aria-live="polite"></div>
+
+</main>
+
+<script type="module" src="./aankondigingsfoto.js"></script>
+</body>
+</html>
