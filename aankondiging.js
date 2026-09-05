@@ -5,100 +5,67 @@ import {
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("📷 Publieke Aankondigingsfoto geladen");
+console.log("📷 Alleen-foto Aankondigingspagina geladen");
 
-const image =
-    document.getElementById("aankondigingFoto");
+const foto = document.getElementById("aankondigingFoto");
 
-const loading =
-    document.getElementById("loading");
-
-const geenFoto =
-    document.getElementById("geenFoto");
-
-const BASE_SLOTS =
-    ["foto1", "foto2", "foto3"];
+const BASISFOTOS = ["foto1", "foto2", "foto3"];
 
 onValue(
     ref(db, "aankondigingsfoto"),
     (snapshot) => {
 
-        const data =
-            snapshot.val() || {};
+        const data = snapshot.val() || {};
 
-        const basePhotos =
-            data.basePhotos || {};
-
-        const selectedBase =
-            data.selectedBase || "foto1";
-
-        const special =
-            data.special || {};
-
-        const now =
-            Date.now();
-
-        const start =
-            special.start
-                ? new Date(
-                    special.start
-                ).getTime()
-                : 0;
-
-        const end =
-            special.end
-                ? new Date(
-                    special.end
-                ).getTime()
-                : 0;
-
-        const specialActive =
-            !!special.imageUrl &&
-            start > 0 &&
-            end > 0 &&
-            now >= start &&
-            now <= end;
+        const basisfotos = data.basePhotos || {};
+        const gekozenBasis = data.selectedBase || "foto1";
+        const speciale = data.special || {};
 
         let imageUrl = "";
 
-        // =============================================
-        // 1. SPECIALE FOTO ACTIEF?
-        // =============================================
+        // =========================================
+        // SPECIALE FOTO CONTROLEREN
+        // =========================================
 
-        if (specialActive) {
+        const nu = Date.now();
 
-            imageUrl =
-                special.imageUrl;
+        const start = speciale.start
+            ? new Date(speciale.start).getTime()
+            : 0;
+
+        const einde = speciale.end
+            ? new Date(speciale.end).getTime()
+            : 0;
+
+        const specialeActief =
+            Boolean(speciale.imageUrl) &&
+            start > 0 &&
+            einde > 0 &&
+            nu >= start &&
+            nu <= einde;
+
+        // =========================================
+        // JUISTE FOTO KIEZEN
+        // =========================================
+
+        if (specialeActief) {
+
+            imageUrl = speciale.imageUrl;
 
         } else {
 
-            // =========================================
-            // 2. GEKOZEN BASISFOTO
-            // =========================================
-
             imageUrl =
-                basePhotos[
-                    selectedBase
-                ]?.imageUrl || "";
+                basisfotos[gekozenBasis]?.imageUrl || "";
 
-            // =========================================
-            // 3. VEILIGE FALLBACK
-            // =========================================
-
+            // Veilige fallback
             if (!imageUrl) {
 
-                for (
-                    const slot of BASE_SLOTS
-                ) {
+                for (const slot of BASISFOTOS) {
 
-                    if (
-                        basePhotos[slot]?.imageUrl
-                    ) {
+                    if (basisfotos[slot]?.imageUrl) {
 
                         imageUrl =
-                            basePhotos[
-                                slot
-                            ].imageUrl;
+                            basisfotos[slot].imageUrl;
 
                         break;
                     }
@@ -106,49 +73,19 @@ onValue(
             }
         }
 
-        loading.hidden = true;
+        // =========================================
+        // ALLEEN DE FOTO TONEN
+        // =========================================
 
         if (imageUrl) {
 
-            image.src =
-                imageUrl;
-
-            image.hidden =
-                false;
-
-            geenFoto.hidden =
-                true;
+            foto.src = imageUrl;
+            foto.hidden = false;
 
         } else {
 
-            image.removeAttribute(
-                "src"
-            );
-
-            image.hidden =
-                true;
-
-            geenFoto.hidden =
-                false;
+            foto.removeAttribute("src");
+            foto.hidden = true;
         }
-    },
-    (error) => {
-
-        console.error(
-            "❌ Aankondigingsfoto laden mislukt:",
-            error
-        );
-
-        loading.hidden =
-            true;
-
-        image.hidden =
-            true;
-
-        geenFoto.textContent =
-            "Aankondigingsfoto kon niet worden geladen.";
-
-        geenFoto.hidden =
-            false;
     }
 );
