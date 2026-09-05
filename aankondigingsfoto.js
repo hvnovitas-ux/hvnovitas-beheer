@@ -5,19 +5,26 @@ import {
     onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-console.log("📷 Aankondigingspagina geladen");
+console.log("📷 Publieke Aankondigingsfoto geladen");
 
-const image = document.getElementById("announcementImage");
-const loading = document.getElementById("loading");
-const empty = document.getElementById("empty");
+const image =
+    document.getElementById("aankondigingFoto");
 
-const BASE_SLOTS = ["foto1", "foto2", "foto3"];
+const loading =
+    document.getElementById("loading");
+
+const geenFoto =
+    document.getElementById("geenFoto");
+
+const BASE_SLOTS =
+    ["foto1", "foto2", "foto3"];
 
 onValue(
     ref(db, "aankondigingsfoto"),
     (snapshot) => {
 
-        const data = snapshot.val() || {};
+        const data =
+            snapshot.val() || {};
 
         const basePhotos =
             data.basePhotos || {};
@@ -33,12 +40,16 @@ onValue(
 
         const start =
             special.start
-                ? new Date(special.start).getTime()
+                ? new Date(
+                    special.start
+                ).getTime()
                 : 0;
 
         const end =
             special.end
-                ? new Date(special.end).getTime()
+                ? new Date(
+                    special.end
+                ).getTime()
                 : 0;
 
         const specialActive =
@@ -50,9 +61,9 @@ onValue(
 
         let imageUrl = "";
 
-        // ---------------------------------------------
-        // SPECIALE FOTO
-        // ---------------------------------------------
+        // =============================================
+        // 1. SPECIALE FOTO ACTIEF?
+        // =============================================
 
         if (specialActive) {
 
@@ -61,16 +72,18 @@ onValue(
 
         } else {
 
-            // -----------------------------------------
-            // GEKOZEN BASISFOTO
-            // -----------------------------------------
+            // =========================================
+            // 2. GEKOZEN BASISFOTO
+            // =========================================
 
             imageUrl =
-                basePhotos[selectedBase]?.imageUrl || "";
+                basePhotos[
+                    selectedBase
+                ]?.imageUrl || "";
 
-            // -----------------------------------------
-            // VEILIGE FALLBACK
-            // -----------------------------------------
+            // =========================================
+            // 3. VEILIGE FALLBACK
+            // =========================================
 
             if (!imageUrl) {
 
@@ -83,7 +96,9 @@ onValue(
                     ) {
 
                         imageUrl =
-                            basePhotos[slot].imageUrl;
+                            basePhotos[
+                                slot
+                            ].imageUrl;
 
                         break;
                     }
@@ -101,7 +116,7 @@ onValue(
             image.hidden =
                 false;
 
-            empty.hidden =
+            geenFoto.hidden =
                 true;
 
         } else {
@@ -113,14 +128,14 @@ onValue(
             image.hidden =
                 true;
 
-            empty.hidden =
+            geenFoto.hidden =
                 false;
         }
     },
     (error) => {
 
         console.error(
-            "❌ Fout bij laden aankondigingsfoto:",
+            "❌ Aankondigingsfoto laden mislukt:",
             error
         );
 
@@ -130,10 +145,10 @@ onValue(
         image.hidden =
             true;
 
-        empty.textContent =
-            "De aankondigingsfoto kon niet worden geladen.";
+        geenFoto.textContent =
+            "Aankondigingsfoto kon niet worden geladen.";
 
-        empty.hidden =
+        geenFoto.hidden =
             false;
     }
 );
