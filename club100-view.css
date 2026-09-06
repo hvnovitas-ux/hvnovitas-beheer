@@ -19,49 +19,61 @@ body {
     background: transparent;
 }
 
-/* =========================
-   CLUB100 INHOUD
-   ========================= */
-
 .club100-content {
+    width: 100%;
     padding: 12px;
     background: transparent;
 }
 
 .club100-list {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    width: 100%;
     max-width: 1100px;
     margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
 }
 
 /* =========================
-   CLUB100 TEGELS
+   CLUB100 TEGEL
    ========================= */
 
 .member {
     aspect-ratio: 1 / 1;
+
     background: #292929;
+
     border: 5px solid #ff6a00;
 
     display: flex;
     align-items: center;
     justify-content: center;
+
     text-align: center;
 
     padding: 18px;
 
-    font-family: Georgia, "Times New Roman", serif;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
     font-size: 21px;
     font-weight: 700;
     font-style: italic;
+
     line-height: 1.2;
+
     letter-spacing: 0.4px;
 
     color: #ff6a00;
 
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.45);
 
     box-shadow:
         0 4px 10px rgba(0, 0, 0, 0.30),
@@ -72,8 +84,14 @@ body {
         box-shadow 0.2s ease;
 }
 
+/* =========================
+   HOVER
+   ========================= */
+
 .member:hover {
-    transform: translateY(-3px);
+
+    transform:
+        translateY(-3px);
 
     box-shadow:
         0 8px 18px rgba(0, 0, 0, 0.38),
@@ -81,25 +99,34 @@ body {
 }
 
 /* =========================
-   GEEN LEDEN
+   LEGE STATUS
    ========================= */
 
 .empty {
-    padding: 20px;
+    width: 100%;
+    padding: 25px;
     text-align: center;
 }
 
 .empty-title {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
     font-size: 21px;
+
     font-weight: 700;
     font-style: italic;
+
     color: #ff6a00;
 }
 
 .empty-text {
     margin-top: 7px;
+
     color: #d1d1d1;
+
     font-size: 14px;
 }
 
@@ -108,8 +135,10 @@ body {
    ========================= */
 
 @media (max-width: 900px) {
+
     .club100-list {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
     }
 
     .member {
@@ -122,12 +151,15 @@ body {
    ========================= */
 
 @media (max-width: 650px) {
+
     .club100-content {
         padding: 8px;
     }
 
     .club100-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
         gap: 12px;
     }
 
@@ -138,12 +170,21 @@ body {
     }
 }
 
+/* =========================
+   KLEINE TELEFOONS
+   ========================= */
+
 @media (max-width: 400px) {
+
     .club100-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 9px;
     }
 
     .member {
+        padding: 9px;
         font-size: 15px;
     }
 }
