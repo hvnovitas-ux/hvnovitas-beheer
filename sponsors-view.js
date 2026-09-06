@@ -1,23 +1,14 @@
-// ============================================================
-// HV NOVITAS - SPONSORS OPENBARE WEERGAVE
-// ============================================================
-
 import { db } from "./firebase.js";
+import { ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-import {
-    ref,
-    onValue
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+console.log("🤝 Sponsor slider geladen");
 
-const track =
-    document.getElementById("sponsorTrack") ||
-    document.getElementById("sponsorsTrack");
+const track = document.getElementById("sponsorTrack");
+let position = 0;
+const speed = 0.5;
+let animationId = null;
 
-let sponsors = [];
-let index = 0;
-let timer = null;
-
-function escapeHTML(value = "") {
+function escapeHtml(value = "") {
     return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -26,135 +17,65 @@ function escapeHTML(value = "") {
         .replace(/'/g, "&#039;");
 }
 
-function normalizeUrl(value = "") {
-    const url = String(value).trim();
+async function loadSponsors() {
+    try {
+        const snap = await get(ref(db, "sponsors"));
+        const data = snap.val() || {};
 
-    if (!url) return "";
+        const list = Object.entries(data)
+            .map(([id, sponsor]) => ({
+                id,
+                imageUrl: sponsor.imageUrl || sponsor.image || "",
+                website: sponsor.website || "",
+                name: sponsor.name || "Sponsor"
+            }))
+            .filter(sponsor => sponsor.imageUrl);
 
-    if (
-        url.startsWith("https://") ||
-        url.startsWith("http://")
-    ) {
-        return url;
-    }
+        if (!track) return;
 
-    if (url.startsWith("www.")) {
-        return `https://${url}`;
-    }
-
-    if (
-        url.includes(".") &&
-        !url.includes(" ")
-    ) {
-        return `https://${url}`;
-    }
-
-    return "";
-}
-
-function load(snapshot) {
-    const data = snapshot.val() || {};
-
-    sponsors = Object.values(data)
-        .filter(
-            item =>
-                item &&
-                item.active !== false &&
-                (item.imageUrl || item.image)
-        )
-        .sort(
-            (a, b) =>
-                (a.created || 0) -
-                (b.created || 0)
-        );
-
-    index = 0;
-
-    render();
-    startAutoplay();
-}
-
-function render() {
-    if (!track) return;
-
-    if (!sponsors.length) {
-        track.innerHTML = "";
-        return;
-    }
-
-    const visible = sponsors.map(
-        (sponsor) => {
-            const image =
-                sponsor.imageUrl ||
-                sponsor.image ||
-                "";
-
-            const name =
-                sponsor.name ||
-                sponsor.sponsorName ||
-                "Sponsor";
-
-            const website =
-                normalizeUrl(
-                    sponsor.website ||
-                    sponsor.url ||
-                    ""
-                );
-
-            const card = `
-                <div class="sponsor">
-                    ${
-                        website
-                            ? `
-                                <a
-                                    href="${escapeHTML(website)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer">
-                                    <img
-                                        src="${escapeHTML(image)}"
-                                        alt="${escapeHTML(name)}">
-                                </a>
-                            `
-                            : `
-                                <img
-                                    src="${escapeHTML(image)}"
-                                    alt="${escapeHTML(name)}">
-                            `
-                    }
-                </div>
-            `;
-
-            return card;
+        if (!list.length) {
+            track.innerHTML = '<p class="empty">Geen sponsors</p>';
+            return;
         }
-    );
 
-    track.innerHTML = visible.join("");
+        const items = [...list, ...list];
+
+        track.innerHTML = items.map(sponsor => `
+            <div class="sponsor">
+                ${
+                    sponsor.website
+                        ? `<a href="${escapeHtml(sponsor.website)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(sponsor.name)}">
+                                <img src="${escapeHtml(sponsor.imageUrl)}" alt="${escapeHtml(sponsor.name)}">
+                           </a>`
+                        : `<img src="${escapeHtml(sponsor.imageUrl)}" alt="${escapeHtml(sponsor.name)}">`
+                }
+            </div>
+        `).join("");
+
+        position = 0;
+        startSlider();
+    } catch (error) {
+        console.error("❌ Sponsors laden mislukt:", error);
+        if (track) track.innerHTML = '<p class="empty">Sponsors konden niet worden geladen.</p>';
+    }
 }
 
-function startAutoplay() {
-    if (timer) {
-        clearInterval(timer);
+function startSlider() {
+    cancelAnimationFrame(animationId);
+
+    function animate() {
+        position -= speed;
+        track.style.transform = `translate3d(${position}px, 0, 0)`;
+
+        const halfWidth = track.scrollWidth / 2;
+        if (halfWidth > 0 && Math.abs(position) >= halfWidth) {
+            position = 0;
+        }
+
+        animationId = requestAnimationFrame(animate);
     }
 
-    if (sponsors.length > 1) {
-        timer = setInterval(
-            () => {
-                index =
-                    (index + 1) %
-                    sponsors.length;
-
-                render();
-            },
-            3500
-        );
-    }
+    animate();
 }
 
-if (track) {
-    onValue(
-        ref(db, "sponsors"),
-        load
-    );
-}
-
-console.log("🧡 Sponsors openbare module gereed.");
+window.addEventListener("DOMContentLoaded", loadSponsors);
