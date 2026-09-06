@@ -11,89 +11,139 @@ body {
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    color: #1a1a1a;
+    color: #ffffff;
 }
 
 .club100 {
     width: 100%;
-    background: #fff;
+    background: transparent;
 }
 
-.club100-header {
-    background: #ff6a00;
-    color: #fff;
-    padding: 18px 20px;
-}
-
-.club100-title {
-    font-size: 24px;
-    font-weight: 800;
-    line-height: 1.1;
-}
-
-.club100-subtitle {
-    margin-top: 5px;
-    font-size: 14px;
-    opacity: 0.95;
-}
+/* =========================
+   CLUB100 INHOUD
+   ========================= */
 
 .club100-content {
-    padding: 20px;
-    background: #f7f7f5;
+    padding: 12px;
+    background: transparent;
 }
 
 .club100-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto;
 }
+
+/* =========================
+   CLUB100 TEGELS
+   ========================= */
 
 .member {
-    background: #fff;
-    border: 1px solid #e3e3e3;
-    border-radius: 10px;
-    padding: 13px 14px;
-    font-size: 15px;
+    aspect-ratio: 1 / 1;
+    background: #292929;
+    border: 5px solid #ff6a00;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    padding: 18px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 21px;
     font-weight: 700;
-    line-height: 1.3;
-    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+    font-style: italic;
+    line-height: 1.2;
+    letter-spacing: 0.4px;
+
+    color: #ff6a00;
+
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.30),
+        inset 0 0 0 1px rgba(255, 106, 0, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
+.member:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.38),
+        inset 0 0 0 1px rgba(255, 106, 0, 0.30);
+}
+
+/* =========================
+   GEEN LEDEN
+   ========================= */
+
 .empty {
-    padding: 6px 0;
+    padding: 20px;
+    text-align: center;
 }
 
 .empty-title {
-    font-size: 19px;
-    font-weight: 800;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 21px;
+    font-weight: 700;
+    font-style: italic;
+    color: #ff6a00;
 }
 
 .empty-text {
-    margin-top: 5px;
-    color: #6b7280;
+    margin-top: 7px;
+    color: #d1d1d1;
     font-size: 14px;
 }
 
-@media (max-width: 800px) {
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 900px) {
     .club100-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .member {
+        font-size: 19px;
     }
 }
 
-@media (max-width: 520px) {
-    .club100-header {
-        padding: 16px;
-    }
+/* =========================
+   MOBIEL
+   ========================= */
 
-    .club100-title {
-        font-size: 21px;
-    }
-
+@media (max-width: 650px) {
     .club100-content {
-        padding: 16px;
+        padding: 8px;
     }
 
     .club100-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .member {
+        border-width: 4px;
+        padding: 12px;
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 400px) {
+    .club100-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .member {
+        font-size: 15px;
     }
 }
