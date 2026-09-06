@@ -1,22 +1,49 @@
-// ============================================================
-// HV NOVITAS CMS - centrale Firebase
-// ============================================================
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
+import {
+    getAuth,
+    GoogleAuthProvider
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+// =====================================================
+// FIREBASE CONFIG
+// =====================================================
+
 const firebaseConfig = {
-    apiKey: "AIzaSyBCUZeWMIxIz__7TfNG_b0V47H_pYFPyqQ",
-    authDomain: "hv-novitas-handbal-challenge.firebaseapp.com",
-    databaseURL: "https://hv-novitas-handbal-challenge-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "hv-novitas-handbal-challenge",
-    storageBucket: "hv-novitas-handbal-challenge.firebasestorage.app",
-    messagingSenderId: "707710141199",
-    appId: "1:707710141199:web:ba304ce4e5f653d0afb47a"
+    apiKey: "AIzaSyDWYYS09i4YN9tnCmAzeiicD9T4YZ3a6HE",
+    authDomain: "hv-novitas-beheer.firebaseapp.com",
+    databaseURL: "https://hv-novitas-beheer-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hv-novitas-beheer",
+    storageBucket: "hv-novitas-beheer.appspot.com",
+    messagingSenderId: "71716605241",
+    appId: "1:71716605241:web:b7e87d680b7499421a6ce8"
 };
 
-const app = initializeApp(firebaseConfig);
+// =====================================================
+// APP
+// =====================================================
+
+const app = getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig);
+
+// =====================================================
+// DATABASE
+// =====================================================
+
+export const db = getDatabase(app);
+
+// =====================================================
+// AUTH
+// =====================================================
 
 export const auth = getAuth(app);
-export const db = getDatabase(app);
+export const provider = new GoogleAuthProvider();
+
+// =====================================================
+// APP EXPORT
+// =====================================================
+
+export { app };
