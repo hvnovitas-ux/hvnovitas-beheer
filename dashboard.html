@@ -4,7 +4,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>HV Novitas Dashboard</title>
@@ -562,9 +561,8 @@ body {
              ================================================= -->
 
         <a
-            href="#"
+            href="https://hvnovitasmai.sportsontheweb.net/novmail_login.php"
             class="card external"
-            id="mailCmsLink"
         >
 
             <div class="icon">
@@ -598,7 +596,7 @@ body {
 
 
 <!-- =====================================================
-     FIREBASE + LOGIN + MAIL SSO
+     FIREBASE + LOGIN
      ===================================================== -->
 
 <script type="module">
@@ -627,11 +625,6 @@ const logoutButton =
         "logoutButton"
     );
 
-const mailCmsLink =
-    document.getElementById(
-        "mailCmsLink"
-    );
-
 
 /* =====================================================
    FIREBASE LOGIN CONTROLEREN
@@ -647,7 +640,6 @@ onAuthStateChanged(
                 "login.html";
 
             return;
-
         }
 
 
@@ -687,124 +679,6 @@ logoutButton.addEventListener(
 
             alert(
                 "Uitloggen is niet gelukt."
-            );
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   MAILBEHEER SSO
-   ===================================================== */
-
-mailCmsLink.addEventListener(
-    "click",
-    async (event) => {
-
-        event.preventDefault();
-
-
-        const user =
-            auth.currentUser;
-
-
-        if (!user) {
-
-            alert(
-                "Je bent niet ingelogd in het beheer."
-            );
-
-            window.location.href =
-                "login.html";
-
-            return;
-
-        }
-
-
-        try {
-
-            /* -----------------------------------------
-               Firebase ID-token ophalen
-               ----------------------------------------- */
-
-            const firebaseToken =
-                await user.getIdToken(true);
-
-
-            /* -----------------------------------------
-               POST formulier maken
-               ----------------------------------------- */
-
-            const form =
-                document.createElement(
-                    "form"
-                );
-
-
-            form.method =
-                "POST";
-
-
-            form.action =
-                "https://hvnovitasmai.sportsontheweb.net/novmail_sso.php";
-
-
-            form.style.display =
-                "none";
-
-
-            /* -----------------------------------------
-               Token toevoegen
-               ----------------------------------------- */
-
-            const input =
-                document.createElement(
-                    "input"
-                );
-
-
-            input.type =
-                "hidden";
-
-
-            input.name =
-                "firebase_token";
-
-
-            input.value =
-                firebaseToken;
-
-
-            form.appendChild(
-                input
-            );
-
-
-            /* -----------------------------------------
-               Versturen
-               ----------------------------------------- */
-
-            document.body.appendChild(
-                form
-            );
-
-
-            form.submit();
-
-
-        } catch (error) {
-
-            console.error(
-                "Mail CMS SSO fout:",
-                error
-            );
-
-
-            alert(
-                "Automatisch inloggen op Mailbeheer is niet gelukt."
             );
 
         }
