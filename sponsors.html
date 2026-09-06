@@ -1,52 +1,17 @@
-<!DOCTYPE html>
-<html lang="nl">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>HV Novitas Sponsors</title>
-
-    <link
-        rel="stylesheet"
-        href="sponsors.css"
-    >
-
-</head>
-
-
-<body>
-
-
-<!-- =====================================================
-     SPONSOR SLIDER
-===================================================== -->
-
-<div class="slider">
-
-    <div
-        class="track"
-        id="sponsorTrack"
-    ></div>
-
-</div>
-
-
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
-
-<script
-    type="module"
-    src="sponsors.js"
-></script>
-
-
-</body>
-
-</html>
+<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Sponsors - HV Novitas</title><style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#222}.topbar{background:#ff6a00;color:#fff;padding:15px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;gap:15px}.title{font-size:20px}.page{max-width:900px;margin:30px auto;padding:0 20px}.card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 4px 16px rgba(0,0,0,.07);margin-bottom:18px}.grid{display:grid;gap:14px}.item{background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:14px}.item img{max-width:180px;max-height:120px;display:block;border-radius:8px;margin-bottom:10px}.row{display:flex;gap:10px;flex-wrap:wrap}.input,.item-input,input[type=text],input[type=date],input[type=url],input[type=file],textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}.btn,button{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:bold;background:#ff6a00;color:#fff}.btn-danger{background:#dc2626}.back{display:inline-block;margin-top:8px;text-decoration:none;color:#2563eb}.help{color:#6b7280;font-size:14px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.two{grid-template-columns:1fr}}
+</style></head><body><div class="topbar"><div class="title">🧡 HV NOVITAS CMS</div><div><span id="userInfo">Laden...</span> <button id="logoutButton" type="button">Uitloggen</button></div></div><main class="page"><div class="card"><h1>🤝 Sponsors</h1><input id="sponsorName" type="text" placeholder="Bedrijfsnaam"><br><br><input id="sponsorWebsite" type="url" placeholder="https://www.bedrijf.nl"><br><br><input id="sponsorImage" type="file" accept="image/*"><br><br><button id="saveSponsor">Sponsor toevoegen</button></div><div class="card"><h2>Sponsors</h2><div id="sponsorList" class="grid"></div></div><a class="back" href="dashboard.html">← Terug naar dashboard</a></main><script type="module">
+import { auth } from "./firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+const u=document.getElementById("userInfo");
+const l=document.getElementById("logoutButton");
+onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return;}u.textContent="👋 "+(user.displayName||user.email||"Admin");});
+l.addEventListener("click",async()=>{try{await signOut(auth);location.href="login.html";}catch(e){console.error(e);alert("Uitloggen is niet gelukt.");}});
+</script><script type="module">
+import { db } from "./firebase.js";
+import { ref,push,onValue,remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+function normalizeUrl(url){url=String(url||"").trim();if(!url)return"";if(url.startsWith("https://")||url.startsWith("http://"))return url;if(url.startsWith("www."))return"https://"+url;if(url.includes(".")&&!url.includes(" "))return"https://"+url;return"";}
+document.getElementById("saveSponsor").addEventListener("click",async()=>{try{const name=document.getElementById("sponsorName").value.trim();const website=normalizeUrl(document.getElementById("sponsorWebsite").value);const file=document.getElementById("sponsorImage").files[0];if(!file){alert("Kies eerst een sponsorlogo.");return;}const form=new FormData();form.append("file",file);form.append("upload_preset","hvnovitas_upload");const res=await fetch("https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",{method:"POST",body:form});if(!res.ok)throw new Error("Cloudinary upload mislukt");const data=await res.json();const imageUrl=data.secure_url||"";if(!imageUrl)throw new Error("Geen afbeelding ontvangen");await push(ref(db,"sponsors"),{name,imageUrl,website,created:Date.now(),active:true});document.getElementById("sponsorName").value="";document.getElementById("sponsorWebsite").value="";document.getElementById("sponsorImage").value="";alert("Sponsor succesvol toegevoegd.");}catch(e){console.error(e);alert("Sponsor kon niet worden opgeslagen.");}});
+onValue(ref(db,"sponsors"),snap=>{const d=snap.val()||{};document.getElementById("sponsorList").innerHTML=Object.entries(d).map(([id,v])=>{const website=normalizeUrl(v.website||"");return `<div class="item">${v.imageUrl?`<img src="${esc(v.imageUrl)}" alt="${esc(v.name||"Sponsor")}">`:""}<strong>${esc(v.name||"Sponsor")}</strong><div class="help">${website?`<a href="${esc(website)}" target="_blank" rel="noopener noreferrer">${esc(website)}</a>`:"Geen website ingesteld"}</div><br><button class="btn-danger" data-id="${esc(id)}">🗑 Verwijderen</button></div>`}).join("")||"<p>Geen sponsors toegevoegd.</p>";document.querySelectorAll("#sponsorList [data-id]").forEach(b=>b.addEventListener("click",()=>remove(ref(db,"sponsors/"+b.dataset.id))));});
+</script></body></html>
