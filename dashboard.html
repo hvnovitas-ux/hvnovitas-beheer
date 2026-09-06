@@ -4,23 +4,12 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>HV Novitas Dashboard</title>
 
 <style>
-
-:root {
-    --orange: #ff6a00;
-    --orange-dark: #e65f00;
-    --black: #111111;
-    --background: #f4f6f8;
-    --white: #ffffff;
-    --text: #222222;
-    --muted: #70757a;
-    --border: #e5e7eb;
-    --badge: #ff6a00;
-}
 
 * {
     box-sizing: border-box;
@@ -29,255 +18,267 @@
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background: var(--background);
-    color: var(--text);
+    background: #f4f6f8;
+    color: #222;
 }
 
-/* =========================================
+/* =====================================================
    TOPBAR
-   ========================================= */
+   ===================================================== */
 
 .topbar {
-    background: var(--orange);
+    background: #ff6a00;
     color: white;
-    padding: 18px 28px;
+    padding: 15px 20px;
+    font-weight: bold;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+    gap: 15px;
 }
 
-.dashboard-title {
+.title {
     font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 0.4px;
 }
 
 .userbox {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     font-size: 14px;
 }
 
 .logout {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 8px;
-
     background: white;
-    color: var(--black);
-
-    font-weight: bold;
+    color: #222;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 12px;
     cursor: pointer;
-
-    transition: 0.2s ease;
+    font-weight: bold;
 }
 
 .logout:hover {
-    background: #f0f0f0;
+    background: #f1f1f1;
 }
 
-/* =========================================
+
+/* =====================================================
    DASHBOARD
-   ========================================= */
+   ===================================================== */
 
 .dashboard {
     max-width: 1100px;
-    margin: 0 auto;
-    padding: 35px 25px 50px;
+    margin: 30px auto;
+    padding: 0 20px;
 }
 
-.intro {
+.welcome {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
     margin-bottom: 25px;
+
+    box-shadow:
+        0 4px 16px rgba(0,0,0,0.07);
 }
 
-.intro h1 {
-    margin: 0 0 7px;
-    font-size: 28px;
+.welcome h1 {
+    margin: 0 0 8px;
+    font-size: 26px;
 }
 
-.intro p {
+.welcome p {
     margin: 0;
-    color: var(--muted);
-    font-size: 15px;
+    color: #6b7280;
 }
 
-/* =========================================
-   KAARTEN
-   ========================================= */
 
-.menu {
+/* =====================================================
+   GRID
+   ===================================================== */
+
+.grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
     gap: 18px;
 }
 
-.menu a {
+
+/* =====================================================
+   CARD
+   ===================================================== */
+
+.card {
     position: relative;
 
     display: flex;
     align-items: center;
 
-    gap: 17px;
+    min-height: 110px;
 
-    min-height: 108px;
-
-    padding: 20px;
-
-    background: var(--white);
-    color: var(--text);
+    background: white;
+    color: #222;
 
     text-decoration: none;
 
-    border: 1px solid var(--border);
-    border-left: 5px solid var(--orange);
-
     border-radius: 14px;
 
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-
-    transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease;
-}
-
-.menu a:hover {
-    transform: translateY(-3px);
+    padding: 20px;
 
     box-shadow:
-        0 8px 22px rgba(0, 0, 0, 0.10);
+        0 4px 16px rgba(0,0,0,0.07);
+
+    border-left:
+        5px solid #ff6a00;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
 }
 
-/* =========================================
-   ICOON
-   ========================================= */
+.card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 22px rgba(0,0,0,0.11);
+
+    background: #fffaf6;
+}
+
+
+/* =====================================================
+   ICON
+   ===================================================== */
 
 .icon {
     width: 54px;
     height: 54px;
 
-    flex: 0 0 54px;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 12px;
+    font-size: 28px;
 
     background: #fff1e8;
 
-    font-size: 27px;
+    border-radius: 12px;
+
+    margin-right: 16px;
+
+    flex-shrink: 0;
 }
 
-/* =========================================
-   TEKST
-   ========================================= */
+
+/* =====================================================
+   CARD CONTENT
+   ===================================================== */
 
 .card-content {
     min-width: 0;
-    flex: 1;
 }
 
 .card-title {
+    font-size: 18px;
+    font-weight: bold;
     margin-bottom: 5px;
-
-    font-size: 17px;
-    font-weight: 800;
 }
 
 .card-text {
-    color: var(--muted);
-
     font-size: 13px;
-    line-height: 1.4;
+    color: #6b7280;
 }
 
-/* =========================================
+
+/* =====================================================
    BADGE
-   ========================================= */
+   ===================================================== */
 
 .badge {
-    min-width: 30px;
-    height: 30px;
+    position: absolute;
 
-    padding: 0 9px;
+    top: 14px;
+    right: 14px;
+
+    min-width: 28px;
+    height: 28px;
+
+    padding: 0 8px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 999px;
+    border-radius: 20px;
 
-    background: var(--badge);
+    background: #ff6a00;
     color: white;
 
     font-size: 13px;
-    font-weight: 800;
+    font-weight: bold;
 }
 
-/* =========================================
-   MAIL CMS
-   ========================================= */
 
-.mail-card {
-    border-left-color: var(--black) !important;
+/* =====================================================
+   LINK CARD
+   ===================================================== */
+
+.external::after {
+    content: "↗";
+
+    position: absolute;
+
+    right: 16px;
+    bottom: 14px;
+
+    color: #9ca3af;
+    font-size: 16px;
 }
 
-.mail-card .icon {
-    background: #eeeeee;
-}
 
-/* =========================================
+/* =====================================================
    FOOTER
-   ========================================= */
+   ===================================================== */
 
 .footer {
-    margin-top: 35px;
-
     text-align: center;
 
-    color: #999;
+    margin-top: 30px;
+    padding: 20px;
+
     font-size: 12px;
+    color: #9ca3af;
 }
 
-/* =========================================
-   MOBIEL
-   ========================================= */
 
-@media (max-width: 760px) {
+/* =====================================================
+   MOBIEL
+   ===================================================== */
+
+@media (max-width: 750px) {
 
     .topbar {
-        padding: 15px 18px;
-
-        align-items: flex-start;
-
-        gap: 12px;
-    }
-
-    .dashboard-title {
-        font-size: 17px;
-    }
-
-    .userbox {
         flex-direction: column;
-        align-items: flex-end;
+        align-items: flex-start;
+    }
 
-        gap: 6px;
+    .grid {
+        grid-template-columns: 1fr;
     }
 
     .dashboard {
-        padding: 25px 16px 40px;
+        margin-top: 20px;
     }
 
-    .intro h1 {
-        font-size: 24px;
-    }
-
-    .menu {
-        grid-template-columns: 1fr;
+    .welcome h1 {
+        font-size: 22px;
     }
 
 }
@@ -286,15 +287,17 @@ body {
 
 </head>
 
+
 <body>
 
-<!-- =========================================
+
+<!-- =====================================================
      TOPBAR
-     ========================================= -->
+     ===================================================== -->
 
 <div class="topbar">
 
-    <div class="dashboard-title">
+    <div class="title">
         🧡 HV NOVITAS DASHBOARD
     </div>
 
@@ -306,7 +309,8 @@ body {
 
         <button
             class="logout"
-            onclick="logout()"
+            id="logoutButton"
+            type="button"
         >
             Uitloggen
         </button>
@@ -316,33 +320,39 @@ body {
 </div>
 
 
-<!-- =========================================
+<!-- =====================================================
      DASHBOARD
-     ========================================= -->
+     ===================================================== -->
 
 <main class="dashboard">
 
-    <div class="intro">
+
+    <section class="welcome">
 
         <h1>
-            Beheer HV Novitas
+            Beheer
         </h1>
 
         <p>
-            Kies hieronder de beheerfunctie die je wilt openen.
+            Welkom in het centrale beheer van HV Novitas.
         </p>
 
-    </div>
+    </section>
 
 
-    <div class="menu">
+    <!-- =================================================
+         MENU
+         ================================================= -->
+
+    <section class="grid">
 
 
-        <!-- =====================================
-             NIEUWS
-             ===================================== -->
+        <!-- NIEUWS -->
 
-        <a href="cms.html">
+        <a
+            href="cms.html"
+            class="card"
+        >
 
             <div class="icon">
                 📰
@@ -355,26 +365,27 @@ body {
                 </div>
 
                 <div class="card-text">
-                    Nieuwsberichten maken, aanpassen en beheren.
+                    Nieuwsberichten toevoegen en aanpassen
                 </div>
 
             </div>
 
-            <div
+            <span
                 class="badge"
                 data-badge="nieuws"
             >
                 0
-            </div>
+            </span>
 
         </a>
 
 
-        <!-- =====================================
-             PROEFTRAININGEN
-             ===================================== -->
+        <!-- PROEFTRAININGEN -->
 
-        <a href="proeftrainingen.html">
+        <a
+            href="proeftrainingen.html"
+            class="card"
+        >
 
             <div class="icon">
                 🏃
@@ -387,26 +398,27 @@ body {
                 </div>
 
                 <div class="card-text">
-                    Proeftrainingen en aanvragen beheren.
+                    Aanmeldingen voor proeftrainingen
                 </div>
 
             </div>
 
-            <div
+            <span
                 class="badge"
                 data-badge="proeftrainingen"
             >
                 0
-            </div>
+            </span>
 
         </a>
 
 
-        <!-- =====================================
-             INSCHRIJVINGEN
-             ===================================== -->
+        <!-- INSCHRIJVINGEN -->
 
-        <a href="inschrijvingen.html">
+        <a
+            href="inschrijvingen.html"
+            class="card"
+        >
 
             <div class="icon">
                 📋
@@ -419,26 +431,27 @@ body {
                 </div>
 
                 <div class="card-text">
-                    Nieuwe inschrijvingen bekijken en verwerken.
+                    Nieuwe leden en inschrijvingen
                 </div>
 
             </div>
 
-            <div
+            <span
                 class="badge"
                 data-badge="inschrijvingen"
             >
                 0
-            </div>
+            </span>
 
         </a>
 
 
-        <!-- =====================================
-             SPONSORS
-             ===================================== -->
+        <!-- SPONSORS -->
 
-        <a href="sponsors.html">
+        <a
+            href="sponsors.html"
+            class="card"
+        >
 
             <div class="icon">
                 🤝
@@ -451,26 +464,27 @@ body {
                 </div>
 
                 <div class="card-text">
-                    Sponsors en sponsorinformatie beheren.
+                    Sponsors en sponsorbeheer
                 </div>
 
             </div>
 
-            <div
+            <span
                 class="badge"
                 data-badge="sponsors"
             >
                 0
-            </div>
+            </span>
 
         </a>
 
 
-        <!-- =====================================
-             AANKONDIGINGSFOTO
-             ===================================== -->
+        <!-- AANKONDIGINGSFOTO -->
 
-        <a href="aankondigingsfoto.html">
+        <a
+            href="aankondigingsfoto.html"
+            class="card"
+        >
 
             <div class="icon">
                 📷
@@ -483,7 +497,7 @@ body {
                 </div>
 
                 <div class="card-text">
-                    Basisfoto's en tijdelijke speciale foto's beheren.
+                    Wedstrijd- en aankondigingsfoto's
                 </div>
 
             </div>
@@ -491,11 +505,12 @@ body {
         </a>
 
 
-        <!-- =====================================
-             INSTELLINGEN
-             ===================================== -->
+        <!-- INSTELLINGEN -->
 
-        <a href="instellingen.html">
+        <a
+            href="instellingen.html"
+            class="card"
+        >
 
             <div class="icon">
                 ⚙️
@@ -508,7 +523,7 @@ body {
                 </div>
 
                 <div class="card-text">
-                    Algemene instellingen van het beheer aanpassen.
+                    Instellingen van het CMS
                 </div>
 
             </div>
@@ -516,11 +531,12 @@ body {
         </a>
 
 
-        <!-- =====================================
-             CHALLENGE
-             ===================================== -->
+        <!-- CHALLENGE -->
 
-        <a href="challenge/index.html">
+        <a
+            href="challenge/index.html"
+            class="card external"
+        >
 
             <div class="icon">
                 🎮
@@ -533,7 +549,7 @@ body {
                 </div>
 
                 <div class="card-text">
-                    De HV Novitas Challenge openen.
+                    HV Novitas Challenge
                 </div>
 
             </div>
@@ -541,13 +557,14 @@ body {
         </a>
 
 
-        <!-- =====================================
-             MAIL CMS
-             ===================================== -->
+        <!-- =================================================
+             MAILBEHEER
+             ================================================= -->
 
         <a
-            href="https://hvnovitasmai.sportsontheweb.net/novmail_login.php"
-            class="mail-card"
+            href="#"
+            class="card external"
+            id="mailCmsLink"
         >
 
             <div class="icon">
@@ -561,7 +578,7 @@ body {
                 </div>
 
                 <div class="card-text">
-                    Inbox en e-mailbeheer openen.
+                    E-mail en mailbox beheren
                 </div>
 
             </div>
@@ -569,33 +586,56 @@ body {
         </a>
 
 
-    </div>
+    </section>
 
 
     <div class="footer">
-        HV Novitas · Beheeromgeving
+        HV Novitas CMS
     </div>
+
 
 </main>
 
 
-<!-- =========================================
-     FIREBASE
-     ========================================= -->
+<!-- =====================================================
+     FIREBASE + LOGIN + MAIL SSO
+     ===================================================== -->
 
 <script type="module">
 
-import { auth } from "./firebase.js";
+import {
+    auth
+} from "./firebase.js";
 
 import {
     onAuthStateChanged,
     signOut
-}
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-console.log("🧡 Dashboard geladen");
+/* =====================================================
+   ELEMENTEN
+   ===================================================== */
 
+const userInfo =
+    document.getElementById(
+        "userInfo"
+    );
+
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
+const mailCmsLink =
+    document.getElementById(
+        "mailCmsLink"
+    );
+
+
+/* =====================================================
+   FIREBASE LOGIN CONTROLEREN
+   ===================================================== */
 
 onAuthStateChanged(
     auth,
@@ -610,36 +650,169 @@ onAuthStateChanged(
 
         }
 
-        document
-            .getElementById("userInfo")
-            .innerText =
-                "👋 " +
-                (
-                    user.displayName ||
-                    "Admin"
-                );
+
+        userInfo.innerText =
+            "👋 " +
+            (
+                user.displayName ||
+                user.email ||
+                "Admin"
+            );
 
     }
 );
 
 
-window.logout = async function () {
+/* =====================================================
+   UITLOGGEN
+   ===================================================== */
 
-    await signOut(auth);
+logoutButton.addEventListener(
+    "click",
+    async () => {
 
-    window.location.href =
-        "login.html";
+        try {
 
-};
+            await signOut(auth);
+
+            window.location.href =
+                "login.html";
+
+        } catch (error) {
+
+            console.error(
+                "Uitloggen mislukt:",
+                error
+            );
+
+            alert(
+                "Uitloggen is niet gelukt."
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   MAILBEHEER SSO
+   ===================================================== */
+
+mailCmsLink.addEventListener(
+    "click",
+    async (event) => {
+
+        event.preventDefault();
+
+
+        const user =
+            auth.currentUser;
+
+
+        if (!user) {
+
+            alert(
+                "Je bent niet ingelogd in het beheer."
+            );
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        try {
+
+            /* -----------------------------------------
+               Firebase ID-token ophalen
+               ----------------------------------------- */
+
+            const firebaseToken =
+                await user.getIdToken(true);
+
+
+            /* -----------------------------------------
+               POST formulier maken
+               ----------------------------------------- */
+
+            const form =
+                document.createElement(
+                    "form"
+                );
+
+
+            form.method =
+                "POST";
+
+
+            form.action =
+                "https://hvnovitasmai.sportsontheweb.net/novmail_sso.php";
+
+
+            form.style.display =
+                "none";
+
+
+            /* -----------------------------------------
+               Token toevoegen
+               ----------------------------------------- */
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+
+            input.type =
+                "hidden";
+
+
+            input.name =
+                "firebase_token";
+
+
+            input.value =
+                firebaseToken;
+
+
+            form.appendChild(
+                input
+            );
+
+
+            /* -----------------------------------------
+               Versturen
+               ----------------------------------------- */
+
+            document.body.appendChild(
+                form
+            );
+
+
+            form.submit();
+
+
+        } catch (error) {
+
+            console.error(
+                "Mail CMS SSO fout:",
+                error
+            );
+
+
+            alert(
+                "Automatisch inloggen op Mailbeheer is niet gelukt."
+            );
+
+        }
+
+    }
+);
 
 </script>
-
-
-<!-- =========================================
-     DASHBOARD DATA
-     ========================================= -->
-
-<script type="module" src="./dashboard.js"></script>
 
 
 </body>
