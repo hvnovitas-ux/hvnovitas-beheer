@@ -7,6 +7,8 @@ import {
 
 const container = document.getElementById("club100List");
 
+console.log("🧱 Club100 openbare module geladen");
+
 function escapeHTML(value = "") {
     return String(value)
         .replace(/&/g, "&amp;")
@@ -17,39 +19,76 @@ function escapeHTML(value = "") {
 }
 
 function render(snapshot) {
-    if (!container) return;
+
+    if (!container) {
+        console.error("❌ club100List niet gevonden");
+        return;
+    }
 
     const data = snapshot.val() || {};
 
     const members = Object.values(data)
         .filter(member => member && member.name)
         .sort((a, b) =>
-            String(a.name).localeCompare(String(b.name), "nl", {
-                sensitivity: "base"
-            })
+            String(a.name).localeCompare(
+                String(b.name),
+                "nl",
+                {
+                    sensitivity: "base"
+                }
+            )
         );
 
-    if (!members.length) {
+    // =========================
+    // GEEN CLUB100 LEDEN
+    // =========================
+
+    if (members.length === 0) {
+
         container.innerHTML = `
             <div class="empty">
-                <div class="empty-title">Nog geen Club100-leden</div>
+                <div class="empty-title">
+                    Club100
+                </div>
+
                 <div class="empty-text">
-                    Binnenkort vind je hier onze Club100-leden.
+                    Er zijn momenteel geen Club100-leden.
                 </div>
             </div>
         `;
+
         return;
     }
 
-    container.innerHTML = members.map(member => `
-        <div class="member">
-            ${escapeHTML(member.name)}
-        </div>
-    `).join("");
+    // =========================
+    // LEDEN WEERGEVEN
+    // =========================
+
+    container.innerHTML = members
+        .map(member => `
+            <div class="member">
+                <span>${escapeHTML(member.name)}</span>
+            </div>
+        `)
+        .join("");
 }
 
-if (container) {
-    onValue(ref(db, "club100"), render);
-}
+onValue(
+    ref(db, "club100"),
+    render,
+    error => {
+        console.error("❌ Club100 laden mislukt:", error);
 
-console.log("🧱 Club100 openbare module gereed.");
+        if (container) {
+            container.innerHTML = `
+                <div class="empty">
+                    <div class="empty-title">
+                        Club100 kon niet worden geladen
+                    </div>
+                </div>
+            `;
+        }
+    }
+);
+
+console.log("🧡 Club100 openbare module gereed.");
