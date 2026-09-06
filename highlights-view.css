@@ -1,1 +1,16 @@
-*{box-sizing:border-box}html,body{margin:0;background:transparent}body{font-family:Arial,Helvetica,sans-serif;color:#1b2430}.wrap{width:100%;background:transparent}.bar{height:55px;background:#ff6a00;color:#fff;display:flex;align-items:center;gap:11px;padding:0 18px;font-size:21px;letter-spacing:.2px}.bar span{font-size:22px}.card{display:flex;gap:15px;align-items:flex-start;background:#f7f7f5;padding:20px 18px 17px}.icon{flex:0 0 45px;width:45px;height:45px;border-radius:50%;background:#fff2e9;color:#ff6a00;display:grid;place-items:center;font-size:24px}.copy{flex:1}.copy h2{margin:0 0 5px;font-size:20px;line-height:1.15}.copy p{margin:0 0 4px;font-size:15px;line-height:1.45;color:#4b5563}.date{color:#ff6a00;font-size:13px;font-weight:700;text-transform:uppercase;margin-bottom:4px}.empty-title{font-weight:800;font-size:19px}.empty-sub{color:#6b7280;font-size:14px;margin-top:4px}.yt{display:block;text-decoration:none;background:#ff6a00;color:#fff;text-align:center;font-weight:800;padding:14px 12px;font-size:14px}.yt span{font-size:15px;margin-right:5px}.item{padding:0 0 15px;margin:0 0 15px;border-bottom:1px solid #ddd}.item:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}@media(max-width:600px){.bar{font-size:18px}.card{padding:16px}.copy h2{font-size:18px}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent}
+body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a}
+.wrap{width:100%;background:#fff}
+.bar{height:54px;background:#ff6a00;color:#fff;display:flex;align-items:center;padding:0 18px;font-size:21px;font-weight:800;text-transform:uppercase}
+.card{background:#f7f7f5;padding:20px 18px 18px;display:flex;gap:15px;align-items:flex-start}
+.icon{flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:#fff1e8;color:#ff6a00;display:grid;place-items:center;font-size:23px;font-weight:800}
+.copy{flex:1;min-width:0}
+.item{margin:0 0 14px;padding:0 0 14px;border-bottom:1px solid #dedede}
+.item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
+.date{margin:0 0 4px;color:#ff6a00;font-size:12px;font-weight:800;text-transform:uppercase}
+.item h2{margin:0 0 6px;font-size:20px;line-height:1.18}
+.item p{margin:0;font-size:15px;line-height:1.45;color:#4b5563}
+.empty-title{font-size:19px;font-weight:800;line-height:1.25}
+.empty-sub{margin-top:5px;color:#6b7280;font-size:14px}
+@media(max-width:600px){.bar{font-size:18px}.card{padding:16px}.item h2{font-size:18px}}
