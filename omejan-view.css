@@ -1,0 +1,16 @@
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent}
+body{font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+.omejan{position:relative;width:100%;overflow:hidden}
+.viewport{width:100%;overflow:hidden}
+.track{display:flex;width:100%;transform:translateX(0);transition:transform .45s ease}
+.slide{min-width:100%;display:flex;align-items:center;justify-content:center}
+.slide img{display:block;width:100%;height:auto;max-height:80vh;object-fit:contain}
+.arrow{position:absolute;top:50%;z-index:5;transform:translateY(-50%);width:42px;height:64px;border:0;border-radius:10px;background:rgba(0,0,0,.58);color:#fff;font-size:48px;line-height:1;cursor:pointer;padding:0}
+.arrow.prev{left:10px}.arrow.next{right:10px}
+.arrow:hover{background:rgba(0,0,0,.78)}
+.dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:7px}
+.dot{width:8px;height:8px;border:0;border-radius:50%;padding:0;background:rgba(255,255,255,.55);cursor:pointer}
+.dot.active{background:#ff6a00;transform:scale(1.2)}
+.empty{padding:30px;text-align:center;color:#777}
+@media(max-width:600px){.arrow{width:34px;height:50px;font-size:38px}.dots{bottom:8px}}

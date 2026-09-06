@@ -4,35 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sponsors - HV Novitas</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#111;color:#fff}
-.section{padding:0;overflow:hidden}.heading{text-align:center;font-size:24px;font-weight:800;margin:0 0 18px;text-transform:uppercase}
-.slider{width:100%;overflow:hidden}.track{display:flex;gap:50px;width:max-content;align-items:center}.sponsor{display:flex;align-items:center;justify-content:center;min-width:220px;height:90px}.sponsor img{height:70px;max-width:220px;object-fit:contain;display:block}.empty{text-align:center;color:#ccc;padding:20px}.controls{display:flex;justify-content:center;gap:10px;margin-top:14px}.controls button{border:1px solid #666;background:#222;color:#fff;border-radius:50%;width:38px;height:38px;cursor:pointer}
-</style>
+<link rel="stylesheet" href="./sponsors-view.css">
 </head>
 <body>
-<section class="section">
-<div id="slider" class="slider"><div id="sponsorTrack" class="track"></div></div>
-<div class="controls"><button id="prev" aria-label="Vorige">‹</button><button id="next" aria-label="Volgende">›</button></div>
+<section class="sponsors">
+  <button class="arrow prev" id="prev" aria-label="Vorige">‹</button>
+  <div class="viewport"><div class="track" id="track"></div></div>
+  <button class="arrow next" id="next" aria-label="Volgende">›</button>
+  <div class="dots" id="dots"></div>
 </section>
-<script type="module">
-import { db } from "./firebase.js";
-import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-const track=document.getElementById("sponsorTrack");
-let items=[];let index=0;let timer=null;
-function render(){
- const active=items.filter(v=>v && v.active!==false && (v.imageUrl||v.image));
- if(!active.length){track.innerHTML="<div class=\"empty\">Geen sponsors beschikbaar.</div>";return;}
- items=active;track.innerHTML=active.map(v=>{const image=v.imageUrl||v.image;const url=v.website||v.url||"";return `<a class="sponsor" href="${esc(url||"#")}" ${url?'target="_blank" rel="noopener noreferrer"':''}><img src="${esc(image)}" alt="${esc(v.name||v.sponsorName||"Sponsor")}"></a>`}).join("")+active.map(v=>{const image=v.imageUrl||v.image;const url=v.website||v.url||"";return `<a class="sponsor" href="${esc(url||"#")}" ${url?'target="_blank" rel="noopener noreferrer"':''}><img src="${esc(image)}" alt="${esc(v.name||v.sponsorName||"Sponsor")}"></a>`}).join("");
- index=0;update();clearInterval(timer);timer=setInterval(next,3500);
-}
-function update(){const first=track.querySelector('.sponsor');if(!first)return;const gap=50;const step=first.getBoundingClientRect().width+gap;track.style.transform=`translateX(${-index*step}px)`;track.style.transition="transform .5s ease";}
-function next(){if(!items.length)return;index=(index+1)%items.length;update()}
-function prev(){if(!items.length)return;index=(index-1+items.length)%items.length;update()}
-document.getElementById("next").addEventListener("click",next);document.getElementById("prev").addEventListener("click",prev);
-onValue(ref(db,"sponsors"),snap=>{items=Object.values(snap.val()||{});render();});
-window.addEventListener("resize",update);
-</script>
+<script type="module" src="./sponsors-view.js"></script>
 </body>
 </html>

@@ -1,93 +1,96 @@
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-const esc = (v) => String(v ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-const track = document.getElementById("sponsorTrack");
-const nextButton = document.getElementById("next");
-const prevButton = document.getElementById("prev");
+const track = document.getElementById("track");
+const dots = document.getElementById("dots");
+const prev = document.getElementById("prev");
+const next = document.getElementById("next");
 
 let items = [];
-let index = 0;
+let page = 0;
 let timer = null;
 
-function getActiveSponsors() {
-    return items.filter(
-        v => v &&
-             v.active !== false &&
-             (v.imageUrl || v.image)
-    );
+const esc = (v) => String(v ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+function perPage() {
+  const w = window.innerWidth;
+  if (w < 620) return 1;
+  if (w < 900) return 2;
+  if (w < 1200) return 3;
+  return 4;
 }
 
-function sponsorHtml(v) {
+function pages() { return Math.max(1, Math.ceil(items.length / perPage())); }
+
+function render() {
+  if (!items.length) {
+    track.innerHTML = '<div class="empty">Geen sponsors beschikbaar.</div>';
+    dots.innerHTML = "";
+    return;
+  }
+
+  const count = perPage();
+  track.innerHTML = items.map(v => {
     const image = v.imageUrl || v.image;
     const url = v.website || v.url || "";
     const name = v.name || v.sponsorName || "Sponsor";
+    return `<a class="sponsor" href="${esc(url || "#")}" ${url ? 'target="_blank" rel="noopener noreferrer"' : ""}>
+      <img src="${esc(image)}" alt="${esc(name)}">
+    </a>`;
+  }).join("");
 
-    return `
-        <a class="sponsor"
-           href="${esc(url || "#")}"
-           ${url ? 'target="_blank" rel="noopener noreferrer"' : ""}>
-            <img src="${esc(image)}" alt="${esc(name)}">
-        </a>
-    `;
-}
+  page = Math.min(page, pages() - 1);
 
-function render() {
-    const active = getActiveSponsors();
+  dots.innerHTML = Array.from({length: pages()}, (_, i) =>
+    `<button class="dot${i === page ? " active" : ""}" data-page="${i}" aria-label="Pagina ${i+1}"></button>`
+  ).join("");
 
-    if (!active.length) {
-        track.innerHTML = '<div class="empty">Geen sponsors beschikbaar.</div>';
-        clearInterval(timer);
-        return;
-    }
+  dots.querySelectorAll(".dot").forEach(btn =>
+    btn.addEventListener("click", () => goTo(Number(btn.dataset.page)))
+  );
 
-    items = active;
-
-    const html = active.map(sponsorHtml).join("");
-    track.innerHTML = html + html;
-
-    index = 0;
-    update();
-
-    clearInterval(timer);
-    timer = setInterval(next, 3500);
+  update();
+  restart();
 }
 
 function update() {
-    const first = track.querySelector(".sponsor");
-    if (!first) return;
-
-    const gap = 50;
-    const step = first.getBoundingClientRect().width + gap;
-
-    track.style.transform = `translateX(${-index * step}px)`;
-    track.style.transition = "transform .5s ease";
+  const card = track.querySelector(".sponsor");
+  if (!card) return;
+  const gap = 18;
+  const step = card.getBoundingClientRect().width + gap;
+  track.style.transform = `translateX(-${page * step * perPage()}px)`;
+  dots.querySelectorAll(".dot").forEach((d,i) => d.classList.toggle("active", i === page));
 }
 
-function next() {
-    if (!items.length) return;
-    index = (index + 1) % items.length;
-    update();
+function goTo(p) {
+  page = (p + pages()) % pages();
+  update();
+  restart();
 }
 
-function prev() {
-    if (!items.length) return;
-    index = (index - 1 + items.length) % items.length;
-    update();
+function start() {
+  stop();
+  if (pages() > 1) timer = setInterval(() => goTo(page + 1), 4000);
 }
 
-nextButton.addEventListener("click", next);
-prevButton.addEventListener("click", prev);
+function stop() {
+  if (timer) clearInterval(timer);
+  timer = null;
+}
 
-onValue(ref(db, "sponsors"), (snap) => {
-    items = Object.values(snap.val() || {});
-    render();
+function restart() { start(); }
+
+prev.addEventListener("click", () => goTo(page - 1));
+next.addEventListener("click", () => goTo(page + 1));
+window.addEventListener("resize", render);
+
+onValue(ref(db, "sponsors"), snap => {
+  items = Object.values(snap.val() || {})
+    .filter(v => v && v.active !== false && (v.imageUrl || v.image));
+  render();
 });
-
-window.addEventListener("resize", update);
