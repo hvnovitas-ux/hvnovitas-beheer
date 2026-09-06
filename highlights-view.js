@@ -1,9 +1,99 @@
+// ============================================================
+// HV NOVITAS - HIGHLIGHTS OPENBARE WEERGAVE
+// ============================================================
+
 import { db } from "./firebase.js";
-import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-const content=document.getElementById('content');
-const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-function dateText(d){if(!d)return '';const x=new Date(d+'T00:00:00');return isNaN(x)?d:x.toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'})}
-onValue(ref(db,'highlights'),snap=>{const data=Object.values(snap.val()||{}).sort((a,b)=>{const ad=new Date(a.date||0).getTime()||a.created||0,bd=new Date(b.date||0).getTime()||b.created||0;return bd-ad});
- if(!data.length){content.innerHTML='<div class="empty-title">Vandaag zijn er geen highlights uit het verleden.</div><div class="empty-sub">Mis niets van onze mooiste momenten!</div>';return}
- content.innerHTML=data.map(v=>`<article class="item">${v.date?`<div class="date">${esc(dateText(v.date))}</div>`:''}<h2>${esc(v.title||'')}</h2><p>${esc(v.text||'')}</p></article>`).join('');
-});
+
+import {
+    ref,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const container =
+    document.getElementById("highlightsContainer") ||
+    document.getElementById("highlightsList") ||
+    document.getElementById("highlights");
+
+function escapeHTML(value = "") {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function formatDate(value) {
+    if (!value) return "";
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        const date = new Date(`${value}T00:00:00`);
+
+        return date.toLocaleDateString(
+            "nl-NL",
+            {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            }
+        );
+    }
+
+    return value;
+}
+
+function render(snapshot) {
+    if (!container) return;
+
+    const data = snapshot.val() || {};
+
+    const items = Object.values(data)
+        .filter(Boolean)
+        .sort((a, b) => {
+            const dateA = a.date || "";
+            const dateB = b.date || "";
+
+            if (dateA !== dateB) {
+                return dateB.localeCompare(dateA);
+            }
+
+            return (
+                (b.created || 0) -
+                (a.created || 0)
+            );
+        });
+
+    if (!items.length) {
+        container.innerHTML = "";
+        return;
+    }
+
+    container.innerHTML = items
+        .map(
+            (item) => `
+                <article class="highlight-item">
+                    <div class="highlight-date">
+                        ${escapeHTML(formatDate(item.date || ""))}
+                    </div>
+
+                    <h3>
+                        ${escapeHTML(item.title || "")}
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(item.text || "")}
+                    </p>
+                </article>
+            `
+        )
+        .join("");
+}
+
+if (container) {
+    onValue(
+        ref(db, "highlights"),
+        render
+    );
+}
+
+console.log("🧡 Highlights openbare module gereed.");
