@@ -4,13 +4,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HV Novitas</title>
+
+<title>HV Novitas – Handbalvereniging uit Hulst</title>
+
+<meta name="description" content="HV Novitas is de handbalvereniging uit Hulst in Zeeuws-Vlaanderen. Bekijk onze wedstrijden, trainingen, activiteiten en highlights.">
+
+<link rel="canonical" href="https://hvnovitas.nl/">
 
 <style>
 body {
     margin: 0;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background: #eef1f5;
+    color: #222;
 }
 
 .topbar {
@@ -22,7 +28,25 @@ body {
     font-weight: bold;
 }
 
+.intro {
+    max-width: 1100px;
+    margin: 20px auto 10px;
+    padding: 0 20px;
+}
+
+.intro h1 {
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+.intro p {
+    line-height: 1.6;
+    font-size: 16px;
+}
+
 .container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 15px;
@@ -52,7 +76,9 @@ body {
 .highlight { border-left-color: gold; }
 
 @media (max-width: 900px) {
-    .container { grid-template-columns: 1fr; }
+    .container {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
@@ -62,23 +88,46 @@ body {
 
 <div class="topbar">🧡 HV NOVITAS</div>
 
-<div class="container">
+<main>
 
-    <div class="column" id="matches">
-        <h3>⚔️ Wedstrijden</h3>
-    </div>
+    <!-- VASTE HTML-INHOUD VOOR BEZOEKERS EN ZOEKMACHINES -->
+    <section class="intro">
 
-    <div class="column" id="activities">
-        <h3>🏋️ Activiteiten</h3>
-    </div>
+        <h1>HV Novitas – Handbalvereniging uit Hulst</h1>
 
-    <div class="column" id="highlights">
-        <h3>🏆 Highlights</h3>
-    </div>
+        <p>
+            HV Novitas is een handbalvereniging uit Hulst in Zeeuws-Vlaanderen.
+            Bij onze vereniging staat handbal, bewegen en plezier centraal.
+            We organiseren trainingen, wedstrijden en activiteiten voor onze leden.
+        </p>
 
-</div>
+        <p>
+            Op deze pagina vind je de actuele wedstrijden, trainingen,
+            activiteiten en highlights van HV Novitas.
+        </p>
 
-<!-- BELANGRIJK: MODULE -->
+    </section>
+
+    <!-- ACTUELE INHOUD UIT FIREBASE -->
+    <section class="container" aria-label="Agenda HV Novitas">
+
+        <div class="column" id="matches">
+            <h2>⚔️ Wedstrijden</h2>
+        </div>
+
+        <div class="column" id="activities">
+            <h2>🏋️ Activiteiten</h2>
+        </div>
+
+        <div class="column" id="highlights">
+            <h2>🏆 Highlights</h2>
+        </div>
+
+    </section>
+
+</main>
+
+<!-- Firebase / actuele agenda -->
 <script type="module" src="index.js"></script>
 
 </body>
