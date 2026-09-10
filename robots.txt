@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+Disallow: /dashboard.html
+Disallow: /login.html
+Disallow: /cms.html
+Disallow: /club100.html
+Disallow: /highlights.html
+Disallow: /inschrijvingen.html
+Disallow: /proeftrainingen.html
+Disallow: /sponsors.html
+Disallow: /sponsorcommissie.html
+Disallow: /vrienden.html
+Disallow: /omejan.html
+
+Sitemap: https://hvnovitas.nl/sitemap.xml
