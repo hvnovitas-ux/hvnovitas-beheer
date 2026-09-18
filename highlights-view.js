@@ -11,71 +11,90 @@ if (!container) {
 
     onValue(ref(db, "highlights"), (snapshot) => {
 
-        console.log("🔥 Firebase highlights ontvangen");
-
         const data = snapshot.val() || {};
 
-        // ================= LOKALE DATUM =================
+        // ================= VANDAAG =================
 
         const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        const currentDay = now.getDate();
 
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-
-        const today = year + "-" + month + "-" + day;
-
-        console.log("📅 Vandaag:", today);
+        // Dagnummer binnen het huidige jaar
+        const todayNumber = currentMonth * 100 + currentDay;
 
         // ================= ALLE HIGHLIGHTS =================
 
         const items = Object.values(data)
-            .filter(h => h && h.date);
+            .filter(h => h && h.date)
+            .map(h => {
 
-        console.log("📦 Alle highlights:", items);
+                const parts = String(h.date).split("-");
 
-        // ================= VANDAAG OF TOEKOMST =================
+                const month = Number(parts[1]);
+                const day = Number(parts[2]);
 
-        const upcomingItems = items.filter(h => h.date >= today);
+                return {
+                    ...h,
+                    month,
+                    day,
+                    calendarNumber: month * 100 + day
+                };
+            })
+            .filter(h =>
+                Number.isInteger(h.month) &&
+                Number.isInteger(h.day) &&
+                h.month >= 1 &&
+                h.month <= 12 &&
+                h.day >= 1 &&
+                h.day <= 31
+            );
 
-        console.log("➡️ Komende highlights:", upcomingItems);
+        // ================= EERSTVOLGENDE DATUM DIT JAAR =================
 
-        // ================= GEEN KOMENDE HIGHLIGHTS =================
+        let upcomingItems = items
+            .filter(h => h.calendarNumber >= todayNumber)
+            .sort((a, b) => {
+                if (a.calendarNumber !== b.calendarNumber) {
+                    return a.calendarNumber - b.calendarNumber;
+                }
+
+                return (b.created || 0) - (a.created || 0);
+            });
+
+        // ================= ALS DIT JAAR NIETS MEER KOMT =================
+        // Dan beginnen we opnieuw bij de eerste highlight van het jaar.
 
         if (upcomingItems.length === 0) {
+            upcomingItems = items
+                .sort((a, b) => {
+                    if (a.calendarNumber !== b.calendarNumber) {
+                        return a.calendarNumber - b.calendarNumber;
+                    }
 
+                    return (b.created || 0) - (a.created || 0);
+                });
+        }
+
+        // ================= GEEN HIGHLIGHTS =================
+
+        if (upcomingItems.length === 0) {
             container.innerHTML =
                 '<div class="empty-title">' +
-                    '🧡 Er zijn geen komende highlights' +
+                    '🧡 Er zijn geen highlights' +
                 '</div>';
 
             return;
         }
 
-        // ================= SORTEREN OP DATUM =================
-
-        upcomingItems.sort((a, b) => {
-
-            if (a.date !== b.date) {
-                return a.date.localeCompare(b.date);
-            }
-
-            return (b.created || 0) - (a.created || 0);
-        });
-
-        // ================= EERSTVOLGENDE HIGHLIGHT =================
+        // ================= EERSTVOLGENDE =================
 
         const h = upcomingItems[0];
-
-        console.log("⭐ Getoonde highlight:", h);
-
-        // ================= TYPE =================
 
         const typeText = h.type
             ? " | ⭐ " + escapeHTML(h.type)
             : "";
 
-        // ================= RENDER =================
+        // ================= WEERGAVE =================
 
         container.innerHTML =
             '<article class="item">' +
@@ -103,7 +122,6 @@ if (!container) {
             '<div class="empty-title">' +
                 '⚠️ Highlights konden niet worden geladen.' +
             '</div>';
-
     });
 }
 
