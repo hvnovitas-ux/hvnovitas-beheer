@@ -1,79 +1,87 @@
-```javascript
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const container = document.getElementById("highlightsContainer");
 
-console.log("🏆 Highlights view loaded");
+console.log("🏆 highlights-view.js gestart");
 
-// ================= FIREBASE =================
+if (!container) {
+    console.error("❌ highlightsContainer niet gevonden");
+} else {
 
-onValue(ref(db, "highlights"), (snapshot) => {
+    onValue(ref(db, "highlights"), (snapshot) => {
 
-    const data = snapshot.val() || {};
+        console.log("🔥 Firebase highlights ontvangen");
 
-    if (!container) return;
+        const data = snapshot.val() || {};
 
-    const today = new Date().toISOString().split("T")[0];
+        const today = new Date().toISOString().split("T")[0];
 
-    const items = Object.entries(data)
-        .map(([id, value]) => value)
-        .filter(h => h && h.date);
+        console.log("📅 Vandaag:", today);
+        console.log("📦 Highlights:", data);
 
-    // ================= FILTER: VANDAAG OF TOEKOMST =================
+        const items = Object.values(data)
+            .filter(h => h && h.date);
 
-    const upcomingItems = items.filter(h => h.date >= today);
+        // Alleen vandaag en toekomstige highlights
+        const upcomingItems = items.filter(h => h.date >= today);
 
-    // ================= EMPTY STATE =================
+        console.log("➡️ Komende highlights:", upcomingItems);
 
-    if (upcomingItems.length === 0) {
-        container.innerHTML = `
-            <div class="empty-title">
-                🧡 Er zijn geen komende highlights
-            </div>
-        `;
-        return;
-    }
-
-    // ================= SORT OP DATUM =================
-
-    upcomingItems.sort((a, b) => {
-
-        // Eerstvolgende datum eerst
-        if (a.date !== b.date) {
-            return a.date.localeCompare(b.date);
+        // Geen toekomstige highlights
+        if (upcomingItems.length === 0) {
+            container.innerHTML = `
+                <div class="empty-title">
+                    🧡 Er zijn geen komende highlights
+                </div>
+            `;
+            return;
         }
 
-        // Bij dezelfde datum: nieuwste eerst
-        return (b.created || 0) - (a.created || 0);
-    });
+        // Eerstvolgende datum bovenaan
+        upcomingItems.sort((a, b) => {
+            if (a.date !== b.date) {
+                return a.date.localeCompare(b.date);
+            }
 
-    // ================= EERSTVOLGENDE HIGHLIGHT =================
+            return (b.created || 0) - (a.created || 0);
+        });
 
-    const nextHighlight = upcomingItems[0];
+        // Alleen de eerstvolgende highlight
+        const h = upcomingItems[0];
 
-    // ================= RENDER =================
+        container.innerHTML = `
+            <article class="item">
 
-    container.innerHTML = `
-        <article class="item">
+                <div class="date">
+                    📅 ${escapeHTML(h.date || "")}
+                    ${h.type ? ` | ⭐ ${escapeHTML(h.type)}` : ""}
+                </div>
 
-            <div class="date">
-                📅 ${escapeHTML(nextHighlight.date || "")}
-                ${nextHighlight.type ? ` | ⭐ ${escapeHTML(nextHighlight.type)}` : ""}
+                <h2>
+                    ${escapeHTML(h.title || "")}
+                </h2>
+
+                <p>
+                    ${escapeHTML(h.text || "")}
+                </p>
+
+            </article>
+        `;
+
+    }, (error) => {
+
+        console.error("❌ Firebase fout:", error);
+
+        container.innerHTML = `
+            <div class="empty-title">
+                ⚠️ Highlights konden niet worden geladen.
             </div>
+        `;
 
-            <h2>
-                ${escapeHTML(nextHighlight.title || "")}
-            </h2>
+    });
+}
 
-            <p>
-                ${escapeHTML(nextHighlight.text || "")}
-            </p>
-
-        </article>
-    `;
-
-});
 
 // ================= VEILIGE HTML =================
 
@@ -85,4 +93,3 @@ function escapeHTML(value = "") {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-```
