@@ -15,31 +15,47 @@ if (!container) {
 
         const data = snapshot.val() || {};
 
-        const today = new Date().toISOString().split("T")[0];
+        // ================= LOKALE DATUM =================
+
+        const now = new Date();
+
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+
+        const today = year + "-" + month + "-" + day;
 
         console.log("📅 Vandaag:", today);
-        console.log("📦 Highlights:", data);
+
+        // ================= ALLE HIGHLIGHTS =================
 
         const items = Object.values(data)
             .filter(h => h && h.date);
 
-        // Alleen vandaag en toekomstige highlights
+        console.log("📦 Alle highlights:", items);
+
+        // ================= VANDAAG OF TOEKOMST =================
+
         const upcomingItems = items.filter(h => h.date >= today);
 
         console.log("➡️ Komende highlights:", upcomingItems);
 
-        // Geen toekomstige highlights
+        // ================= GEEN KOMENDE HIGHLIGHTS =================
+
         if (upcomingItems.length === 0) {
-            container.innerHTML = `
-                <div class="empty-title">
-                    🧡 Er zijn geen komende highlights
-                </div>
-            `;
+
+            container.innerHTML =
+                '<div class="empty-title">' +
+                    '🧡 Er zijn geen komende highlights' +
+                '</div>';
+
             return;
         }
 
-        // Eerstvolgende datum bovenaan
+        // ================= SORTEREN OP DATUM =================
+
         upcomingItems.sort((a, b) => {
+
             if (a.date !== b.date) {
                 return a.date.localeCompare(b.date);
             }
@@ -47,37 +63,46 @@ if (!container) {
             return (b.created || 0) - (a.created || 0);
         });
 
-        // Alleen de eerstvolgende highlight
+        // ================= EERSTVOLGENDE HIGHLIGHT =================
+
         const h = upcomingItems[0];
 
-        container.innerHTML = `
-            <article class="item">
+        console.log("⭐ Getoonde highlight:", h);
 
-                <div class="date">
-                    📅 ${escapeHTML(h.date || "")}
-                    ${h.type ? ` | ⭐ ${escapeHTML(h.type)}` : ""}
-                </div>
+        // ================= TYPE =================
 
-                <h2>
-                    ${escapeHTML(h.title || "")}
-                </h2>
+        const typeText = h.type
+            ? " | ⭐ " + escapeHTML(h.type)
+            : "";
 
-                <p>
-                    ${escapeHTML(h.text || "")}
-                </p>
+        // ================= RENDER =================
 
-            </article>
-        `;
+        container.innerHTML =
+            '<article class="item">' +
+
+                '<div class="date">' +
+                    '📅 ' + escapeHTML(h.date || "") +
+                    typeText +
+                '</div>' +
+
+                '<h2>' +
+                    escapeHTML(h.title || "") +
+                '</h2>' +
+
+                '<p>' +
+                    escapeHTML(h.text || "") +
+                '</p>' +
+
+            '</article>';
 
     }, (error) => {
 
         console.error("❌ Firebase fout:", error);
 
-        container.innerHTML = `
-            <div class="empty-title">
-                ⚠️ Highlights konden niet worden geladen.
-            </div>
-        `;
+        container.innerHTML =
+            '<div class="empty-title">' +
+                '⚠️ Highlights konden niet worden geladen.' +
+            '</div>';
 
     });
 }
