@@ -1,3 +1,4 @@
+```javascript
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
@@ -19,13 +20,13 @@ onValue(ref(db, "highlights"), (snapshot) => {
         .map(([id, value]) => value)
         .filter(h => h && h.date);
 
-    // ================= FILTER: ALLEEN VANDAAG =================
+    // ================= FILTER: VANDAAG OF TOEKOMST =================
 
-    const todayItems = items.filter(h => h.date === today);
+    const upcomingItems = items.filter(h => h.date >= today);
 
     // ================= EMPTY STATE =================
 
-    if (todayItems.length === 0) {
+    if (upcomingItems.length === 0) {
         container.innerHTML = `
             <div style="
                 padding:15px;
@@ -33,28 +34,42 @@ onValue(ref(db, "highlights"), (snapshot) => {
                 color:gray;
                 font-style:italic;
             ">
-                🧡 Vandaag zijn er geen highlights uit het verleden
+                🧡 Er zijn geen komende highlights
             </div>
         `;
         return;
     }
 
-    // ================= SORT =================
+    // ================= SORT OP DATUM =================
 
-    todayItems.sort((a, b) => (b.created || 0) - (a.created || 0));
+    upcomingItems.sort((a, b) => {
+
+        // Eerstvolgende datum eerst
+        if (a.date !== b.date) {
+            return a.date.localeCompare(b.date);
+        }
+
+        // Bij dezelfde datum: nieuwste aangemaakte eerst
+        return (b.created || 0) - (a.created || 0);
+    });
+
+    // ================= EERSTVOLGENDE HIGHLIGHT =================
+
+    const nextHighlight = upcomingItems[0];
 
     // ================= RENDER =================
 
-    container.innerHTML = todayItems.map(h => `
+    container.innerHTML = `
         <div class="highlight">
 
-            <h3>${h.title || ""}</h3>
+            <h3>${nextHighlight.title || ""}</h3>
 
-            <small>📅 ${h.date || ""} | ⭐ ${h.type || ""}</small>
+            <small>📅 ${nextHighlight.date || ""} | ⭐ ${nextHighlight.type || ""}</small>
 
-            <p>${h.text || ""}</p>
+            <p>${nextHighlight.text || ""}</p>
 
         </div>
-    `).join("");
+    `;
 
 });
+```
