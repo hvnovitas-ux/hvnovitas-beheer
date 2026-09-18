@@ -1,9 +1,10 @@
+```javascript
 import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const container = document.getElementById("highlightsContainer");
 
-console.log("🏆 Highlights loaded");
+console.log("🏆 Highlights view loaded");
 
 // ================= FIREBASE =================
 
@@ -19,45 +20,58 @@ onValue(ref(db, "highlights"), (snapshot) => {
         .map(([id, value]) => value)
         .filter(h => h && h.date);
 
-    // ================= FILTER: ALLEEN VANDAAG =================
+    // ================= FILTER: VANDAAG OF TOEKOMST =================
 
-    const todayItems = items.filter(h => h.date === today);
+    const upcomingItems = items.filter(h => h.date >= today);
 
     // ================= EMPTY STATE =================
 
-    if (todayItems.length === 0) {
+    if (upcomingItems.length === 0) {
         container.innerHTML = `
             <div class="empty-title">
-                🧡 Vandaag zijn er geen highlights uit het verleden
+                🧡 Er zijn geen komende highlights
             </div>
         `;
         return;
     }
 
-    // ================= SORT =================
+    // ================= SORT OP DATUM =================
 
-    todayItems.sort((a, b) => (b.created || 0) - (a.created || 0));
+    upcomingItems.sort((a, b) => {
+
+        // Eerstvolgende datum eerst
+        if (a.date !== b.date) {
+            return a.date.localeCompare(b.date);
+        }
+
+        // Bij dezelfde datum: nieuwste eerst
+        return (b.created || 0) - (a.created || 0);
+    });
+
+    // ================= EERSTVOLGENDE HIGHLIGHT =================
+
+    const nextHighlight = upcomingItems[0];
 
     // ================= RENDER =================
 
-    container.innerHTML = todayItems.map(h => `
+    container.innerHTML = `
         <article class="item">
 
             <div class="date">
-                📅 ${escapeHTML(h.date || "")}
-                ${h.type ? ` | ⭐ ${escapeHTML(h.type)}` : ""}
+                📅 ${escapeHTML(nextHighlight.date || "")}
+                ${nextHighlight.type ? ` | ⭐ ${escapeHTML(nextHighlight.type)}` : ""}
             </div>
 
             <h2>
-                ${escapeHTML(h.title || "")}
+                ${escapeHTML(nextHighlight.title || "")}
             </h2>
 
             <p>
-                ${escapeHTML(h.text || "")}
+                ${escapeHTML(nextHighlight.text || "")}
             </p>
 
         </article>
-    `).join("");
+    `;
 
 });
 
@@ -71,3 +85,4 @@ function escapeHTML(value = "") {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+```
