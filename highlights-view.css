@@ -1,220 +1,163 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
 body {
-    margin: 0;
-    padding: 0;
-    background: transparent;
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #111;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #111;
 }
 
 .wrap {
-    width: 100%;
-    background: #fff;
+  width: 100%;
+  background: #fff;
 }
-
-/* ================= HOOFDBALK ================= */
 
 .bar {
-    min-height: 58px;
-    background: #ff6a00;
-    color: #fff;
-
-    display: flex;
-    align-items: center;
-
-    padding: 12px 22px;
-
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: .2px;
-    text-transform: uppercase;
+  min-height: 58px;
+  background: #ff6a00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 22px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  text-transform: uppercase;
 }
-
-/* ================= HIGHLIGHT VLAK ================= */
 
 .card {
-    position: relative;
-
-    background:
-        linear-gradient(
-            135deg,
-            #f8f8f8 0%,
-            #ffffff 100%
-        );
-
-    padding: 28px 28px 30px;
-
-    min-height: 210px;
-
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f7f7f7 0%, #fff 100%);
+  padding: 28px;
 }
-
-/* Grote subtiele achtergrondvorm */
 
 .card::after {
-    content: "";
-    position: absolute;
-
-    width: 240px;
-    height: 240px;
-
-    right: -100px;
-    top: -120px;
-
-    border-radius: 50%;
-
-    background: #fff1e8;
-
-    pointer-events: none;
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -120px;
+  top: -130px;
+  border-radius: 50%;
+  background: #fff1e8;
+  pointer-events: none;
 }
-
-/* ================= HARTJE WEG ================= */
-
-.icon {
-    display: none;
-}
-
-/* ================= CONTENT ================= */
 
 .copy {
-    position: relative;
-    z-index: 2;
-
-    width: 100%;
+  position: relative;
+  z-index: 2;
+  width: 100%;
 }
 
-/* ================= HIGHLIGHT ================= */
-
-.item {
-    position: relative;
-
-    margin: 0;
-    padding: 0 0 0 22px;
-
-    border: 0;
+.highlight-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 38%) 1fr;
+  min-height: 230px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .06);
 }
 
-/* Oranje verticale accentlijn */
-
-.item::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 2px;
-    bottom: 2px;
-
-    width: 5px;
-
-    background: #ff6a00;
+.highlight-image-wrap {
+  min-height: 230px;
+  background: #ececec;
 }
 
-/* ================= DATUM ================= */
+.highlight-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+  object-fit: cover;
+}
+
+.highlight-content {
+  padding: 28px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 .date {
-    display: inline-block;
-
-    margin: 0 0 9px;
-
-    padding: 5px 10px;
-
-    background: #ff6a00;
-    color: #fff;
-
-    font-size: 12px;
-    font-weight: 800;
-
-    letter-spacing: .5px;
-
-    text-transform: uppercase;
-
-    border-radius: 4px;
+  display: inline-block;
+  align-self: flex-start;
+  margin: 0 0 11px;
+  padding: 5px 10px;
+  background: #ff6a00;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .45px;
 }
 
-/* ================= TITEL ================= */
-
-.item h2 {
-    margin: 0 0 10px;
-
-    font-size: 29px;
-    line-height: 1.12;
-
-    font-weight: 800;
-
-    color: #111;
-
-    max-width: 800px;
+.highlight-content h1 {
+  margin: 0 0 10px;
+  font-size: 29px;
+  line-height: 1.12;
+  font-weight: 800;
 }
 
-/* ================= TEKST ================= */
-
-.item p {
-    margin: 0;
-
-    max-width: 780px;
-
-    font-size: 16px;
-    line-height: 1.55;
-
-    color: #4b5563;
+.highlight-content p {
+  margin: 0;
+  max-width: 760px;
+  color: #4b5563;
+  font-size: 16px;
+  line-height: 1.55;
+  white-space: pre-wrap;
 }
-
-/* ================= GEEN HIGHLIGHTS ================= */
 
 .empty-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: #111;
+  font-size: 20px;
+  font-weight: 800;
 }
 
 .empty-sub {
-    margin-top: 6px;
-    color: #6b7280;
-    font-size: 14px;
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 14px;
 }
 
-/* ================= MOBIEL ================= */
+@media (max-width: 700px) {
+  .bar {
+    padding: 11px 16px;
+    font-size: 18px;
+  }
 
-@media (max-width: 600px) {
+  .card {
+    padding: 16px;
+  }
 
-    .bar {
-        min-height: 52px;
-        padding: 10px 16px;
-        font-size: 18px;
-    }
+  .highlight-card {
+    grid-template-columns: 1fr;
+  }
 
-    .card {
-        padding: 22px 18px 24px;
-        min-height: 180px;
-    }
+  .highlight-image-wrap,
+  .highlight-image {
+    min-height: 190px;
+    height: 220px;
+  }
 
-    .item {
-        padding-left: 16px;
-    }
+  .highlight-content {
+    padding: 20px;
+  }
 
-    .item::before {
-        width: 4px;
-    }
+  .highlight-content h1 {
+    font-size: 24px;
+  }
 
-    .date {
-        font-size: 11px;
-        padding: 4px 8px;
-    }
-
-    .item h2 {
-        font-size: 23px;
-    }
-
-    .item p {
-        font-size: 14px;
-        line-height: 1.5;
-    }
+  .highlight-content p {
+    font-size: 15px;
+  }
 }

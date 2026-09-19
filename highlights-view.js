@@ -3,136 +3,116 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase
 
 const container = document.getElementById("highlightsContainer");
 
-console.log("🏆 highlights-view.js gestart");
+console.log("🏆 Highlights view geladen");
 
 if (!container) {
-    console.error("❌ highlightsContainer niet gevonden");
+  console.error("❌ highlightsContainer niet gevonden");
 } else {
+  onValue(
+    ref(db, "highlights"),
+    (snapshot) => {
+      const data = snapshot.val() || {};
+      const now = new Date();
+      const todayNumber = (now.getMonth() + 1) * 100 + now.getDate();
 
-    onValue(ref(db, "highlights"), (snapshot) => {
+      const items = Object.values(data)
+        .filter((h) => h && h.date)
+        .map((h) => {
+          const parts = String(h.date).split("-");
+          const month = Number(parts[1]);
+          const day = Number(parts[2]);
 
-        const data = snapshot.val() || {};
+          return {
+            ...h,
+            month,
+            day,
+            calendarNumber: month * 100 + day,
+          };
+        })
+        .filter(
+          (h) =>
+            Number.isInteger(h.month) &&
+            Number.isInteger(h.day) &&
+            h.month >= 1 &&
+            h.month <= 12 &&
+            h.day >= 1 &&
+            h.day <= 31
+        );
 
-        // ================= VANDAAG =================
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-title">Er zijn geen highlights</div>
+          <div class="empty-sub">Voeg een highlight toe via het CMS.</div>
+        `;
+        return;
+      }
 
-        const now = new Date();
-        const currentMonth = now.getMonth() + 1;
-        const currentDay = now.getDate();
+      // Zoek de eerstvolgende datum van het jaar.
+      let upcoming = items
+        .filter((h) => h.calendarNumber >= todayNumber)
+        .sort(compareHighlights);
 
-        // Dagnummer binnen het huidige jaar
-        const todayNumber = currentMonth * 100 + currentDay;
+      // Niets meer dit kalenderjaar? Dan terug naar de eerste highlight van het jaar.
+      if (upcoming.length === 0) {
+        upcoming = [...items].sort(compareHighlights);
+      }
 
-        // ================= ALLE HIGHLIGHTS =================
+      // Zelfde maand/dag: gebruik de laatst toegevoegde als eerste.
+      // Het systeem toont standaard één eerstvolgende highlight.
+      const highlight = upcoming[0];
 
-        const items = Object.values(data)
-            .filter(h => h && h.date)
-            .map(h => {
+      const imageHtml = highlight.imageUrl
+        ? `
+          <div class="highlight-image-wrap">
+            <img
+              class="highlight-image"
+              src="${escapeHTML(highlight.imageUrl)}"
+              alt="${escapeHTML(highlight.title || "HV Novitas highlight")}" 
+              loading="eager"
+            >
+          </div>
+        `
+        : "";
 
-                const parts = String(h.date).split("-");
+      container.innerHTML = `
+        <article class="highlight-card">
+          ${imageHtml}
 
-                const month = Number(parts[1]);
-                const day = Number(parts[2]);
+          <div class="highlight-content">
+            <div class="date">
+              📅 ${escapeHTML(highlight.date || "")}
+            </div>
 
-                return {
-                    ...h,
-                    month,
-                    day,
-                    calendarNumber: month * 100 + day
-                };
-            })
-            .filter(h =>
-                Number.isInteger(h.month) &&
-                Number.isInteger(h.day) &&
-                h.month >= 1 &&
-                h.month <= 12 &&
-                h.day >= 1 &&
-                h.day <= 31
-            );
+            <h1>${escapeHTML(highlight.title || "")}</h1>
 
-        // ================= EERSTVOLGENDE DATUM DIT JAAR =================
-
-        let upcomingItems = items
-            .filter(h => h.calendarNumber >= todayNumber)
-            .sort((a, b) => {
-                if (a.calendarNumber !== b.calendarNumber) {
-                    return a.calendarNumber - b.calendarNumber;
-                }
-
-                return (b.created || 0) - (a.created || 0);
-            });
-
-        // ================= ALS DIT JAAR NIETS MEER KOMT =================
-        // Dan beginnen we opnieuw bij de eerste highlight van het jaar.
-
-        if (upcomingItems.length === 0) {
-            upcomingItems = items
-                .sort((a, b) => {
-                    if (a.calendarNumber !== b.calendarNumber) {
-                        return a.calendarNumber - b.calendarNumber;
-                    }
-
-                    return (b.created || 0) - (a.created || 0);
-                });
-        }
-
-        // ================= GEEN HIGHLIGHTS =================
-
-        if (upcomingItems.length === 0) {
-            container.innerHTML =
-                '<div class="empty-title">' +
-                    '🧡 Er zijn geen highlights' +
-                '</div>';
-
-            return;
-        }
-
-        // ================= EERSTVOLGENDE =================
-
-        const h = upcomingItems[0];
-
-        const typeText = h.type
-            ? " | ⭐ " + escapeHTML(h.type)
-            : "";
-
-        // ================= WEERGAVE =================
-
-        container.innerHTML =
-            '<article class="item">' +
-
-                '<div class="date">' +
-                    '📅 ' + escapeHTML(h.date || "") +
-                    typeText +
-                '</div>' +
-
-                '<h2>' +
-                    escapeHTML(h.title || "") +
-                '</h2>' +
-
-                '<p>' +
-                    escapeHTML(h.text || "") +
-                '</p>' +
-
-            '</article>';
-
-    }, (error) => {
-
-        console.error("❌ Firebase fout:", error);
-
-        container.innerHTML =
-            '<div class="empty-title">' +
-                '⚠️ Highlights konden niet worden geladen.' +
-            '</div>';
-    });
+            <p>${escapeHTML(highlight.text || "")}</p>
+          </div>
+        </article>
+      `;
+    },
+    (error) => {
+      console.error("❌ Firebase fout bij highlights:", error);
+      container.innerHTML = `
+        <div class="empty-title">Highlights konden niet worden geladen.</div>
+        <div class="empty-sub">Probeer de pagina opnieuw te laden.</div>
+      `;
+    }
+  );
 }
 
+function compareHighlights(a, b) {
+  if (a.calendarNumber !== b.calendarNumber) {
+    return a.calendarNumber - b.calendarNumber;
+  }
 
-// ================= VEILIGE HTML =================
+  return Number(b.created || 0) - Number(a.created || 0);
+}
 
 function escapeHTML(value = "") {
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
