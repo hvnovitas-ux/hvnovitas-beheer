@@ -1,42 +1,568 @@
-<!-- HV NOVITAS EVENEMENTENBANNER -->
-<div class="novitas-evenementenbanner">
-    <iframe
-        src="https://hvnovitas-ux.github.io/hvnovitas-beheer/evenementenbanner-widget.html"
-        title="HV Novitas evenementenbanner"
-        width="100%"
-        height="200"
-        scrolling="no"
-        frameborder="0"
-        loading="lazy"
-        style="
-            display: block;
-            width: 100%;
-            height: 200px;
-            border: 0;
-            overflow: hidden;
-        ">
-    </iframe>
-</div>
+<!DOCTYPE html>
+<html lang="nl">
 
-<style>
-    .novitas-evenementenbanner {
-        display: block;
-        width: 100%;
-        height: 200px;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        border: 0;
-    }
+<head>
 
-    .novitas-evenementenbanner iframe {
-        display: block;
-        width: 100%;
-        height: 200px;
-        margin: 0;
-        padding: 0;
-        border: 0;
-        overflow: hidden;
-    }
-</style>
-<!-- EINDE HV NOVITAS EVENEMENTENBANNER -->
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <title>
+    HV Novitas – Evenementenbanner beheren
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="evenementenbanner.css">
+
+</head>
+
+
+<body>
+
+
+  <main class="page">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="header">
+
+      <div>
+
+        <div class="kicker">
+          HV NOVITAS CMS
+        </div>
+
+        <h1>
+          Evenementenbanner beheren
+        </h1>
+
+        <p>
+          Stel hier de banner in die op de website verschijnt.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        <a
+          class="back"
+          href="dashboard.html">
+
+          ← Terug naar dashboard
+
+        </a>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         LAYOUT
+         ===================================================== -->
+
+    <div class="layout">
+
+
+
+      <!-- ===================================================
+           INSTELLINGEN
+           =================================================== -->
+
+      <section class="panel">
+
+
+        <div class="panel-title">
+
+          <div>
+
+            <h2>
+              Bannerinstellingen
+            </h2>
+
+          </div>
+
+
+          <div
+            id="status"
+            class="pill neutral">
+
+            Laden...
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FORMULIER
+             ================================================= -->
+
+        <form id="eventForm">
+
+
+
+          <!-- ACTIEF -->
+
+          <label class="toggle-row">
+
+            <input
+              id="active"
+              type="checkbox">
+
+            <span>
+
+              <strong>
+                Banner actief
+              </strong>
+
+              <small>
+                De banner wordt alleen getoond wanneer
+                de banner actief is én binnen de ingestelde
+                zichtbaarheidperiode valt.
+              </small>
+
+            </span>
+
+          </label>
+
+
+
+          <!-- TITEL -->
+
+          <label>
+
+            Titel
+
+            <input
+              id="title"
+              type="text"
+              placeholder="Bijvoorbeeld: Muziek Bingo"
+              autocomplete="off">
+
+          </label>
+
+
+
+          <!-- BOVENREGEL -->
+
+          <label>
+
+            Bovenregel
+
+            <input
+              id="eyebrow"
+              type="text"
+              placeholder="HV NOVITAS PRESENTEERT"
+              autocomplete="off">
+
+          </label>
+
+
+
+          <!-- DATUM + TIJD -->
+
+          <div class="two">
+
+
+            <label>
+
+              Datumtekst
+
+              <input
+                id="dateText"
+                type="text"
+                placeholder="Zaterdag 28 november 2026">
+
+            </label>
+
+
+
+            <label>
+
+              Tijdtekst
+
+              <input
+                id="timeText"
+                type="text"
+                placeholder="19.00 uur">
+
+            </label>
+
+
+          </div>
+
+
+
+          <!-- LOCATIE -->
+
+          <label>
+
+            Locatie
+
+            <input
+              id="location"
+              type="text"
+              placeholder="Den Dullaert"
+              autocomplete="off">
+
+          </label>
+
+
+
+          <!-- LINK -->
+
+          <label>
+
+            Link
+
+            <input
+              id="link"
+              type="url"
+              placeholder="https://www.hvnovitas.nl/..."
+              inputmode="url">
+
+            <small>
+
+              Optioneel.
+              Wanneer hier een link staat wordt
+              de volledige banner klikbaar.
+
+            </small>
+
+          </label>
+
+
+
+          <!-- ZICHTBAARHEID -->
+
+          <div class="two">
+
+
+            <label>
+
+              Zichtbaar vanaf
+
+              <input
+                id="start"
+                type="datetime-local">
+
+            </label>
+
+
+
+            <label>
+
+              Zichtbaar tot
+
+              <input
+                id="end"
+                type="datetime-local">
+
+            </label>
+
+
+          </div>
+
+
+
+          <!-- ACTIES -->
+
+          <div class="actions">
+
+
+            <button
+              type="submit"
+              class="primary">
+
+              Banner opslaan
+
+            </button>
+
+
+
+            <button
+              type="button"
+              id="previewBtn"
+              class="secondary">
+
+              Naar voorbeeld
+
+            </button>
+
+
+
+            <button
+              type="button"
+              id="clearBtn"
+              class="danger">
+
+              Banner leegmaken
+
+            </button>
+
+
+          </div>
+
+
+
+          <p class="note">
+
+            De vormgeving van de banner wordt automatisch
+            door HV Novitas bepaald. Hier vul je alleen de
+            gegevens van het evenement in.
+
+          </p>
+
+
+        </form>
+
+
+      </section>
+
+
+
+      <!-- ===================================================
+           VOORBEELD
+           =================================================== -->
+
+      <section
+        class="panel"
+        id="previewPanel">
+
+
+        <div class="panel-title">
+
+
+          <div>
+
+            <h2>
+              Voorbeeld
+            </h2>
+
+            <p class="note">
+
+              Het voorbeeld verandert automatisch
+              wanneer je de gegevens aanpast.
+
+            </p>
+
+          </div>
+
+
+          <div class="pill">
+
+            Voorbeeld
+
+          </div>
+
+
+        </div>
+
+
+
+        <div id="preview">
+
+
+          <!-- ===============================================
+               BANNER VOORBEELD
+               =============================================== -->
+
+          <section class="event-banner">
+
+
+            <!-- DECORATIE -->
+
+            <div
+              class="art"
+              aria-hidden="true">
+
+
+              <span class="music one">
+                ♪
+              </span>
+
+
+              <span class="music two">
+                ♫
+              </span>
+
+
+              <span class="ball left">
+                5
+              </span>
+
+
+              <span class="ball mid">
+                17
+              </span>
+
+
+              <span class="ball right">
+                28
+              </span>
+
+
+              <div class="bingo">
+
+                BINGO
+
+                <br>
+
+                <small>
+                  ★ ★ ★
+                </small>
+
+              </div>
+
+
+            </div>
+
+
+
+            <!-- INHOUD -->
+
+            <div class="content">
+
+
+              <div
+                id="previewEyebrow"
+                class="eyebrow">
+
+                HV NOVITAS PRESENTEERT
+
+              </div>
+
+
+
+              <div
+                id="previewTitle"
+                class="title">
+
+                MUZIEK
+                <strong>BINGO</strong>
+
+              </div>
+
+
+
+              <div class="rule"></div>
+
+
+
+              <div class="details">
+
+
+                <span id="previewDate">
+
+                  DATUM
+
+                </span>
+
+
+                <i>
+                  •
+                </i>
+
+
+                <span id="previewTime">
+
+                  TIJD
+
+                </span>
+
+
+                <i>
+                  •
+                </i>
+
+
+                <span id="previewLocation">
+
+                  LOCATIE
+
+                </span>
+
+
+              </div>
+
+
+            </div>
+
+
+          </section>
+
+
+        </div>
+
+
+      </section>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         UITLEG
+         ===================================================== -->
+
+    <section class="panel guidance">
+
+
+      <b>
+        Gebruik
+      </b>
+
+
+      <p>
+
+        Zet de banner aan, vul de gegevens in,
+        stel de begin- en eindtijd in en klik daarna
+        op <strong>Banner opslaan</strong>.
+
+      </p>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =======================================================
+       MELDINGEN
+       ======================================================= -->
+
+  <div
+    id="message"
+    class="message"
+    aria-live="polite">
+
+  </div>
+
+
+
+  <!-- =======================================================
+       JAVASCRIPT
+       ======================================================= -->
+
+  <script
+    type="module"
+    src="evenementenbanner.js">
+  </script>
+
+
+</body>
+
+</html>
