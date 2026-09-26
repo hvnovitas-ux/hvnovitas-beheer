@@ -11,14 +11,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 
-console.log(
-    "⭐ Sponsor van de Week geladen"
-);
-
-
-// =====================================================
-// ELEMENT
-// =====================================================
+/* =====================================================
+   ELEMENT
+===================================================== */
 
 const content =
     document.getElementById(
@@ -26,18 +21,13 @@ const content =
     );
 
 
-// =====================================================
-// SPONSOR VAN DE WEEK LADEN
-// =====================================================
+/* =====================================================
+   SPONSOR VAN DE WEEK LADEN
+===================================================== */
 
 async function loadSponsorOfTheWeek() {
 
     try {
-
-        console.log(
-            "🔄 Sponsors ophalen..."
-        );
-
 
         // ---------------------------------------------
         // FIREBASE
@@ -85,15 +75,11 @@ async function loadSponsorOfTheWeek() {
 
                 }))
 
-
-                // Alleen actieve sponsors
                 .filter(
                     sponsor =>
                         sponsor.active
                 )
 
-
-                // Alleen sponsors met logo
                 .filter(
                     sponsor =>
                         sponsor.imageUrl
@@ -107,23 +93,13 @@ async function loadSponsorOfTheWeek() {
         if (sponsors.length === 0) {
 
             content.innerHTML = `
-
                 <div class="error">
-
                     Geen sponsors beschikbaar.
-
                 </div>
-
             `;
 
             return;
-
         }
-
-
-        console.log(
-            `✅ ${sponsors.length} sponsors gevonden`
-        );
 
 
         // ---------------------------------------------
@@ -134,12 +110,6 @@ async function loadSponsorOfTheWeek() {
             getSponsorForCurrentWeek(
                 sponsors
             );
-
-
-        console.log(
-            "⭐ Sponsor van deze week:",
-            sponsor.name
-        );
 
 
         // ---------------------------------------------
@@ -154,19 +124,14 @@ async function loadSponsorOfTheWeek() {
     } catch (error) {
 
         console.error(
-            "❌ Fout bij Sponsor van de Week:",
+            "Fout bij Sponsor van de Week:",
             error
         );
 
-
         content.innerHTML = `
-
             <div class="error">
-
                 Sponsor kon niet worden geladen.
-
             </div>
-
         `;
 
     }
@@ -174,60 +139,33 @@ async function loadSponsorOfTheWeek() {
 }
 
 
-// =====================================================
-// AUTOMATISCHE SPONSORSELECTIE
-// =====================================================
-//
-// De week bepaalt automatisch welke sponsor aan de beurt is.
-//
-// Week 1  → sponsor 1
-// Week 2  → sponsor 2
-// Week 3  → sponsor 3
-// enz.
-//
-// Na de laatste sponsor begint de cyclus opnieuw.
-//
-// =====================================================
+/* =====================================================
+   AUTOMATISCHE SPONSORSELECTIE
+===================================================== */
 
 function getSponsorForCurrentWeek(
     sponsors
 ) {
 
-    // ---------------------------------------------
-    // HUIDIGE DATUM
-    // ---------------------------------------------
-
     const today =
         new Date();
-
-
-    // ---------------------------------------------
-    // WEEKNUMMER
-    // ---------------------------------------------
 
     const weekNumber =
         getISOWeekNumber(
             today
         );
 
-
-    // ---------------------------------------------
-    // INDEX BEREKENEN
-    // ---------------------------------------------
-
     const index =
         (weekNumber - 1) %
         sponsors.length;
 
-
     return sponsors[index];
-
 }
 
 
-// =====================================================
-// ISO WEEKNUMMER
-// =====================================================
+/* =====================================================
+   ISO WEEKNUMMER
+===================================================== */
 
 function getISOWeekNumber(
     date
@@ -242,17 +180,14 @@ function getISOWeekNumber(
             )
         );
 
-
     const day =
         tempDate.getUTCDay() || 7;
-
 
     tempDate.setUTCDate(
         tempDate.getUTCDate() +
         4 -
         day
     );
-
 
     const yearStart =
         new Date(
@@ -262,7 +197,6 @@ function getISOWeekNumber(
                 1
             )
         );
-
 
     return Math.ceil(
 
@@ -280,9 +214,9 @@ function getISOWeekNumber(
 }
 
 
-// =====================================================
-// SPONSOR TONEN
-// =====================================================
+/* =====================================================
+   SPONSOR TONEN
+===================================================== */
 
 function renderSponsor(
     sponsor
@@ -346,7 +280,6 @@ function renderSponsor(
         `;
 
         return;
-
     }
 
 
@@ -379,75 +312,58 @@ function renderSponsor(
 }
 
 
-// =====================================================
-// URL NORMALISEREN
-// =====================================================
+/* =====================================================
+   URL NORMALISEREN
+===================================================== */
 
 function normalizeUrl(
     url
 ) {
 
     if (!url) {
-
         return "";
-
     }
-
 
     url =
         String(url).trim();
 
-
     if (!url) {
-
         return "";
-
     }
-
 
     if (
         url.startsWith("https://") ||
         url.startsWith("http://")
     ) {
-
         return url;
-
     }
-
 
     if (
         url.startsWith("www.")
     ) {
-
         return (
             "https://" +
             url
         );
-
     }
-
 
     if (
         url.includes(".") &&
         !url.includes(" ")
     ) {
-
         return (
             "https://" +
             url
         );
-
     }
 
-
     return "";
-
 }
 
 
-// =====================================================
-// HTML VEILIG MAKEN
-// =====================================================
+/* =====================================================
+   HTML VEILIG MAKEN
+===================================================== */
 
 function escapeHtml(
     value
@@ -483,9 +399,9 @@ function escapeHtml(
 }
 
 
-// =====================================================
-// ATTRIBUTE VEILIG MAKEN
-// =====================================================
+/* =====================================================
+   ATTRIBUTE VEILIG MAKEN
+===================================================== */
 
 function escapeAttribute(
     value
@@ -498,9 +414,9 @@ function escapeAttribute(
 }
 
 
-// =====================================================
-// START
-// =====================================================
+/* =====================================================
+   START
+===================================================== */
 
 window.addEventListener(
     "DOMContentLoaded",
