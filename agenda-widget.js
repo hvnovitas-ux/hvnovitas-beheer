@@ -1,63 +1,48 @@
-/* =========================================================
-   HV NOVITAS AGENDA WIDGET
-   Google Agenda als bron
-   Alleen vandaag t/m 14 dagen vooruit
-   Alleen dagen waarop iets staat
-   ========================================================= */
-
 import ICAL from "https://cdn.jsdelivr.net/npm/ical.js@2.2.1/+esm";
 
 
-/* =========================================================
+/* =====================================================
    INSTELLINGEN
-   ========================================================= */
-
-/*
-   Dit wordt de URL van de Cloudflare Worker die
-   de openbare Google iCal-feed doorgeeft.
-
-   VOORBEELD:
-   https://hvnovitas-agenda-feed.workers.dev
-*/
+   ===================================================== */
 
 const FEED_URL =
-  "https://HV-NOVITAS-AGENDA-FEED.workers.dev";
+  "https://JOUW-WORKER-URL.workers.dev/";
+
+const DAYS_AHEAD =
+  14;
 
 
-const DAYS_AHEAD = 14;
-
-
-/* =========================================================
+/* =====================================================
    ELEMENTEN
-   ========================================================= */
+   ===================================================== */
 
-const agendaList =
+const statusElement =
+  document.getElementById(
+    "agendaStatus"
+  );
+
+const listElement =
   document.getElementById(
     "agendaList"
   );
 
 
-const agendaStatus =
-  document.getElementById(
-    "agendaStatus"
-  );
-
-
-/* =========================================================
+/* =====================================================
    START
-   ========================================================= */
+   ===================================================== */
 
 loadAgenda();
 
 
-/* =========================================================
+/* =====================================================
    AGENDA LADEN
-   ========================================================= */
+   ===================================================== */
 
 async function loadAgenda() {
 
   setStatus(
-    "Agenda laden..."
+    "Agenda laden...",
+    ""
   );
 
 
@@ -65,10 +50,13 @@ async function loadAgenda() {
 
     const response =
       await fetch(
-        `${FEED_URL}?v=${Date.now()}`,
+        FEED_URL,
         {
-          method: "GET",
-          cache: "no-store"
+          method:
+            "GET",
+
+          cache:
+            "no-store"
         }
       );
 
@@ -76,7 +64,7 @@ async function loadAgenda() {
     if (!response.ok) {
 
       throw new Error(
-        `Agenda-feed gaf HTTP ${response.status}.`
+        `Agenda-server gaf HTTP ${response.status}`
       );
 
     }
@@ -94,33 +82,56 @@ async function loadAgenda() {
     ) {
 
       throw new Error(
-        "De ontvangen agenda-feed is geen geldige iCal-feed."
+        "Ongeldige agenda ontvangen."
       );
 
     }
 
 
-    const events =
+    const groups =
       parseCalendar(
         icsText
       );
 
 
     renderAgenda(
-      events
+      groups
     );
 
-
-  } catch (error) {
+  }
+  catch (error) {
 
     console.error(
-      "Agenda laden mislukt:",
+      "Agenda fout:",
       error
     );
 
 
-    renderError(
-      "De agenda kon momenteel niet worden geladen."
+    listElement.innerHTML = "";
+
+
+    const errorElement =
+      document.createElement(
+        "div"
+      );
+
+
+    errorElement.className =
+      "agenda-empty";
+
+
+    errorElement.textContent =
+      "De agenda kan op dit moment niet worden geladen.";
+
+
+    listElement.appendChild(
+      errorElement
+    );
+
+
+    setStatus(
+      "Agenda niet beschikbaar.",
+      "error"
     );
 
   }
@@ -128,167 +139,212 @@ async function loadAgenda() {
 }
 
 
-/* =========================================================
-   ICS PARSEN
-   ========================================================= */
+/* =====================================================
+   ICS VERWERKEN
+   ===================================================== */
 
 function parseCalendar(
   icsText
 ) {
 
-  const jcal =
+  const parsed =
     ICAL.parse(
       icsText
     );
 
 
-  const calendar =
+  const component =
     new ICAL.Component(
-      jcal
+      parsed
     );
 
 
-  const components =
-    calendar.getAllSubcomponents(
+  const vevents =
+    component.getAllSubcomponents(
       "vevent"
     );
 
 
-  const rangeStart =
-    new Date();
+  const today =
+    startOfDay(
+      new Date()
+    );
 
 
-  rangeStart.setHours(
-    0,
-    0,
-    0,
-    0
+  const endDate =
+    new Date(
+      today
+    );
+
+  endDate.setDate(
+    endDate.getDate() +
+      DAYS_AHEAD
   );
 
 
+  const rangeStart =
+    ICAL.Time.fromJSDate(
+      today,
+      true
+    );
+
+
   const rangeEnd =
-    new Date(
+    ICAL.Time.fromJSDate(
+      endDate,
+      true
+    );
+
+
+  const groups =
+    new Map();
+
+
+  for (
+    const vevent
+    of vevents
+  ) {
+
+    try {
+
+      const event =
+        new ICAL.Event(
+          vevent
+        );
+
+
+      if (
+        event.isRecurring()
+      ) {
+
+        processRecurringEvent(
+          event,
+          rangeStart,
+          rangeEnd,
+          today,
+          endDate,
+          groups
+        );
+
+      }
+      else {
+
+        processSingleEvent(
+          event,
+          today,
+          endDate,
+          groups
+        );
+
+      }
+
+    }
+    catch (
+      eventError
+    ) {
+
+      console.warn(
+        "Agenda-item overgeslagen:",
+        eventError
+      );
+
+    }
+
+  }
+
+
+  return groups;
+
+}
+
+
+/* =====================================================
+   EENMALIG EVENT
+   ===================================================== */
+
+function processSingleEvent(
+  event,
+  today,
+  endDate,
+  groups
+) {
+
+  if (
+    !event.startDate
+  ) {
+
+    return;
+
+  }
+
+
+  const start =
+    event.startDate.toJSDate();
+
+
+  if (
+    start < today ||
+    start >= endDate
+  ) {
+
+    return;
+
+  }
+
+
+  addEvent(
+    event,
+    start,
+    event.endDate
+      ? event.endDate.toJSDate()
+      : null,
+    groups
+  );
+
+}
+
+
+/* =====================================================
+   TERUGKEREND EVENT
+   ===================================================== */
+
+function processRecurringEvent(
+  event,
+  rangeStart,
+  rangeEnd,
+  today,
+  endDate,
+  groups
+) {
+
+  const iterator =
+    event.iterator(
       rangeStart
     );
 
 
-  rangeEnd.setDate(
-    rangeEnd.getDate() +
-    DAYS_AHEAD
-  );
+  let next;
 
 
-  const results = [];
-
-
-  components.forEach(
-    component => {
-
-      try {
-
-        const event =
-          new ICAL.Event(
-            component
-          );
-
-
-        if (
-          !event.startDate
-        ) {
-
-          return;
-
-        }
-
-
-        if (
-          event.isRecurring()
-        ) {
-
-          expandRecurringEvent(
-            event,
-            rangeStart,
-            rangeEnd,
-            results
-          );
-
-        } else {
-
-          addSingleEvent(
-            event,
-            event.startDate,
-            event.endDate,
-            rangeStart,
-            rangeEnd,
-            results
-          );
-
-        }
-
-      } catch (error) {
-
-        console.warn(
-          "Agenda-item kon niet worden verwerkt:",
-          error
-        );
-
-      }
-
-    }
-  );
-
-
-  return results;
-
-}
-
-
-/* =========================================================
-   TERUGKERENDE ACTIVITEIT
-   ========================================================= */
-
-function expandRecurringEvent(
-  event,
-  rangeStart,
-  rangeEnd,
-  results
-) {
-
-  const iterator =
-    event.iterator();
-
-
-  let count =
+  let guard =
     0;
 
 
-  const MAX_INSTANCES =
-    500;
-
-
   while (
-    count <
-    MAX_INSTANCES
+    guard < 1000 &&
+    (
+      next =
+        iterator.next()
+    )
   ) {
 
-    const occurrence =
-      iterator.next();
-
-
-    if (!occurrence) {
-
-      break;
-
-    }
-
-
-    const startDate =
-      occurrence.toJSDate();
+    guard++;
 
 
     if (
-      startDate >
-      rangeEnd
+      next.compare(
+        rangeEnd
+      ) >= 0
     ) {
 
       break;
@@ -296,102 +352,110 @@ function expandRecurringEvent(
     }
 
 
+    const details =
+      event.getOccurrenceDetails(
+        next
+      );
+
+
     if (
-      startDate >=
-      rangeStart
+      !details ||
+      !details.startDate
     ) {
 
-      try {
-
-        const details =
-          event.getOccurrenceDetails(
-            occurrence
-          );
-
-
-        addSingleEvent(
-          event,
-          details.startDate,
-          details.endDate,
-          rangeStart,
-          rangeEnd,
-          results
-        );
-
-      } catch (error) {
-
-        console.warn(
-          "Terugkerende gebeurtenis kon niet worden toegevoegd:",
-          error
-        );
-
-      }
+      continue;
 
     }
 
 
-    count++;
+    const start =
+      details.startDate.toJSDate();
+
+
+    if (
+      start < today ||
+      start >= endDate
+    ) {
+
+      continue;
+
+    }
+
+
+    const end =
+      details.endDate
+        ? details.endDate.toJSDate()
+        : null;
+
+
+    addOccurrence(
+      event,
+      details,
+      start,
+      end,
+      groups
+    );
 
   }
 
 }
 
 
-/* =========================================================
-   ENKELE ACTIVITEIT
-   ========================================================= */
+/* =====================================================
+   EVENT TOEVOEGEN
+   ===================================================== */
 
-function addSingleEvent(
+function addEvent(
   event,
-  startValue,
-  endValue,
-  rangeStart,
-  rangeEnd,
-  results
+  start,
+  end,
+  groups
 ) {
 
-  if (!startValue) {
+  addOccurrence(
+    event,
+    {
+      item:
+        event.component,
 
-    return;
+      startDate:
+        event.startDate,
 
-  }
+      endDate:
+        event.endDate
+    },
+    start,
+    end,
+    groups
+  );
 
-
-  const startDate =
-    startValue.toJSDate();
-
-
-  const endDate =
-    endValue
-      ? endValue.toJSDate()
-      : new Date(
-          startDate.getTime()
-        );
-
-
-  if (
-    endDate <
-    rangeStart
-  ) {
-
-    return;
-
-  }
+}
 
 
-  if (
-    startDate >
-    rangeEnd
-  ) {
+/* =====================================================
+   OCCURRENCE TOEVOEGEN
+   ===================================================== */
 
-    return;
+function addOccurrence(
+  event,
+  details,
+  start,
+  end,
+  groups
+) {
 
-  }
+  const dateKey =
+    getDateKey(
+      start
+    );
 
 
-  const summary =
+  const title =
     cleanText(
       event.summary ||
+      details.item?.getFirstPropertyValue(
+        "summary"
+      ) ||
       "Activiteit"
     );
 
@@ -399,323 +463,296 @@ function addSingleEvent(
   const location =
     cleanText(
       event.location ||
+      details.item?.getFirstPropertyValue(
+        "location"
+      ) ||
       ""
     );
 
 
-  results.push({
+  const isAllDay =
+    details.startDate &&
+    details.startDate.isDate;
 
-    id:
-      event.uid ||
-      `${startDate.getTime()}-${summary}`,
 
-    start:
-      startDate,
+  const item = {
 
-    end:
-      endDate,
-
-    summary,
+    title,
 
     location,
 
-    allDay:
-      Boolean(
-        startValue.isDate
+    start,
+
+    end,
+
+    isAllDay,
+
+    type:
+      getEventType(
+        title
       )
 
-  });
-
-}
-
-
-/* =========================================================
-   TEKST OPSCHONEN
-   ========================================================= */
-
-function cleanText(
-  value
-) {
-
-  return String(
-    value || ""
-  )
-    .replace(
-      /\\,/g,
-      ","
-    )
-    .replace(
-      /\\;/g,
-      ";"
-    )
-    .replace(
-      /\\n/g,
-      " "
-    )
-    .replace(
-      /\\\\/g,
-      "\\"
-    )
-    .replace(
-      /\s+/g,
-      " "
-    )
-    .trim();
-
-}
-
-
-/* =========================================================
-   DUBBELE ITEMS VERWIJDEREN
-   ========================================================= */
-
-function uniqueEvents(
-  events
-) {
-
-  const seen =
-    new Set();
-
-
-  return events.filter(
-    event => {
-
-      const key =
-        [
-          event.id,
-          event.start.getTime(),
-          event.end.getTime()
-        ]
-          .join(
-            "|"
-          );
-
-
-      if (
-        seen.has(key)
-      ) {
-
-        return false;
-
-      }
-
-
-      seen.add(key);
-
-      return true;
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   AGENDA RENDEREN
-   ========================================================= */
-
-function renderAgenda(
-  sourceEvents
-) {
-
-  const events =
-    uniqueEvents(
-      sourceEvents
-    );
-
-
-  events.sort(
-    (a, b) =>
-      a.start.getTime() -
-      b.start.getTime()
-  );
-
-
-  agendaList.replaceChildren();
+  };
 
 
   if (
-    events.length === 0
+    !groups.has(
+      dateKey
+    )
   ) {
 
-    setStatus(
-      "Geen activiteiten in de komende 14 dagen."
+    groups.set(
+      dateKey,
+      []
+    );
+
+  }
+
+
+  const existing =
+    groups.get(
+      dateKey
     );
 
 
-    renderEmpty();
+  const duplicate =
+    existing.some(
+      entry =>
+        entry.title ===
+          item.title &&
+        entry.start.getTime() ===
+          item.start.getTime()
+    );
+
+
+  if (
+    !duplicate
+  ) {
+
+    existing.push(
+      item
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   EVENT TYPE
+   ===================================================== */
+
+function getEventType(
+  title
+) {
+
+  const normalized =
+    title.toLowerCase();
+
+
+  if (
+    normalized.includes(
+      "training"
+    ) ||
+    normalized.includes(
+      "trainen"
+    )
+  ) {
+
+    return "training";
+
+  }
+
+
+  if (
+    normalized.includes(
+      "wedstrijd"
+    ) ||
+    normalized.includes(
+      "competitie"
+    ) ||
+    normalized.includes(
+      "toernooi"
+    ) ||
+    normalized.includes(
+      "novitas"
+    )
+  ) {
+
+    return "match";
+
+  }
+
+
+  return "other";
+
+}
+
+
+/* =====================================================
+   RENDEREN
+   ===================================================== */
+
+function renderAgenda(
+  groups
+) {
+
+  listElement.innerHTML = "";
+
+
+  if (
+    groups.size === 0
+  ) {
+
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+
+    empty.className =
+      "agenda-empty";
+
+
+    empty.textContent =
+      "Er staan de komende 14 dagen geen activiteiten in de agenda.";
+
+
+    listElement.appendChild(
+      empty
+    );
+
+
+    setStatus(
+      "Geen activiteiten de komende 14 dagen.",
+      "success"
+    );
+
 
     return;
 
   }
 
 
-  const grouped =
-    groupByDate(
-      events
+  const sortedDays =
+    Array.from(
+      groups.entries()
+    ).sort(
+      (
+        a,
+        b
+      ) =>
+        a[0].localeCompare(
+          b[0]
+        )
     );
 
 
+  let totalEvents =
+    0;
+
+
+  for (
+    const [
+      dateKey,
+      events
+    ]
+    of sortedDays
+  ) {
+
+    events.sort(
+      (
+        a,
+        b
+      ) =>
+        a.start -
+        b.start
+    );
+
+
+    totalEvents +=
+      events.length;
+
+
+    const dayElement =
+      createDayElement(
+        dateKey,
+        events
+      );
+
+
+    listElement.appendChild(
+      dayElement
+    );
+
+  }
+
+
   setStatus(
-    ""
-  );
-
-
-  agendaStatus.hidden =
-    true;
-
-
-  Object.entries(
-    grouped
-  ).forEach(
-    ([dateKey, dayEvents]) => {
-
-      agendaList.append(
-        createDayCard(
-          dateKey,
-          dayEvents
-        )
-      );
-
-    }
+    `${totalEvents} activiteit${totalEvents === 1 ? "" : "en"} gevonden.`,
+    "success"
   );
 
 }
 
 
-/* =========================================================
-   GROEPEREN PER DAG
-   ========================================================= */
+/* =====================================================
+   DAG ELEMENT
+   ===================================================== */
 
-function groupByDate(
-  events
-) {
-
-  const grouped = {};
-
-
-  events.forEach(
-    event => {
-
-      const key =
-        dateKey(
-          event.start
-        );
-
-
-      if (
-        !grouped[key]
-      ) {
-
-        grouped[key] =
-          [];
-
-      }
-
-
-      grouped[key].push(
-        event
-      );
-
-    }
-  );
-
-
-  return grouped;
-
-}
-
-
-/* =========================================================
-   DATUMSLEUTEL
-   ========================================================= */
-
-function dateKey(
-  date
-) {
-
-  const year =
-    date.getFullYear();
-
-
-  const month =
-    String(
-      date.getMonth() + 1
-    )
-      .padStart(
-        2,
-        "0"
-      );
-
-
-  const day =
-    String(
-      date.getDate()
-    )
-      .padStart(
-        2,
-        "0"
-      );
-
-
-  return `${year}-${month}-${day}`;
-
-}
-
-
-/* =========================================================
-   DAGKAART
-   ========================================================= */
-
-function createDayCard(
-  dateKeyValue,
+function createDayElement(
+  dateKey,
   events
 ) {
 
   const date =
     parseDateKey(
-      dateKeyValue
+      dateKey
     );
 
 
-  const article =
+  const day =
     document.createElement(
-      "article"
+      "section"
     );
 
 
-  article.className =
+  day.className =
     "agenda-day";
 
 
-  /* =======================================================
-     DATUM
-     ======================================================= */
+  const header =
+    document.createElement(
+      "header"
+    );
 
-  const dateElement =
+
+  header.className =
+    "agenda-day-header";
+
+
+  const dateBlock =
     document.createElement(
       "div"
     );
 
 
-  dateElement.className =
+  dateBlock.className =
     "agenda-date";
 
 
-  const dayNumber =
+  const number =
     document.createElement(
       "div"
     );
 
 
-  dayNumber.className =
-    "agenda-day-number";
+  number.className =
+    "agenda-date-number";
 
 
-  dayNumber.textContent =
-    String(
-      date.getDate()
-    );
+  number.textContent =
+    date.getDate();
 
 
   const month =
@@ -725,7 +762,7 @@ function createDayCard(
 
 
   month.className =
-    "agenda-month";
+    "agenda-date-month";
 
 
   month.textContent =
@@ -733,17 +770,27 @@ function createDayCard(
       "nl-NL",
       {
         month:
-          "short"
+          "long"
       }
-    )
-      .format(
-        date
-      )
-      .replace(
-        ".",
-        ""
-      )
-      .toUpperCase();
+    ).format(
+      date
+    );
+
+
+  dateBlock.append(
+    number,
+    month
+  );
+
+
+  const titleBlock =
+    document.createElement(
+      "div"
+    );
+
+
+  titleBlock.className =
+    "agenda-day-title";
 
 
   const weekday =
@@ -761,90 +808,91 @@ function createDayCard(
       "nl-NL",
       {
         weekday:
-          "short"
+          "long"
       }
-    )
-      .format(
-        date
-      )
-      .replace(
-        ".",
-        ""
-      )
-      .toUpperCase();
+    ).format(
+      date
+    );
 
 
-  dateElement.append(
-    dayNumber,
-    month,
-    weekday
-  );
-
-
-  /* =======================================================
-     EVENTS
-     ======================================================= */
-
-  const eventList =
+  const fullDate =
     document.createElement(
       "div"
     );
 
 
-  eventList.className =
-    "agenda-events";
+  fullDate.className =
+    "agenda-full-date";
 
 
-  events.forEach(
-    event => {
+  fullDate.textContent =
+    new Intl.DateTimeFormat(
+      "nl-NL",
+      {
+        day:
+          "numeric",
 
-      eventList.append(
-        createEventRow(
-          event
-        )
-      );
+        month:
+          "long"
+      }
+    ).format(
+      date
+    );
 
-    }
+
+  titleBlock.append(
+    weekday,
+    fullDate
   );
 
 
-  article.append(
-    dateElement,
-    eventList
+  header.append(
+    dateBlock,
+    titleBlock
   );
 
 
-  return article;
+  day.appendChild(
+    header
+  );
+
+
+  for (
+    const event
+    of events
+  ) {
+
+    day.appendChild(
+      createEventElement(
+        event
+      )
+    );
+
+  }
+
+
+  return day;
 
 }
 
 
-/* =========================================================
-   EVENT RIJ
-   ========================================================= */
+/* =====================================================
+   EVENT ELEMENT
+   ===================================================== */
 
-function createEventRow(
+function createEventElement(
   event
 ) {
 
-  const row =
+  const article =
     document.createElement(
-      "div"
+      "article"
     );
 
 
-  row.className =
-    "agenda-event " +
-    (
-      isTraining(
-        event.summary
-      )
-        ? "training"
-        : "match"
-    );
+  article.className =
+    `agenda-event ${event.type}`;
 
-
-  /* PUNT */
 
   const dot =
     document.createElement(
@@ -853,7 +901,7 @@ function createEventRow(
 
 
   dot.className =
-    "agenda-dot";
+    "agenda-event-dot";
 
 
   dot.setAttribute(
@@ -862,8 +910,6 @@ function createEventRow(
   );
 
 
-  /* TIJD */
-
   const time =
     document.createElement(
       "div"
@@ -871,37 +917,23 @@ function createEventRow(
 
 
   time.className =
-    "agenda-time";
+    "agenda-event-time";
 
 
-  if (
-    event.allDay
-  ) {
-
-    time.textContent =
-      "Hele dag";
-
-  } else {
-
-    time.textContent =
-      formatTimeRange(
-        event.start,
-        event.end
-      );
-
-  }
+  time.textContent =
+    formatTime(
+      event
+    );
 
 
-  /* INHOUD */
-
-  const content =
+  const main =
     document.createElement(
       "div"
     );
 
 
-  content.className =
-    "agenda-event-content";
+  main.className =
+    "agenda-event-main";
 
 
   const title =
@@ -915,10 +947,10 @@ function createEventRow(
 
 
   title.textContent =
-    event.summary;
+    event.title;
 
 
-  content.append(
+  main.appendChild(
     title
   );
 
@@ -946,97 +978,74 @@ function createEventRow(
     icon.className =
       "agenda-location-icon";
 
-
     icon.textContent =
-      "●";
+      "📍";
 
 
-    const locationText =
+    const text =
       document.createElement(
         "span"
       );
 
 
-    locationText.textContent =
+    text.textContent =
       event.location;
 
 
     location.append(
       icon,
-      locationText
+      text
     );
 
 
-    content.append(
+    main.appendChild(
       location
     );
 
   }
 
 
-  row.append(
+  article.append(
     dot,
     time,
-    content
+    main
   );
 
 
-  return row;
+  return article;
 
 }
 
 
-/* =========================================================
-   TRAINING HERKENNEN
-   ========================================================= */
+/* =====================================================
+   TIJD
+   ===================================================== */
 
-function isTraining(
-  title
+function formatTime(
+  event
 ) {
 
-  const text =
-    String(
-      title || ""
-    )
-      .toLowerCase();
+  if (
+    event.isAllDay
+  ) {
+
+    return "Hele dag";
+
+  }
 
 
-  return (
-    text.includes(
-      "training"
-    ) ||
-    text.includes(
-      "trainen"
-    )
-  );
+  const start =
+    event.start;
 
-}
-
-
-/* =========================================================
-   TIJD OPMAKEN
-   ========================================================= */
-
-function formatTimeRange(
-  start,
-  end
-) {
 
   const startText =
-    formatTime(
+    formatClock(
       start
     );
 
 
-  const endText =
-    formatTime(
-      end
-    );
-
-
   if (
-    !end ||
-    startText === endText
+    !event.end
   ) {
 
     return startText;
@@ -1044,16 +1053,36 @@ function formatTimeRange(
   }
 
 
+  const sameDay =
+    start.toDateString() ===
+    event.end.toDateString();
+
+
+  if (
+    !sameDay
+  ) {
+
+    return `${startText} – ${formatClock(event.end)}`;
+
+  }
+
+
+  const endText =
+    formatClock(
+      event.end
+    );
+
+
   return `${startText} – ${endText}`;
 
 }
 
 
-/* =========================================================
-   TIJD
-   ========================================================= */
+/* =====================================================
+   KLOK
+   ===================================================== */
 
-function formatTime(
+function formatClock(
   date
 ) {
 
@@ -1064,25 +1093,75 @@ function formatTime(
         "2-digit",
 
       minute:
-        "2-digit",
-
-      hour12:
-        false
+        "2-digit"
     }
-  )
-    .format(
-      date
-    );
+  ).format(
+    date
+  );
 
 }
 
 
-/* =========================================================
-   DATUMSLEUTEL PARSEN
-   ========================================================= */
+/* =====================================================
+   DATUM
+   ===================================================== */
+
+function startOfDay(
+  date
+) {
+
+  const result =
+    new Date(
+      date
+    );
+
+
+  result.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  return result;
+
+}
+
+
+function getDateKey(
+  date
+) {
+
+  const year =
+    date.getFullYear();
+
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  return `${year}-${month}-${day}`;
+
+}
+
 
 function parseDateKey(
-  value
+  key
 ) {
 
   const [
@@ -1090,11 +1169,11 @@ function parseDateKey(
     month,
     day
   ] =
-    value
-      .split("-")
-      .map(
-        Number
-      );
+    key.split(
+      "-"
+    ).map(
+      Number
+    );
 
 
   return new Date(
@@ -1106,109 +1185,65 @@ function parseDateKey(
 }
 
 
-/* =========================================================
-   STATUS
-   ========================================================= */
+/* =====================================================
+   TEKST OPSCHONEN
+   ===================================================== */
 
-function setStatus(
-  text
+function cleanText(
+  value
 ) {
 
-  agendaStatus.hidden =
-    !text;
+  if (
+    value === null ||
+    value === undefined
+  ) {
+
+    return "";
+
+  }
 
 
-  agendaStatus.textContent =
+  return String(
+    value
+  )
+    .replace(
+      /\\n/g,
+      " "
+    )
+    .replace(
+      /\s+/g,
+      " "
+    )
+    .trim();
+
+}
+
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+function setStatus(
+  text,
+  type
+) {
+
+  statusElement.textContent =
     text;
 
 
-  agendaStatus.classList.remove(
-    "error"
-  );
-
-}
+  statusElement.className =
+    "agenda-status";
 
 
-/* =========================================================
-   LEGE AGENDA
-   ========================================================= */
+  if (
+    type
+  ) {
 
-function renderEmpty() {
-
-  const box =
-    document.createElement(
-      "div"
+    statusElement.classList.add(
+      type
     );
 
-
-  box.className =
-    "agenda-empty";
-
-
-  const title =
-    document.createElement(
-      "strong"
-    );
-
-
-  title.textContent =
-    "Geen activiteiten gevonden";
-
-
-  const text =
-    document.createElement(
-      "span"
-    );
-
-
-  text.textContent =
-    "Er staan de komende 14 dagen geen activiteiten in de Google Agenda.";
-
-
-  box.append(
-    title,
-    text
-  );
-
-
-  agendaList.append(
-    box
-  );
-
-}
-
-
-/* =========================================================
-   FOUT
-   ========================================================= */
-
-function renderError(
-  message
-) {
-
-  agendaStatus.hidden =
-    true;
-
-
-  agendaList.replaceChildren();
-
-
-  const box =
-    document.createElement(
-      "div"
-    );
-
-
-  box.className =
-    "agenda-error-box";
-
-
-  box.textContent =
-    message;
-
-
-  agendaList.append(
-    box
-  );
+  }
 
 }
