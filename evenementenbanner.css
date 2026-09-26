@@ -1,24 +1,34 @@
 /* =========================================================
-   HV NOVITAS - EVENEMENTENBANNER BEHEER
-   Formulier + preview
-   Banner-styling is uitsluitend actief binnen #previewRoot
+   HV NOVITAS
+   EVENEMENTENBANNER BEHEER
    ========================================================= */
 
 :root {
-  --orange: #ff6a00;
-  --orange-dark: #d94f00;
+
+  --orange: #ff6500;
+  --orange-bright: #ff7a00;
+  --gold: #ffd21f;
+  --gold-bright: #ffe75a;
+
   --dark: #171717;
-  --dark-2: #0a0a0a;
+  --dark-2: #0c0c0c;
+
   --ink: #172033;
   --muted: #667085;
-  --line: #d8dee8;
-  --bg: #f3f5f8;
+
+  --bg: #eef1f5;
   --white: #ffffff;
-  --green: #18894a;
-  --green-dark: #0f6f3a;
-  --red: #c53030;
+
+  --line: #d9e0e9;
+
+  --green: #16884a;
+  --green-dark: #0e6c39;
+
+  --red: #c83232;
   --red-bg: #fff1f1;
+
 }
+
 
 /* =========================================================
    BASIS
@@ -30,913 +40,1690 @@
   box-sizing: border-box;
 }
 
+
 html {
   min-height: 100%;
 }
 
+
 body {
+
   margin: 0;
-  padding: 32px;
-  background: var(--bg);
+
+  padding: 28px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f4f6f9 0%,
+      #e9edf2 100%
+    );
+
   color: var(--ink);
+
   font-family:
     Arial,
     Helvetica,
     sans-serif;
+
   font-size: 16px;
+
   line-height: 1.45;
 
-  /* Belangrijk: niets mag het beheerformulier roteren */
   transform: none !important;
   rotate: none !important;
-  scale: none !important;
   translate: none !important;
+  scale: none !important;
   skew: none !important;
+
 }
 
-img,
-svg,
-canvas {
-  max-width: 100%;
-}
 
 /* =========================================================
    PAGINA
    ========================================================= */
 
 .page {
+
   width: min(1600px, 100%);
+
   margin: 0 auto;
+
 }
 
-.page-header {
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 25px;
+
   margin-bottom: 24px;
+
 }
 
-.page-header h1 {
-  margin: 0 0 8px;
-  font-size: 32px;
-  line-height: 1.1;
-  font-weight: 800;
+
+.kicker {
+
+  margin-bottom: 6px;
+
+  color: var(--orange);
+
+  font-size: 12px;
+
+  font-weight: 900;
+
+  letter-spacing: .15em;
+
+  text-transform: uppercase;
+
+}
+
+
+.header h1 {
+
+  margin: 0 0 6px;
+
   color: var(--dark);
+
+  font-size: 32px;
+
+  line-height: 1.08;
+
 }
 
-.page-header p {
+
+.header p {
+
   margin: 0;
+
   color: var(--muted);
+
   font-size: 15px;
+
 }
+
+
+.back {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 10px 15px;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  border: 1px solid var(--line);
+
+  color: var(--ink);
+
+  text-decoration: none;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 4px 14px rgba(20, 30, 45, .05);
+
+}
+
+
+.back:hover {
+
+  border-color: var(--orange);
+
+  color: var(--orange);
+
+}
+
 
 /* =========================================================
    LAYOUT
    ========================================================= */
 
-.admin-grid {
+.layout {
+
   display: grid;
-  grid-template-columns: minmax(420px, 720px) minmax(480px, 1fr);
+
+  grid-template-columns:
+    minmax(430px, 700px)
+    minmax(500px, 1fr);
+
   gap: 24px;
+
   align-items: start;
+
 }
+
+
+/* =========================================================
+   PANEL
+   ========================================================= */
 
 .panel {
-  background: var(--white);
+
+  position: relative;
+
+  background: #ffffff;
+
   border: 1px solid var(--line);
+
   border-radius: 18px;
-  box-shadow: 0 10px 35px rgba(23, 32, 51, 0.07);
+
   padding: 24px;
-  overflow: hidden;
+
+  box-shadow:
+    0 12px 35px rgba(25, 38, 55, .07);
+
 }
 
-.panel h2 {
-  margin: 0 0 18px;
+
+.panel::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 24px;
+  right: 24px;
+
+  height: 4px;
+
+  border-radius:
+    0 0 999px 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--orange),
+      var(--gold),
+      var(--orange)
+    );
+
+}
+
+
+.panel-title {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+
+}
+
+
+.panel-title h2 {
+
+  margin: 0;
+
+  color: var(--dark);
+
   font-size: 21px;
-  font-weight: 800;
-  color: var(--dark);
+
+  line-height: 1.15;
+
 }
 
-.panel h3 {
-  margin: 26px 0 12px;
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--dark);
+
+.note {
+
+  margin: 7px 0 0;
+
+  color: var(--muted);
+
+  font-size: 13px;
+
 }
+
+
+/* =========================================================
+   STATUS PILL
+   ========================================================= */
+
+.pill {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 34px;
+
+  padding: 7px 13px;
+
+  border-radius: 999px;
+
+  background: #fff0e5;
+
+  color: #a94000;
+
+  font-size: 13px;
+
+  font-weight: 900;
+
+  white-space: nowrap;
+
+}
+
+
+.pill.neutral {
+
+  background: #eef1f5;
+
+  color: #526072;
+
+}
+
+
+.preview-pill {
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff0db,
+      #ffe8bd
+    );
+
+  color:
+    #a44500;
+
+}
+
 
 /* =========================================================
    FORMULIER
    ========================================================= */
 
+#eventForm {
+
+  width: 100%;
+
+}
+
+
+/*
+   EXTRA BEVEILIGING.
+   Ook wanneer ergens nog oude CSS in cache staat,
+   mogen formulierelementen nooit draaien.
+*/
+
 #eventForm,
 #eventForm *,
-.form-panel,
-.form-panel * {
-  transform: none !important;
-  rotate: none !important;
-  scale: none !important;
-  translate: none !important;
-  skew: none !important;
-}
-
-#eventForm {
-  width: 100%;
-}
-
-.field {
-  margin-bottom: 18px;
-}
-
-.field:last-child {
-  margin-bottom: 0;
-}
-
-.field label {
-  display: block;
-  margin: 0 0 7px;
-  color: var(--ink);
-  font-size: 14px;
-  line-height: 1.2;
-  font-weight: 700;
+#eventForm label,
+#eventForm input,
+#eventForm button,
+#eventForm .two {
 
   transform: none !important;
+
   rotate: none !important;
-  scale: none !important;
+
   translate: none !important;
+
+  scale: none !important;
+
   skew: none !important;
+
 }
 
-.field small,
-.help-text {
+
+/* =========================================================
+   ACTIEF BLOK
+   ========================================================= */
+
+.toggle-row {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 15px;
+
+  margin-bottom: 20px;
+
+  border:
+    1px solid #ffd4b7;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fffaf6,
+      #fff3e9
+    );
+
+}
+
+
+.toggle-row input {
+
+  width: 22px;
+
+  height: 22px;
+
+  margin:
+    2px
+    0
+    0;
+
+  accent-color:
+    var(--orange);
+
+}
+
+
+.toggle-row span {
+
   display: block;
-  margin-top: 6px;
+
+}
+
+
+.toggle-row strong {
+
+  display: block;
+
+  color: var(--dark);
+
+  font-size: 15px;
+
+}
+
+
+.toggle-row small {
+
+  display: block;
+
+  margin-top: 3px;
+
   color: var(--muted);
+
   font-size: 12px;
-  line-height: 1.45;
+
 }
 
-input,
-textarea,
-select,
-button {
-  font: inherit;
-}
 
-input[type="text"],
-input[type="url"],
-input[type="datetime-local"],
-input:not([type]),
-textarea,
-select {
+/* =========================================================
+   FORM VELDEN
+   ========================================================= */
+
+.form-field {
+
   display: block;
-  width: 100%;
-  min-height: 44px;
-  margin: 0;
-  padding: 10px 13px;
 
-  background: #ffffff;
+  margin-bottom: 17px;
+
+}
+
+
+.form-label {
+
+  display: block;
+
+  margin-bottom: 7px;
+
   color: var(--ink);
 
-  border: 1px solid #cfd7e4;
+  font-size: 14px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+
+}
+
+
+.form-field input {
+
+  display: block;
+
+  width: 100%;
+
+  min-height: 45px;
+
+  padding:
+    10px
+    13px;
+
+  border:
+    1px solid #cfd7e4;
+
   border-radius: 10px;
+
   outline: none;
 
-  box-shadow: none;
+  background: #ffffff;
 
-  transform: none !important;
-  rotate: none !important;
-  scale: none !important;
-  translate: none !important;
-  skew: none !important;
+  color: var(--ink);
+
+  font: inherit;
+
 }
 
-textarea {
-  min-height: 110px;
-  resize: vertical;
+
+.form-field input:focus {
+
+  border-color:
+    var(--orange);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(255, 101, 0, .12);
+
 }
 
-input[type="text"]:focus,
-input[type="url"]:focus,
-input[type="datetime-local"]:focus,
-input:not([type]):focus,
-textarea:focus,
-select:focus {
-  border-color: var(--orange);
-  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.12);
-}
 
-input::placeholder,
-textarea::placeholder {
+.form-field input::placeholder {
+
   color: #98a2b3;
+
 }
 
-/* =========================================================
-   CHECKBOX / ACTIEF
-   ========================================================= */
 
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 22px;
-}
+.help-text {
 
-.checkbox-row input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin: 0;
+  display: block;
 
-  accent-color: var(--orange);
-
-  transform: none !important;
-  rotate: none !important;
-  scale: none !important;
-  translate: none !important;
-  skew: none !important;
-}
-
-.checkbox-row label {
-  margin: 0;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* =========================================================
-   TWEE VELDEN NAAST ELKAAR
-   ========================================================= */
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.field-row .field {
-  margin-bottom: 0;
-}
-
-/* =========================================================
-   STATUS
-   ========================================================= */
-
-.status {
-  margin: 18px 0 0;
-  padding: 12px 14px;
-
-  border-radius: 10px;
-  background: #f6f8fb;
-  border: 1px solid #e2e7ef;
+  margin-top: 6px;
 
   color: var(--muted);
-  font-size: 14px;
-  font-weight: 600;
+
+  font-size: 12px;
+
 }
 
-.status.active {
-  background: #eefaf3;
-  border-color: #b9e3c9;
-  color: #167442;
-}
-
-.status.warning {
-  background: #fff8eb;
-  border-color: #f2d59d;
-  color: #9a5b00;
-}
-
-.status.error {
-  background: #fff1f1;
-  border-color: #efc2c2;
-  color: var(--red);
-}
 
 /* =========================================================
-   KNOPPEN
+   DATUM / TIJD
+   LET OP: NIET .two
+   ========================================================= */
+
+.field-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  gap: 14px;
+
+}
+
+
+.field-grid .form-field {
+
+  min-width: 0;
+
+}
+
+
+/* =========================================================
+   ACTIES
    ========================================================= */
 
 .actions {
+
   display: flex;
+
   flex-wrap: wrap;
+
   gap: 10px;
-  margin-top: 22px;
+
+  margin-top: 7px;
+
 }
 
-.actions button,
-button {
-  appearance: none;
-  border: 0;
-  border-radius: 10px;
-  min-height: 44px;
-  padding: 10px 16px;
 
-  font-weight: 800;
-  line-height: 1.1;
+.actions button {
+
+  appearance: none;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  min-height: 45px;
+
+  padding:
+    10px
+    17px;
 
   cursor: pointer;
 
-  transform: none !important;
-  rotate: none !important;
-  scale: none !important;
-  translate: none !important;
-  skew: none !important;
+  font: inherit;
+
+  font-weight: 900;
 
   transition:
-    transform 0.15s ease,
-    filter 0.15s ease,
-    box-shadow 0.15s ease;
+    transform .15s ease,
+    filter .15s ease,
+    box-shadow .15s ease;
+
 }
 
-.actions button:hover,
-button:hover {
-  filter: brightness(0.97);
+
+.actions button:hover {
+
+  filter:
+    brightness(.98);
+
 }
 
-.actions button:active,
-button:active {
-  transform: translateY(1px) !important;
+
+.actions button:active {
+
+  transform:
+    translateY(1px) !important;
+
 }
 
-.btn-save {
-  flex: 1 1 180px;
-  background: var(--green);
+
+.primary {
+
+  background:
+    linear-gradient(
+      135deg,
+      #188c4b,
+      #0f703b
+    );
+
   color: #ffffff;
-  box-shadow: 0 5px 15px rgba(24, 137, 74, 0.18);
+
+  box-shadow:
+    0 6px 16px
+    rgba(24, 140, 75, .20);
+
 }
 
-.btn-save:hover {
-  background: var(--green-dark);
-}
 
-.btn-preview {
-  flex: 1 1 170px;
-  background: #edf2f7;
+.secondary {
+
+  background: #edf1f5;
+
   color: var(--ink);
+
 }
 
-.btn-clear {
-  flex: 1 1 180px;
-  background: var(--red-bg);
-  color: var(--red);
+
+.secondary:hover {
+
+  background: #e4e9ef;
+
 }
 
-.btn-clear:hover {
-  background: #ffe5e5;
+
+.danger {
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff0f0,
+      #ffe4e4
+    );
+
+  color:
+    #b92b2b;
+
 }
+
+
+/* =========================================================
+   PREVIEW
+   ========================================================= */
+
+#preview {
+
+  width: 100%;
+
+  padding: 12px;
+
+  border:
+    1px solid #dfe5ec;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fffdf9,
+      #fff4e5
+    );
+
+  overflow: hidden;
+
+}
+
+
+#previewRoot {
+
+  width: 100%;
+
+  min-height: 190px;
+
+}
+
+
+/* =========================================================
+   BANNER
+   ALLEEN BINNEN #previewRoot
+   ========================================================= */
+
+#previewRoot .event-link {
+
+  display: block;
+
+  width: 100%;
+
+  color: inherit;
+
+  text-decoration: none;
+
+}
+
+
+#previewRoot .event-banner {
+
+  position: relative;
+
+  isolation: isolate;
+
+  width: 100%;
+
+  min-height: 190px;
+
+  overflow: hidden;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding:
+    15px
+    20px;
+
+  border:
+    2px solid
+    #ffb000;
+
+  border-radius: 12px;
+
+  color: #ffffff;
+
+  text-align: center;
+
+  background:
+
+    radial-gradient(
+      ellipse at 15% 30%,
+      rgba(255,225,61,.70)
+      0%,
+      rgba(255,173,0,.38)
+      18%,
+      transparent 42%
+    ),
+
+    radial-gradient(
+      ellipse at 85% 65%,
+      rgba(255,238,90,.55)
+      0%,
+      rgba(255,105,0,.32)
+      20%,
+      transparent 44%
+    ),
+
+    radial-gradient(
+      ellipse at 52% 115%,
+      rgba(255,245,145,.38)
+      0%,
+      transparent 45%
+    ),
+
+    linear-gradient(
+      118deg,
+      #8d1d00 0%,
+      #e83c00 24%,
+      #ff6800 46%,
+      #ff8e00 66%,
+      #b92700 100%
+    );
+
+  box-shadow:
+    inset 0 0 60px
+    rgba(85, 15, 0, .35),
+
+    0 10px 28px
+    rgba(112, 41, 0, .28);
+
+}
+
+
+/* =========================================================
+   DIAGONALE BANEN
+   ========================================================= */
+
+#previewRoot .event-banner::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: -70%;
+
+  left: 29%;
+
+  width: 24px;
+
+  height: 240%;
+
+  transform:
+    rotate(34deg) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(255,239,155,.88),
+      rgba(255,215,75,.30),
+      transparent
+    );
+
+  opacity: .65;
+
+  z-index: 0;
+
+}
+
+
+#previewRoot .event-banner::after {
+
+  content: "";
+
+  position: absolute;
+
+  top: -70%;
+
+  right: 28%;
+
+  width: 13px;
+
+  height: 240%;
+
+  transform:
+    rotate(34deg) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(255,255,255,.75),
+      transparent
+    );
+
+  opacity: .38;
+
+  z-index: 0;
+
+}
+
+
+/* =========================================================
+   ART
+   ========================================================= */
+
+#previewRoot .art {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  overflow: hidden;
+
+}
+
+
+#previewRoot .art::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: -8%;
+  bottom: -15%;
+
+  width: 58%;
+  height: 65%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255,238,94,.62),
+      rgba(255,126,0,.25) 36%,
+      transparent 72%
+    );
+
+  filter:
+    blur(12px);
+
+}
+
+
+#previewRoot .art::after {
+
+  content: "";
+
+  position: absolute;
+
+  right: -8%;
+  top: -10%;
+
+  width: 55%;
+  height: 60%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255,247,139,.44),
+      rgba(255,133,0,.18) 40%,
+      transparent 74%
+    );
+
+  filter:
+    blur(15px);
+
+}
+
+
+/* =========================================================
+   MUZIEKNOTEN
+   ========================================================= */
+
+#previewRoot .music {
+
+  position: absolute;
+
+  color:
+    var(--gold-bright);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-weight: 900;
+
+  line-height: 1;
+
+  text-shadow:
+    0 0 8px
+    rgba(255,235,70,.95),
+
+    0 0 22px
+    rgba(255,179,0,.72),
+
+    0 4px 10px
+    rgba(95,20,0,.55);
+
+  opacity: .98;
+
+  z-index: 4;
+
+}
+
+
+#previewRoot .music.one {
+
+  left: 5%;
+
+  top: 9%;
+
+  font-size: 54px;
+
+  transform:
+    rotate(-12deg) !important;
+
+}
+
+
+#previewRoot .music.two {
+
+  right: 5%;
+
+  top: 7%;
+
+  font-size: 55px;
+
+  transform:
+    rotate(12deg) !important;
+
+}
+
+
+#previewRoot .music.three {
+
+  left: 12%;
+
+  bottom: 4%;
+
+  font-size: 42px;
+
+  transform:
+    rotate(8deg) !important;
+
+}
+
+
+#previewRoot .music.four {
+
+  right: 12%;
+
+  bottom: 6%;
+
+  font-size: 42px;
+
+  transform:
+    rotate(-8deg) !important;
+
+}
+
+
+/* =========================================================
+   BINGO KAARTEN
+   ========================================================= */
+
+#previewRoot .bingo-card {
+
+  position: absolute;
+
+  width: 125px;
+
+  height: 80px;
+
+  border:
+    3px solid
+    rgba(255,242,206,.95);
+
+  border-radius: 9px;
+
+  background:
+
+    repeating-linear-gradient(
+      to right,
+      rgba(255,101,0,.72) 0,
+      rgba(255,101,0,.72) 2px,
+      transparent 2px,
+      transparent 24px
+    ),
+
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,101,0,.72) 0,
+      rgba(255,101,0,.72) 2px,
+      transparent 2px,
+      transparent 19px
+    ),
+
+    linear-gradient(
+      145deg,
+      #fffdf7,
+      #e9e9e9
+    );
+
+  box-shadow:
+    0 10px 28px
+    rgba(84,24,0,.42),
+
+    0 0 18px
+    rgba(255,221,47,.35);
+
+  opacity: .98;
+
+  z-index: 3;
+
+}
+
+
+#previewRoot .bingo-card::before {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 7px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.8);
+
+  border-radius: 4px;
+
+}
+
+
+#previewRoot .bingo-card::after {
+
+  content:
+    "BINGO";
+
+  position: absolute;
+
+  left: 50%;
+
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(0deg) !important;
+
+  color:
+    #ff6500;
+
+  font-size: 15px;
+
+  font-weight: 1000;
+
+  letter-spacing: .12em;
+
+  text-shadow:
+    0 2px 4px
+    rgba(255,255,255,.85);
+
+}
+
+
+#previewRoot .card-left {
+
+  left: 3%;
+
+  top: 4%;
+
+  transform:
+    rotate(-11deg) !important;
+
+}
+
+
+#previewRoot .card-right {
+
+  right: 3%;
+
+  bottom: 2%;
+
+  transform:
+    rotate(10deg) !important;
+
+}
+
+
+/* =========================================================
+   BINGO BALLEN
+   ========================================================= */
+
+#previewRoot .ball {
+
+  position: absolute;
+
+  width: 72px;
+
+  height: 72px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  color:
+    #222222;
+
+  font-size: 27px;
+
+  font-weight: 1000;
+
+  background:
+
+    radial-gradient(
+      circle at 32% 24%,
+      #ffffff 0%,
+      #ffffff 16%,
+      #fff7dd 30%,
+      #e5e5e5 53%,
+      #a8a8a8 77%,
+      #656565 100%
+    );
+
+  border:
+    5px solid
+    #ff6900;
+
+  box-shadow:
+
+    0 7px 18px
+    rgba(70,22,0,.42),
+
+    0 0 18px
+    rgba(255,221,47,.70);
+
+  z-index: 5;
+
+}
+
+
+#previewRoot .ball::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 8px;
+
+  border:
+    2px solid
+    rgba(255,119,0,.72);
+
+  border-radius: 50%;
+
+}
+
+
+#previewRoot .ball-left-one {
+
+  left: 5%;
+
+  bottom: -18px;
+
+}
+
+
+#previewRoot .ball-left-two {
+
+  left: 11%;
+
+  bottom: -27px;
+
+  width: 58px;
+
+  height: 58px;
+
+  font-size: 21px;
+
+}
+
+
+#previewRoot .ball-right-one {
+
+  right: 5%;
+
+  bottom: -18px;
+
+}
+
+
+#previewRoot .ball-right-two {
+
+  right: 11%;
+
+  bottom: -27px;
+
+  width: 58px;
+
+  height: 58px;
+
+  font-size: 21px;
+
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+#previewRoot .content {
+
+  position: relative;
+
+  z-index: 10;
+
+  width: 100%;
+
+  max-width: 1200px;
+
+  padding:
+    0
+    165px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+}
+
+
+#previewRoot .eyebrow {
+
+  margin-bottom: 4px;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  font-weight: 1000;
+
+  letter-spacing: .23em;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    0 2px 5px
+    rgba(70,16,0,.85);
+
+}
+
+
+#previewRoot .title {
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      34px,
+      4.4vw,
+      64px
+    );
+
+  font-weight: 1000;
+
+  letter-spacing:
+    -.045em;
+
+  line-height: .95;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  text-shadow:
+
+    0 3px 0
+    rgba(101,30,0,.85),
+
+    0 6px 13px
+    rgba(60,15,0,.62);
+
+}
+
+
+#previewRoot .title strong {
+
+  color:
+    #ffe040;
+
+  text-shadow:
+
+    0 3px 0
+    #a54b00,
+
+    0 5px 12px
+    rgba(89,28,0,.72),
+
+    0 0 18px
+    rgba(255,237,87,.40);
+
+}
+
+
+#previewRoot .rule {
+
+  width: 55%;
+
+  height: 4px;
+
+  margin:
+    8px
+    auto
+    7px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #fff176 15%,
+      #ffd21f 50%,
+      #fff176 85%,
+      transparent
+    );
+
+  box-shadow:
+    0 0 14px
+    rgba(255,237,87,.65);
+
+}
+
+
+#previewRoot .details {
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      10px,
+      1vw,
+      14px
+    );
+
+  font-weight: 900;
+
+  letter-spacing: .025em;
+
+  text-shadow:
+    0 2px 5px
+    rgba(74,20,0,.9);
+
+}
+
+
+#previewRoot .details i {
+
+  color:
+    #fff04a;
+
+  font-style: normal;
+
+  font-weight: 1000;
+
+  text-shadow:
+    0 0 10px
+    rgba(255,231,48,.8);
+
+}
+
+
+/* =========================================================
+   GEBRUIK
+   ========================================================= */
+
+.guidance {
+
+  margin-top: 24px;
+
+}
+
+
+.guidance > strong {
+
+  display: block;
+
+  color: var(--dark);
+
+  font-size: 17px;
+
+}
+
+
+.guidance p {
+
+  margin: 7px 0 0;
+
+  color: var(--muted);
+
+  font-size: 14px;
+
+}
+
 
 /* =========================================================
    MELDING
    ========================================================= */
 
 .message {
-  min-height: 22px;
-  margin-top: 14px;
-  font-size: 14px;
-  font-weight: 700;
-}
 
-.message.success {
-  color: var(--green-dark);
-}
+  position: fixed;
 
-.message.error {
-  color: var(--red);
-}
+  left: 50%;
 
-.message.info {
-  color: var(--muted);
-}
+  bottom: 22px;
 
-/* =========================================================
-   PREVIEW PANEL
-   ========================================================= */
+  z-index: 1000;
 
-.preview-panel {
-  min-width: 0;
-}
+  transform:
+    translateX(-50%)
+    translateY(20px) !important;
 
-.preview-frame {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: #ffffff;
-  overflow: hidden;
-}
+  min-width: 280px;
 
-#previewRoot {
-  width: 100%;
-  min-height: 190px;
-}
+  max-width: min(600px, 90vw);
 
-/* =========================================================
-   ZEER BELANGRIJK
-   Alle banner-CSS hieronder is uitsluitend gekoppeld aan
-   #previewRoot. Hierdoor kan deze styling nooit het
-   beheerformulier beïnvloeden.
-   ========================================================= */
+  padding:
+    12px
+    16px;
 
-/* Banner */
+  border-radius: 10px;
 
-#previewRoot .event-banner {
-  position: relative;
-  isolation: isolate;
-
-  width: 100%;
-  min-height: 190px;
-  padding: 14px 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  overflow: hidden;
-
-  border: 2px solid #ff6a00;
-  border-radius: 12px;
-
-  background:
-    radial-gradient(circle at 18% 55%, rgba(255, 106, 0, 0.5), transparent 32%),
-    radial-gradient(circle at 82% 45%, rgba(255, 106, 0, 0.22), transparent 30%),
-    linear-gradient(115deg, #090909 0%, #1b1b1b 33%, #3a1b08 62%, #120f0c 100%);
-
-  box-shadow:
-    inset 0 0 50px rgba(255, 106, 0, 0.08),
-    0 14px 35px rgba(0, 0, 0, 0.18);
+  background: #171717;
 
   color: #ffffff;
 
-  transform: none !important;
-}
-
-/* Oranje / witte diagonalen */
-
-#previewRoot .event-banner::before {
-  content: "";
-  position: absolute;
-  z-index: 1;
-
-  width: 160%;
-  height: 2px;
-
-  left: -30%;
-  top: 24%;
-
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 106, 0, 0.05) 20%,
-    rgba(255, 106, 0, 0.8) 48%,
-    rgba(255, 106, 0, 0.05) 72%,
-    transparent 100%
-  );
-
-  transform: rotate(-14deg) !important;
-}
-
-#previewRoot .event-banner::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-
-  width: 150%;
-  height: 2px;
-
-  left: -20%;
-  bottom: 22%;
-
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.28) 50%,
-    rgba(255, 255, 255, 0.03) 75%,
-    transparent 100%
-  );
-
-  transform: rotate(-14deg) !important;
-}
-
-/* =========================================================
-   ART
-   ========================================================= */
-
-#previewRoot .event-banner .art {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+  opacity: 0;
 
   pointer-events: none;
 
-  transform: none !important;
-}
-
-/* Muzieknoten */
-
-#previewRoot .event-banner .music {
-  position: absolute;
-
-  color: #ff7a00;
-
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 700;
-
-  text-shadow:
-    0 0 8px rgba(255, 106, 0, 0.45),
-    0 0 18px rgba(255, 106, 0, 0.2);
-
-  opacity: 0.9;
-}
-
-#previewRoot .event-banner .music.one {
-  left: 6%;
-  top: 8%;
-  font-size: 44px;
-  transform: rotate(-10deg) !important;
-}
-
-#previewRoot .event-banner .music.two {
-  left: 11%;
-  bottom: 6%;
-  font-size: 31px;
-  transform: rotate(12deg) !important;
-}
-
-#previewRoot .event-banner .music.three {
-  right: 7%;
-  top: 11%;
-  font-size: 38px;
-  transform: rotate(8deg) !important;
-}
-
-#previewRoot .event-banner .music.four {
-  right: 13%;
-  bottom: 9%;
-  font-size: 30px;
-  transform: rotate(-8deg) !important;
-}
-
-/* =========================================================
-   BINGO KAARTEN
-   ========================================================= */
-
-#previewRoot .event-banner .bingo-card {
-  position: absolute;
-
-  width: 100px;
-  height: 64px;
-
-  border-radius: 8px;
-
-  border: 3px solid rgba(255, 255, 255, 0.72);
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0,
-      transparent 18%,
-      rgba(255, 255, 255, 0.32) 19%,
-      transparent 20%,
-      transparent 38%,
-      rgba(255, 255, 255, 0.32) 39%,
-      transparent 40%,
-      transparent 58%,
-      rgba(255, 255, 255, 0.32) 59%,
-      transparent 60%,
-      transparent 78%,
-      rgba(255, 255, 255, 0.32) 79%,
-      transparent 80%
-    ),
-    linear-gradient(
-      0deg,
-      transparent 0,
-      transparent 22%,
-      rgba(255, 255, 255, 0.32) 23%,
-      transparent 24%,
-      transparent 46%,
-      rgba(255, 255, 255, 0.32) 47%,
-      transparent 48%,
-      transparent 70%,
-      rgba(255, 255, 255, 0.32) 71%,
-      transparent 72%
-    ),
-    linear-gradient(135deg, #272727, #4a4a4a);
-
-  box-shadow:
-    0 9px 22px rgba(0, 0, 0, 0.24),
-    inset 0 0 18px rgba(255, 255, 255, 0.07);
-
-  opacity: 0.95;
-}
-
-#previewRoot .event-banner .card-left {
-  left: 2.5%;
-  top: -6px;
-  transform: rotate(-12deg) !important;
-}
-
-#previewRoot .event-banner .card-right {
-  right: 2.5%;
-  bottom: -3px;
-  transform: rotate(10deg) !important;
-}
-
-/* =========================================================
-   BINGO BALLEN
-   ========================================================= */
-
-#previewRoot .event-banner .ball {
-  position: absolute;
-
-  width: 48px;
-  height: 48px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(circle at 30% 27%, #ffffff 0 18%, #ececec 45%, #c9c9c9 100%);
-
-  border: 3px solid #ff6a00;
-
-  color: #111111;
-
-  font-size: 20px;
-  font-weight: 900;
-
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.28),
-    inset 0 0 0 2px #ffffff,
-    inset 0 0 0 5px rgba(255, 106, 0, 0.35);
-}
-
-#previewRoot .event-banner .ball-left-one {
-  left: 5%;
-  bottom: -6px;
-}
-
-#previewRoot .event-banner .ball-left-two {
-  left: 9%;
-  bottom: -10px;
-  width: 40px;
-  height: 40px;
-  font-size: 17px;
-}
-
-#previewRoot .event-banner .ball-right-one {
-  right: 8%;
-  bottom: -6px;
-}
-
-#previewRoot .event-banner .ball-right-two {
-  right: 4%;
-  bottom: 2px;
-  width: 40px;
-  height: 40px;
-  font-size: 17px;
-}
-
-/* =========================================================
-   CONTENT
-   ========================================================= */
-
-#previewRoot .event-banner .content {
-  position: relative;
-  z-index: 5;
-
-  width: 100%;
-  max-width: 1000px;
-
-  padding: 0 160px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-
-  transform: none !important;
-}
-
-/* Bovenregel */
-
-#previewRoot .event-banner .eyebrow {
-  margin-bottom: 5px;
-
-  font-size: 13px;
-  line-height: 1.2;
-  font-weight: 800;
-
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-
-  color: #ffffff;
-
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-}
-
-/* Titel */
-
-#previewRoot .event-banner .title {
-  margin: 0;
-
-  font-size: clamp(28px, 4vw, 52px);
-  line-height: 0.98;
-
-  font-weight: 1000;
-  letter-spacing: -0.025em;
-
-  color: #ff6a00;
-
-  text-transform: uppercase;
-
-  text-shadow:
-    0 3px 0 rgba(0, 0, 0, 0.5),
-    0 8px 18px rgba(0, 0, 0, 0.42);
-
-  transform: none !important;
-}
-
-#previewRoot .event-banner .title strong {
-  color: #ff6a00;
-  font-weight: 1000;
-}
-
-/* Lijn onder titel */
-
-#previewRoot .event-banner .rule {
-  width: 220px;
-  height: 3px;
-
-  margin: 8px auto 8px;
-
-  border-radius: 999px;
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #ff6a00 18%,
-    #ff6a00 82%,
-    transparent
-  );
-
-  box-shadow: 0 0 12px rgba(255, 106, 0, 0.28);
-}
-
-/* Details */
-
-#previewRoot .event-banner .details {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 5px 10px;
-
-  color: #ffffff;
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
 
   font-size: 14px;
-  line-height: 1.2;
+
   font-weight: 800;
 
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.58);
-
-  transform: none !important;
 }
 
-#previewRoot .event-banner .details span {
-  display: inline-block;
-  transform: none !important;
+
+.message.show {
+
+  opacity: 1;
+
+  transform:
+    translateX(-50%)
+    translateY(0) !important;
+
 }
 
-#previewRoot .event-banner .details i {
-  color: #ff6a00;
-  font-style: normal;
-  font-weight: 900;
+
+.message.success {
+
+  background:
+    #18884b;
+
 }
 
-/* Link over volledige banner */
 
-#previewRoot .event-link {
-  display: block;
-  width: 100%;
-  color: inherit;
-  text-decoration: none;
+.message.error {
 
-  transform: none !important;
+  background:
+    #c83232;
+
 }
 
-/* =========================================================
-   INFOBLOK
-   ========================================================= */
-
-.usage-box {
-  margin-top: 24px;
-  padding: 22px 24px;
-
-  background: #ffffff;
-
-  border: 1px solid var(--line);
-  border-radius: 18px;
-
-  box-shadow: 0 10px 35px rgba(23, 32, 51, 0.06);
-}
-
-.usage-box h2 {
-  margin: 0 0 8px;
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.usage-box p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 14px;
-}
 
 /* =========================================================
    RESPONSIVE
    ========================================================= */
 
 @media (max-width: 1100px) {
-  .admin-grid {
-    grid-template-columns: 1fr;
+
+  .layout {
+
+    grid-template-columns:
+      1fr;
+
   }
 
-  .preview-panel {
-    order: 2;
-  }
-
-  .form-panel {
-    order: 1;
-  }
 }
 
+
 @media (max-width: 700px) {
+
   body {
+
     padding: 16px;
+
   }
 
-  .panel {
-    padding: 18px;
-    border-radius: 14px;
+
+  .header {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
   }
 
-  .page-header h1 {
-    font-size: 26px;
+
+  .header h1 {
+
+    font-size: 27px;
+
   }
 
-  .field-row {
-    grid-template-columns: 1fr;
+
+  .field-grid {
+
+    grid-template-columns:
+      1fr;
+
     gap: 0;
+
   }
 
-  .field-row .field {
-    margin-bottom: 18px;
-  }
 
   .actions {
+
     flex-direction: column;
+
   }
+
 
   .actions button {
+
     width: 100%;
-    flex: 1 1 auto;
+
   }
+
 
   #previewRoot .event-banner {
+
     min-height: 190px;
-    padding: 12px 10px;
+
+    padding:
+      10px
+      7px;
+
   }
 
-  #previewRoot .event-banner .content {
-    padding: 0 75px;
+
+  #previewRoot .content {
+
+    padding:
+      0
+      72px;
+
   }
 
-  #previewRoot .event-banner .title {
-    font-size: 28px;
+
+  #previewRoot .title {
+
+    font-size:
+      clamp(
+        27px,
+        7vw,
+        42px
+      );
+
+    white-space: normal;
+
   }
 
-  #previewRoot .event-banner .details {
-    font-size: 11px;
-    gap: 3px 6px;
+
+  #previewRoot .bingo-card {
+
+    width: 90px;
+
+    height: 60px;
+
   }
 
-  #previewRoot .event-banner .bingo-card {
-    width: 75px;
-    height: 48px;
+
+  #previewRoot .ball {
+
+    width: 56px;
+
+    height: 56px;
+
+    font-size: 20px;
+
   }
 
-  #previewRoot .event-banner .ball {
-    width: 38px;
-    height: 38px;
-    font-size: 16px;
+
+  #previewRoot .ball-left-two,
+  #previewRoot .ball-right-two {
+
+    width: 45px;
+
+    height: 45px;
+
+    font-size: 17px;
+
   }
 
-  #previewRoot .event-banner .ball-left-two,
-  #previewRoot .event-banner .ball-right-two {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
-  }
 }
