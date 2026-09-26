@@ -10,13 +10,19 @@
     content="width=device-width, initial-scale=1.0"
   >
 
+  <meta
+    name="description"
+    content="Agenda HV Novitas"
+  >
+
   <title>
     Agenda HV Novitas
   </title>
 
+
   <link
     rel="stylesheet"
-    href="agenda-widget.css?v=20260926-1"
+    href="./agenda-widget.css?v=20260926-2"
   >
 
 </head>
@@ -24,48 +30,55 @@
 
 <body>
 
-  <main class="agenda-app">
+  <main
+    class="agenda-widget"
+    aria-label="Agenda HV Novitas"
+  >
 
     <header class="agenda-header">
 
-      <div class="agenda-title-block">
+      <div class="agenda-header-icon">
 
-        <div class="agenda-icon" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <span class="calendar-icon">
 
+          <span class="calendar-top"></span>
 
-        <div>
+          <span class="calendar-grid">
 
-          <div class="agenda-label">
-            AGENDA
-          </div>
+            <i></i>
+            <i></i>
+            <i></i>
 
-          <h1>
-            HV NOVITAS
-          </h1>
+            <i></i>
+            <i></i>
+            <i></i>
 
-          <p>
-            Alleen de komende 14 dagen · Alleen dagen met activiteiten
-          </p>
+            <i></i>
+            <i></i>
+            <i></i>
 
-        </div>
+          </span>
+
+        </span>
 
       </div>
 
 
-      <a
-        class="agenda-full-link"
-        href="https://calendar.google.com/calendar/embed?src=hvnovitas%40gmail.com&ctz=Europe%2FAmsterdam&mode=AGENDA"
-        target="_blank"
-        rel="noopener"
-      >
-        Naar volledige agenda
-        <span aria-hidden="true">→</span>
-      </a>
+      <div class="agenda-header-text">
+
+        <div class="agenda-kicker">
+          HV NOVITAS
+        </div>
+
+        <h1>
+          AGENDA
+        </h1>
+
+        <p>
+          De komende 14 dagen
+        </p>
+
+      </div>
 
     </header>
 
@@ -78,39 +91,25 @@
     </div>
 
 
-    <section
+    <div
       id="agendaList"
       class="agenda-list"
-      aria-live="polite"
-    ></section>
+    >
+    </div>
 
 
     <footer class="agenda-footer">
 
-      <div class="agenda-footer-info">
-
-        <span
-          class="agenda-footer-icon"
-          aria-hidden="true"
-        >
-          ◷
-        </span>
-
-        <span>
-          We tonen alleen de activiteiten van vandaag t/m 14 dagen vooruit.
-        </span>
-
-      </div>
-
+      <span>
+        Handbalclub Hulst – Zeeuws-Vlaanderen
+      </span>
 
       <a
-        class="agenda-footer-button"
         href="https://calendar.google.com/calendar/embed?src=hvnovitas%40gmail.com&ctz=Europe%2FAmsterdam&mode=AGENDA"
         target="_blank"
         rel="noopener"
       >
-        Naar volledige agenda
-        <span aria-hidden="true">→</span>
+        Naar volledige agenda →
       </a>
 
     </footer>
@@ -120,8 +119,8 @@
 
   <script
     type="module"
-    src="agenda-widget.js?v=20260926-1"
-  ></script>
+    src="./agenda-widget.js?v=20260926-2">
+  </script>
 
 </body>
 
