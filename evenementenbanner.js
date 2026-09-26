@@ -1,460 +1,1142 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+import { db, auth } from "./firebase.js";
 
-  <title>HV Novitas – Evenementenbanner beheren</title>
+import {
+  ref,
+  onValue,
+  set,
+  remove
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-  <link rel="stylesheet" href="evenementenbanner.css">
-</head>
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-<body>
 
-  <main class="page">
+/* =========================================================
+   INSTELLINGEN
+   ========================================================= */
 
-    <header class="header">
+const PATH = "evenementenbanner";
 
-      <div>
 
-        <div class="kicker">
-          HV NOVITAS CMS
-        </div>
+const $ = id =>
+  document.getElementById(id);
 
-        <h1>
-          Evenementenbanner beheren
-        </h1>
 
-        <p>
-          Stel hier de banner in die op de website boven het nieuws verschijnt.
-        </p>
+let current = {};
 
-      </div>
+let messageTimer = null;
 
-      <div>
 
-        <a
-          class="back"
-          href="dashboard.html">
-          ← Terug naar dashboard
-        </a>
+/* =========================================================
+   AUTHENTICATIE
+   ========================================================= */
 
-      </div>
+onAuthStateChanged(
+  auth,
+  user => {
 
-    </header>
+    if (!user) {
 
+      window.location.href =
+        "login.html";
 
-    <div class="layout">
+      return;
+    }
 
+    loadBanner();
 
-      <!-- =========================================
-           INSTELLINGEN
-           ========================================= -->
+  }
+);
 
-      <section class="panel">
 
-        <div class="panel-title">
+/* =========================================================
+   FIREBASE LADEN
+   ========================================================= */
 
-          <div>
+function loadBanner() {
 
-            <h2>
-              Bannerinstellingen
-            </h2>
+  onValue(
+    ref(db, PATH),
 
-          </div>
+    snapshot => {
 
-          <div
-            id="status"
-            class="pill neutral">
-            Laden...
-          </div>
+      current =
+        snapshot.val() || {};
 
-        </div>
 
+      fillForm();
 
-        <form id="eventForm">
+      updatePreview();
 
+      updateStatus();
 
-          <!-- ACTIEF -->
+    },
 
-          <label class="toggle-row">
+    error => {
 
-            <input
-              id="active"
-              type="checkbox">
+      console.error(
+        "Evenementenbanner laden mislukt:",
+        error
+      );
 
-            <span>
+      message(
+        "Laden mislukt.",
+        "error"
+      );
 
-              <strong>
-                Banner actief
-              </strong>
+    }
+  );
 
-              <small>
-                Alleen binnen de ingestelde periode wordt de banner getoond.
-              </small>
+}
 
-            </span>
 
-          </label>
+/* =========================================================
+   FORMULIER VULLEN
+   ========================================================= */
 
+function fillForm() {
 
-          <!-- TITEL -->
+  const active =
+    $("active");
 
-          <label>
+  const title =
+    $("title");
 
-            Titel
+  const eyebrow =
+    $("eyebrow");
 
-            <input
-              id="title"
-              type="text"
-              placeholder="Bijvoorbeeld: Muziek Bingo"
-              autocomplete="off">
+  const dateText =
+    $("dateText");
 
-          </label>
+  const timeText =
+    $("timeText");
 
+  const location =
+    $("location");
 
-          <!-- BOVENREGEL -->
+  const link =
+    $("link");
 
-          <label>
+  const start =
+    $("start");
 
-            Bovenregel
+  const end =
+    $("end");
 
-            <input
-              id="eyebrow"
-              type="text"
-              placeholder="HV NOVITAS PRESENTEERT"
-              autocomplete="off">
 
-          </label>
+  if (active) {
 
+    active.checked =
+      !!current.active;
 
-          <!-- DATUM + TIJD -->
+  }
 
-          <div class="two">
 
-            <label>
+  if (title) {
 
-              Datumtekst
+    title.value =
+      current.title || "";
 
-              <input
-                id="dateText"
-                type="text"
-                placeholder="Zaterdag 28 november 2026">
+  }
 
-            </label>
 
+  if (eyebrow) {
 
-            <label>
+    eyebrow.value =
+      current.eyebrow || "";
 
-              Tijdtekst
+  }
 
-              <input
-                id="timeText"
-                type="text"
-                placeholder="19.00 uur">
 
-            </label>
+  if (dateText) {
 
-          </div>
+    dateText.value =
+      current.dateText || "";
 
+  }
 
-          <!-- LOCATIE -->
 
-          <label>
+  if (timeText) {
 
-            Locatie
+    timeText.value =
+      current.timeText || "";
 
-            <input
-              id="location"
-              type="text"
-              placeholder="Den Dullaert"
-              autocomplete="off">
+  }
 
-          </label>
 
+  if (location) {
 
-          <!-- LINK -->
+    location.value =
+      current.location || "";
 
-          <label>
+  }
 
-            Link
 
-            <input
-              id="link"
-              type="url"
-              placeholder="https://www.hvnovitas.nl/..."
-              inputmode="url">
+  if (link) {
 
-            <small>
-              Optioneel. De hele banner wordt klikbaar wanneer hier een link staat.
-            </small>
+    link.value =
+      current.link || "";
 
-          </label>
+  }
 
 
-          <!-- ZICHTBAARHEID -->
+  if (start) {
 
-          <div class="two">
+    start.value =
+      toDateTimeLocal(
+        current.start
+      );
 
-            <label>
+  }
 
-              Zichtbaar vanaf
 
-              <input
-                id="start"
-                type="datetime-local">
+  if (end) {
 
-            </label>
+    end.value =
+      toDateTimeLocal(
+        current.end
+      );
 
+  }
 
-            <label>
+}
 
-              Zichtbaar tot
 
-              <input
-                id="end"
-                type="datetime-local">
+/* =========================================================
+   DATUM VOOR INPUT
+   ========================================================= */
 
-            </label>
+function toDateTimeLocal(value) {
 
-          </div>
+  if (!value) {
 
+    return "";
 
-          <!-- KNOPPEN -->
+  }
 
-          <div class="actions">
 
-            <button
-              type="submit"
-              class="primary">
-              Banner opslaan
-            </button>
+  const stringValue =
+    String(value);
 
 
-            <button
-              type="button"
-              id="previewBtn"
-              class="secondary">
-              Naar voorbeeld
-            </button>
+  /*
+   * Wanneer het al exact het formaat
+   * YYYY-MM-DDTHH:MM heeft.
+   */
 
+  if (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/
+      .test(stringValue)
+  ) {
 
-            <button
-              type="button"
-              id="clearBtn"
-              class="danger">
-              Banner leegmaken
-            </button>
+    return stringValue;
 
-          </div>
+  }
 
 
-          <p class="note">
+  /*
+   * ISO-datum met timezone.
+   */
 
-            De banner gebruikt de vaste HV Novitas-vormgeving.
-            Je hoeft hier alleen de tekst, periode en eventuele link in te vullen.
+  const date =
+    new Date(stringValue);
 
-          </p>
 
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
 
-        </form>
+    return "";
 
-      </section>
+  }
 
 
-      <!-- =========================================
-           VOORBEELD
-           ========================================= -->
+  const pad =
+    number =>
+      String(number)
+        .padStart(2, "0");
 
-      <section
-        class="panel"
-        id="previewPanel">
 
-        <div class="panel-title">
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes())
+  );
 
-          <div>
+}
 
-            <h2>
-              Voorbeeld
-            </h2>
 
-            <p class="note">
-              Dit voorbeeld verandert direct terwijl je de velden invult.
-            </p>
+/* =========================================================
+   FORMULIER UITLEZEN
+   ========================================================= */
 
-          </div>
+function readForm() {
 
+  return {
 
-          <div class="pill">
-            Voorbeeld
-          </div>
+    active:
+      $("active").checked,
 
-        </div>
+    title:
+      $("title").value.trim(),
 
+    eyebrow:
+      $("eyebrow").value.trim(),
 
-        <div id="preview">
+    dateText:
+      $("dateText").value.trim(),
 
+    timeText:
+      $("timeText").value.trim(),
 
-          <section class="event-banner">
+    location:
+      $("location").value.trim(),
 
+    link:
+      $("link").value.trim(),
 
-            <div
-              class="art"
-              aria-hidden="true">
+    start:
+      $("start").value,
 
+    end:
+      $("end").value
 
-              <span class="music one">
-                ♪
-              </span>
+  };
 
+}
 
-              <span class="music two">
-                ♫
-              </span>
 
+/* =========================================================
+   INPUT EVENTS
+   ========================================================= */
 
-              <span class="ball left">
-                5
-              </span>
+[
+  "active",
+  "title",
+  "eyebrow",
+  "dateText",
+  "timeText",
+  "location",
+  "link",
+  "start",
+  "end"
+]
+.forEach(
+  id => {
 
+    const element =
+      $(id);
 
-              <span class="ball mid">
-                17
-              </span>
+    if (!element) {
+      return;
+    }
 
 
-              <span class="ball right">
-                28
-              </span>
+    element.addEventListener(
+      "input",
+      updatePreview
+    );
 
+    element.addEventListener(
+      "change",
+      updatePreview
+    );
 
-              <div class="bingo">
+  }
+);
 
-                BINGO
 
-                <small>
-                  ★ ★ ★
-                </small>
+/* =========================================================
+   OPSLAAN
+   ========================================================= */
 
-              </div>
+$("eventForm")
+  ?.addEventListener(
+    "submit",
+    async event => {
 
+      event.preventDefault();
 
-            </div>
 
+      const data =
+        readForm();
 
-            <div class="content">
 
+      if (!data.title) {
 
-              <div
-                id="previewEyebrow"
-                class="eyebrow">
+        message(
+          "Vul een titel in.",
+          "error"
+        );
 
-                HV NOVITAS PRESENTEERT
+        return;
 
-              </div>
+      }
 
 
-              <div
-                id="previewTitle"
-                class="title">
+      if (
+        !data.start ||
+        !data.end
+      ) {
 
-                MUZIEK
-                <strong>BINGO</strong>
+        message(
+          "Vul de zichtbaarheidperiode in.",
+          "error"
+        );
 
-              </div>
+        return;
 
+      }
 
-              <div class="rule">
-              </div>
 
+      const startDate =
+        new Date(data.start);
 
-              <div class="details">
+      const endDate =
+        new Date(data.end);
 
 
-                <span id="previewDate">
-                  DATUM
-                </span>
+      if (
+        Number.isNaN(
+          startDate.getTime()
+        ) ||
+        Number.isNaN(
+          endDate.getTime()
+        )
+      ) {
 
+        message(
+          "Controleer de datum en tijd.",
+          "error"
+        );
 
-                <i>
-                  •
-                </i>
+        return;
 
+      }
 
-                <span id="previewTime">
-                  TIJD
-                </span>
 
+      if (
+        endDate <= startDate
+      ) {
 
-                <i>
-                  •
-                </i>
+        message(
+          "De eindtijd moet na de begintijd liggen.",
+          "error"
+        );
 
+        return;
 
-                <span id="previewLocation">
-                  LOCATIE
-                </span>
+      }
 
 
-              </div>
+      if (
+        data.link &&
+        !/^https?:\/\//i.test(
+          data.link
+        )
+      ) {
 
+        message(
+          "De link moet beginnen met http:// of https://.",
+          "error"
+        );
 
-            </div>
+        return;
 
+      }
 
-          </section>
 
+      try {
 
-        </div>
+        await set(
+          ref(
+            db,
+            PATH
+          ),
 
+          {
+            ...data,
 
-      </section>
+            updatedAt:
+              Date.now()
+          }
+        );
 
 
-    </div>
+        message(
+          "Evenementenbanner opgeslagen.",
+          "success"
+        );
 
 
-    <!-- =========================================
-         UITLEG
-         ========================================= -->
+      } catch (error) {
 
-    <section class="panel guidance">
+        console.error(
+          "Opslaan mislukt:",
+          error
+        );
 
-      <b>
-        Gebruik
-      </b>
+        message(
+          "Opslaan mislukt. Controleer Firebase-rechten.",
+          "error"
+        );
 
-      <p>
+      }
 
-        Zet eerst de banner aan.
-        Vul daarna titel, datum, tijd en locatie in.
-        Stel vervolgens de zichtbaarheidperiode in en klik op
-        <strong>Banner opslaan</strong>.
+    }
+  );
 
-      </p>
 
-    </section>
+/* =========================================================
+   PREVIEW KNOP
+   ========================================================= */
 
+$("previewBtn")
+  ?.addEventListener(
+    "click",
+    () => {
 
-  </main>
+      $("previewPanel")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
 
+      updatePreview();
 
-  <!-- MELDINGEN -->
+    }
+  );
 
-  <div
-    id="message"
-    class="message"
-    aria-live="polite">
-  </div>
 
+/* =========================================================
+   LEEGMAKEN
+   ========================================================= */
 
-  <!-- SCRIPT -->
+$("clearBtn")
+  ?.addEventListener(
+    "click",
+    async () => {
 
-  <script
-    type="module"
-    src="evenementenbanner.js">
-  </script>
+      const confirmed =
+        window.confirm(
+          "Wil je de bannergegevens verwijderen?"
+        );
 
 
-</body>
-</html>
+      if (!confirmed) {
+        return;
+      }
+
+
+      try {
+
+        await remove(
+          ref(
+            db,
+            PATH
+          )
+        );
+
+
+        $("eventForm")
+          ?.reset();
+
+
+        updatePreview();
+
+
+        message(
+          "Banner leeggemaakt.",
+          "success"
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Verwijderen mislukt:",
+          error
+        );
+
+        message(
+          "Verwijderen mislukt.",
+          "error"
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function updateStatus() {
+
+  const element =
+    $("status");
+
+
+  if (!element) {
+    return;
+  }
+
+
+  const now =
+    Date.now();
+
+
+  const start =
+    current.start
+      ? new Date(
+          current.start
+        ).getTime()
+      : 0;
+
+
+  const end =
+    current.end
+      ? new Date(
+          current.end
+        ).getTime()
+      : 0;
+
+
+  element.className =
+    "pill";
+
+
+  if (!current.active) {
+
+    element.textContent =
+      "Uitgeschakeld";
+
+    element.classList.add(
+      "neutral"
+    );
+
+    return;
+
+  }
+
+
+  if (!start || !end) {
+
+    element.textContent =
+      "Nog niet gepland";
+
+    element.classList.add(
+      "neutral"
+    );
+
+    return;
+
+  }
+
+
+  if (now < start) {
+
+    element.textContent =
+      "Ingepland";
+
+    element.classList.add(
+      "neutral"
+    );
+
+    return;
+
+  }
+
+
+  if (now <= end) {
+
+    element.textContent =
+      "Actief volgens planning";
+
+    return;
+
+  }
+
+
+  element.textContent =
+    "Periode verstreken";
+
+  element.classList.add(
+    "neutral"
+  );
+
+}
+
+
+/* =========================================================
+   PREVIEW
+   ========================================================= */
+
+function updatePreview() {
+
+  const root =
+    $("previewRoot");
+
+
+  if (!root) {
+    return;
+  }
+
+
+  const data =
+    readForm();
+
+
+  root.replaceChildren();
+
+
+  renderBanner(
+    root,
+    data,
+    false
+  );
+
+}
+
+
+/* =========================================================
+   BANNER RENDERER
+   DEZELFDE OPBOUW ALS WEBSITE
+   ========================================================= */
+
+function renderBanner(
+  root,
+  data,
+  clickable
+) {
+
+  const banner =
+    createElement(
+      "section",
+      "event-banner"
+    );
+
+
+  /* =======================================================
+     ART
+     ======================================================= */
+
+  const art =
+    createElement(
+      "div",
+      "art"
+    );
+
+
+  art.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  /* MUZIEKNOTEN */
+
+  const musicItems = [
+
+    [
+      "music one",
+      "♪"
+    ],
+
+    [
+      "music two",
+      "♫"
+    ],
+
+    [
+      "music three",
+      "♪"
+    ],
+
+    [
+      "music four",
+      "♫"
+    ]
+
+  ];
+
+
+  musicItems.forEach(
+    ([className, text]) => {
+
+      art.append(
+        createElement(
+          "span",
+          className,
+          text
+        )
+      );
+
+    }
+  );
+
+
+  /* BINGO-KAARTEN */
+
+  art.append(
+    createElement(
+      "span",
+      "bingo-card card-left"
+    )
+  );
+
+
+  art.append(
+    createElement(
+      "span",
+      "bingo-card card-right"
+    )
+  );
+
+
+  /* BINGO BALLEN */
+
+  const balls = [
+
+    [
+      "ball ball-left-one",
+      "5"
+    ],
+
+    [
+      "ball ball-left-two",
+      "17"
+    ],
+
+    [
+      "ball ball-right-one",
+      "28"
+    ],
+
+    [
+      "ball ball-right-two",
+      "11"
+    ]
+
+  ];
+
+
+  balls.forEach(
+    ([className, text]) => {
+
+      art.append(
+        createElement(
+          "span",
+          className,
+          text
+        )
+      );
+
+    }
+  );
+
+
+  banner.append(
+    art
+  );
+
+
+  /* =======================================================
+     CONTENT
+     ======================================================= */
+
+  const content =
+    createElement(
+      "div",
+      "content"
+    );
+
+
+  /* EYEBROW */
+
+  const eyebrow =
+    createElement(
+      "div",
+      "eyebrow",
+      data.eyebrow ||
+      "HV NOVITAS PRESENTEERT"
+    );
+
+
+  /* TITEL */
+
+  const title =
+    createElement(
+      "div",
+      "title"
+    );
+
+
+  const words =
+    String(
+      data.title ||
+      "EVENEMENT"
+    )
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+
+  if (
+    words.length > 1
+  ) {
+
+    contentText =
+      words
+        .slice(0, -1)
+        .join(" ") +
+      " ";
+
+    title.append(
+      document.createTextNode(
+        contentText
+      )
+    );
+
+  }
+
+
+  const strong =
+    createElement(
+      "strong",
+      "",
+      words[
+        words.length - 1
+      ]
+    );
+
+
+  title.append(
+    strong
+  );
+
+
+  /* LIJN */
+
+  const rule =
+    createElement(
+      "div",
+      "rule"
+    );
+
+
+  /* DETAILS */
+
+  const details =
+    createElement(
+      "div",
+      "details"
+    );
+
+
+  const values = [
+
+    data.dateText,
+
+    data.timeText,
+
+    data.location
+
+  ]
+    .filter(Boolean);
+
+
+  values.forEach(
+    (
+      value,
+      index
+    ) => {
+
+
+      if (index > 0) {
+
+        details.append(
+          createElement(
+            "i",
+            "",
+            "•"
+          )
+        );
+
+      }
+
+
+      details.append(
+        createElement(
+          "span",
+          "",
+          value
+        )
+      );
+
+
+    }
+  );
+
+
+  content.append(
+    eyebrow,
+    title,
+    rule,
+    details
+  );
+
+
+  banner.append(
+    content
+  );
+
+
+  /* =======================================================
+     KLIKBAAR MAKEN
+     ======================================================= */
+
+  if (
+    clickable &&
+    data.link
+  ) {
+
+    const link =
+      createElement(
+        "a",
+        "event-link"
+      );
+
+
+    link.href =
+      data.link;
+
+
+    link.target =
+      "_blank";
+
+
+    link.rel =
+      "noopener";
+
+
+    link.setAttribute(
+      "aria-label",
+      data.title ||
+      "Evenement"
+    );
+
+
+    link.append(
+      banner
+    );
+
+
+    root.append(
+      link
+    );
+
+
+  } else {
+
+    root.append(
+      banner
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ELEMENT HELPER
+   ========================================================= */
+
+function createElement(
+  tag,
+  className,
+  text = ""
+) {
+
+  const element =
+    document.createElement(
+      tag
+    );
+
+
+  if (className) {
+
+    element.className =
+      className;
+
+  }
+
+
+  if (text) {
+
+    element.textContent =
+      text;
+
+  }
+
+
+  return element;
+
+}
+
+
+/* =========================================================
+   MELDING
+   ========================================================= */
+
+function message(
+  text,
+  type = ""
+) {
+
+  const element =
+    $("message");
+
+
+  if (!element) {
+    return;
+  }
+
+
+  clearTimeout(
+    messageTimer
+  );
+
+
+  element.textContent =
+    text;
+
+
+  element.className =
+    "message show " +
+    type;
+
+
+  messageTimer =
+    setTimeout(
+      () => {
+
+        element.className =
+          "message";
+
+      },
+      4000
+    );
+
+}
