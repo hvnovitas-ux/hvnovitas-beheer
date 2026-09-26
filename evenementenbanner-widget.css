@@ -1,17 +1,23 @@
 /* =========================================================
-   HV NOVITAS - MUZIEK BINGO EVENT BANNER
+   HV NOVITAS
+   MUZIEK BINGO EVENT BANNER
+   HELDERE EDITIE
    ========================================================= */
 
 * {
   box-sizing: border-box;
 }
 
+
 html,
 body {
+
   width: 100%;
+
   height: 100%;
 
   margin: 0;
+
   padding: 0;
 
   overflow: hidden;
@@ -21,14 +27,20 @@ body {
     Helvetica,
     sans-serif;
 
-  background: #0a0a0a;
+  background:
+    #120700;
+
 }
 
+
 #eventRoot {
+
   width: 100%;
+
   height: 100%;
 
   overflow: hidden;
+
 }
 
 
@@ -37,27 +49,32 @@ body {
    ========================================================= */
 
 .event-link {
+
   display: block;
 
   width: 100%;
+
   height: 100%;
 
   color: #ffffff;
 
   text-decoration: none;
+
 }
 
 
 /* =========================================================
-   HOOFDBANNER
+   BANNER
    ========================================================= */
 
 .event-banner {
+
   position: relative;
 
   isolation: isolate;
 
   width: 100%;
+
   height: 100%;
 
   min-height: 190px;
@@ -67,10 +84,11 @@ body {
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
   padding:
-    14px
+    15px
     20px;
 
   color: #ffffff;
@@ -78,58 +96,73 @@ body {
   text-align: center;
 
   background:
+
     radial-gradient(
-      ellipse at 8% 50%,
-      rgba(255,106,0,.55) 0%,
-      rgba(255,106,0,.20) 18%,
-      transparent 37%
+      ellipse at 15% 30%,
+      rgba(255,225,61,.70)
+      0%,
+      rgba(255,173,0,.38)
+      18%,
+      transparent 42%
     ),
 
     radial-gradient(
-      ellipse at 92% 45%,
-      rgba(255,106,0,.45) 0%,
-      rgba(255,106,0,.16) 19%,
-      transparent 38%
+      ellipse at 85% 65%,
+      rgba(255,238,90,.55)
+      0%,
+      rgba(255,105,0,.32)
+      20%,
+      transparent 44%
     ),
 
     radial-gradient(
-      ellipse at 50% 120%,
-      rgba(255,106,0,.25) 0%,
-      transparent 50%
+      ellipse at 52% 115%,
+      rgba(255,245,145,.38)
+      0%,
+      transparent 45%
     ),
 
     linear-gradient(
-      110deg,
-      #050505 0%,
-      #101010 42%,
-      #191919 58%,
-      #080808 100%
+      118deg,
+      #8d1d00 0%,
+      #e83c00 24%,
+      #ff6800 46%,
+      #ff8e00 66%,
+      #b92700 100%
     );
 
   border-top:
-    2px solid #ff6a00;
+    2px solid
+    #ffe45c;
 
   border-bottom:
-    2px solid #ff6a00;
+    2px solid
+    #ff9e00;
 
   box-shadow:
-    inset 0 0 80px rgba(0,0,0,.55),
-    0 8px 20px rgba(0,0,0,.25);
+
+    inset 0 0 60px
+    rgba(85,15,0,.35),
+
+    0 8px 20px
+    rgba(80,24,0,.25);
+
 }
 
 
 /* =========================================================
-   DIAGONALE ORANJE BANEN
+   DIAGONALE LICHTBANDEN
    ========================================================= */
 
 .event-banner::before {
+
   content: "";
 
   position: absolute;
 
   top: -70%;
 
-  left: 31%;
+  left: 29%;
 
   width: 24px;
 
@@ -142,30 +175,29 @@ body {
     linear-gradient(
       180deg,
       transparent,
-      rgba(255,106,0,.72),
-      rgba(255,122,0,.20),
+      rgba(255,239,155,.88),
+      rgba(255,215,75,.30),
       transparent
     );
 
-  opacity: .45;
-
-  filter:
-    blur(.2px);
+  opacity: .65;
 
   z-index: 0;
+
 }
 
 
 .event-banner::after {
+
   content: "";
 
   position: absolute;
 
   top: -70%;
 
-  right: 30%;
+  right: 28%;
 
-  width: 11px;
+  width: 13px;
 
   height: 240%;
 
@@ -176,26 +208,29 @@ body {
     linear-gradient(
       180deg,
       transparent,
-      rgba(255,255,255,.18),
+      rgba(255,255,255,.75),
       transparent
     );
 
-  opacity: .32;
+  opacity: .38;
 
   z-index: 0;
+
 }
 
 
 /* =========================================================
-   DECORATIE-LAAG
+   ART
    ========================================================= */
 
 .art {
+
   position: absolute;
 
   inset: 0;
 
   width: 100%;
+
   height: 100%;
 
   overflow: hidden;
@@ -203,62 +238,67 @@ body {
   z-index: 1;
 
   pointer-events: none;
+
 }
 
 
-/* =========================================================
-   EXTRA LICHTSTREPEN
-   ========================================================= */
-
 .art::before {
+
   content: "";
 
   position: absolute;
 
   left: -8%;
-  bottom: -10%;
 
-  width: 55%;
-  height: 55%;
+  bottom: -15%;
+
+  width: 58%;
+
+  height: 65%;
 
   border-radius: 50%;
 
   background:
     radial-gradient(
       ellipse,
-      rgba(255,106,0,.48),
-      rgba(255,106,0,.14) 38%,
+      rgba(255,238,94,.62),
+      rgba(255,126,0,.25) 36%,
       transparent 72%
     );
 
   filter:
     blur(12px);
+
 }
 
 
 .art::after {
+
   content: "";
 
   position: absolute;
 
   right: -8%;
+
   top: -10%;
 
-  width: 50%;
-  height: 55%;
+  width: 55%;
+
+  height: 60%;
 
   border-radius: 50%;
 
   background:
     radial-gradient(
       ellipse,
-      rgba(255,106,0,.32),
-      rgba(255,106,0,.08) 42%,
+      rgba(255,247,139,.44),
+      rgba(255,133,0,.18) 40%,
       transparent 74%
     );
 
   filter:
     blur(15px);
+
 }
 
 
@@ -267,126 +307,165 @@ body {
    ========================================================= */
 
 .music {
+
   position: absolute;
 
-  color: #ff7a00;
+  color:
+    #fff05a;
 
   font-size:
     clamp(
-      32px,
+      35px,
       4.5vw,
       70px
     );
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 
   font-weight: 900;
 
   line-height: 1;
 
   text-shadow:
-    0 0 8px rgba(255,106,0,.80),
-    0 0 22px rgba(255,106,0,.42);
 
-  opacity: .95;
+    0 0 8px
+    rgba(255,235,70,.95),
+
+    0 0 22px
+    rgba(255,179,0,.72),
+
+    0 4px 10px
+    rgba(95,20,0,.55);
+
+  opacity: .98;
 
   z-index: 3;
+
 }
 
+
 .one {
-  left: 6%;
-  top: 15%;
+
+  left: 5%;
+
+  top: 9%;
 
   transform:
     rotate(-12deg);
+
 }
 
+
 .two {
-  right: 6%;
-  top: 10%;
+
+  right: 5%;
+
+  top: 7%;
 
   transform:
     rotate(12deg);
+
 }
 
+
 .three {
-  left: 14%;
-  bottom: 8%;
+
+  left: 12%;
+
+  bottom: 4%;
 
   font-size:
     clamp(
-      25px,
+      28px,
       3vw,
       46px
     );
 
   transform:
     rotate(8deg);
+
 }
 
+
 .four {
-  right: 14%;
-  bottom: 10%;
+
+  right: 12%;
+
+  bottom: 6%;
 
   font-size:
     clamp(
-      25px,
+      28px,
       3vw,
       46px
     );
 
   transform:
     rotate(-8deg);
+
 }
 
 
 /* =========================================================
-   BINGO-KAARTEN
+   BINGO KAARTEN
    ========================================================= */
 
 .bingo-card {
+
   position: absolute;
 
-  width: 135px;
-  height: 86px;
+  width: 125px;
+
+  height: 80px;
 
   border:
-    3px solid rgba(255,150,60,.85);
+    3px solid
+    rgba(255,242,206,.95);
 
-  border-radius: 8px;
+  border-radius: 9px;
 
   background:
+
     repeating-linear-gradient(
       to right,
-      rgba(255,255,255,.75) 0,
-      rgba(255,255,255,.75) 2px,
+      rgba(255,101,0,.72) 0,
+      rgba(255,101,0,.72) 2px,
       transparent 2px,
-      transparent 26px
+      transparent 24px
     ),
 
     repeating-linear-gradient(
       to bottom,
-      rgba(255,255,255,.75) 0,
-      rgba(255,255,255,.75) 2px,
+      rgba(255,101,0,.72) 0,
+      rgba(255,101,0,.72) 2px,
       transparent 2px,
-      transparent 20px
+      transparent 19px
     ),
 
     linear-gradient(
       145deg,
-      rgba(40,40,40,.95),
-      rgba(10,10,10,.95)
+      #fffdf7,
+      #e9e9e9
     );
 
   box-shadow:
-    0 10px 30px rgba(0,0,0,.40),
-    0 0 14px rgba(255,106,0,.18);
+
+    0 10px 28px
+    rgba(84,24,0,.42),
+
+    0 0 18px
+    rgba(255,221,47,.35);
 
   z-index: 2;
 
-  opacity: .92;
 }
 
 
 .bingo-card::before {
+
   content: "";
 
   position: absolute;
@@ -394,91 +473,111 @@ body {
   inset: 7px;
 
   border:
-    1px solid rgba(255,255,255,.16);
+    1px solid
+    rgba(255,255,255,.8);
 
-  border-radius: 3px;
+  border-radius: 4px;
+
 }
 
 
 .card-left {
-  left: 4%;
 
-  top: 5%;
+  left: 3%;
+
+  top: 4%;
 
   transform:
     rotate(-11deg);
+
 }
 
 
 .card-left::after {
-  content: "BINGO";
+
+  content:
+    "BINGO";
 
   position: absolute;
 
   left: 50%;
+
   top: 50%;
 
   transform:
-    translate(-50%,-50%)
+    translate(-50%, -50%)
     rotate(11deg);
 
-  color: #ff7a00;
+  color:
+    #ff6500;
 
   font-size: 15px;
 
   font-weight: 1000;
 
-  letter-spacing: .10em;
+  letter-spacing: .12em;
 
   text-shadow:
-    0 2px 5px #000;
+    0 2px 4px
+    rgba(255,255,255,.85);
+
 }
 
 
 .card-right {
-  right: 4%;
+
+  right: 3%;
 
   bottom: 2%;
 
   transform:
     rotate(10deg);
+
 }
 
 
 .card-right::after {
-  content: "BINGO";
+
+  content:
+    "BINGO";
 
   position: absolute;
 
   left: 50%;
+
   top: 50%;
 
   transform:
-    translate(-50%,-50%)
+    translate(-50%, -50%)
     rotate(-10deg);
 
-  color: #ff7a00;
+  color:
+    #ff6500;
 
   font-size: 15px;
 
   font-weight: 1000;
 
-  letter-spacing: .10em;
+  letter-spacing: .12em;
 
   text-shadow:
-    0 2px 5px #000;
+    0 2px 4px
+    rgba(255,255,255,.85);
+
 }
 
 
 /* =========================================================
-   BINGO BALLEN
+   BALLEN
    ========================================================= */
 
 .ball {
+
   position: absolute;
 
-  width: 76px;
-  height: 76px;
+  width: 72px;
+
+  height: 72px;
 
   border-radius: 50%;
 
@@ -486,34 +585,44 @@ body {
 
   place-items: center;
 
-  color: #171717;
+  color:
+    #222222;
 
-  font-size: 28px;
+  font-size: 27px;
 
   font-weight: 1000;
 
   background:
+
     radial-gradient(
-      circle at 33% 25%,
+      circle at 32% 24%,
       #ffffff 0%,
-      #f1f1f1 32%,
-      #d2d2d2 48%,
-      #888888 73%,
-      #252525 100%
+      #ffffff 16%,
+      #fff7dd 30%,
+      #e5e5e5 53%,
+      #a8a8a8 77%,
+      #656565 100%
     );
 
   border:
-    4px solid #ff6a00;
+    5px solid
+    #ff6900;
 
   box-shadow:
-    0 7px 18px rgba(0,0,0,.40),
-    0 0 16px rgba(255,106,0,.60);
+
+    0 7px 18px
+    rgba(70,22,0,.42),
+
+    0 0 18px
+    rgba(255,221,47,.70);
 
   z-index: 4;
+
 }
 
 
 .ball::after {
+
   content: "";
 
   position: absolute;
@@ -521,48 +630,68 @@ body {
   inset: 8px;
 
   border:
-    2px solid rgba(255,106,0,.65);
+    2px solid
+    rgba(255,119,0,.72);
 
   border-radius: 50%;
+
 }
 
 
 .ball-left-one {
+
   left: 5%;
+
   bottom: -18px;
+
 }
+
 
 .ball-left-two {
+
   left: 11%;
-  bottom: -28px;
 
-  width: 62px;
-  height: 62px;
+  bottom: -27px;
 
-  font-size: 23px;
+  width: 58px;
+
+  height: 58px;
+
+  font-size: 21px;
+
 }
+
 
 .ball-right-one {
+
   right: 5%;
-  bottom: -20px;
+
+  bottom: -18px;
+
 }
 
+
 .ball-right-two {
+
   right: 11%;
-  bottom: -29px;
 
-  width: 62px;
-  height: 62px;
+  bottom: -27px;
 
-  font-size: 23px;
+  width: 58px;
+
+  height: 58px;
+
+  font-size: 21px;
+
 }
 
 
 /* =========================================================
-   CENTRALE INHOUD
+   CONTENT
    ========================================================= */
 
 .content {
+
   position: relative;
 
   z-index: 10;
@@ -573,18 +702,17 @@ body {
 
   padding:
     0
-    160px;
+    165px;
+
 }
 
 
-/* =========================================================
-   EYEBROW
-   ========================================================= */
-
 .eyebrow {
+
   margin-bottom: 4px;
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
   font-size:
     clamp(
@@ -593,23 +721,23 @@ body {
       14px
     );
 
-  font-weight: 900;
+  font-weight: 1000;
 
-  letter-spacing: .24em;
+  letter-spacing: .23em;
 
   text-transform: uppercase;
 
   text-shadow:
-    0 2px 5px #000;
+    0 2px 5px
+    rgba(70,16,0,.85);
+
 }
 
 
-/* =========================================================
-   TITEL
-   ========================================================= */
-
 .title {
-  color: #ffffff;
+
+  color:
+    #ffffff;
 
   font-size:
     clamp(
@@ -620,63 +748,77 @@ body {
 
   font-weight: 1000;
 
-  letter-spacing: -.045em;
+  letter-spacing:
+    -.045em;
 
-  line-height: .98;
+  line-height: .95;
 
   text-transform: uppercase;
 
   white-space: nowrap;
 
   text-shadow:
-    0 3px 0 #343434,
-    0 6px 12px #000;
+
+    0 3px 0
+    rgba(101,30,0,.85),
+
+    0 6px 13px
+    rgba(60,15,0,.62);
+
 }
 
 
 .title strong {
-  color: #ff7a00;
+
+  color:
+    #ffe040;
 
   text-shadow:
-    0 3px 0 #8e3600,
-    0 6px 14px #000,
-    0 0 15px rgba(255,106,0,.25);
+
+    0 3px 0
+    #a54b00,
+
+    0 5px 12px
+    rgba(89,28,0,.72),
+
+    0 0 18px
+    rgba(255,237,87,.40);
+
 }
 
 
-/* =========================================================
-   SCHEIDINGSLIJN
-   ========================================================= */
-
 .rule {
-  width: 54%;
 
-  height: 3px;
+  width: 55%;
+
+  height: 4px;
 
   margin:
     8px
     auto
     7px;
 
+  border-radius: 999px;
+
   background:
     linear-gradient(
       90deg,
       transparent,
-      #ff6a00 15%,
-      #ff6a00 85%,
+      #fff176 15%,
+      #ffd21f 50%,
+      #fff176 85%,
       transparent
     );
 
   box-shadow:
-    0 0 12px rgba(255,106,0,.40);
+    0 0 14px
+    rgba(255,237,87,.65);
+
 }
 
 
-/* =========================================================
-   DETAILS
-   ========================================================= */
-
 .details {
+
   display: flex;
 
   justify-content: center;
@@ -685,9 +827,10 @@ body {
 
   flex-wrap: wrap;
 
-  gap: 9px;
+  gap: 8px;
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
   font-size:
     clamp(
@@ -698,88 +841,28 @@ body {
 
   font-weight: 900;
 
-  letter-spacing: .04em;
+  letter-spacing: .025em;
 
   text-shadow:
-    0 2px 4px #000;
+    0 2px 5px
+    rgba(74,20,0,.9);
+
 }
 
+
 .details i {
-  color: #ff7a00;
+
+  color:
+    #fff04a;
 
   font-style: normal;
 
   font-weight: 1000;
 
   text-shadow:
-    0 0 8px rgba(255,106,0,.60);
-}
+    0 0 10px
+    rgba(255,231,48,.8);
 
-
-/* =========================================================
-   CENTRALE ORANJE GLOED
-   ========================================================= */
-
-.content::before {
-  content: "";
-
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
-
-  width: 78%;
-  height: 100px;
-
-  transform:
-    translate(
-      -50%,
-      -50%
-    );
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(255,106,0,.12),
-      transparent 70%
-    );
-
-  filter:
-    blur(6px);
-
-  z-index: -1;
-
-  pointer-events: none;
-}
-
-
-/* =========================================================
-   HORIZONTALE LICHTSTREAKS
-   ========================================================= */
-
-.event-banner .content::after {
-  content: "";
-
-  position: absolute;
-
-  left: 12%;
-  right: 12%;
-
-  bottom: -18px;
-
-  height: 25px;
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(255,106,0,.60),
-      transparent 68%
-    );
-
-  filter:
-    blur(10px);
-
-  z-index: -1;
 }
 
 
@@ -790,22 +873,27 @@ body {
 @media (max-width: 700px) {
 
   .event-banner {
+
     min-height: 190px;
 
     padding:
-      12px
-      8px;
+      10px
+      7px;
+
   }
 
 
   .content {
+
     padding:
       0
-      80px;
+      72px;
+
   }
 
 
   .title {
+
     font-size:
       clamp(
         27px,
@@ -814,56 +902,60 @@ body {
       );
 
     white-space: normal;
+
   }
 
 
   .eyebrow {
+
     letter-spacing: .12em;
+
   }
 
 
   .details {
+
     gap: 6px;
 
-    letter-spacing: .02em;
-  }
-
-
-  .rule {
-    width: 48%;
-
-    margin:
-      6px
-      auto
-      5px;
   }
 
 
   .bingo-card {
-    width: 92px;
-    height: 62px;
+
+    width: 90px;
+
+    height: 60px;
+
   }
 
 
   .ball {
+
     width: 56px;
+
     height: 56px;
 
     font-size: 20px;
+
   }
 
 
   .ball-left-two,
   .ball-right-two {
-    width: 46px;
-    height: 46px;
+
+    width: 45px;
+
+    height: 45px;
 
     font-size: 17px;
+
   }
 
 
   .music {
+
     font-size: 36px;
+
   }
 
 }
