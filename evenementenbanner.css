@@ -1,422 +1,1339 @@
-<!DOCTYPE html>
-<html lang="nl">
+/* =========================================================
+   HV NOVITAS - EVENEMENTENBANNER BEHEER
+   ========================================================= */
 
-<head>
+:root {
+  --orange: #ff6a00;
+  --orange-light: #ff7a00;
+  --orange-dark: #c94f00;
 
-  <meta charset="UTF-8">
+  --dark: #111111;
+  --dark-2: #171717;
+  --dark-3: #242424;
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
+  --ink: #172033;
+  --muted: #6b7280;
+  --line: #dce2e9;
+  --bg: #f3f5f8;
 
-  <title>
-    HV Novitas – Evenementenbanner beheren
-  </title>
+  --white: #ffffff;
+}
 
-  <link
-    rel="stylesheet"
-    href="evenementenbanner.css">
 
-</head>
+/* =========================================================
+   BASIS BEHEER
+   ========================================================= */
 
+* {
+  box-sizing: border-box;
+}
 
-<body>
+html {
+  overflow-x: hidden;
+}
 
-  <main class="page">
+body {
+  margin: 0;
 
+  background: var(--bg);
 
-    <!-- =====================================================
-         HEADER
-         ===================================================== -->
+  color: var(--ink);
 
-    <header class="header">
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
 
-      <div>
+.page {
+  width:
+    min(
+      1450px,
+      calc(100% - 40px)
+    );
 
-        <div class="kicker">
-          HV NOVITAS CMS
-        </div>
+  margin:
+    28px
+    auto
+    45px;
+}
 
-        <h1>
-          Evenementenbanner beheren
-        </h1>
 
-        <p>
-          Stel hier de banner in die op de website verschijnt.
-        </p>
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-      </div>
+.header {
+  display: flex;
 
+  justify-content: space-between;
 
-      <div>
+  align-items: flex-start;
 
-        <a
-          class="back"
-          href="dashboard.html">
+  gap: 20px;
 
-          ← Terug naar dashboard
+  margin-bottom: 22px;
+}
 
-        </a>
+.kicker {
+  margin-bottom: 7px;
 
-      </div>
+  color: var(--orange);
 
-    </header>
+  font-size: 12px;
 
+  font-weight: 800;
 
+  letter-spacing: .16em;
+}
 
-    <!-- =====================================================
-         BEHEER + VOORBEELD
-         ===================================================== -->
+.header h1 {
+  margin:
+    0
+    0
+    7px;
 
-    <div class="layout">
+  font-size: 32px;
+}
 
+.header p {
+  margin: 0;
 
-      <!-- ===================================================
-           INSTELLINGEN
-           =================================================== -->
+  color: var(--muted);
 
-      <section class="panel">
+  line-height: 1.5;
+}
 
+.back {
+  display: inline-block;
 
-        <div class="panel-title">
+  padding-top: 7px;
 
-          <div>
+  color: #e85f00;
 
-            <h2>
-              Bannerinstellingen
-            </h2>
+  font-weight: 700;
 
-          </div>
+  text-decoration: none;
 
+  white-space: nowrap;
+}
 
-          <div
-            id="status"
-            class="pill neutral">
+.back:hover {
+  text-decoration: underline;
+}
 
-            Laden...
 
-          </div>
+/* =========================================================
+   LAYOUT
+   ========================================================= */
 
-        </div>
+.layout {
+  display: grid;
 
+  grid-template-columns:
+    minmax(320px,.9fr)
+    minmax(400px,1.1fr);
 
+  gap: 20px;
 
-        <form id="eventForm">
+  align-items: start;
+}
 
+.panel {
+  min-width: 0;
 
-          <!-- ACTIEF -->
+  padding: 22px;
 
-          <label class="toggle-row">
+  background: #ffffff;
 
-            <input
-              id="active"
-              type="checkbox">
+  border:
+    1px solid var(--line);
 
-            <span>
+  border-radius: 15px;
 
-              <strong>
-                Banner actief
-              </strong>
+  box-shadow:
+    0 8px 25px rgba(23,32,51,.05);
+}
 
-              <small>
-                De banner wordt alleen getoond wanneer
-                deze actief is en binnen de ingestelde
-                periode valt.
-              </small>
+.panel-title {
+  display: flex;
 
-            </span>
+  align-items: center;
 
-          </label>
+  justify-content: space-between;
 
+  gap: 12px;
 
+  margin-bottom: 20px;
+}
 
-          <!-- TITEL -->
+.panel-title h2 {
+  margin: 0;
 
-          <label>
+  font-size: 20px;
+}
 
-            Titel
+.panel-title .note {
+  margin-top: 5px;
+}
 
-            <input
-              id="title"
-              type="text"
-              placeholder="Bijvoorbeeld: Muziek Bingo"
-              autocomplete="off">
 
-          </label>
+/* =========================================================
+   STATUS PILLS
+   ========================================================= */
 
+.pill {
+  flex-shrink: 0;
 
+  padding:
+    7px
+    10px;
 
-          <!-- BOVENREGEL -->
+  border-radius: 99px;
 
-          <label>
+  color: #a84200;
 
-            Bovenregel
+  background: #fff0e5;
 
-            <input
-              id="eyebrow"
-              type="text"
-              placeholder="HV NOVITAS PRESENTEERT"
-              autocomplete="off">
+  font-size: 12px;
 
-          </label>
+  font-weight: 800;
+}
 
+.pill.neutral {
+  color: #596273;
 
+  background: #eef1f5;
+}
 
-          <!-- DATUM EN TIJD -->
 
-          <div class="two">
+/* =========================================================
+   FORM
+   ========================================================= */
 
+form {
+  display: flex;
 
-            <label>
+  flex-direction: column;
 
-              Datumtekst
+  gap: 15px;
+}
 
-              <input
-                id="dateText"
-                type="text"
-                placeholder="Zaterdag 28 november 2026">
+label {
+  display: flex;
 
-            </label>
+  flex-direction: column;
 
+  gap: 7px;
 
-            <label>
+  font-size: 13px;
 
-              Tijdtekst
+  font-weight: 700;
+}
 
-              <input
-                id="timeText"
-                type="text"
-                placeholder="19.00 uur">
+input:not([type="checkbox"]) {
+  width: 100%;
 
-            </label>
+  min-width: 0;
 
+  padding: 12px;
 
-          </div>
+  border:
+    1px solid #d5dce5;
 
+  border-radius: 9px;
 
+  background: #ffffff;
 
-          <!-- LOCATIE -->
+  color: var(--ink);
 
-          <label>
+  font:
+    inherit;
 
-            Locatie
+  font-weight: 400;
+}
 
-            <input
-              id="location"
-              type="text"
-              placeholder="Den Dullaert"
-              autocomplete="off">
+input:focus {
+  outline:
+    2px solid
+    rgba(255,106,0,.27);
 
-          </label>
+  border-color:
+    var(--orange);
+}
 
+label small {
+  color: var(--muted);
 
+  font-size: 12px;
 
-          <!-- LINK -->
+  font-weight: 400;
+}
 
-          <label>
 
-            Link
+/* =========================================================
+   TOGGLE
+   ========================================================= */
 
-            <input
-              id="link"
-              type="url"
-              placeholder="https://www.hvnovitas.nl/..."
-              inputmode="url">
+.toggle-row {
+  display: flex;
 
-            <small>
+  flex-direction: row;
 
-              Optioneel.
-              Wanneer je een link invult wordt
-              de volledige banner klikbaar.
+  align-items: center;
 
-            </small>
+  gap: 12px;
 
-          </label>
+  padding: 13px;
 
+  border:
+    1px solid #ffe0c9;
 
+  border-radius: 11px;
 
-          <!-- ZICHTBAARHEID -->
+  background:
+    #fff8f2;
+}
 
-          <div class="two">
+.toggle-row input {
+  width: 21px;
+  height: 21px;
 
+  flex-shrink: 0;
 
-            <label>
+  accent-color:
+    var(--orange);
+}
 
-              Zichtbaar vanaf
+.toggle-row span {
+  display: flex;
 
-              <input
-                id="start"
-                type="datetime-local">
+  flex-direction: column;
 
-            </label>
+  gap: 4px;
+}
 
+.toggle-row small {
+  color: var(--muted);
 
-            <label>
+  font-size: 12px;
 
-              Zichtbaar tot
+  font-weight: 400;
+}
 
-              <input
-                id="end"
-                type="datetime-local">
 
-            </label>
+/* =========================================================
+   TWO KOLOMMEN
+   ========================================================= */
 
+.two {
+  display: grid;
 
-          </div>
+  grid-template-columns:
+    1fr
+    1fr;
 
+  gap: 12px;
+}
 
 
-          <!-- ACTIES -->
+/* =========================================================
+   KNOPPEN
+   ========================================================= */
 
-          <div class="actions">
+.actions {
+  display: flex;
 
+  flex-wrap: wrap;
 
-            <button
-              type="submit"
-              class="primary">
+  gap: 9px;
+}
 
-              Banner opslaan
+button {
+  padding:
+    12px
+    15px;
 
-            </button>
+  border: 0;
 
+  border-radius: 9px;
 
-            <button
-              type="button"
-              id="previewBtn"
-              class="secondary">
+  font:
+    inherit;
 
-              Naar voorbeeld
+  font-weight: 800;
 
-            </button>
+  cursor: pointer;
+}
 
+button:hover {
+  filter: brightness(.97);
+}
 
-            <button
-              type="button"
-              id="clearBtn"
-              class="danger">
+.primary {
+  color: #ffffff;
 
-              Banner leegmaken
+  background: #168345;
+}
 
-            </button>
+.secondary {
+  color: #273244;
 
+  background: #edf1f5;
+}
 
-          </div>
+.danger {
+  color: #ad2c22;
 
+  background: #fff0ee;
+}
 
+.note {
+  margin: 0;
 
-          <p class="note">
+  color: var(--muted);
 
-            De banner gebruikt automatisch de vaste
-            HV Novitas-vormgeving.
+  font-size: 12px;
 
-          </p>
+  line-height: 1.5;
+}
 
+.guidance {
+  margin-top: 18px;
+}
 
-        </form>
+.guidance b {
+  display: block;
 
+  margin-bottom: 5px;
+}
 
-      </section>
+.guidance p {
+  margin: 0;
 
+  color: var(--muted);
 
+  font-size: 13px;
 
-      <!-- ===================================================
-           VOORBEELD
-           =================================================== -->
+  line-height: 1.5;
+}
 
-      <section
-        class="panel"
-        id="previewPanel">
 
+/* =========================================================
+   MELDING
+   ========================================================= */
 
-        <div class="panel-title">
+.message {
+  position: fixed;
 
+  right: 20px;
+  bottom: 20px;
 
-          <div>
+  z-index: 100;
 
-            <h2>
-              Voorbeeld
-            </h2>
+  padding:
+    13px
+    16px;
 
-            <p class="note">
+  border-radius: 10px;
 
-              Het voorbeeld is hetzelfde ontwerp
-              als de banner op de website.
+  color: #ffffff;
 
-            </p>
+  background: #172033;
 
-          </div>
+  opacity: 0;
 
+  pointer-events: none;
 
-          <div class="pill">
-            Voorbeeld
-          </div>
+  transform:
+    translateY(8px);
 
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
+}
 
-        </div>
+.message.show {
+  opacity: 1;
 
+  transform:
+    translateY(0);
+}
 
+.message.error {
+  background: #b42318;
+}
 
-        <div id="preview">
+.message.success {
+  background: #168345;
+}
 
-          <div id="previewRoot"></div>
 
-        </div>
+/* =========================================================
+   VOORBEELDVENSTER
+   ========================================================= */
 
+#preview {
+  width: 100%;
 
-      </section>
+  overflow: hidden;
 
+  border-radius: 12px;
+}
 
-    </div>
+#previewRoot {
+  width: 100%;
+}
 
 
+/* =========================================================
+   DEZELFDE BANNER ALS OP DE WEBSITE
+   ========================================================= */
 
-    <!-- =====================================================
-         UITLEG
-         ===================================================== -->
+.event-link {
+  display: block;
 
-    <section class="panel guidance">
+  width: 100%;
+  height: 100%;
 
-      <b>
-        Gebruik
-      </b>
+  color: #ffffff;
 
-      <p>
+  text-decoration: none;
+}
 
-        Zet de banner aan, vul de gegevens in,
-        stel de zichtbaarheidperiode in en klik
-        daarna op <strong>Banner opslaan</strong>.
 
-      </p>
+/* =========================================================
+   BANNER
+   ========================================================= */
 
-    </section>
+.event-banner {
+  position: relative;
 
+  isolation: isolate;
 
-  </main>
+  width: 100%;
 
+  min-height: 260px;
 
+  overflow: hidden;
 
-  <!-- =======================================================
-       MELDING
-       ======================================================= -->
+  display: flex;
 
-  <div
-    id="message"
-    class="message"
-    aria-live="polite">
-  </div>
+  align-items: center;
 
+  justify-content: center;
 
+  padding:
+    30px
+    25px;
 
-  <!-- =======================================================
-       JAVASCRIPT
-       ======================================================= -->
+  color: #ffffff;
 
-  <script
-    type="module"
-    src="evenementenbanner.js">
-  </script>
+  background:
+    radial-gradient(
+      ellipse at 8% 50%,
+      rgba(255,106,0,.55) 0%,
+      rgba(255,106,0,.20) 18%,
+      transparent 37%
+    ),
 
+    radial-gradient(
+      ellipse at 92% 45%,
+      rgba(255,106,0,.45) 0%,
+      rgba(255,106,0,.16) 19%,
+      transparent 38%
+    ),
 
-</body>
+    radial-gradient(
+      ellipse at 50% 120%,
+      rgba(255,106,0,.25) 0%,
+      transparent 50%
+    ),
 
-</html>
+    linear-gradient(
+      110deg,
+      #050505 0%,
+      #101010 42%,
+      #191919 58%,
+      #080808 100%
+    );
+
+  border:
+    2px solid
+    #ff6a00;
+
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,.55),
+    0 8px 20px rgba(0,0,0,.25);
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   DIAGONALE ACCENTEN
+   ========================================================= */
+
+.event-banner::before {
+  content: "";
+
+  position: absolute;
+
+  top: -70%;
+
+  left: 31%;
+
+  width: 24px;
+
+  height: 240%;
+
+  transform:
+    rotate(34deg);
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(255,106,0,.72),
+      rgba(255,122,0,.20),
+      transparent
+    );
+
+  opacity: .45;
+
+  z-index: 0;
+}
+
+.event-banner::after {
+  content: "";
+
+  position: absolute;
+
+  top: -70%;
+
+  right: 30%;
+
+  width: 11px;
+
+  height: 240%;
+
+  transform:
+    rotate(34deg);
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(255,255,255,.18),
+      transparent
+    );
+
+  opacity: .32;
+
+  z-index: 0;
+}
+
+
+/* =========================================================
+   ART
+   ========================================================= */
+
+.art {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+.art::before {
+  content: "";
+
+  position: absolute;
+
+  left: -8%;
+  bottom: -10%;
+
+  width: 55%;
+  height: 55%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255,106,0,.48),
+      rgba(255,106,0,.14) 38%,
+      transparent 72%
+    );
+
+  filter:
+    blur(12px);
+}
+
+.art::after {
+  content: "";
+
+  position: absolute;
+
+  right: -8%;
+  top: -10%;
+
+  width: 50%;
+  height: 55%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255,106,0,.32),
+      rgba(255,106,0,.08) 42%,
+      transparent 74%
+    );
+
+  filter:
+    blur(15px);
+}
+
+
+/* =========================================================
+   MUZIEKNOTEN
+   ========================================================= */
+
+.music {
+  position: absolute;
+
+  color: #ff7a00;
+
+  font-size:
+    clamp(
+      32px,
+      4.5vw,
+      70px
+    );
+
+  font-weight: 900;
+
+  line-height: 1;
+
+  text-shadow:
+    0 0 8px rgba(255,106,0,.80),
+    0 0 22px rgba(255,106,0,.42);
+
+  opacity: .95;
+
+  z-index: 3;
+}
+
+.one {
+  left: 6%;
+  top: 15%;
+
+  transform:
+    rotate(-12deg);
+}
+
+.two {
+  right: 6%;
+  top: 10%;
+
+  transform:
+    rotate(12deg);
+}
+
+.three {
+  left: 14%;
+  bottom: 8%;
+
+  font-size:
+    clamp(
+      25px,
+      3vw,
+      46px
+    );
+
+  transform:
+    rotate(8deg);
+}
+
+.four {
+  right: 14%;
+  bottom: 10%;
+
+  font-size:
+    clamp(
+      25px,
+      3vw,
+      46px
+    );
+
+  transform:
+    rotate(-8deg);
+}
+
+
+/* =========================================================
+   BINGO-KAARTEN
+   ========================================================= */
+
+.bingo-card {
+  position: absolute;
+
+  width: 135px;
+  height: 86px;
+
+  border:
+    3px solid
+    rgba(255,150,60,.85);
+
+  border-radius: 8px;
+
+  background:
+    repeating-linear-gradient(
+      to right,
+      rgba(255,255,255,.75) 0,
+      rgba(255,255,255,.75) 2px,
+      transparent 2px,
+      transparent 26px
+    ),
+
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.75) 0,
+      rgba(255,255,255,.75) 2px,
+      transparent 2px,
+      transparent 20px
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(40,40,40,.95),
+      rgba(10,10,10,.95)
+    );
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.40),
+    0 0 14px rgba(255,106,0,.18);
+
+  z-index: 2;
+
+  opacity: .92;
+}
+
+.bingo-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 7px;
+
+  border:
+    1px solid rgba(255,255,255,.16);
+
+  border-radius: 3px;
+}
+
+.card-left {
+  left: 4%;
+
+  top: 5%;
+
+  transform:
+    rotate(-11deg);
+}
+
+.card-left::after {
+  content: "BINGO";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%,-50%)
+    rotate(11deg);
+
+  color: #ff7a00;
+
+  font-size: 15px;
+
+  font-weight: 1000;
+
+  letter-spacing: .10em;
+
+  text-shadow:
+    0 2px 5px #000;
+}
+
+.card-right {
+  right: 4%;
+
+  bottom: 2%;
+
+  transform:
+    rotate(10deg);
+}
+
+.card-right::after {
+  content: "BINGO";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%,-50%)
+    rotate(-10deg);
+
+  color: #ff7a00;
+
+  font-size: 15px;
+
+  font-weight: 1000;
+
+  letter-spacing: .10em;
+
+  text-shadow:
+    0 2px 5px #000;
+}
+
+
+/* =========================================================
+   BINGO BALLEN
+   ========================================================= */
+
+.ball {
+  position: absolute;
+
+  width: 76px;
+  height: 76px;
+
+  border-radius: 50%;
+
+  display: grid;
+
+  place-items: center;
+
+  color: #171717;
+
+  font-size: 28px;
+
+  font-weight: 1000;
+
+  background:
+    radial-gradient(
+      circle at 33% 25%,
+      #ffffff 0%,
+      #f1f1f1 32%,
+      #d2d2d2 48%,
+      #888888 73%,
+      #252525 100%
+    );
+
+  border:
+    4px solid
+    #ff6a00;
+
+  box-shadow:
+    0 7px 18px rgba(0,0,0,.40),
+    0 0 16px rgba(255,106,0,.60);
+
+  z-index: 4;
+}
+
+.ball::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 8px;
+
+  border:
+    2px solid
+    rgba(255,106,0,.65);
+
+  border-radius: 50%;
+}
+
+.ball-left-one {
+  left: 5%;
+
+  bottom: -18px;
+}
+
+.ball-left-two {
+  left: 11%;
+
+  bottom: -28px;
+
+  width: 62px;
+  height: 62px;
+
+  font-size: 23px;
+}
+
+.ball-right-one {
+  right: 5%;
+
+  bottom: -20px;
+}
+
+.ball-right-two {
+  right: 11%;
+
+  bottom: -29px;
+
+  width: 62px;
+  height: 62px;
+
+  font-size: 23px;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content {
+  position: relative;
+
+  z-index: 10;
+
+  width: 100%;
+
+  max-width: 850px;
+
+  padding:
+    0
+    160px;
+}
+
+
+/* =========================================================
+   EYEBROW
+   ========================================================= */
+
+.event-banner .eyebrow {
+  margin-bottom: 4px;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      10px,
+      1vw,
+      14px
+    );
+
+  font-weight: 900;
+
+  letter-spacing: .24em;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    0 2px 5px #000;
+}
+
+
+/* =========================================================
+   TITEL
+   ========================================================= */
+
+.event-banner .title {
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      31px,
+      4.35vw,
+      64px
+    );
+
+  font-weight: 1000;
+
+  letter-spacing: -.045em;
+
+  line-height: .98;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  text-shadow:
+    0 3px 0 #343434,
+    0 6px 12px #000;
+}
+
+.event-banner .title strong {
+  color: #ff7a00;
+
+  text-shadow:
+    0 3px 0 #8e3600,
+    0 6px 14px #000,
+    0 0 15px rgba(255,106,0,.25);
+}
+
+
+/* =========================================================
+   LIJN
+   ========================================================= */
+
+.rule {
+  width: 54%;
+
+  height: 3px;
+
+  margin:
+    8px
+    auto
+    7px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #ff6a00 15%,
+      #ff6a00 85%,
+      transparent
+    );
+
+  box-shadow:
+    0 0 12px rgba(255,106,0,.40);
+}
+
+
+/* =========================================================
+   DETAILS
+   ========================================================= */
+
+.details {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 9px;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      10px,
+      1vw,
+      14px
+    );
+
+  font-weight: 900;
+
+  letter-spacing: .04em;
+
+  text-shadow:
+    0 2px 4px #000;
+}
+
+.details i {
+  color: #ff7a00;
+
+  font-style: normal;
+
+  font-weight: 1000;
+
+  text-shadow:
+    0 0 8px rgba(255,106,0,.60);
+}
+
+
+/* =========================================================
+   EXTRA GLOW
+   ========================================================= */
+
+.event-banner .content::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 78%;
+  height: 100px;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255,106,0,.12),
+      transparent 70%
+    );
+
+  filter:
+    blur(6px);
+
+  z-index: -1;
+
+  pointer-events: none;
+}
+
+.event-banner .content::after {
+  content: "";
+
+  position: absolute;
+
+  left: 12%;
+  right: 12%;
+
+  bottom: -18px;
+
+  height: 25px;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255,106,0,.60),
+      transparent 68%
+    );
+
+  filter:
+    blur(10px);
+
+  z-index: -1;
+}
+
+
+/* =========================================================
+   MOBIEL
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .page {
+    width:
+      calc(100% - 20px);
+
+    margin:
+      16px
+      auto
+      30px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .header h1 {
+    font-size: 26px;
+  }
+
+  .panel {
+    padding: 15px;
+  }
+
+  .two {
+    grid-template-columns: 1fr;
+  }
+
+  .event-banner {
+    min-height: 200px;
+
+    padding:
+      20px
+      12px;
+  }
+
+  .content {
+    padding:
+      0
+      80px;
+  }
+
+  .event-banner .title {
+    font-size:
+      clamp(
+        28px,
+        8vw,
+        46px
+      );
+
+    white-space: normal;
+  }
+
+  .event-banner .eyebrow {
+    letter-spacing: .12em;
+  }
+
+  .details {
+    gap: 6px;
+
+    letter-spacing: .02em;
+  }
+
+  .rule {
+    width: 48%;
+
+    margin:
+      6px
+      auto
+      5px;
+  }
+
+  .bingo-card {
+    width: 92px;
+    height: 62px;
+  }
+
+  .ball {
+    width: 56px;
+    height: 56px;
+
+    font-size: 20px;
+  }
+
+  .ball-left-two,
+  .ball-right-two {
+    width: 46px;
+    height: 46px;
+
+    font-size: 17px;
+  }
+
+  .music {
+    font-size: 36px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+
+}
