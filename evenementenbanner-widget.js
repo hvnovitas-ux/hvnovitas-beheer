@@ -6,9 +6,29 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 
-const root =
-  document.getElementById("eventRoot");
+/* =========================================================
+   ELEMENT
+   ========================================================= */
 
+const root =
+  document.getElementById(
+    "eventRoot"
+  );
+
+
+/* =========================================================
+   PREVIEW MODUS
+   ========================================================= */
+
+const isPreview =
+  new URLSearchParams(
+    window.location.search
+  ).get("preview") === "1";
+
+
+/* =========================================================
+   DATA
+   ========================================================= */
 
 let data = null;
 
@@ -18,6 +38,7 @@ let data = null;
    ========================================================= */
 
 onValue(
+
   ref(
     db,
     "evenementenbanner"
@@ -32,18 +53,20 @@ onValue(
 
   },
 
-  err => {
+  error => {
 
     console.error(
       "Evenementenbanner laden mislukt:",
-      err
+      error
     );
 
-    root.hidden = true;
+    root.hidden =
+      true;
 
     root.replaceChildren();
 
   }
+
 );
 
 
@@ -58,7 +81,9 @@ function createElement(
 ) {
 
   const element =
-    document.createElement(tag);
+    document.createElement(
+      tag
+    );
 
 
   if (className) {
@@ -90,26 +115,52 @@ function render() {
 
 
   /* -------------------------------------------------------
-     CONTROLEREN OF BANNER GETOOND MAG WORDEN
+     CONTROLE NORMALE WEBSITE
      ------------------------------------------------------- */
 
   if (
-    !data ||
-    !data.active ||
-    !data.title ||
-    !data.start ||
-    !data.end ||
-    Date.now() <
-      new Date(
-        data.start
-      ).getTime() ||
-    Date.now() >
-      new Date(
-        data.end
-      ).getTime()
+    !isPreview &&
+    (
+      !data ||
+      !data.active ||
+      !data.title ||
+      !data.start ||
+      !data.end ||
+      Date.now() <
+        new Date(
+          data.start
+        ).getTime() ||
+      Date.now() >
+        new Date(
+          data.end
+        ).getTime()
+    )
   ) {
 
-    root.hidden = true;
+    root.hidden =
+      true;
+
+    root.replaceChildren();
+
+    return;
+
+  }
+
+
+  /* -------------------------------------------------------
+     CONTROLE PREVIEW
+     ------------------------------------------------------- */
+
+  if (
+    isPreview &&
+    (
+      !data ||
+      !data.title
+    )
+  ) {
+
+    root.hidden =
+      true;
 
     root.replaceChildren();
 
@@ -130,7 +181,7 @@ function render() {
 
 
   /* =======================================================
-     DECORATIE LAAG
+     DECORATIE
      ======================================================= */
 
   const art =
@@ -202,16 +253,12 @@ function render() {
   musicItems.forEach(
     ([className, text]) => {
 
-      const music =
+      art.append(
         createElement(
           "span",
           className,
           text
-        );
-
-
-      art.append(
-        music
+        )
       );
 
     }
@@ -219,34 +266,22 @@ function render() {
 
 
   /* =======================================================
-     BINGO KAART LINKS
+     BINGO KAARTEN
      ======================================================= */
 
-  const leftCard =
+  art.append(
     createElement(
       "span",
       "bingo-card card-left"
-    );
-
-
-  art.append(
-    leftCard
+    )
   );
 
 
-  /* =======================================================
-     BINGO KAART RECHTS
-     ======================================================= */
-
-  const rightCard =
+  art.append(
     createElement(
       "span",
       "bingo-card card-right"
-    );
-
-
-  art.append(
-    rightCard
+    )
   );
 
 
@@ -282,25 +317,17 @@ function render() {
   balls.forEach(
     ([className, text]) => {
 
-      const ball =
+      art.append(
         createElement(
           "span",
           className,
           text
-        );
-
-
-      art.append(
-        ball
+        )
       );
 
     }
   );
 
-
-  /* =======================================================
-     ART TOEVOEGEN AAN BANNER
-     ======================================================= */
 
   banner.append(
     art
@@ -449,31 +476,23 @@ function render() {
         index > 0
       ) {
 
-        const separator =
+        details.append(
           createElement(
             "i",
             "",
             "•"
-          );
-
-
-        details.append(
-          separator
+          )
         );
 
       }
 
 
-      const detail =
+      details.append(
         createElement(
           "span",
           "",
           String(value)
-        );
-
-
-      details.append(
-        detail
+        )
       );
 
     }
@@ -497,17 +516,13 @@ function render() {
   );
 
 
-  /* =======================================================
-     CONTENT TOEVOEGEN
-     ======================================================= */
-
   banner.append(
     content
   );
 
 
   /* =======================================================
-     LINK
+     KLIKBAAR
      ======================================================= */
 
   if (
@@ -556,7 +571,7 @@ function render() {
 
 
   /* =======================================================
-     BANNER ZICHTBAAR MAKEN
+     ZICHTBAAR
      ======================================================= */
 
   root.hidden =
