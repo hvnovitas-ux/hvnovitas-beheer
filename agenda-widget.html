@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Agenda HV Novitas
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="agenda-widget.css?v=20260926-1"
+  >
+
+</head>
+
+
+<body>
+
+  <main class="agenda-app">
+
+    <header class="agenda-header">
+
+      <div class="agenda-title-block">
+
+        <div class="agenda-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+
+        <div>
+
+          <div class="agenda-label">
+            AGENDA
+          </div>
+
+          <h1>
+            HV NOVITAS
+          </h1>
+
+          <p>
+            Alleen de komende 14 dagen · Alleen dagen met activiteiten
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <a
+        class="agenda-full-link"
+        href="https://calendar.google.com/calendar/embed?src=hvnovitas%40gmail.com&ctz=Europe%2FAmsterdam&mode=AGENDA"
+        target="_blank"
+        rel="noopener"
+      >
+        Naar volledige agenda
+        <span aria-hidden="true">→</span>
+      </a>
+
+    </header>
+
+
+    <div
+      id="agendaStatus"
+      class="agenda-status"
+    >
+      Agenda laden...
+    </div>
+
+
+    <section
+      id="agendaList"
+      class="agenda-list"
+      aria-live="polite"
+    ></section>
+
+
+    <footer class="agenda-footer">
+
+      <div class="agenda-footer-info">
+
+        <span
+          class="agenda-footer-icon"
+          aria-hidden="true"
+        >
+          ◷
+        </span>
+
+        <span>
+          We tonen alleen de activiteiten van vandaag t/m 14 dagen vooruit.
+        </span>
+
+      </div>
+
+
+      <a
+        class="agenda-footer-button"
+        href="https://calendar.google.com/calendar/embed?src=hvnovitas%40gmail.com&ctz=Europe%2FAmsterdam&mode=AGENDA"
+        target="_blank"
+        rel="noopener"
+      >
+        Naar volledige agenda
+        <span aria-hidden="true">→</span>
+      </a>
+
+    </footer>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="agenda-widget.js?v=20260926-1"
+  ></script>
+
+</body>
+
+</html>
