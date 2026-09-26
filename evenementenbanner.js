@@ -18,10 +18,8 @@ import {
 
 const PATH = "evenementenbanner";
 
-
 const $ = id =>
   document.getElementById(id);
-
 
 let current = {};
 
@@ -64,7 +62,6 @@ function loadBanner() {
       current =
         snapshot.val() || {};
 
-
       fillForm();
 
       updatePreview();
@@ -97,133 +94,52 @@ function loadBanner() {
 
 function fillForm() {
 
-  const active =
-    $("active");
+  $("active").checked =
+    !!current.active;
 
-  const title =
-    $("title");
+  $("title").value =
+    current.title || "";
 
-  const eyebrow =
-    $("eyebrow");
+  $("eyebrow").value =
+    current.eyebrow || "";
 
-  const dateText =
-    $("dateText");
+  $("dateText").value =
+    current.dateText || "";
 
-  const timeText =
-    $("timeText");
+  $("timeText").value =
+    current.timeText || "";
 
-  const location =
-    $("location");
+  $("location").value =
+    current.location || "";
 
-  const link =
-    $("link");
+  $("link").value =
+    current.link || "";
 
-  const start =
-    $("start");
+  $("start").value =
+    toDateTimeLocal(
+      current.start
+    );
 
-  const end =
-    $("end");
-
-
-  if (active) {
-
-    active.checked =
-      !!current.active;
-
-  }
-
-
-  if (title) {
-
-    title.value =
-      current.title || "";
-
-  }
-
-
-  if (eyebrow) {
-
-    eyebrow.value =
-      current.eyebrow || "";
-
-  }
-
-
-  if (dateText) {
-
-    dateText.value =
-      current.dateText || "";
-
-  }
-
-
-  if (timeText) {
-
-    timeText.value =
-      current.timeText || "";
-
-  }
-
-
-  if (location) {
-
-    location.value =
-      current.location || "";
-
-  }
-
-
-  if (link) {
-
-    link.value =
-      current.link || "";
-
-  }
-
-
-  if (start) {
-
-    start.value =
-      toDateTimeLocal(
-        current.start
-      );
-
-  }
-
-
-  if (end) {
-
-    end.value =
-      toDateTimeLocal(
-        current.end
-      );
-
-  }
+  $("end").value =
+    toDateTimeLocal(
+      current.end
+    );
 
 }
 
 
 /* =========================================================
-   DATUM VOOR INPUT
+   DATUM
    ========================================================= */
 
 function toDateTimeLocal(value) {
 
   if (!value) {
-
     return "";
-
   }
-
 
   const stringValue =
     String(value);
-
-
-  /*
-   * Wanneer het al exact het formaat
-   * YYYY-MM-DDTHH:MM heeft.
-   */
 
   if (
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/
@@ -234,14 +150,10 @@ function toDateTimeLocal(value) {
 
   }
 
-
-  /*
-   * ISO-datum met timezone.
-   */
-
   const date =
-    new Date(stringValue);
-
+    new Date(
+      stringValue
+    );
 
   if (
     Number.isNaN(
@@ -253,12 +165,10 @@ function toDateTimeLocal(value) {
 
   }
 
-
   const pad =
     number =>
       String(number)
         .padStart(2, "0");
-
 
   return (
     date.getFullYear() +
@@ -316,7 +226,7 @@ function readForm() {
 
 
 /* =========================================================
-   INPUT EVENTS
+   LIVE PREVIEW
    ========================================================= */
 
 [
@@ -339,7 +249,6 @@ function readForm() {
     if (!element) {
       return;
     }
-
 
     element.addEventListener(
       "input",
@@ -365,7 +274,6 @@ $("eventForm")
     async event => {
 
       event.preventDefault();
-
 
       const data =
         readForm();
@@ -399,10 +307,14 @@ $("eventForm")
 
 
       const startDate =
-        new Date(data.start);
+        new Date(
+          data.start
+        );
 
       const endDate =
-        new Date(data.end);
+        new Date(
+          data.end
+        );
 
 
       if (
@@ -497,7 +409,7 @@ $("eventForm")
 
 
 /* =========================================================
-   PREVIEW KNOP
+   VOORBEELD
    ========================================================= */
 
 $("previewBtn")
@@ -551,7 +463,11 @@ $("clearBtn")
           ?.reset();
 
 
+        current = {};
+
         updatePreview();
+
+        updateStatus();
 
 
         message(
@@ -712,7 +628,6 @@ function updatePreview() {
 
 /* =========================================================
    BANNER RENDERER
-   DEZELFDE OPBOUW ALS WEBSITE
    ========================================================= */
 
 function renderBanner(
@@ -738,7 +653,6 @@ function renderBanner(
       "art"
     );
 
-
   art.setAttribute(
     "aria-hidden",
     "true"
@@ -749,25 +663,13 @@ function renderBanner(
 
   const musicItems = [
 
-    [
-      "music one",
-      "♪"
-    ],
+    ["music one", "♪"],
 
-    [
-      "music two",
-      "♫"
-    ],
+    ["music two", "♫"],
 
-    [
-      "music three",
-      "♪"
-    ],
+    ["music three", "♪"],
 
-    [
-      "music four",
-      "♫"
-    ]
+    ["music four", "♫"]
 
   ];
 
@@ -787,7 +689,7 @@ function renderBanner(
   );
 
 
-  /* BINGO-KAARTEN */
+  /* BINGO KAARTEN */
 
   art.append(
     createElement(
@@ -809,25 +711,13 @@ function renderBanner(
 
   const balls = [
 
-    [
-      "ball ball-left-one",
-      "5"
-    ],
+    ["ball ball-left-one", "5"],
 
-    [
-      "ball ball-left-two",
-      "17"
-    ],
+    ["ball ball-left-two", "17"],
 
-    [
-      "ball ball-right-one",
-      "28"
-    ],
+    ["ball ball-right-one", "28"],
 
-    [
-      "ball ball-right-two",
-      "11"
-    ]
+    ["ball ball-right-two", "11"]
 
   ];
 
@@ -897,7 +787,7 @@ function renderBanner(
     words.length > 1
   ) {
 
-    contentText =
+    const contentText =
       words
         .slice(0, -1)
         .join(" ") +
@@ -963,7 +853,6 @@ function renderBanner(
       index
     ) => {
 
-
       if (index > 0) {
 
         details.append(
@@ -985,7 +874,6 @@ function renderBanner(
         )
       );
 
-
     }
   );
 
@@ -1004,7 +892,7 @@ function renderBanner(
 
 
   /* =======================================================
-     KLIKBAAR MAKEN
+     KLIKBAAR
      ======================================================= */
 
   if (
@@ -1046,7 +934,6 @@ function renderBanner(
     root.append(
       link
     );
-
 
   } else {
 
