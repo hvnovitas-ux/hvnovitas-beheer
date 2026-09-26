@@ -6,7 +6,7 @@ import ICAL from "https://cdn.jsdelivr.net/npm/ical.js@2.2.1/+esm";
    ===================================================== */
 
 const FEED_URL =
-  "https://JOUW-WORKER-URL.workers.dev/";
+  "https://novitas-agenda.hvnovitas.workers.dev/";
 
 const DAYS_AHEAD =
   14;
@@ -176,6 +176,7 @@ function parseCalendar(
       today
     );
 
+
   endDate.setDate(
     endDate.getDate() +
       DAYS_AHEAD
@@ -324,7 +325,6 @@ function processRecurringEvent(
 
 
   let next;
-
 
   let guard =
     0;
@@ -977,6 +977,7 @@ function createEventElement(
 
     icon.className =
       "agenda-location-icon";
+
 
     icon.textContent =
       "📍";
