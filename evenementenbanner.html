@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evenementenbanner | HV Novitas CMS</title><link rel="stylesheet" href="./evenementenbanner.css"></head>
+<body><main class="page">
+<header class="header"><div><div class="kicker">HV NOVITAS CMS</div><h1>Evenementenbanner</h1><p>Beheer de banner op de homepage.</p></div><a class="back" href="dashboard.html">← Dashboard</a></header>
+<div class="layout"><section class="panel"><div class="panel-title"><h2>Inhoud en planning</h2><span id="status" class="pill">Laden…</span></div>
+<form id="eventForm">
+<label class="toggle-row"><input id="active" type="checkbox"><span><b>Banner actief</b><small>Toon de banner binnen de ingestelde periode.</small></span></label>
+<label>Titel evenement<input id="title" maxlength="70" placeholder="MUZIEK BINGO" required></label>
+<label>Bovenste tekst<input id="eyebrow" maxlength="60" placeholder="HV NOVITAS PRESENTEERT"></label>
+<div class="two"><label>Datum tekst<input id="dateText" maxlength="50" placeholder="ZATERDAG • 14 NOVEMBER 2026"></label><label>Tijd<input id="timeText" maxlength="30" placeholder="20:00 uur"></label></div>
+<label>Locatie<input id="location" maxlength="80" placeholder="Den Dullaert"></label>
+<label>Link (optioneel)<input id="link" type="url" placeholder="https://www.hvnovitas.nl/..."><small>Bestemming als bezoekers op de banner klikken.</small></label>
+<div class="two"><label>Banner tonen vanaf<input id="start" type="datetime-local" required></label><label>Banner verbergen na<input id="end" type="datetime-local" required></label></div>
+<div class="actions"><button class="primary" type="submit">💾 Opslaan</button><button class="secondary" id="previewBtn" type="button">👁 Voorbeeld bekijken</button><button class="danger" id="clearBtn" type="button">Banner leegmaken</button></div>
+<p class="note">Zet ‘Banner actief’ uit om de banner direct te verbergen. De bestaande aankondigingsfoto blijft onaangeraakt.</p></form></section>
+<section class="panel"><div class="panel-title"><h2>Voorbeeld</h2><span class="pill neutral">Live voorbeeld</span></div>
+<div id="preview" class="event-banner"><div class="art"><span class="music one">♪</span><span class="music two">♫</span><span class="ball left">5</span><span class="ball mid">17</span><span class="ball right">28</span><span class="bingo">BINGO<br><small>▣ ▣ ▣<br>▣ ▣ ▣</small></span></div>
+<div class="content"><div id="previewEyebrow" class="eyebrow">HV NOVITAS PRESENTEERT</div><div id="previewTitle" class="title">MUZIEK <strong>BINGO</strong></div><div class="rule"></div><div class="details"><span id="previewDate">DATUM</span><i>•</i><span id="previewTime">TIJD</span><i>•</i><span id="previewLocation">LOCATIE</span></div></div></div>
+<div class="guidance"><b>Novitas-stijl</b><p>Zwart, oranje, grote letters, muzieksymbolen en bingoballen — passend bij het voorbeeld.</p></div></section></div><div id="message" class="message" role="status"></div></main>
+<script type="module" src="./evenementenbanner.js"></script></body></html>
