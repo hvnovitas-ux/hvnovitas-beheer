@@ -15,23 +15,813 @@
   </title>
 
 
-  <link
-    rel="stylesheet"
-    href="evenementenbanner.css?v=20260926-1700"
-  >
-
   <style>
 
-    /* =================================================
-       LIVE VOORBEELD
-       Exact dezelfde banner als op de website
-       ================================================= */
+    /* =====================================================
+       HV NOVITAS CMS
+       ===================================================== */
+
+    :root {
+
+      --orange: #ff6500;
+      --orange-bright: #ff7a00;
+      --gold: #ffd21f;
+
+      --dark: #171717;
+      --ink: #172033;
+      --muted: #667085;
+
+      --bg: #eef1f5;
+      --white: #ffffff;
+
+      --line: #d9e0e9;
+
+      --green: #16884a;
+      --red: #c83232;
+
+    }
+
+
+    /* =====================================================
+       BASIS
+       ===================================================== */
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    html {
+      min-height: 100%;
+    }
+
+
+    body {
+
+      margin: 0;
+
+      padding: 28px;
+
+      background:
+        linear-gradient(
+          180deg,
+          #f4f6f9 0%,
+          #e9edf2 100%
+        );
+
+      color:
+        var(--ink);
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      font-size:
+        16px;
+
+      line-height:
+        1.45;
+
+    }
+
+
+    /* =====================================================
+       PAGINA
+       ===================================================== */
+
+    .page {
+
+      width:
+        min(
+          1600px,
+          100%
+        );
+
+      margin:
+        0 auto;
+
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap:
+        25px;
+
+      margin-bottom:
+        24px;
+
+    }
+
+
+    .kicker {
+
+      margin-bottom:
+        6px;
+
+      color:
+        var(--orange);
+
+      font-size:
+        12px;
+
+      font-weight:
+        900;
+
+      letter-spacing:
+        .15em;
+
+      text-transform:
+        uppercase;
+
+    }
+
+
+    .header h1 {
+
+      margin:
+        0 0 6px;
+
+      color:
+        var(--dark);
+
+      font-size:
+        32px;
+
+      line-height:
+        1.08;
+
+    }
+
+
+    .header p {
+
+      margin:
+        0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        15px;
+
+    }
+
+
+    .back {
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      min-height:
+        42px;
+
+      padding:
+        10px 15px;
+
+      border-radius:
+        10px;
+
+      background:
+        #ffffff;
+
+      border:
+        1px solid var(--line);
+
+      color:
+        var(--ink);
+
+      text-decoration:
+        none;
+
+      font-weight:
+        800;
+
+      box-shadow:
+        0 4px 14px
+        rgba(
+          20,
+          30,
+          45,
+          .05
+        );
+
+      white-space:
+        nowrap;
+
+    }
+
+
+    .back:hover {
+
+      border-color:
+        var(--orange);
+
+      color:
+        var(--orange);
+
+    }
+
+
+    /* =====================================================
+       HOOFD LAYOUT
+       FORMULIER LINKS
+       VOORBEELD RECHTS
+       ===================================================== */
+
+    .layout {
+
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(
+          520px,
+          700px
+        )
+        minmax(
+          600px,
+          1fr
+        );
+
+      gap:
+        24px;
+
+      align-items:
+        start;
+
+    }
+
+
+    /* =====================================================
+       PANEL
+       ===================================================== */
+
+    .panel {
+
+      position:
+        relative;
+
+      background:
+        #ffffff;
+
+      border:
+        1px solid var(--line);
+
+      border-radius:
+        18px;
+
+      padding:
+        24px;
+
+      box-shadow:
+        0 12px 35px
+        rgba(
+          25,
+          38,
+          55,
+          .07
+        );
+
+    }
+
+
+    .panel::before {
+
+      content:
+        "";
+
+      position:
+        absolute;
+
+      top:
+        0;
+
+      left:
+        24px;
+
+      right:
+        24px;
+
+      height:
+        4px;
+
+      border-radius:
+        0 0 999px 999px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--orange),
+          var(--gold),
+          var(--orange)
+        );
+
+    }
+
+
+    /* =====================================================
+       TITEL PANEL
+       ===================================================== */
+
+    .panel-title {
+
+      display:
+        flex;
+
+      align-items:
+        flex-start;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      margin-bottom:
+        20px;
+
+    }
+
+
+    .panel-title h2 {
+
+      margin:
+        0;
+
+      color:
+        var(--dark);
+
+      font-size:
+        21px;
+
+      line-height:
+        1.15;
+
+    }
+
+
+    .note {
+
+      margin:
+        7px 0 0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        13px;
+
+    }
+
+
+    /* =====================================================
+       STATUS
+       ===================================================== */
+
+    .pill {
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      min-height:
+        34px;
+
+      padding:
+        7px 13px;
+
+      border-radius:
+        999px;
+
+      background:
+        #fff0e5;
+
+      color:
+        #a94000;
+
+      font-size:
+        13px;
+
+      font-weight:
+        900;
+
+      white-space:
+        nowrap;
+
+    }
+
+
+    .pill.neutral {
+
+      background:
+        #eef1f5;
+
+      color:
+        #526072;
+
+    }
+
+
+    .preview-pill {
+
+      background:
+        linear-gradient(
+          135deg,
+          #e3f8ff,
+          #d8efff
+        );
+
+      color:
+        #075c7a;
+
+    }
+
+
+    /* =====================================================
+       FORMULIER
+       ===================================================== */
+
+    #eventForm {
+
+      width:
+        100%;
+
+    }
+
+
+    .toggle-row {
+
+      display:
+        flex;
+
+      align-items:
+        flex-start;
+
+      gap:
+        12px;
+
+      padding:
+        15px;
+
+      margin-bottom:
+        20px;
+
+      border:
+        1px solid #ffd4b7;
+
+      border-radius:
+        12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #fffaf6,
+          #fff3e9
+        );
+
+    }
+
+
+    .toggle-row input {
+
+      width:
+        22px;
+
+      height:
+        22px;
+
+      margin:
+        2px 0 0;
+
+      accent-color:
+        var(--orange);
+
+    }
+
+
+    .toggle-row strong {
+
+      display:
+        block;
+
+      color:
+        var(--dark);
+
+      font-size:
+        15px;
+
+    }
+
+
+    .toggle-row small {
+
+      display:
+        block;
+
+      margin-top:
+        3px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+    }
+
+
+    /* =====================================================
+       VELDEN
+       ===================================================== */
+
+    .form-field {
+
+      display:
+        block;
+
+      margin-bottom:
+        17px;
+
+    }
+
+
+    .form-label {
+
+      display:
+        block;
+
+      margin-bottom:
+        7px;
+
+      color:
+        var(--ink);
+
+      font-size:
+        14px;
+
+      font-weight:
+        800;
+
+    }
+
+
+    .form-field input {
+
+      display:
+        block;
+
+      width:
+        100%;
+
+      min-height:
+        45px;
+
+      padding:
+        10px 13px;
+
+      border:
+        1px solid #cfd7e4;
+
+      border-radius:
+        10px;
+
+      outline:
+        none;
+
+      background:
+        #ffffff;
+
+      color:
+        var(--ink);
+
+      font:
+        inherit;
+
+    }
+
+
+    .form-field input:focus {
+
+      border-color:
+        var(--orange);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(
+          255,
+          101,
+          0,
+          .12
+        );
+
+    }
+
+
+    .form-field input::placeholder {
+
+      color:
+        #98a2b3;
+
+    }
+
+
+    .help-text {
+
+      display:
+        block;
+
+      margin-top:
+        6px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+    }
+
+
+    /* =====================================================
+       DATUM + TIJD
+       ===================================================== */
+
+    .field-grid {
+
+      display:
+        grid;
+
+      grid-template-columns:
+        1fr
+        1fr;
+
+      gap:
+        14px;
+
+    }
+
+
+    .field-grid .form-field {
+
+      min-width:
+        0;
+
+    }
+
+
+    /* =====================================================
+       KNOPPEN
+       ===================================================== */
+
+    .actions {
+
+      display:
+        flex;
+
+      flex-wrap:
+        wrap;
+
+      gap:
+        10px;
+
+      margin-top:
+        7px;
+
+    }
+
+
+    .actions button {
+
+      appearance:
+        none;
+
+      border:
+        0;
+
+      border-radius:
+        10px;
+
+      min-height:
+        45px;
+
+      padding:
+        10px 17px;
+
+      cursor:
+        pointer;
+
+      font:
+        inherit;
+
+      font-weight:
+        900;
+
+    }
+
+
+    .actions button:hover {
+
+      filter:
+        brightness(.98);
+
+    }
+
+
+    .primary {
+
+      background:
+        linear-gradient(
+          135deg,
+          #188c4b,
+          #0f703b
+        );
+
+      color:
+        #ffffff;
+
+      box-shadow:
+        0 6px 16px
+        rgba(
+          24,
+          140,
+          75,
+          .20
+        );
+
+    }
+
+
+    .secondary {
+
+      background:
+        #edf1f5;
+
+      color:
+        var(--ink);
+
+    }
+
+
+    .danger {
+
+      background:
+        linear-gradient(
+          135deg,
+          #fff0f0,
+          #ffe4e4
+        );
+
+      color:
+        #b92b2b;
+
+    }
+
+
+    /* =====================================================
+       VOORBEELD RECHTS
+       ===================================================== */
+
+    .preview-panel {
+
+      min-width:
+        0;
+
+    }
+
 
     #preview {
 
-      width: 100%;
+      width:
+        100%;
 
-      padding: 12px;
+      padding:
+        12px;
 
       border:
         1px solid #dfe5ec;
@@ -73,10 +863,265 @@
         0;
 
       border-radius:
-        12px;
+        10px;
 
       overflow:
         hidden;
+
+      background:
+        #050716;
+
+    }
+
+
+    /* =====================================================
+       UITLEG
+       ===================================================== */
+
+    .guidance {
+
+      margin-top:
+        24px;
+
+    }
+
+
+    .guidance strong {
+
+      color:
+        var(--dark);
+
+    }
+
+
+    .guidance p {
+
+      margin:
+        7px 0 0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        13px;
+
+    }
+
+
+    /* =====================================================
+       MELDING
+       ===================================================== */
+
+    .message {
+
+      position:
+        fixed;
+
+      right:
+        24px;
+
+      bottom:
+        24px;
+
+      z-index:
+        1000;
+
+      max-width:
+        420px;
+
+      padding:
+        12px 16px;
+
+      border-radius:
+        10px;
+
+      background:
+        #171717;
+
+      color:
+        #ffffff;
+
+      font-size:
+        14px;
+
+      font-weight:
+        700;
+
+      box-shadow:
+        0 12px 30px
+        rgba(
+          0,
+          0,
+          0,
+          .18
+        );
+
+      opacity:
+        0;
+
+      transform:
+        translateY(10px);
+
+      pointer-events:
+        none;
+
+      transition:
+        opacity .2s ease,
+        transform .2s ease;
+
+    }
+
+
+    .message.show {
+
+      opacity:
+        1;
+
+      transform:
+        translateY(0);
+
+    }
+
+
+    .message.success {
+
+      background:
+        #16884a;
+
+    }
+
+
+    .message.error {
+
+      background:
+        #c83232;
+
+    }
+
+
+    /* =====================================================
+       TABLET
+       ===================================================== */
+
+    @media (max-width: 1150px) {
+
+      .layout {
+
+        grid-template-columns:
+          minmax(
+            450px,
+            1fr
+          )
+          minmax(
+            450px,
+            1fr
+          );
+
+      }
+
+    }
+
+
+    @media (max-width: 900px) {
+
+      body {
+
+        padding:
+          20px;
+
+      }
+
+
+      .header {
+
+        flex-direction:
+          column;
+
+        align-items:
+          flex-start;
+
+      }
+
+
+      .layout {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       MOBIEL
+       ===================================================== */
+
+    @media (max-width: 600px) {
+
+      body {
+
+        padding:
+          12px;
+
+      }
+
+
+      .header h1 {
+
+        font-size:
+          27px;
+
+      }
+
+
+      .panel {
+
+        padding:
+          17px;
+
+        border-radius:
+          14px;
+
+      }
+
+
+      .panel::before {
+
+        left:
+          17px;
+
+        right:
+          17px;
+
+      }
+
+
+      .panel-title {
+
+        flex-direction:
+          column;
+
+        gap:
+          10px;
+
+      }
+
+
+      .field-grid {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      #previewFrame {
+
+        height:
+          190px;
+
+      }
 
     }
 
@@ -91,11 +1136,12 @@
   <main class="page">
 
 
-    <!-- =================================================
+    <!-- ===================================================
          HEADER
-         ================================================= -->
+         =================================================== -->
 
     <header class="header">
+
 
       <div>
 
@@ -123,25 +1169,27 @@
         ← Terug naar dashboard
       </a>
 
+
     </header>
 
 
 
-    <!-- =================================================
-         LAYOUT
-         ================================================= -->
+    <!-- ===================================================
+         LINKS FORMULIER / RECHTS VOORBEELD
+         =================================================== -->
 
     <div class="layout">
 
 
       <!-- =================================================
-           INSTELLINGEN
+           LINKS
            ================================================= -->
 
       <section class="panel">
 
 
         <div class="panel-title">
+
 
           <div>
 
@@ -159,6 +1207,7 @@
             Laden...
           </div>
 
+
         </div>
 
 
@@ -170,10 +1219,12 @@
 
           <label class="toggle-row">
 
+
             <input
               id="active"
               type="checkbox"
             >
+
 
             <span>
 
@@ -188,6 +1239,7 @@
 
             </span>
 
+
           </label>
 
 
@@ -196,9 +1248,11 @@
 
           <label class="form-field">
 
+
             <span class="form-label">
               Titel
             </span>
+
 
             <input
               id="title"
@@ -206,6 +1260,7 @@
               placeholder="Bijvoorbeeld: Muziek Bingo"
               autocomplete="off"
             >
+
 
           </label>
 
@@ -215,9 +1270,11 @@
 
           <label class="form-field">
 
+
             <span class="form-label">
               Bovenregel
             </span>
+
 
             <input
               id="eyebrow"
@@ -225,6 +1282,7 @@
               placeholder="HV NOVITAS PRESENTEERT"
               autocomplete="off"
             >
+
 
           </label>
 
@@ -234,11 +1292,14 @@
 
           <div class="field-grid">
 
+
             <label class="form-field">
+
 
               <span class="form-label">
                 Datumtekst
               </span>
+
 
               <input
                 id="dateText"
@@ -246,14 +1307,18 @@
                 placeholder="Vrijdag 27 november 2026"
               >
 
+
             </label>
+
 
 
             <label class="form-field">
 
+
               <span class="form-label">
                 Tijdtekst
               </span>
+
 
               <input
                 id="timeText"
@@ -261,7 +1326,9 @@
                 placeholder="19.00 uur"
               >
 
+
             </label>
+
 
           </div>
 
@@ -271,9 +1338,11 @@
 
           <label class="form-field">
 
+
             <span class="form-label">
               Locatie
             </span>
+
 
             <input
               id="location"
@@ -281,6 +1350,7 @@
               placeholder="Kantine HV Novitas, Willem Alexanderstraat 6 Hulst."
               autocomplete="off"
             >
+
 
           </label>
 
@@ -290,9 +1360,11 @@
 
           <label class="form-field">
 
+
             <span class="form-label">
               Link
             </span>
+
 
             <input
               id="link"
@@ -301,10 +1373,12 @@
               inputmode="url"
             >
 
+
             <small class="help-text">
               Optioneel. Wanneer je een link invult wordt de volledige
               banner klikbaar.
             </small>
+
 
           </label>
 
@@ -314,32 +1388,41 @@
 
           <div class="field-grid">
 
+
             <label class="form-field">
+
 
               <span class="form-label">
                 Zichtbaar vanaf
               </span>
+
 
               <input
                 id="start"
                 type="datetime-local"
               >
 
+
             </label>
+
 
 
             <label class="form-field">
 
+
               <span class="form-label">
                 Zichtbaar tot
               </span>
+
 
               <input
                 id="end"
                 type="datetime-local"
               >
 
+
             </label>
+
 
           </div>
 
@@ -348,6 +1431,7 @@
           <!-- KNOPPEN -->
 
           <div class="actions">
+
 
             <button
               type="submit"
@@ -374,38 +1458,42 @@
               Banner leegmaken
             </button>
 
+
           </div>
 
 
           <p class="note">
-            Het voorbeeld hieronder gebruikt exact dezelfde banner
+            Het voorbeeld rechts gebruikt exact dezelfde banner
             als de website.
           </p>
 
 
         </form>
 
+
       </section>
 
 
 
       <!-- =================================================
-           VOORBEELD
+           RECHTS
            ================================================= -->
 
       <section
-        class="panel"
+        class="panel preview-panel"
         id="previewPanel"
       >
 
 
         <div class="panel-title">
 
+
           <div>
 
             <h2>
               Voorbeeld
             </h2>
+
 
             <p class="note">
               Dit is exact dezelfde banner als op de website.
@@ -418,11 +1506,13 @@
             Live voorbeeld
           </div>
 
+
         </div>
 
 
 
         <div id="preview">
+
 
           <iframe
             id="previewFrame"
@@ -431,6 +1521,7 @@
             loading="eager"
             scrolling="no">
           </iframe>
+
 
         </div>
 
@@ -442,21 +1533,24 @@
 
 
 
-    <!-- =================================================
+    <!-- ===================================================
          UITLEG
-         ================================================= -->
+         =================================================== -->
 
     <section class="panel guidance">
+
 
       <strong>
         Gebruik
       </strong>
+
 
       <p>
         Zet de banner aan, vul de gegevens in, stel de
         zichtbaarheidperiode in en klik daarna op
         <strong>Banner opslaan</strong>.
       </p>
+
 
     </section>
 
@@ -465,6 +1559,10 @@
 
 
 
+  <!-- =====================================================
+       MELDING
+       ===================================================== -->
+
   <div
     id="message"
     class="message"
@@ -472,6 +1570,10 @@
   ></div>
 
 
+
+  <!-- =====================================================
+       JAVASCRIPT
+       ===================================================== -->
 
   <script
     type="module"
