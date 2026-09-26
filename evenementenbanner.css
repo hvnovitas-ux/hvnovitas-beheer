@@ -1,760 +1,14 @@
 /* =========================================================
-   HV NOVITAS
-   EVENEMENTENBANNER BEHEER
+   NIEUW LIVE VOORBEELD
+   Zelfde stijl als evenementenbanner-widget.css
    ========================================================= */
-
-:root {
-
-  --orange: #ff6500;
-  --orange-bright: #ff7a00;
-  --gold: #ffd21f;
-  --gold-bright: #ffe75a;
-
-  --dark: #171717;
-  --dark-2: #0c0c0c;
-
-  --ink: #172033;
-  --muted: #667085;
-
-  --bg: #eef1f5;
-  --white: #ffffff;
-
-  --line: #d9e0e9;
-
-  --green: #16884a;
-  --green-dark: #0e6c39;
-
-  --red: #c83232;
-  --red-bg: #fff1f1;
-
-}
-
-
-/* =========================================================
-   BASIS
-   ========================================================= */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-
-html {
-  min-height: 100%;
-}
-
-
-body {
-
-  margin: 0;
-
-  padding: 28px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #f4f6f9 0%,
-      #e9edf2 100%
-    );
-
-  color: var(--ink);
-
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  font-size: 16px;
-
-  line-height: 1.45;
-
-  transform: none !important;
-  rotate: none !important;
-  translate: none !important;
-  scale: none !important;
-  skew: none !important;
-
-}
-
-
-/* =========================================================
-   PAGINA
-   ========================================================= */
-
-.page {
-
-  width: min(1600px, 100%);
-
-  margin: 0 auto;
-
-}
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-.header {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 25px;
-
-  margin-bottom: 24px;
-
-}
-
-
-.kicker {
-
-  margin-bottom: 6px;
-
-  color: var(--orange);
-
-  font-size: 12px;
-
-  font-weight: 900;
-
-  letter-spacing: .15em;
-
-  text-transform: uppercase;
-
-}
-
-
-.header h1 {
-
-  margin: 0 0 6px;
-
-  color: var(--dark);
-
-  font-size: 32px;
-
-  line-height: 1.08;
-
-}
-
-
-.header p {
-
-  margin: 0;
-
-  color: var(--muted);
-
-  font-size: 15px;
-
-}
-
-
-.back {
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  min-height: 42px;
-
-  padding: 10px 15px;
-
-  border-radius: 10px;
-
-  background: #ffffff;
-
-  border: 1px solid var(--line);
-
-  color: var(--ink);
-
-  text-decoration: none;
-
-  font-weight: 800;
-
-  box-shadow:
-    0 4px 14px rgba(20, 30, 45, .05);
-
-}
-
-
-.back:hover {
-
-  border-color: var(--orange);
-
-  color: var(--orange);
-
-}
-
-
-/* =========================================================
-   LAYOUT
-   ========================================================= */
-
-.layout {
-
-  display: grid;
-
-  grid-template-columns:
-    minmax(430px, 700px)
-    minmax(500px, 1fr);
-
-  gap: 24px;
-
-  align-items: start;
-
-}
-
-
-/* =========================================================
-   PANEL
-   ========================================================= */
-
-.panel {
-
-  position: relative;
-
-  background: #ffffff;
-
-  border: 1px solid var(--line);
-
-  border-radius: 18px;
-
-  padding: 24px;
-
-  box-shadow:
-    0 12px 35px rgba(25, 38, 55, .07);
-
-}
-
-
-.panel::before {
-
-  content: "";
-
-  position: absolute;
-
-  top: 0;
-  left: 24px;
-  right: 24px;
-
-  height: 4px;
-
-  border-radius:
-    0 0 999px 999px;
-
-  background:
-    linear-gradient(
-      90deg,
-      var(--orange),
-      var(--gold),
-      var(--orange)
-    );
-
-}
-
-
-.panel-title {
-
-  display: flex;
-
-  align-items: flex-start;
-
-  justify-content: space-between;
-
-  gap: 20px;
-
-  margin-bottom: 20px;
-
-}
-
-
-.panel-title h2 {
-
-  margin: 0;
-
-  color: var(--dark);
-
-  font-size: 21px;
-
-  line-height: 1.15;
-
-}
-
-
-.note {
-
-  margin: 7px 0 0;
-
-  color: var(--muted);
-
-  font-size: 13px;
-
-}
-
-
-/* =========================================================
-   STATUS PILL
-   ========================================================= */
-
-.pill {
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  min-height: 34px;
-
-  padding: 7px 13px;
-
-  border-radius: 999px;
-
-  background: #fff0e5;
-
-  color: #a94000;
-
-  font-size: 13px;
-
-  font-weight: 900;
-
-  white-space: nowrap;
-
-}
-
-
-.pill.neutral {
-
-  background: #eef1f5;
-
-  color: #526072;
-
-}
-
-
-.preview-pill {
-
-  background:
-    linear-gradient(
-      135deg,
-      #fff0db,
-      #ffe8bd
-    );
-
-  color:
-    #a44500;
-
-}
-
-
-/* =========================================================
-   FORMULIER
-   ========================================================= */
-
-#eventForm {
-
-  width: 100%;
-
-}
-
-
-/*
-   EXTRA BEVEILIGING.
-   Ook wanneer ergens nog oude CSS in cache staat,
-   mogen formulierelementen nooit draaien.
-*/
-
-#eventForm,
-#eventForm *,
-#eventForm label,
-#eventForm input,
-#eventForm button,
-#eventForm .two {
-
-  transform: none !important;
-
-  rotate: none !important;
-
-  translate: none !important;
-
-  scale: none !important;
-
-  skew: none !important;
-
-}
-
-
-/* =========================================================
-   ACTIEF BLOK
-   ========================================================= */
-
-.toggle-row {
-
-  display: flex;
-
-  align-items: flex-start;
-
-  gap: 12px;
-
-  padding: 15px;
-
-  margin-bottom: 20px;
-
-  border:
-    1px solid #ffd4b7;
-
-  border-radius: 12px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #fffaf6,
-      #fff3e9
-    );
-
-}
-
-
-.toggle-row input {
-
-  width: 22px;
-
-  height: 22px;
-
-  margin:
-    2px
-    0
-    0;
-
-  accent-color:
-    var(--orange);
-
-}
-
-
-.toggle-row span {
-
-  display: block;
-
-}
-
-
-.toggle-row strong {
-
-  display: block;
-
-  color: var(--dark);
-
-  font-size: 15px;
-
-}
-
-
-.toggle-row small {
-
-  display: block;
-
-  margin-top: 3px;
-
-  color: var(--muted);
-
-  font-size: 12px;
-
-}
-
-
-/* =========================================================
-   FORM VELDEN
-   ========================================================= */
-
-.form-field {
-
-  display: block;
-
-  margin-bottom: 17px;
-
-}
-
-
-.form-label {
-
-  display: block;
-
-  margin-bottom: 7px;
-
-  color: var(--ink);
-
-  font-size: 14px;
-
-  font-weight: 800;
-
-  line-height: 1.2;
-
-}
-
-
-.form-field input {
-
-  display: block;
-
-  width: 100%;
-
-  min-height: 45px;
-
-  padding:
-    10px
-    13px;
-
-  border:
-    1px solid #cfd7e4;
-
-  border-radius: 10px;
-
-  outline: none;
-
-  background: #ffffff;
-
-  color: var(--ink);
-
-  font: inherit;
-
-}
-
-
-.form-field input:focus {
-
-  border-color:
-    var(--orange);
-
-  box-shadow:
-    0 0 0 3px
-    rgba(255, 101, 0, .12);
-
-}
-
-
-.form-field input::placeholder {
-
-  color: #98a2b3;
-
-}
-
-
-.help-text {
-
-  display: block;
-
-  margin-top: 6px;
-
-  color: var(--muted);
-
-  font-size: 12px;
-
-}
-
-
-/* =========================================================
-   DATUM / TIJD
-   LET OP: NIET .two
-   ========================================================= */
-
-.field-grid {
-
-  display: grid;
-
-  grid-template-columns:
-    1fr
-    1fr;
-
-  gap: 14px;
-
-}
-
-
-.field-grid .form-field {
-
-  min-width: 0;
-
-}
-
-
-/* =========================================================
-   ACTIES
-   ========================================================= */
-
-.actions {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 10px;
-
-  margin-top: 7px;
-
-}
-
-
-.actions button {
-
-  appearance: none;
-
-  border: 0;
-
-  border-radius: 10px;
-
-  min-height: 45px;
-
-  padding:
-    10px
-    17px;
-
-  cursor: pointer;
-
-  font: inherit;
-
-  font-weight: 900;
-
-  transition:
-    transform .15s ease,
-    filter .15s ease,
-    box-shadow .15s ease;
-
-}
-
-
-.actions button:hover {
-
-  filter:
-    brightness(.98);
-
-}
-
-
-.actions button:active {
-
-  transform:
-    translateY(1px) !important;
-
-}
-
-
-.primary {
-
-  background:
-    linear-gradient(
-      135deg,
-      #188c4b,
-      #0f703b
-    );
-
-  color: #ffffff;
-
-  box-shadow:
-    0 6px 16px
-    rgba(24, 140, 75, .20);
-
-}
-
-
-.secondary {
-
-  background: #edf1f5;
-
-  color: var(--ink);
-
-}
-
-
-.secondary:hover {
-
-  background: #e4e9ef;
-
-}
-
-
-.danger {
-
-  background:
-    linear-gradient(
-      135deg,
-      #fff0f0,
-      #ffe4e4
-    );
-
-  color:
-    #b92b2b;
-
-}
-
-
-/* =========================================================
-   PREVIEW
-   ========================================================= */
-
-#preview {
-
-  width: 100%;
-
-  padding: 12px;
-
-  border:
-    1px solid #dfe5ec;
-
-  border-radius: 15px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #fffdf9,
-      #fff4e5
-    );
-
-  overflow: hidden;
-
-}
-
-
-#previewRoot {
-
-  width: 100%;
-
-  min-height: 190px;
-
-}
-
-
-/* =========================================================
-   BANNER
-   ALLEEN BINNEN #previewRoot
-   ========================================================= */
-
-#previewRoot .event-link {
-
-  display: block;
-
-  width: 100%;
-
-  color: inherit;
-
-  text-decoration: none;
-
-}
-
 
 #previewRoot .event-banner {
 
   position: relative;
-
   isolation: isolate;
 
   width: 100%;
-
   min-height: 190px;
 
   overflow: hidden;
@@ -762,18 +16,11 @@ body {
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   padding:
-    15px
+    14px
     20px;
-
-  border:
-    2px solid
-    #ffb000;
-
-  border-radius: 12px;
 
   color: #ffffff;
 
@@ -782,51 +29,68 @@ body {
   background:
 
     radial-gradient(
-      ellipse at 15% 30%,
-      rgba(255,225,61,.70)
-      0%,
-      rgba(255,173,0,.38)
-      18%,
+      circle at 8% 50%,
+      rgba(0,217,255,.60) 0%,
+      rgba(0,217,255,.22) 16%,
+      transparent 38%
+    ),
+
+    radial-gradient(
+      circle at 30% 15%,
+      rgba(255,0,204,.48) 0%,
+      rgba(255,0,204,.18) 20%,
+      transparent 38%
+    ),
+
+    radial-gradient(
+      circle at 72% 15%,
+      rgba(119,0,255,.55) 0%,
+      rgba(119,0,255,.18) 24%,
       transparent 42%
     ),
 
     radial-gradient(
-      ellipse at 85% 65%,
-      rgba(255,238,90,.55)
-      0%,
-      rgba(255,105,0,.32)
-      20%,
-      transparent 44%
+      circle at 95% 55%,
+      rgba(255,0,153,.58) 0%,
+      rgba(255,0,153,.20) 18%,
+      transparent 38%
     ),
 
     radial-gradient(
-      ellipse at 52% 115%,
-      rgba(255,245,145,.38)
-      0%,
+      circle at 55% 110%,
+      rgba(0,156,255,.35) 0%,
       transparent 45%
     ),
 
     linear-gradient(
-      118deg,
-      #8d1d00 0%,
-      #e83c00 24%,
-      #ff6800 46%,
-      #ff8e00 66%,
-      #b92700 100%
+      120deg,
+      #030615 0%,
+      #07132f 28%,
+      #10114a 48%,
+      #210a45 72%,
+      #050716 100%
     );
 
-  box-shadow:
-    inset 0 0 60px
-    rgba(85, 15, 0, .35),
+  border:
+    2px solid
+    #4edcff;
 
-    0 10px 28px
-    rgba(112, 41, 0, .28);
+  border-radius:
+    0;
+
+  box-shadow:
+
+    inset 0 0 70px
+    rgba(0,0,0,.58),
+
+    0 8px 22px
+    rgba(0,0,0,.32);
 
 }
 
 
 /* =========================================================
-   DIAGONALE BANEN
+   GLOED
    ========================================================= */
 
 #previewRoot .event-banner::before {
@@ -835,32 +99,44 @@ body {
 
   position: absolute;
 
-  top: -70%;
-
-  left: 29%;
-
-  width: 24px;
-
-  height: 240%;
-
-  transform:
-    rotate(34deg) !important;
+  inset:
+    -20%;
 
   background:
-    linear-gradient(
-      180deg,
-      transparent,
-      rgba(255,239,155,.88),
-      rgba(255,215,75,.30),
-      transparent
+
+    radial-gradient(
+      circle at 18% 35%,
+      rgba(0,238,255,.24),
+      transparent 18%
+    ),
+
+    radial-gradient(
+      circle at 47% 75%,
+      rgba(255,0,204,.18),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at 82% 32%,
+      rgba(155,0,255,.24),
+      transparent 19%
     );
 
-  opacity: .65;
+  filter:
+    blur(24px);
 
-  z-index: 0;
+  opacity:
+    .95;
+
+  z-index:
+    0;
 
 }
 
+
+/* =========================================================
+   TWEEDE GLOEDLAAG
+   ========================================================= */
 
 #previewRoot .event-banner::after {
 
@@ -868,28 +144,28 @@ body {
 
   position: absolute;
 
-  top: -70%;
-
-  right: 28%;
-
-  width: 13px;
-
-  height: 240%;
-
-  transform:
-    rotate(34deg) !important;
+  inset:
+    0;
 
   background:
-    linear-gradient(
-      180deg,
-      transparent,
-      rgba(255,255,255,.75),
-      transparent
+
+    radial-gradient(
+      circle at 6% 90%,
+      rgba(0,224,255,.22),
+      transparent 18%
+    ),
+
+    radial-gradient(
+      circle at 94% 12%,
+      rgba(255,25,196,.24),
+      transparent 18%
     );
 
-  opacity: .38;
+  pointer-events:
+    none;
 
-  z-index: 0;
+  z-index:
+    0;
 
 }
 
@@ -900,71 +176,253 @@ body {
 
 #previewRoot .art {
 
-  position: absolute;
+  position:
+    absolute;
 
-  inset: 0;
+  inset:
+    0;
 
-  z-index: 1;
+  width:
+    100%;
 
-  pointer-events: none;
+  height:
+    100%;
 
-  overflow: hidden;
+  overflow:
+    hidden;
+
+  z-index:
+    2;
+
+  pointer-events:
+    none;
 
 }
 
 
 #previewRoot .art::before {
 
-  content: "";
+  content:
+    "";
 
-  position: absolute;
+  position:
+    absolute;
 
-  left: -8%;
-  bottom: -15%;
+  inset:
+    0;
 
-  width: 58%;
-  height: 65%;
+  background-image:
 
-  border-radius: 50%;
-
-  background:
     radial-gradient(
-      ellipse,
-      rgba(255,238,94,.62),
-      rgba(255,126,0,.25) 36%,
-      transparent 72%
+      circle,
+      rgba(255,255,255,.85) 0 1.5px,
+      transparent 2px
+    ),
+
+    radial-gradient(
+      circle,
+      rgba(0,238,255,.65) 0 1.5px,
+      transparent 2px
+    ),
+
+    radial-gradient(
+      circle,
+      rgba(255,0,204,.65) 0 1.5px,
+      transparent 2px
     );
 
-  filter:
-    blur(12px);
+  background-size:
+    85px 72px,
+    115px 95px,
+    145px 110px;
+
+  background-position:
+    20px 12px,
+    55px 28px,
+    90px 45px;
+
+  opacity:
+    .55;
+
+  z-index:
+    0;
 
 }
 
 
-#previewRoot .art::after {
+/* =========================================================
+   DISCOBAL
+   ========================================================= */
 
-  content: "";
+#previewRoot .disco-ball {
 
-  position: absolute;
+  position:
+    absolute;
 
-  right: -8%;
-  top: -10%;
+  left:
+    4%;
 
-  width: 55%;
-  height: 60%;
+  top:
+    50%;
 
-  border-radius: 50%;
+  width:
+    130px;
+
+  height:
+    130px;
+
+  transform:
+    translateY(-50%) !important;
+
+  border-radius:
+    50%;
 
   background:
+
     radial-gradient(
-      ellipse,
-      rgba(255,247,139,.44),
-      rgba(255,133,0,.18) 40%,
-      transparent 74%
+      circle at 32% 27%,
+      #ffffff 0%,
+      #ffffff 8%,
+      rgba(255,255,255,.75) 10%,
+      transparent 14%
+    ),
+
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.72) 0 3px,
+      transparent 3px 20px
+    ),
+
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,.72) 0 3px,
+      transparent 3px 20px
+    ),
+
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #a9eaff 18%,
+      #5f79ff 34%,
+      #d841ff 52%,
+      #ff45ba 68%,
+      #8e59ff 82%,
+      #ffffff 100%
     );
 
+  box-shadow:
+
+    0 0 18px
+    rgba(0,225,255,.95),
+
+    0 0 38px
+    rgba(211,0,255,.70),
+
+    0 16px 32px
+    rgba(0,0,0,.40);
+
+  z-index:
+    4;
+
+}
+
+
+#previewRoot .disco-ball::before {
+
+  content:
+    "";
+
+  position:
+    absolute;
+
+  width:
+    38px;
+
+  height:
+    25px;
+
+  left:
+    22px;
+
+  top:
+    18px;
+
+  border-radius:
+    50%;
+
+  background:
+    rgba(255,255,255,.85);
+
   filter:
-    blur(15px);
+    blur(5px);
+
+  transform:
+    rotate(-25deg) !important;
+
+}
+
+
+#previewRoot .disco-ball::after {
+
+  content:
+    "";
+
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  border-radius:
+    50%;
+
+  background:
+
+    radial-gradient(
+      circle at 28% 25%,
+      rgba(255,255,255,.65),
+      transparent 14%
+    ),
+
+    radial-gradient(
+      circle at 72% 75%,
+      rgba(0,238,255,.20),
+      transparent 22%
+    );
+
+}
+
+
+/* =========================================================
+   DISCO-STOK
+   ========================================================= */
+
+#previewRoot .disco-ball-wrap {
+
+  position:
+    absolute;
+
+  left:
+    8%;
+
+  top:
+    -4px;
+
+  width:
+    2px;
+
+  height:
+    42px;
+
+  background:
+    rgba(255,255,255,.85);
+
+  box-shadow:
+    0 0 8px
+    rgba(255,255,255,.8);
+
+  z-index:
+    5;
 
 }
 
@@ -975,72 +433,90 @@ body {
 
 #previewRoot .music {
 
-  position: absolute;
-
-  color:
-    var(--gold-bright);
+  position:
+    absolute;
 
   font-family:
     Georgia,
     "Times New Roman",
     serif;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
-  line-height: 1;
+  line-height:
+    1;
+
+  z-index:
+    6;
 
   text-shadow:
-    0 0 8px
-    rgba(255,235,70,.95),
 
-    0 0 22px
-    rgba(255,179,0,.72),
+    0 0 7px
+    currentColor,
 
-    0 4px 10px
-    rgba(95,20,0,.55);
+    0 0 18px
+    currentColor,
 
-  opacity: .98;
-
-  z-index: 4;
+    0 4px 8px
+    rgba(0,0,0,.5);
 
 }
 
 
 #previewRoot .music.one {
 
-  left: 5%;
+  left:
+    25%;
 
-  top: 9%;
+  top:
+    15%;
 
-  font-size: 54px;
+  color:
+    #00eaff;
+
+  font-size:
+    54px;
 
   transform:
-    rotate(-12deg) !important;
+    rotate(-9deg) !important;
 
 }
 
 
 #previewRoot .music.two {
 
-  right: 5%;
+  right:
+    20%;
 
-  top: 7%;
+  top:
+    8%;
 
-  font-size: 55px;
+  color:
+    #ff3edb;
+
+  font-size:
+    54px;
 
   transform:
-    rotate(12deg) !important;
+    rotate(9deg) !important;
 
 }
 
 
 #previewRoot .music.three {
 
-  left: 12%;
+  left:
+    29%;
 
-  bottom: 4%;
+  bottom:
+    8%;
 
-  font-size: 42px;
+  color:
+    #8effff;
+
+  font-size:
+    38px;
 
   transform:
     rotate(8deg) !important;
@@ -1050,11 +526,17 @@ body {
 
 #previewRoot .music.four {
 
-  right: 12%;
+  right:
+    29%;
 
-  bottom: 6%;
+  bottom:
+    7%;
 
-  font-size: 42px;
+  color:
+    #ff83eb;
+
+  font-size:
+    38px;
 
   transform:
     rotate(-8deg) !important;
@@ -1068,69 +550,77 @@ body {
 
 #previewRoot .bingo-card {
 
-  position: absolute;
+  position:
+    absolute;
 
-  width: 125px;
+  width:
+    125px;
 
-  height: 80px;
+  height:
+    82px;
 
   border:
     3px solid
-    rgba(255,242,206,.95);
+    rgba(255,255,255,.95);
 
-  border-radius: 9px;
+  border-radius:
+    8px;
 
   background:
 
     repeating-linear-gradient(
       to right,
-      rgba(255,101,0,.72) 0,
-      rgba(255,101,0,.72) 2px,
+      rgba(48,84,150,.78) 0,
+      rgba(48,84,150,.78) 2px,
       transparent 2px,
-      transparent 24px
+      transparent 25px
     ),
 
     repeating-linear-gradient(
       to bottom,
-      rgba(255,101,0,.72) 0,
-      rgba(255,101,0,.72) 2px,
+      rgba(48,84,150,.78) 0,
+      rgba(48,84,150,.78) 2px,
       transparent 2px,
       transparent 19px
     ),
 
     linear-gradient(
-      145deg,
-      #fffdf7,
-      #e9e9e9
+      135deg,
+      #ffffff 0%,
+      #e8f2ff 100%
     );
 
   box-shadow:
-    0 10px 28px
-    rgba(84,24,0,.42),
 
-    0 0 18px
-    rgba(255,221,47,.35);
+    0 9px 25px
+    rgba(0,0,0,.42),
 
-  opacity: .98;
+    0 0 16px
+    rgba(0,238,255,.38);
 
-  z-index: 3;
+  z-index:
+    5;
 
 }
 
 
 #previewRoot .bingo-card::before {
 
-  content: "";
+  content:
+    "";
 
-  position: absolute;
+  position:
+    absolute;
 
-  inset: 7px;
+  inset:
+    7px;
 
   border:
     1px solid
-    rgba(255,255,255,.8);
+    rgba(0,72,160,.26);
 
-  border-radius: 4px;
+  border-radius:
+    3px;
 
 }
 
@@ -1140,52 +630,60 @@ body {
   content:
     "BINGO";
 
-  position: absolute;
+  position:
+    absolute;
 
-  left: 50%;
+  left:
+    50%;
 
-  top: 50%;
+  top:
+    50%;
 
   transform:
-    translate(-50%, -50%)
-    rotate(0deg) !important;
+    translate(-50%,-50%) !important;
 
   color:
-    #ff6500;
+    #1268d7;
 
-  font-size: 15px;
+  font-size:
+    15px;
 
-  font-weight: 1000;
+  font-weight:
+    1000;
 
-  letter-spacing: .12em;
+  letter-spacing:
+    .12em;
 
   text-shadow:
-    0 2px 4px
-    rgba(255,255,255,.85);
+    0 1px 0 #ffffff;
 
 }
 
 
 #previewRoot .card-left {
 
-  left: 3%;
+  left:
+    9%;
 
-  top: 4%;
+  top:
+    5%;
 
   transform:
-    rotate(-11deg) !important;
+    rotate(-10deg) !important;
 
 }
 
 
 #previewRoot .card-right {
 
-  right: 3%;
+  right:
+    4%;
 
-  bottom: 2%;
+  bottom:
+    2%;
 
   transform:
-    rotate(10deg) !important;
+    rotate(9deg) !important;
 
 }
 
@@ -1196,198 +694,252 @@ body {
 
 #previewRoot .ball {
 
-  position: absolute;
+  position:
+    absolute;
 
-  width: 72px;
+  width:
+    68px;
 
-  height: 72px;
+  height:
+    68px;
 
-  display: grid;
+  display:
+    grid;
 
-  place-items: center;
+  place-items:
+    center;
 
-  border-radius: 50%;
+  border-radius:
+    50%;
 
   color:
-    #222222;
+    #162033;
 
-  font-size: 27px;
+  font-size:
+    26px;
 
-  font-weight: 1000;
+  font-weight:
+    1000;
 
   background:
 
     radial-gradient(
-      circle at 32% 24%,
+      circle at 32% 23%,
       #ffffff 0%,
-      #ffffff 16%,
-      #fff7dd 30%,
-      #e5e5e5 53%,
-      #a8a8a8 77%,
-      #656565 100%
+      #ffffff 15%,
+      #edf9ff 32%,
+      #c9def0 52%,
+      #7491ab 77%,
+      #364453 100%
     );
 
   border:
-    5px solid
-    #ff6900;
+    4px solid
+    #00dfff;
 
   box-shadow:
 
     0 7px 18px
-    rgba(70,22,0,.42),
+    rgba(0,0,0,.46),
 
     0 0 18px
-    rgba(255,221,47,.70);
+    rgba(0,224,255,.75);
 
-  z-index: 5;
+  z-index:
+    7;
 
 }
 
 
 #previewRoot .ball::after {
 
-  content: "";
+  content:
+    "";
 
-  position: absolute;
+  position:
+    absolute;
 
-  inset: 8px;
+  inset:
+    7px;
 
   border:
     2px solid
-    rgba(255,119,0,.72);
+    rgba(255,0,204,.62);
 
-  border-radius: 50%;
+  border-radius:
+    50%;
 
 }
 
 
 #previewRoot .ball-left-one {
 
-  left: 5%;
+  left:
+    7%;
 
-  bottom: -18px;
+  bottom:
+    -17px;
 
 }
 
 
 #previewRoot .ball-left-two {
 
-  left: 11%;
+  left:
+    13%;
 
-  bottom: -27px;
+  bottom:
+    -26px;
 
-  width: 58px;
+  width:
+    55px;
 
-  height: 58px;
+  height:
+    55px;
 
-  font-size: 21px;
+  font-size:
+    20px;
+
+  border-color:
+    #ff32d7;
 
 }
 
 
 #previewRoot .ball-right-one {
 
-  right: 5%;
+  right:
+    5%;
 
-  bottom: -18px;
+  bottom:
+    -17px;
 
 }
 
 
 #previewRoot .ball-right-two {
 
-  right: 11%;
+  right:
+    11%;
 
-  bottom: -27px;
+  bottom:
+    -26px;
 
-  width: 58px;
+  width:
+    55px;
 
-  height: 58px;
+  height:
+    55px;
 
-  font-size: 21px;
+  font-size:
+    20px;
+
+  border-color:
+    #ff32d7;
 
 }
 
 
 /* =========================================================
-   CONTENT
+   CENTRALE INHOUD
    ========================================================= */
 
 #previewRoot .content {
 
-  position: relative;
+  position:
+    relative;
 
-  z-index: 10;
+  z-index:
+    20;
 
-  width: 100%;
+  width:
+    100%;
 
-  max-width: 1200px;
+  max-width:
+    1250px;
 
   padding:
-    0
-    165px;
+    0 155px;
 
-  display: flex;
+  display:
+    flex;
 
-  flex-direction: column;
+  flex-direction:
+    column;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: center;
+  justify-content:
+    center;
 
 }
 
 
 #previewRoot .eyebrow {
 
-  margin-bottom: 4px;
+  margin-bottom:
+    4px;
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
-  font-size: 13px;
+  font-size:
+    13px;
 
-  font-weight: 1000;
+  font-weight:
+    900;
 
-  letter-spacing: .23em;
+  letter-spacing:
+    .25em;
 
-  text-transform: uppercase;
+  text-transform:
+    uppercase;
 
   text-shadow:
-    0 2px 5px
-    rgba(70,16,0,.85);
+
+    0 0 8px
+    rgba(0,238,255,.65),
+
+    0 2px 4px
+    rgba(0,0,0,.75);
 
 }
 
 
 #previewRoot .title {
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
   font-size:
-    clamp(
-      34px,
-      4.4vw,
-      64px
-    );
+    clamp(34px,4.5vw,66px);
 
-  font-weight: 1000;
+  font-weight:
+    1000;
 
   letter-spacing:
     -.045em;
 
-  line-height: .95;
+  line-height:
+    .94;
 
-  text-transform: uppercase;
+  text-transform:
+    uppercase;
 
-  white-space: nowrap;
+  white-space:
+    nowrap;
 
   text-shadow:
 
     0 3px 0
-    rgba(101,30,0,.85),
+    #243a71,
 
-    0 6px 13px
-    rgba(60,15,0,.62);
+    0 6px 14px
+    rgba(0,0,0,.72),
+
+    0 0 15px
+    rgba(0,220,255,.20);
 
 }
 
@@ -1395,80 +947,111 @@ body {
 #previewRoot .title strong {
 
   color:
-    #ffe040;
+    #ff4bd8;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff4bd8 0%,
+      #ff7cf0 28%,
+      #ffe15a 56%,
+      #ff8a3c 100%
+    );
+
+  -webkit-background-clip:
+    text;
+
+  background-clip:
+    text;
+
+  -webkit-text-fill-color:
+    transparent;
 
   text-shadow:
+    none;
 
-    0 3px 0
-    #a54b00,
+  filter:
 
-    0 5px 12px
-    rgba(89,28,0,.72),
+    drop-shadow(
+      0 3px 0
+      rgba(107,28,113,.75)
+    )
 
-    0 0 18px
-    rgba(255,237,87,.40);
+    drop-shadow(
+      0 6px 11px
+      rgba(0,0,0,.65)
+    );
 
 }
 
 
 #previewRoot .rule {
 
-  width: 55%;
+  width:
+    52%;
 
-  height: 4px;
+  height:
+    4px;
 
   margin:
-    8px
-    auto
-    7px;
+    8px auto;
 
-  border-radius: 999px;
+  border-radius:
+    999px;
 
   background:
+
     linear-gradient(
       90deg,
       transparent,
-      #fff176 15%,
-      #ffd21f 50%,
-      #fff176 85%,
+      #00eaff 18%,
+      #ff32d7 50%,
+      #ffe45c 82%,
       transparent
     );
 
   box-shadow:
-    0 0 14px
-    rgba(255,237,87,.65);
+
+    0 0 12px
+    rgba(0,224,255,.65),
+
+    0 0 15px
+    rgba(255,0,204,.45);
 
 }
 
 
 #previewRoot .details {
 
-  display: flex;
+  display:
+    flex;
 
-  justify-content: center;
+  align-items:
+    center;
 
-  align-items: center;
+  justify-content:
+    center;
 
-  flex-wrap: wrap;
+  flex-wrap:
+    wrap;
 
-  gap: 8px;
+  gap:
+    8px;
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
   font-size:
-    clamp(
-      10px,
-      1vw,
-      14px
-    );
+    13px;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
-  letter-spacing: .025em;
+  letter-spacing:
+    .025em;
 
   text-shadow:
-    0 2px 5px
-    rgba(74,20,0,.9);
+    0 2px 5px rgba(0,0,0,.85);
 
 }
 
@@ -1476,198 +1059,83 @@ body {
 #previewRoot .details i {
 
   color:
-    #fff04a;
+    #ff52dd;
 
-  font-style: normal;
+  font-style:
+    normal;
 
-  font-weight: 1000;
+  font-weight:
+    1000;
 
   text-shadow:
-    0 0 10px
-    rgba(255,231,48,.8);
+    0 0 8px
+    rgba(255,62,219,.85);
 
 }
 
 
-/* =========================================================
-   GEBRUIK
-   ========================================================= */
+#previewRoot .content::before {
 
-.guidance {
+  content:
+    "";
 
-  margin-top: 24px;
+  position:
+    absolute;
 
-}
+  left:
+    50%;
 
+  top:
+    50%;
 
-.guidance > strong {
+  width:
+    72%;
 
-  display: block;
-
-  color: var(--dark);
-
-  font-size: 17px;
-
-}
-
-
-.guidance p {
-
-  margin: 7px 0 0;
-
-  color: var(--muted);
-
-  font-size: 14px;
-
-}
-
-
-/* =========================================================
-   MELDING
-   ========================================================= */
-
-.message {
-
-  position: fixed;
-
-  left: 50%;
-
-  bottom: 22px;
-
-  z-index: 1000;
+  height:
+    90px;
 
   transform:
-    translateX(-50%)
-    translateY(20px) !important;
-
-  min-width: 280px;
-
-  max-width: min(600px, 90vw);
-
-  padding:
-    12px
-    16px;
-
-  border-radius: 10px;
-
-  background: #171717;
-
-  color: #ffffff;
-
-  opacity: 0;
-
-  pointer-events: none;
-
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-
-  font-size: 14px;
-
-  font-weight: 800;
-
-}
-
-
-.message.show {
-
-  opacity: 1;
-
-  transform:
-    translateX(-50%)
-    translateY(0) !important;
-
-}
-
-
-.message.success {
+    translate(-50%,-50%) !important;
 
   background:
-    #18884b;
 
-}
+    radial-gradient(
+      ellipse,
+      rgba(0,225,255,.18),
+      transparent 40%
+    ),
 
+    radial-gradient(
+      ellipse,
+      rgba(255,0,204,.16),
+      transparent 65%
+    );
 
-.message.error {
+  filter:
+    blur(7px);
 
-  background:
-    #c83232;
+  z-index:
+    -1;
+
+  pointer-events:
+    none;
 
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   MOBIEL
    ========================================================= */
-
-@media (max-width: 1100px) {
-
-  .layout {
-
-    grid-template-columns:
-      1fr;
-
-  }
-
-}
-
 
 @media (max-width: 700px) {
 
-  body {
-
-    padding: 16px;
-
-  }
-
-
-  .header {
-
-    flex-direction: column;
-
-    align-items: flex-start;
-
-  }
-
-
-  .header h1 {
-
-    font-size: 27px;
-
-  }
-
-
-  .field-grid {
-
-    grid-template-columns:
-      1fr;
-
-    gap: 0;
-
-  }
-
-
-  .actions {
-
-    flex-direction: column;
-
-  }
-
-
-  .actions button {
-
-    width: 100%;
-
-  }
-
-
   #previewRoot .event-banner {
 
-    min-height: 190px;
+    min-height:
+      190px;
 
     padding:
-      10px
-      7px;
+      10px 7px;
 
   }
 
@@ -1675,8 +1143,7 @@ body {
   #previewRoot .content {
 
     padding:
-      0
-      72px;
+      0 72px;
 
   }
 
@@ -1684,45 +1151,65 @@ body {
   #previewRoot .title {
 
     font-size:
-      clamp(
-        27px,
-        7vw,
-        42px
-      );
+      clamp(27px,7vw,42px);
 
-    white-space: normal;
+    white-space:
+      normal;
+
+  }
+
+
+  #previewRoot .eyebrow {
+
+    letter-spacing:
+      .13em;
+
+  }
+
+
+  #previewRoot .details {
+
+    gap:
+      6px;
+
+  }
+
+
+  #previewRoot .disco-ball {
+
+    width:
+      82px;
+
+    height:
+      82px;
+
+    left:
+      2%;
 
   }
 
 
   #previewRoot .bingo-card {
 
-    width: 90px;
+    width:
+      87px;
 
-    height: 60px;
+    height:
+      57px;
 
   }
 
 
   #previewRoot .ball {
 
-    width: 56px;
+    width:
+      53px;
 
-    height: 56px;
+    height:
+      53px;
 
-    font-size: 20px;
-
-  }
-
-
-  #previewRoot .ball-left-two,
-  #previewRoot .ball-right-two {
-
-    width: 45px;
-
-    height: 45px;
-
-    font-size: 17px;
+    font-size:
+      18px;
 
   }
 
