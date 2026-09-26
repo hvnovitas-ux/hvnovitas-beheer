@@ -7,7 +7,8 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0">
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>
     HV Novitas – Evenementenbanner beheren
@@ -15,7 +16,8 @@
 
   <link
     rel="stylesheet"
-    href="evenementenbanner.css">
+    href="evenementenbanner.css?v=20260926-1500"
+  >
 
 </head>
 
@@ -24,10 +26,6 @@
 
   <main class="page">
 
-
-    <!-- =====================================================
-         HEADER
-         ===================================================== -->
 
     <header class="header">
 
@@ -48,35 +46,25 @@
       </div>
 
 
-      <div>
-
-        <a
-          class="back"
-          href="dashboard.html">
-
-          ← Terug naar dashboard
-
-        </a>
-
-      </div>
+      <a
+        class="back"
+        href="dashboard.html"
+      >
+        ← Terug naar dashboard
+      </a>
 
     </header>
 
 
 
-    <!-- =====================================================
-         BEHEER + VOORBEELD
-         ===================================================== -->
-
     <div class="layout">
 
 
-      <!-- ===================================================
+      <!-- =================================================
            INSTELLINGEN
-           =================================================== -->
+           ================================================= -->
 
       <section class="panel">
-
 
         <div class="panel-title">
 
@@ -88,13 +76,11 @@
 
           </div>
 
-
           <div
             id="status"
-            class="pill neutral">
-
+            class="pill neutral"
+          >
             Laden...
-
           </div>
 
         </div>
@@ -110,7 +96,8 @@
 
             <input
               id="active"
-              type="checkbox">
+              type="checkbox"
+            >
 
             <span>
 
@@ -119,9 +106,8 @@
               </strong>
 
               <small>
-                De banner wordt alleen getoond wanneer
-                deze actief is en binnen de ingestelde
-                periode valt.
+                De banner wordt alleen getoond wanneer deze actief is
+                en binnen de ingestelde periode valt.
               </small>
 
             </span>
@@ -132,15 +118,18 @@
 
           <!-- TITEL -->
 
-          <label>
+          <label class="form-field">
 
-            Titel
+            <span class="form-label">
+              Titel
+            </span>
 
             <input
               id="title"
               type="text"
               placeholder="Bijvoorbeeld: Muziek Bingo"
-              autocomplete="off">
+              autocomplete="off"
+            >
 
           </label>
 
@@ -148,15 +137,18 @@
 
           <!-- BOVENREGEL -->
 
-          <label>
+          <label class="form-field">
 
-            Bovenregel
+            <span class="form-label">
+              Bovenregel
+            </span>
 
             <input
               id="eyebrow"
               type="text"
               placeholder="HV NOVITAS PRESENTEERT"
-              autocomplete="off">
+              autocomplete="off"
+            >
 
           </label>
 
@@ -164,32 +156,36 @@
 
           <!-- DATUM EN TIJD -->
 
-          <div class="two">
+          <div class="field-grid">
 
+            <label class="form-field">
 
-            <label>
-
-              Datumtekst
+              <span class="form-label">
+                Datumtekst
+              </span>
 
               <input
                 id="dateText"
                 type="text"
-                placeholder="Zaterdag 28 november 2026">
+                placeholder="Vrijdag 27 november 2026"
+              >
 
             </label>
 
 
-            <label>
+            <label class="form-field">
 
-              Tijdtekst
+              <span class="form-label">
+                Tijdtekst
+              </span>
 
               <input
                 id="timeText"
                 type="text"
-                placeholder="19.00 uur">
+                placeholder="19.00 uur"
+              >
 
             </label>
-
 
           </div>
 
@@ -197,15 +193,18 @@
 
           <!-- LOCATIE -->
 
-          <label>
+          <label class="form-field">
 
-            Locatie
+            <span class="form-label">
+              Locatie
+            </span>
 
             <input
               id="location"
               type="text"
-              placeholder="Den Dullaert"
-              autocomplete="off">
+              placeholder="Kantine HV Novitas, Willem Alexanderstraat 6 Hulst."
+              autocomplete="off"
+            >
 
           </label>
 
@@ -213,22 +212,22 @@
 
           <!-- LINK -->
 
-          <label>
+          <label class="form-field">
 
-            Link
+            <span class="form-label">
+              Link
+            </span>
 
             <input
               id="link"
               type="url"
               placeholder="https://www.hvnovitas.nl/..."
-              inputmode="url">
+              inputmode="url"
+            >
 
-            <small>
-
-              Optioneel.
-              Wanneer je een link invult wordt
-              de volledige banner klikbaar.
-
+            <small class="help-text">
+              Optioneel. Wanneer je een link invult wordt de volledige
+              banner klikbaar.
             </small>
 
           </label>
@@ -237,30 +236,34 @@
 
           <!-- ZICHTBAARHEID -->
 
-          <div class="two">
+          <div class="field-grid">
 
+            <label class="form-field">
 
-            <label>
-
-              Zichtbaar vanaf
+              <span class="form-label">
+                Zichtbaar vanaf
+              </span>
 
               <input
                 id="start"
-                type="datetime-local">
+                type="datetime-local"
+              >
 
             </label>
 
 
-            <label>
+            <label class="form-field">
 
-              Zichtbaar tot
+              <span class="form-label">
+                Zichtbaar tot
+              </span>
 
               <input
                 id="end"
-                type="datetime-local">
+                type="datetime-local"
+              >
 
             </label>
-
 
           </div>
 
@@ -270,35 +273,30 @@
 
           <div class="actions">
 
-
             <button
               type="submit"
-              class="primary">
-
+              class="primary"
+            >
               Banner opslaan
-
             </button>
 
 
             <button
               type="button"
               id="previewBtn"
-              class="secondary">
-
+              class="secondary"
+            >
               Naar voorbeeld
-
             </button>
 
 
             <button
               type="button"
               id="clearBtn"
-              class="danger">
-
+              class="danger"
+            >
               Banner leegmaken
-
             </button>
-
 
           </div>
 
@@ -314,22 +312,20 @@
 
         </form>
 
-
       </section>
 
 
 
-      <!-- ===================================================
+      <!-- =================================================
            VOORBEELD
-           =================================================== -->
+           ================================================= -->
 
       <section
         class="panel"
-        id="previewPanel">
-
+        id="previewPanel"
+      >
 
         <div class="panel-title">
-
 
           <div>
 
@@ -338,22 +334,17 @@
             </h2>
 
             <p class="note">
-
-              Het voorbeeld is hetzelfde ontwerp
-              als de banner op de website.
-
+              Het voorbeeld is hetzelfde ontwerp als de banner
+              op de website.
             </p>
 
           </div>
 
-
-          <div class="pill">
+          <div class="pill preview-pill">
             Voorbeeld
           </div>
 
-
         </div>
-
 
 
         <div id="preview">
@@ -362,7 +353,6 @@
 
         </div>
 
-
       </section>
 
 
@@ -370,22 +360,20 @@
 
 
 
-    <!-- =====================================================
+    <!-- =================================================
          UITLEG
-         ===================================================== -->
+         ================================================= -->
 
     <section class="panel guidance">
 
-      <b>
+      <strong>
         Gebruik
-      </b>
+      </strong>
 
       <p>
-
-        Zet de banner aan, vul de gegevens in,
-        stel de zichtbaarheidperiode in en klik
-        daarna op <strong>Banner opslaan</strong>.
-
+        Zet de banner aan, vul de gegevens in, stel de
+        zichtbaarheidperiode in en klik daarna op
+        <strong>Banner opslaan</strong>.
       </p>
 
     </section>
@@ -395,26 +383,18 @@
 
 
 
-  <!-- =======================================================
-       MELDING
-       ======================================================= -->
-
   <div
     id="message"
     class="message"
-    aria-live="polite">
-  </div>
+    aria-live="polite"
+  ></div>
 
 
-
-  <!-- =======================================================
-       JAVASCRIPT
-       ======================================================= -->
 
   <script
     type="module"
-    src="evenementenbanner.js">
-  </script>
+    src="evenementenbanner.js?v=20260926-1500"
+  ></script>
 
 
 </body>
