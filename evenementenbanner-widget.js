@@ -6,7 +6,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 
-const root = document.getElementById("eventRoot");
+const root =
+  document.getElementById("eventRoot");
+
 
 let data = null;
 
@@ -16,20 +18,31 @@ let data = null;
    ========================================================= */
 
 onValue(
-  ref(db, "evenementenbanner"),
+  ref(
+    db,
+    "evenementenbanner"
+  ),
 
   snap => {
-    data = snap.val() || null;
+
+    data =
+      snap.val() || null;
 
     render();
+
   },
 
   err => {
-    console.error(err);
+
+    console.error(
+      "Evenementenbanner laden mislukt:",
+      err
+    );
 
     root.hidden = true;
 
     root.replaceChildren();
+
   }
 );
 
@@ -40,20 +53,32 @@ onValue(
 
 function createElement(
   tag,
-  className,
+  className = "",
   text = ""
 ) {
-  const el = document.createElement(tag);
+
+  const element =
+    document.createElement(tag);
+
 
   if (className) {
-    el.className = className;
+
+    element.className =
+      className;
+
   }
 
-  if (text) {
-    el.textContent = text;
+
+  if (text !== "") {
+
+    element.textContent =
+      text;
+
   }
 
-  return el;
+
+  return element;
+
 }
 
 
@@ -63,14 +88,25 @@ function createElement(
 
 function render() {
 
+
+  /* -------------------------------------------------------
+     CONTROLEREN OF BANNER GETOOND MAG WORDEN
+     ------------------------------------------------------- */
+
   if (
     !data ||
     !data.active ||
     !data.title ||
     !data.start ||
     !data.end ||
-    Date.now() < new Date(data.start).getTime() ||
-    Date.now() > new Date(data.end).getTime()
+    Date.now() <
+      new Date(
+        data.start
+      ).getTime() ||
+    Date.now() >
+      new Date(
+        data.end
+      ).getTime()
   ) {
 
     root.hidden = true;
@@ -78,11 +114,12 @@ function render() {
     root.replaceChildren();
 
     return;
+
   }
 
 
   /* =======================================================
-     BANNER
+     HOOFDBANNER
      ======================================================= */
 
   const banner =
@@ -93,7 +130,7 @@ function render() {
 
 
   /* =======================================================
-     ART
+     DECORATIE LAAG
      ======================================================= */
 
   const art =
@@ -102,84 +139,176 @@ function render() {
       "art"
     );
 
+
   art.setAttribute(
     "aria-hidden",
     "true"
   );
 
 
-  /* Muzieknoten */
+  /* =======================================================
+     DISCOBAL
+     ======================================================= */
+
+  const discoBallWrap =
+    createElement(
+      "span",
+      "disco-ball-wrap"
+    );
+
+
+  const discoBall =
+    createElement(
+      "span",
+      "disco-ball"
+    );
+
+
+  art.append(
+    discoBallWrap,
+    discoBall
+  );
+
+
+  /* =======================================================
+     MUZIEKNOTEN
+     ======================================================= */
 
   const musicItems = [
-    ["music one", "♪"],
-    ["music two", "♫"],
-    ["music three", "♪"],
-    ["music four", "♫"]
+
+    [
+      "music one",
+      "♪"
+    ],
+
+    [
+      "music two",
+      "♫"
+    ],
+
+    [
+      "music three",
+      "♪"
+    ],
+
+    [
+      "music four",
+      "♫"
+    ]
+
   ];
 
 
   musicItems.forEach(
     ([className, text]) => {
 
-      art.append(
+      const music =
         createElement(
           "span",
           className,
           text
-        )
+        );
+
+
+      art.append(
+        music
       );
 
     }
   );
 
 
-  /* Bingo kaarten */
+  /* =======================================================
+     BINGO KAART LINKS
+     ======================================================= */
 
-  art.append(
+  const leftCard =
     createElement(
       "span",
       "bingo-card card-left"
-    )
-  );
+    );
+
 
   art.append(
+    leftCard
+  );
+
+
+  /* =======================================================
+     BINGO KAART RECHTS
+     ======================================================= */
+
+  const rightCard =
     createElement(
       "span",
       "bingo-card card-right"
-    )
+    );
+
+
+  art.append(
+    rightCard
   );
 
 
-  /* Bingo ballen */
+  /* =======================================================
+     BINGO BALLEN
+     ======================================================= */
 
   const balls = [
-    ["ball ball-left-one", "5"],
-    ["ball ball-left-two", "17"],
-    ["ball ball-right-one", "28"],
-    ["ball ball-right-two", "11"]
+
+    [
+      "ball ball-left-one",
+      "5"
+    ],
+
+    [
+      "ball ball-left-two",
+      "17"
+    ],
+
+    [
+      "ball ball-right-one",
+      "28"
+    ],
+
+    [
+      "ball ball-right-two",
+      "11"
+    ]
+
   ];
 
 
   balls.forEach(
     ([className, text]) => {
 
-      art.append(
+      const ball =
         createElement(
           "span",
           className,
           text
-        )
+        );
+
+
+      art.append(
+        ball
       );
 
     }
   );
 
 
-  banner.append(art);
+  /* =======================================================
+     ART TOEVOEGEN AAN BANNER
+     ======================================================= */
+
+  banner.append(
+    art
+  );
 
 
   /* =======================================================
-     CENTRALE CONTENT
+     CENTRALE INHOUD
      ======================================================= */
 
   const content =
@@ -189,7 +318,9 @@ function render() {
     );
 
 
-  /* Eyebrow */
+  /* =======================================================
+     BOVENREGEL
+     ======================================================= */
 
   const eyebrow =
     createElement(
@@ -200,7 +331,9 @@ function render() {
     );
 
 
-  /* Titel */
+  /* =======================================================
+     TITEL
+     ======================================================= */
 
   const title =
     createElement(
@@ -210,37 +343,66 @@ function render() {
 
 
   const words =
-    String(data.title)
+    String(
+      data.title ||
+      "EVENEMENT"
+    )
       .trim()
       .split(/\s+/)
       .filter(Boolean);
 
 
-  if (words.length > 1) {
+  if (
+    words.length > 1
+  ) {
 
     const normalText =
       document.createTextNode(
+
         words
-          .slice(0, -1)
-          .join(" ") + " "
+          .slice(
+            0,
+            -1
+          )
+          .join(
+            " "
+          ) +
+        " "
+
       );
 
-    title.append(normalText);
+
+    title.append(
+      normalText
+    );
+
   }
+
+
+  const lastWord =
+    words.length > 0
+      ? words[
+          words.length - 1
+        ]
+      : "EVENEMENT";
 
 
   const strong =
     createElement(
       "strong",
       "",
-      words[words.length - 1]
+      lastWord
     );
 
 
-  title.append(strong);
+  title.append(
+    strong
+  );
 
 
-  /* Scheidingslijn */
+  /* =======================================================
+     SCHEIDINGSLIJN
+     ======================================================= */
 
   const rule =
     createElement(
@@ -249,7 +411,9 @@ function render() {
     );
 
 
-  /* Details */
+  /* =======================================================
+     DETAILS
+     ======================================================= */
 
   const details =
     createElement(
@@ -259,60 +423,101 @@ function render() {
 
 
   const detailValues = [
+
     data.dateText,
+
     data.timeText,
+
     data.location
+
   ]
-    .filter(Boolean);
+    .filter(
+      value =>
+        value !== undefined &&
+        value !== null &&
+        String(value).trim() !== ""
+    );
 
 
   detailValues.forEach(
-    (value, index) => {
+    (
+      value,
+      index
+    ) => {
 
-      if (index > 0) {
+      if (
+        index > 0
+      ) {
 
-        const dot =
+        const separator =
           createElement(
             "i",
             "",
             "•"
           );
 
-        details.append(dot);
+
+        details.append(
+          separator
+        );
+
       }
 
 
-      const span =
+      const detail =
         createElement(
           "span",
           "",
-          value
+          String(value)
         );
 
-      details.append(span);
+
+      details.append(
+        detail
+      );
 
     }
   );
 
 
-  /* Content vullen */
+  /* =======================================================
+     CONTENT OPBOUWEN
+     ======================================================= */
 
   content.append(
+
     eyebrow,
+
     title,
+
     rule,
+
     details
+
   );
 
 
-  banner.append(content);
+  /* =======================================================
+     CONTENT TOEVOEGEN
+     ======================================================= */
+
+  banner.append(
+    content
+  );
 
 
   /* =======================================================
      LINK
      ======================================================= */
 
-  if (data.link) {
+  if (
+    data.link &&
+    /^https?:\/\//i.test(
+      String(
+        data.link
+      )
+    )
+  ) {
 
     const link =
       createElement(
@@ -320,23 +525,41 @@ function render() {
         "event-link"
       );
 
-    link.href = data.link;
+
+    link.href =
+      data.link;
+
 
     link.setAttribute(
       "aria-label",
-      data.title
+      data.title ||
+      "Evenement"
     );
 
-    link.append(banner);
 
-    root.append(link);
+    link.append(
+      banner
+    );
+
+
+    root.append(
+      link
+    );
 
   } else {
 
-    root.append(banner);
+    root.append(
+      banner
+    );
 
   }
 
 
-  root.hidden = false;
+  /* =======================================================
+     BANNER ZICHTBAAR MAKEN
+     ======================================================= */
+
+  root.hidden =
+    false;
+
 }
