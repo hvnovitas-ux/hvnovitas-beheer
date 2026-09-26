@@ -1,341 +1,312 @@
 /* =========================================================
    HV NOVITAS - EVENEMENTENBANNER BEHEER
+   Formulier + preview
+   Banner-styling is uitsluitend actief binnen #previewRoot
    ========================================================= */
 
 :root {
   --orange: #ff6a00;
-  --orange-light: #ff7a00;
-  --orange-dark: #c94f00;
-
-  --dark: #111111;
-  --dark-2: #171717;
-  --dark-3: #242424;
-
+  --orange-dark: #d94f00;
+  --dark: #171717;
+  --dark-2: #0a0a0a;
   --ink: #172033;
-  --muted: #6b7280;
-  --line: #dce2e9;
+  --muted: #667085;
+  --line: #d8dee8;
   --bg: #f3f5f8;
-
   --white: #ffffff;
+  --green: #18894a;
+  --green-dark: #0f6f3a;
+  --red: #c53030;
+  --red-bg: #fff1f1;
 }
 
-
 /* =========================================================
-   BASIS BEHEER
+   BASIS
    ========================================================= */
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
-  overflow-x: hidden;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
-
+  padding: 32px;
   background: var(--bg);
-
   color: var(--ink);
-
   font-family:
     Arial,
     Helvetica,
     sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+
+  /* Belangrijk: niets mag het beheerformulier roteren */
+  transform: none !important;
+  rotate: none !important;
+  scale: none !important;
+  translate: none !important;
+  skew: none !important;
 }
 
-.page {
-  width:
-    min(
-      1450px,
-      calc(100% - 40px)
-    );
-
-  margin:
-    28px
-    auto
-    45px;
+img,
+svg,
+canvas {
+  max-width: 100%;
 }
-
 
 /* =========================================================
-   HEADER
+   PAGINA
    ========================================================= */
 
-.header {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: flex-start;
-
-  gap: 20px;
-
-  margin-bottom: 22px;
+.page {
+  width: min(1600px, 100%);
+  margin: 0 auto;
 }
 
-.kicker {
-  margin-bottom: 7px;
-
-  color: var(--orange);
-
-  font-size: 12px;
-
-  font-weight: 800;
-
-  letter-spacing: .16em;
+.page-header {
+  margin-bottom: 24px;
 }
 
-.header h1 {
-  margin:
-    0
-    0
-    7px;
-
+.page-header h1 {
+  margin: 0 0 8px;
   font-size: 32px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: var(--dark);
 }
 
-.header p {
+.page-header p {
   margin: 0;
-
   color: var(--muted);
-
-  line-height: 1.5;
+  font-size: 15px;
 }
-
-.back {
-  display: inline-block;
-
-  padding-top: 7px;
-
-  color: #e85f00;
-
-  font-weight: 700;
-
-  text-decoration: none;
-
-  white-space: nowrap;
-}
-
-.back:hover {
-  text-decoration: underline;
-}
-
 
 /* =========================================================
    LAYOUT
    ========================================================= */
 
-.layout {
+.admin-grid {
   display: grid;
-
-  grid-template-columns:
-    minmax(320px,.9fr)
-    minmax(400px,1.1fr);
-
-  gap: 20px;
-
+  grid-template-columns: minmax(420px, 720px) minmax(480px, 1fr);
+  gap: 24px;
   align-items: start;
 }
 
 .panel {
-  min-width: 0;
-
-  padding: 22px;
-
-  background: #ffffff;
-
-  border:
-    1px solid var(--line);
-
-  border-radius: 15px;
-
-  box-shadow:
-    0 8px 25px rgba(23,32,51,.05);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(23, 32, 51, 0.07);
+  padding: 24px;
+  overflow: hidden;
 }
 
-.panel-title {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 12px;
-
-  margin-bottom: 20px;
-}
-
-.panel-title h2 {
-  margin: 0;
-
-  font-size: 20px;
-}
-
-.panel-title .note {
-  margin-top: 5px;
-}
-
-
-/* =========================================================
-   STATUS PILLS
-   ========================================================= */
-
-.pill {
-  flex-shrink: 0;
-
-  padding:
-    7px
-    10px;
-
-  border-radius: 99px;
-
-  color: #a84200;
-
-  background: #fff0e5;
-
-  font-size: 12px;
-
+.panel h2 {
+  margin: 0 0 18px;
+  font-size: 21px;
   font-weight: 800;
+  color: var(--dark);
 }
 
-.pill.neutral {
-  color: #596273;
-
-  background: #eef1f5;
+.panel h3 {
+  margin: 26px 0 12px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--dark);
 }
-
 
 /* =========================================================
-   FORM
+   FORMULIER
    ========================================================= */
 
-form {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 15px;
+#eventForm,
+#eventForm *,
+.form-panel,
+.form-panel * {
+  transform: none !important;
+  rotate: none !important;
+  scale: none !important;
+  translate: none !important;
+  skew: none !important;
 }
 
-label {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 7px;
-
-  font-size: 13px;
-
-  font-weight: 700;
-}
-
-input:not([type="checkbox"]) {
+#eventForm {
   width: 100%;
+}
 
-  min-width: 0;
+.field {
+  margin-bottom: 18px;
+}
 
-  padding: 12px;
+.field:last-child {
+  margin-bottom: 0;
+}
 
-  border:
-    1px solid #d5dce5;
+.field label {
+  display: block;
+  margin: 0 0 7px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 700;
 
-  border-radius: 9px;
+  transform: none !important;
+  rotate: none !important;
+  scale: none !important;
+  translate: none !important;
+  skew: none !important;
+}
+
+.field small,
+.help-text {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="datetime-local"],
+input:not([type]),
+textarea,
+select {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 13px;
 
   background: #ffffff;
-
   color: var(--ink);
 
-  font:
-    inherit;
+  border: 1px solid #cfd7e4;
+  border-radius: 10px;
+  outline: none;
 
-  font-weight: 400;
+  box-shadow: none;
+
+  transform: none !important;
+  rotate: none !important;
+  scale: none !important;
+  translate: none !important;
+  skew: none !important;
 }
 
-input:focus {
-  outline:
-    2px solid
-    rgba(255,106,0,.27);
-
-  border-color:
-    var(--orange);
+textarea {
+  min-height: 110px;
+  resize: vertical;
 }
 
-label small {
-  color: var(--muted);
-
-  font-size: 12px;
-
-  font-weight: 400;
+input[type="text"]:focus,
+input[type="url"]:focus,
+input[type="datetime-local"]:focus,
+input:not([type]):focus,
+textarea:focus,
+select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.12);
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: #98a2b3;
+}
 
 /* =========================================================
-   TOGGLE
+   CHECKBOX / ACTIEF
    ========================================================= */
 
-.toggle-row {
+.checkbox-row {
   display: flex;
-
-  flex-direction: row;
-
   align-items: center;
-
-  gap: 12px;
-
-  padding: 13px;
-
-  border:
-    1px solid #ffe0c9;
-
-  border-radius: 11px;
-
-  background:
-    #fff8f2;
+  gap: 10px;
+  margin-bottom: 22px;
 }
 
-.toggle-row input {
-  width: 21px;
-  height: 21px;
+.checkbox-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
 
-  flex-shrink: 0;
+  accent-color: var(--orange);
 
-  accent-color:
-    var(--orange);
+  transform: none !important;
+  rotate: none !important;
+  scale: none !important;
+  translate: none !important;
+  skew: none !important;
 }
 
-.toggle-row span {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 4px;
+.checkbox-row label {
+  margin: 0;
+  font-weight: 700;
+  cursor: pointer;
 }
-
-.toggle-row small {
-  color: var(--muted);
-
-  font-size: 12px;
-
-  font-weight: 400;
-}
-
 
 /* =========================================================
-   TWO KOLOMMEN
+   TWEE VELDEN NAAST ELKAAR
    ========================================================= */
 
-.two {
+.field-row {
   display: grid;
-
-  grid-template-columns:
-    1fr
-    1fr;
-
-  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
+.field-row .field {
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status {
+  margin: 18px 0 0;
+  padding: 12px 14px;
+
+  border-radius: 10px;
+  background: #f6f8fb;
+  border: 1px solid #e2e7ef;
+
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status.active {
+  background: #eefaf3;
+  border-color: #b9e3c9;
+  color: #167442;
+}
+
+.status.warning {
+  background: #fff8eb;
+  border-color: #f2d59d;
+  color: #9a5b00;
+}
+
+.status.error {
+  background: #fff1f1;
+  border-color: #efc2c2;
+  color: var(--red);
+}
 
 /* =========================================================
    KNOPPEN
@@ -343,989 +314,585 @@ label small {
 
 .actions {
   display: flex;
-
   flex-wrap: wrap;
-
-  gap: 9px;
+  gap: 10px;
+  margin-top: 22px;
 }
 
+.actions button,
 button {
-  padding:
-    12px
-    15px;
-
+  appearance: none;
   border: 0;
-
-  border-radius: 9px;
-
-  font:
-    inherit;
+  border-radius: 10px;
+  min-height: 44px;
+  padding: 10px 16px;
 
   font-weight: 800;
+  line-height: 1.1;
 
   cursor: pointer;
+
+  transform: none !important;
+  rotate: none !important;
+  scale: none !important;
+  translate: none !important;
+  skew: none !important;
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
+.actions button:hover,
 button:hover {
-  filter: brightness(.97);
+  filter: brightness(0.97);
 }
 
-.primary {
+.actions button:active,
+button:active {
+  transform: translateY(1px) !important;
+}
+
+.btn-save {
+  flex: 1 1 180px;
+  background: var(--green);
   color: #ffffff;
-
-  background: #168345;
+  box-shadow: 0 5px 15px rgba(24, 137, 74, 0.18);
 }
 
-.secondary {
-  color: #273244;
-
-  background: #edf1f5;
+.btn-save:hover {
+  background: var(--green-dark);
 }
 
-.danger {
-  color: #ad2c22;
-
-  background: #fff0ee;
+.btn-preview {
+  flex: 1 1 170px;
+  background: #edf2f7;
+  color: var(--ink);
 }
 
-.note {
-  margin: 0;
-
-  color: var(--muted);
-
-  font-size: 12px;
-
-  line-height: 1.5;
+.btn-clear {
+  flex: 1 1 180px;
+  background: var(--red-bg);
+  color: var(--red);
 }
 
-.guidance {
-  margin-top: 18px;
+.btn-clear:hover {
+  background: #ffe5e5;
 }
-
-.guidance b {
-  display: block;
-
-  margin-bottom: 5px;
-}
-
-.guidance p {
-  margin: 0;
-
-  color: var(--muted);
-
-  font-size: 13px;
-
-  line-height: 1.5;
-}
-
 
 /* =========================================================
    MELDING
    ========================================================= */
 
 .message {
-  position: fixed;
-
-  right: 20px;
-  bottom: 20px;
-
-  z-index: 100;
-
-  padding:
-    13px
-    16px;
-
-  border-radius: 10px;
-
-  color: #ffffff;
-
-  background: #172033;
-
-  opacity: 0;
-
-  pointer-events: none;
-
-  transform:
-    translateY(8px);
-
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-}
-
-.message.show {
-  opacity: 1;
-
-  transform:
-    translateY(0);
-}
-
-.message.error {
-  background: #b42318;
+  min-height: 22px;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .message.success {
-  background: #168345;
+  color: var(--green-dark);
 }
 
+.message.error {
+  color: var(--red);
+}
+
+.message.info {
+  color: var(--muted);
+}
 
 /* =========================================================
-   VOORBEELDVENSTER
+   PREVIEW PANEL
    ========================================================= */
 
-#preview {
+.preview-panel {
+  min-width: 0;
+}
+
+.preview-frame {
   width: 100%;
-
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #ffffff;
   overflow: hidden;
-
-  border-radius: 12px;
 }
 
 #previewRoot {
   width: 100%;
+  min-height: 190px;
 }
 
-
 /* =========================================================
-   DEZELFDE BANNER ALS OP DE WEBSITE
+   ZEER BELANGRIJK
+   Alle banner-CSS hieronder is uitsluitend gekoppeld aan
+   #previewRoot. Hierdoor kan deze styling nooit het
+   beheerformulier beïnvloeden.
    ========================================================= */
 
-.event-link {
-  display: block;
+/* Banner */
 
-  width: 100%;
-  height: 100%;
-
-  color: #ffffff;
-
-  text-decoration: none;
-}
-
-
-/* =========================================================
-   BANNER
-   ========================================================= */
-
-.event-banner {
+#previewRoot .event-banner {
   position: relative;
-
   isolation: isolate;
 
   width: 100%;
+  min-height: 190px;
+  padding: 14px 20px;
 
-  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   overflow: hidden;
 
-  display: flex;
+  border: 2px solid #ff6a00;
+  border-radius: 12px;
 
-  align-items: center;
+  background:
+    radial-gradient(circle at 18% 55%, rgba(255, 106, 0, 0.5), transparent 32%),
+    radial-gradient(circle at 82% 45%, rgba(255, 106, 0, 0.22), transparent 30%),
+    linear-gradient(115deg, #090909 0%, #1b1b1b 33%, #3a1b08 62%, #120f0c 100%);
 
-  justify-content: center;
-
-  padding:
-    30px
-    25px;
+  box-shadow:
+    inset 0 0 50px rgba(255, 106, 0, 0.08),
+    0 14px 35px rgba(0, 0, 0, 0.18);
 
   color: #ffffff;
 
-  background:
-    radial-gradient(
-      ellipse at 8% 50%,
-      rgba(255,106,0,.55) 0%,
-      rgba(255,106,0,.20) 18%,
-      transparent 37%
-    ),
-
-    radial-gradient(
-      ellipse at 92% 45%,
-      rgba(255,106,0,.45) 0%,
-      rgba(255,106,0,.16) 19%,
-      transparent 38%
-    ),
-
-    radial-gradient(
-      ellipse at 50% 120%,
-      rgba(255,106,0,.25) 0%,
-      transparent 50%
-    ),
-
-    linear-gradient(
-      110deg,
-      #050505 0%,
-      #101010 42%,
-      #191919 58%,
-      #080808 100%
-    );
-
-  border:
-    2px solid
-    #ff6a00;
-
-  box-shadow:
-    inset 0 0 80px rgba(0,0,0,.55),
-    0 8px 20px rgba(0,0,0,.25);
-
-  text-align: center;
+  transform: none !important;
 }
 
+/* Oranje / witte diagonalen */
 
-/* =========================================================
-   DIAGONALE ACCENTEN
-   ========================================================= */
-
-.event-banner::before {
+#previewRoot .event-banner::before {
   content: "";
-
   position: absolute;
+  z-index: 1;
 
-  top: -70%;
+  width: 160%;
+  height: 2px;
 
-  left: 31%;
+  left: -30%;
+  top: 24%;
 
-  width: 24px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 106, 0, 0.05) 20%,
+    rgba(255, 106, 0, 0.8) 48%,
+    rgba(255, 106, 0, 0.05) 72%,
+    transparent 100%
+  );
 
-  height: 240%;
-
-  transform:
-    rotate(34deg);
-
-  background:
-    linear-gradient(
-      180deg,
-      transparent,
-      rgba(255,106,0,.72),
-      rgba(255,122,0,.20),
-      transparent
-    );
-
-  opacity: .45;
-
-  z-index: 0;
+  transform: rotate(-14deg) !important;
 }
 
-.event-banner::after {
+#previewRoot .event-banner::after {
   content: "";
-
   position: absolute;
+  z-index: 1;
 
-  top: -70%;
+  width: 150%;
+  height: 2px;
 
-  right: 30%;
+  left: -20%;
+  bottom: 22%;
 
-  width: 11px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.03) 75%,
+    transparent 100%
+  );
 
-  height: 240%;
-
-  transform:
-    rotate(34deg);
-
-  background:
-    linear-gradient(
-      180deg,
-      transparent,
-      rgba(255,255,255,.18),
-      transparent
-    );
-
-  opacity: .32;
-
-  z-index: 0;
+  transform: rotate(-14deg) !important;
 }
-
 
 /* =========================================================
    ART
    ========================================================= */
 
-.art {
+#previewRoot .event-banner .art {
   position: absolute;
-
   inset: 0;
-
-  width: 100%;
-  height: 100%;
-
-  overflow: hidden;
-
-  z-index: 1;
+  z-index: 2;
 
   pointer-events: none;
+
+  transform: none !important;
 }
 
-.art::before {
-  content: "";
+/* Muzieknoten */
 
-  position: absolute;
-
-  left: -8%;
-  bottom: -10%;
-
-  width: 55%;
-  height: 55%;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(255,106,0,.48),
-      rgba(255,106,0,.14) 38%,
-      transparent 72%
-    );
-
-  filter:
-    blur(12px);
-}
-
-.art::after {
-  content: "";
-
-  position: absolute;
-
-  right: -8%;
-  top: -10%;
-
-  width: 50%;
-  height: 55%;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(255,106,0,.32),
-      rgba(255,106,0,.08) 42%,
-      transparent 74%
-    );
-
-  filter:
-    blur(15px);
-}
-
-
-/* =========================================================
-   MUZIEKNOTEN
-   ========================================================= */
-
-.music {
+#previewRoot .event-banner .music {
   position: absolute;
 
   color: #ff7a00;
 
-  font-size:
-    clamp(
-      32px,
-      4.5vw,
-      70px
-    );
-
-  font-weight: 900;
-
-  line-height: 1;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
 
   text-shadow:
-    0 0 8px rgba(255,106,0,.80),
-    0 0 22px rgba(255,106,0,.42);
+    0 0 8px rgba(255, 106, 0, 0.45),
+    0 0 18px rgba(255, 106, 0, 0.2);
 
-  opacity: .95;
-
-  z-index: 3;
+  opacity: 0.9;
 }
 
-.one {
+#previewRoot .event-banner .music.one {
   left: 6%;
-  top: 15%;
-
-  transform:
-    rotate(-12deg);
+  top: 8%;
+  font-size: 44px;
+  transform: rotate(-10deg) !important;
 }
 
-.two {
-  right: 6%;
-  top: 10%;
-
-  transform:
-    rotate(12deg);
+#previewRoot .event-banner .music.two {
+  left: 11%;
+  bottom: 6%;
+  font-size: 31px;
+  transform: rotate(12deg) !important;
 }
 
-.three {
-  left: 14%;
-  bottom: 8%;
-
-  font-size:
-    clamp(
-      25px,
-      3vw,
-      46px
-    );
-
-  transform:
-    rotate(8deg);
+#previewRoot .event-banner .music.three {
+  right: 7%;
+  top: 11%;
+  font-size: 38px;
+  transform: rotate(8deg) !important;
 }
 
-.four {
-  right: 14%;
-  bottom: 10%;
-
-  font-size:
-    clamp(
-      25px,
-      3vw,
-      46px
-    );
-
-  transform:
-    rotate(-8deg);
+#previewRoot .event-banner .music.four {
+  right: 13%;
+  bottom: 9%;
+  font-size: 30px;
+  transform: rotate(-8deg) !important;
 }
-
 
 /* =========================================================
-   BINGO-KAARTEN
+   BINGO KAARTEN
    ========================================================= */
 
-.bingo-card {
+#previewRoot .event-banner .bingo-card {
   position: absolute;
 
-  width: 135px;
-  height: 86px;
-
-  border:
-    3px solid
-    rgba(255,150,60,.85);
+  width: 100px;
+  height: 64px;
 
   border-radius: 8px;
 
+  border: 3px solid rgba(255, 255, 255, 0.72);
+
   background:
-    repeating-linear-gradient(
-      to right,
-      rgba(255,255,255,.75) 0,
-      rgba(255,255,255,.75) 2px,
-      transparent 2px,
-      transparent 26px
-    ),
-
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,.75) 0,
-      rgba(255,255,255,.75) 2px,
-      transparent 2px,
-      transparent 20px
-    ),
-
     linear-gradient(
-      145deg,
-      rgba(40,40,40,.95),
-      rgba(10,10,10,.95)
-    );
+      90deg,
+      transparent 0,
+      transparent 18%,
+      rgba(255, 255, 255, 0.32) 19%,
+      transparent 20%,
+      transparent 38%,
+      rgba(255, 255, 255, 0.32) 39%,
+      transparent 40%,
+      transparent 58%,
+      rgba(255, 255, 255, 0.32) 59%,
+      transparent 60%,
+      transparent 78%,
+      rgba(255, 255, 255, 0.32) 79%,
+      transparent 80%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 22%,
+      rgba(255, 255, 255, 0.32) 23%,
+      transparent 24%,
+      transparent 46%,
+      rgba(255, 255, 255, 0.32) 47%,
+      transparent 48%,
+      transparent 70%,
+      rgba(255, 255, 255, 0.32) 71%,
+      transparent 72%
+    ),
+    linear-gradient(135deg, #272727, #4a4a4a);
 
   box-shadow:
-    0 10px 30px rgba(0,0,0,.40),
-    0 0 14px rgba(255,106,0,.18);
+    0 9px 22px rgba(0, 0, 0, 0.24),
+    inset 0 0 18px rgba(255, 255, 255, 0.07);
 
-  z-index: 2;
-
-  opacity: .92;
+  opacity: 0.95;
 }
 
-.bingo-card::before {
-  content: "";
-
-  position: absolute;
-
-  inset: 7px;
-
-  border:
-    1px solid rgba(255,255,255,.16);
-
-  border-radius: 3px;
+#previewRoot .event-banner .card-left {
+  left: 2.5%;
+  top: -6px;
+  transform: rotate(-12deg) !important;
 }
 
-.card-left {
-  left: 4%;
-
-  top: 5%;
-
-  transform:
-    rotate(-11deg);
+#previewRoot .event-banner .card-right {
+  right: 2.5%;
+  bottom: -3px;
+  transform: rotate(10deg) !important;
 }
-
-.card-left::after {
-  content: "BINGO";
-
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
-
-  transform:
-    translate(-50%,-50%)
-    rotate(11deg);
-
-  color: #ff7a00;
-
-  font-size: 15px;
-
-  font-weight: 1000;
-
-  letter-spacing: .10em;
-
-  text-shadow:
-    0 2px 5px #000;
-}
-
-.card-right {
-  right: 4%;
-
-  bottom: 2%;
-
-  transform:
-    rotate(10deg);
-}
-
-.card-right::after {
-  content: "BINGO";
-
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
-
-  transform:
-    translate(-50%,-50%)
-    rotate(-10deg);
-
-  color: #ff7a00;
-
-  font-size: 15px;
-
-  font-weight: 1000;
-
-  letter-spacing: .10em;
-
-  text-shadow:
-    0 2px 5px #000;
-}
-
 
 /* =========================================================
    BINGO BALLEN
    ========================================================= */
 
-.ball {
+#previewRoot .event-banner .ball {
   position: absolute;
 
-  width: 76px;
-  height: 76px;
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   border-radius: 50%;
-
-  display: grid;
-
-  place-items: center;
-
-  color: #171717;
-
-  font-size: 28px;
-
-  font-weight: 1000;
 
   background:
-    radial-gradient(
-      circle at 33% 25%,
-      #ffffff 0%,
-      #f1f1f1 32%,
-      #d2d2d2 48%,
-      #888888 73%,
-      #252525 100%
-    );
+    radial-gradient(circle at 30% 27%, #ffffff 0 18%, #ececec 45%, #c9c9c9 100%);
 
-  border:
-    4px solid
-    #ff6a00;
+  border: 3px solid #ff6a00;
+
+  color: #111111;
+
+  font-size: 20px;
+  font-weight: 900;
 
   box-shadow:
-    0 7px 18px rgba(0,0,0,.40),
-    0 0 16px rgba(255,106,0,.60);
-
-  z-index: 4;
+    0 4px 12px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 2px #ffffff,
+    inset 0 0 0 5px rgba(255, 106, 0, 0.35);
 }
 
-.ball::after {
-  content: "";
-
-  position: absolute;
-
-  inset: 8px;
-
-  border:
-    2px solid
-    rgba(255,106,0,.65);
-
-  border-radius: 50%;
-}
-
-.ball-left-one {
+#previewRoot .event-banner .ball-left-one {
   left: 5%;
-
-  bottom: -18px;
+  bottom: -6px;
 }
 
-.ball-left-two {
-  left: 11%;
-
-  bottom: -28px;
-
-  width: 62px;
-  height: 62px;
-
-  font-size: 23px;
+#previewRoot .event-banner .ball-left-two {
+  left: 9%;
+  bottom: -10px;
+  width: 40px;
+  height: 40px;
+  font-size: 17px;
 }
 
-.ball-right-one {
-  right: 5%;
-
-  bottom: -20px;
+#previewRoot .event-banner .ball-right-one {
+  right: 8%;
+  bottom: -6px;
 }
 
-.ball-right-two {
-  right: 11%;
-
-  bottom: -29px;
-
-  width: 62px;
-  height: 62px;
-
-  font-size: 23px;
+#previewRoot .event-banner .ball-right-two {
+  right: 4%;
+  bottom: 2px;
+  width: 40px;
+  height: 40px;
+  font-size: 17px;
 }
-
 
 /* =========================================================
    CONTENT
    ========================================================= */
 
-.content {
+#previewRoot .event-banner .content {
   position: relative;
-
-  z-index: 10;
+  z-index: 5;
 
   width: 100%;
+  max-width: 1000px;
 
-  max-width: 850px;
+  padding: 0 160px;
 
-  padding:
-    0
-    160px;
-}
-
-
-/* =========================================================
-   EYEBROW
-   ========================================================= */
-
-.event-banner .eyebrow {
-  margin-bottom: 4px;
-
-  color: #ffffff;
-
-  font-size:
-    clamp(
-      10px,
-      1vw,
-      14px
-    );
-
-  font-weight: 900;
-
-  letter-spacing: .24em;
-
-  text-transform: uppercase;
-
-  text-shadow:
-    0 2px 5px #000;
-}
-
-
-/* =========================================================
-   TITEL
-   ========================================================= */
-
-.event-banner .title {
-  color: #ffffff;
-
-  font-size:
-    clamp(
-      31px,
-      4.35vw,
-      64px
-    );
-
-  font-weight: 1000;
-
-  letter-spacing: -.045em;
-
-  line-height: .98;
-
-  text-transform: uppercase;
-
-  white-space: nowrap;
-
-  text-shadow:
-    0 3px 0 #343434,
-    0 6px 12px #000;
-}
-
-.event-banner .title strong {
-  color: #ff7a00;
-
-  text-shadow:
-    0 3px 0 #8e3600,
-    0 6px 14px #000,
-    0 0 15px rgba(255,106,0,.25);
-}
-
-
-/* =========================================================
-   LIJN
-   ========================================================= */
-
-.rule {
-  width: 54%;
-
-  height: 3px;
-
-  margin:
-    8px
-    auto
-    7px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #ff6a00 15%,
-      #ff6a00 85%,
-      transparent
-    );
-
-  box-shadow:
-    0 0 12px rgba(255,106,0,.40);
-}
-
-
-/* =========================================================
-   DETAILS
-   ========================================================= */
-
-.details {
   display: flex;
-
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
 
-  align-items: center;
+  text-align: center;
 
-  flex-wrap: wrap;
+  transform: none !important;
+}
 
-  gap: 9px;
+/* Bovenregel */
+
+#previewRoot .event-banner .eyebrow {
+  margin-bottom: 5px;
+
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 800;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 
   color: #ffffff;
 
-  font-size:
-    clamp(
-      10px,
-      1vw,
-      14px
-    );
-
-  font-weight: 900;
-
-  letter-spacing: .04em;
-
-  text-shadow:
-    0 2px 4px #000;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
-.details i {
-  color: #ff7a00;
+/* Titel */
 
-  font-style: normal;
+#previewRoot .event-banner .title {
+  margin: 0;
+
+  font-size: clamp(28px, 4vw, 52px);
+  line-height: 0.98;
 
   font-weight: 1000;
+  letter-spacing: -0.025em;
+
+  color: #ff6a00;
+
+  text-transform: uppercase;
 
   text-shadow:
-    0 0 8px rgba(255,106,0,.60);
+    0 3px 0 rgba(0, 0, 0, 0.5),
+    0 8px 18px rgba(0, 0, 0, 0.42);
+
+  transform: none !important;
 }
 
+#previewRoot .event-banner .title strong {
+  color: #ff6a00;
+  font-weight: 1000;
+}
+
+/* Lijn onder titel */
+
+#previewRoot .event-banner .rule {
+  width: 220px;
+  height: 3px;
+
+  margin: 8px auto 8px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ff6a00 18%,
+    #ff6a00 82%,
+    transparent
+  );
+
+  box-shadow: 0 0 12px rgba(255, 106, 0, 0.28);
+}
+
+/* Details */
+
+#previewRoot .event-banner .details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 800;
+
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.58);
+
+  transform: none !important;
+}
+
+#previewRoot .event-banner .details span {
+  display: inline-block;
+  transform: none !important;
+}
+
+#previewRoot .event-banner .details i {
+  color: #ff6a00;
+  font-style: normal;
+  font-weight: 900;
+}
+
+/* Link over volledige banner */
+
+#previewRoot .event-link {
+  display: block;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+
+  transform: none !important;
+}
 
 /* =========================================================
-   EXTRA GLOW
+   INFOBLOK
    ========================================================= */
 
-.event-banner .content::before {
-  content: "";
+.usage-box {
+  margin-top: 24px;
+  padding: 22px 24px;
 
-  position: absolute;
+  background: #ffffff;
 
-  left: 50%;
-  top: 50%;
+  border: 1px solid var(--line);
+  border-radius: 18px;
 
-  width: 78%;
-  height: 100px;
-
-  transform:
-    translate(
-      -50%,
-      -50%
-    );
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(255,106,0,.12),
-      transparent 70%
-    );
-
-  filter:
-    blur(6px);
-
-  z-index: -1;
-
-  pointer-events: none;
+  box-shadow: 0 10px 35px rgba(23, 32, 51, 0.06);
 }
 
-.event-banner .content::after {
-  content: "";
-
-  position: absolute;
-
-  left: 12%;
-  right: 12%;
-
-  bottom: -18px;
-
-  height: 25px;
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(255,106,0,.60),
-      transparent 68%
-    );
-
-  filter:
-    blur(10px);
-
-  z-index: -1;
+.usage-box h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 800;
 }
 
+.usage-box p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
 
 /* =========================================================
-   MOBIEL
+   RESPONSIVE
    ========================================================= */
 
-@media (max-width: 900px) {
-
-  .layout {
+@media (max-width: 1100px) {
+  .admin-grid {
     grid-template-columns: 1fr;
   }
 
+  .preview-panel {
+    order: 2;
+  }
+
+  .form-panel {
+    order: 1;
+  }
 }
 
-
 @media (max-width: 700px) {
-
-  .page {
-    width:
-      calc(100% - 20px);
-
-    margin:
-      16px
-      auto
-      30px;
-  }
-
-  .header {
-    flex-direction: column;
-  }
-
-  .header h1 {
-    font-size: 26px;
+  body {
+    padding: 16px;
   }
 
   .panel {
-    padding: 15px;
+    padding: 18px;
+    border-radius: 14px;
   }
 
-  .two {
+  .page-header h1 {
+    font-size: 26px;
+  }
+
+  .field-row {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .event-banner {
-    min-height: 200px;
-
-    padding:
-      20px
-      12px;
-  }
-
-  .content {
-    padding:
-      0
-      80px;
-  }
-
-  .event-banner .title {
-    font-size:
-      clamp(
-        28px,
-        8vw,
-        46px
-      );
-
-    white-space: normal;
-  }
-
-  .event-banner .eyebrow {
-    letter-spacing: .12em;
-  }
-
-  .details {
-    gap: 6px;
-
-    letter-spacing: .02em;
-  }
-
-  .rule {
-    width: 48%;
-
-    margin:
-      6px
-      auto
-      5px;
-  }
-
-  .bingo-card {
-    width: 92px;
-    height: 62px;
-  }
-
-  .ball {
-    width: 56px;
-    height: 56px;
-
-    font-size: 20px;
-  }
-
-  .ball-left-two,
-  .ball-right-two {
-    width: 46px;
-    height: 46px;
-
-    font-size: 17px;
-  }
-
-  .music {
-    font-size: 36px;
+  .field-row .field {
+    margin-bottom: 18px;
   }
 
   .actions {
@@ -1334,6 +901,42 @@ button:hover {
 
   .actions button {
     width: 100%;
+    flex: 1 1 auto;
   }
 
+  #previewRoot .event-banner {
+    min-height: 190px;
+    padding: 12px 10px;
+  }
+
+  #previewRoot .event-banner .content {
+    padding: 0 75px;
+  }
+
+  #previewRoot .event-banner .title {
+    font-size: 28px;
+  }
+
+  #previewRoot .event-banner .details {
+    font-size: 11px;
+    gap: 3px 6px;
+  }
+
+  #previewRoot .event-banner .bingo-card {
+    width: 75px;
+    height: 48px;
+  }
+
+  #previewRoot .event-banner .ball {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+
+  #previewRoot .event-banner .ball-left-two,
+  #previewRoot .event-banner .ball-right-two {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
 }
