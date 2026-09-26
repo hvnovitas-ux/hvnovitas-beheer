@@ -14,18 +14,86 @@
     HV Novitas – Evenementenbanner beheren
   </title>
 
+
   <link
     rel="stylesheet"
-    href="evenementenbanner.css?v=20260926-1600"
+    href="evenementenbanner.css?v=20260926-1700"
   >
+
+  <style>
+
+    /* =================================================
+       LIVE VOORBEELD
+       Exact dezelfde banner als op de website
+       ================================================= */
+
+    #preview {
+
+      width: 100%;
+
+      padding: 12px;
+
+      border:
+        1px solid #dfe5ec;
+
+      border-radius:
+        15px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #fffdf9,
+          #fff4e5
+        );
+
+      overflow:
+        hidden;
+
+    }
+
+
+    #previewFrame {
+
+      display:
+        block;
+
+      width:
+        100%;
+
+      height:
+        190px;
+
+      margin:
+        0;
+
+      padding:
+        0;
+
+      border:
+        0;
+
+      border-radius:
+        12px;
+
+      overflow:
+        hidden;
+
+    }
+
+  </style>
 
 </head>
 
 
 <body>
 
+
   <main class="page">
 
+
+    <!-- =================================================
+         HEADER
+         ================================================= -->
 
     <header class="header">
 
@@ -35,9 +103,11 @@
           HV NOVITAS CMS
         </div>
 
+
         <h1>
           Evenementenbanner beheren
         </h1>
+
 
         <p>
           Stel hier de banner in die op de website verschijnt.
@@ -57,6 +127,10 @@
 
 
 
+    <!-- =================================================
+         LAYOUT
+         ================================================= -->
+
     <div class="layout">
 
 
@@ -65,6 +139,7 @@
            ================================================= -->
 
       <section class="panel">
+
 
         <div class="panel-title">
 
@@ -76,6 +151,7 @@
 
           </div>
 
+
           <div
             id="status"
             class="pill neutral"
@@ -84,6 +160,7 @@
           </div>
 
         </div>
+
 
 
         <form id="eventForm">
@@ -301,7 +378,8 @@
 
 
           <p class="note">
-            De banner gebruikt automatisch de vaste HV Novitas-vormgeving.
+            Het voorbeeld hieronder gebruikt exact dezelfde banner
+            als de website.
           </p>
 
 
@@ -320,6 +398,7 @@
         id="previewPanel"
       >
 
+
         <div class="panel-title">
 
           <div>
@@ -329,24 +408,32 @@
             </h2>
 
             <p class="note">
-              Het voorbeeld gebruikt exact dezelfde stijl als de website.
+              Dit is exact dezelfde banner als op de website.
             </p>
 
           </div>
 
 
           <div class="pill preview-pill">
-            Voorbeeld
+            Live voorbeeld
           </div>
 
         </div>
 
 
+
         <div id="preview">
 
-          <div id="previewRoot"></div>
+          <iframe
+            id="previewFrame"
+            src="evenementenbanner-widget.html?preview=1&v=20260926-1700"
+            title="Voorbeeld evenementenbanner"
+            loading="eager"
+            scrolling="no">
+          </iframe>
 
         </div>
+
 
       </section>
 
@@ -388,7 +475,7 @@
 
   <script
     type="module"
-    src="evenementenbanner.js?v=20260926-1600"
+    src="evenementenbanner.js?v=20260926-1700"
   ></script>
 
 
