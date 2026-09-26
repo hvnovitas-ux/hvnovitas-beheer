@@ -1,171 +1,460 @@
-import { db, auth } from "./firebase.js";
-import { ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const PATH = "evenementenbanner";
-const $ = id => document.getElementById(id);
+  <title>HV Novitas – Evenementenbanner beheren</title>
 
-const ids = [
-  "active", "title", "eyebrow", "dateText",
-  "timeText", "location", "link", "start", "end"
-];
+  <link rel="stylesheet" href="evenementenbanner.css">
+</head>
 
-let current = {};
-let timer;
+<body>
 
-onAuthStateChanged(auth, user => {
-  if (!user) location.href = "login.html";
-});
+  <main class="page">
 
-onValue(ref(db, PATH), snap => {
-  current = snap.val() || {};
+    <header class="header">
 
-  for (const id of ids) {
-    if (id === "active") {
-      $(id).checked = !!current.active;
-    } else {
-      $(id).value = current[id] || "";
-    }
-  }
+      <div>
 
-  preview();
-  status();
-}, err => {
-  console.error(err);
-  message("Laden mislukt.", "error");
-});
+        <div class="kicker">
+          HV NOVITAS CMS
+        </div>
 
-ids.forEach(id => $(id).addEventListener("input", preview));
+        <h1>
+          Evenementenbanner beheren
+        </h1>
 
-$("eventForm").addEventListener("submit", async e => {
-  e.preventDefault();
+        <p>
+          Stel hier de banner in die op de website boven het nieuws verschijnt.
+        </p>
 
-  const d = read();
+      </div>
 
-  if (!d.title) {
-    return message("Vul een titel in.", "error");
-  }
+      <div>
 
-  if (
-    !d.start ||
-    !d.end ||
-    new Date(d.end) <= new Date(d.start)
-  ) {
-    return message("Controleer de zichtbaarheidperiode.", "error");
-  }
+        <a
+          class="back"
+          href="dashboard.html">
+          ← Terug naar dashboard
+        </a>
 
-  if (d.link && !/^https?:\/\//i.test(d.link)) {
-    return message(
-      "De link moet beginnen met http:// of https://.",
-      "error"
-    );
-  }
+      </div>
 
-  try {
-    await set(ref(db, PATH), {
-      ...d,
-      updatedAt: Date.now()
-    });
+    </header>
 
-    message("Evenementenbanner opgeslagen.", "success");
-  } catch (err) {
-    console.error(err);
-    message(
-      "Opslaan mislukt. Controleer Firebase-rechten.",
-      "error"
-    );
-  }
-});
 
-$("previewBtn").onclick = () => {
-  $("preview").scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
+    <div class="layout">
 
-  preview();
-};
 
-$("clearBtn").onclick = async () => {
-  if (!confirm("Wil je de bannergegevens verwijderen?")) return;
+      <!-- =========================================
+           INSTELLINGEN
+           ========================================= -->
 
-  try {
-    await remove(ref(db, PATH));
-    $("eventForm").reset();
-    message("Banner leeggemaakt.", "success");
-  } catch (e) {
-    console.error(e);
-    message("Verwijderen mislukt.", "error");
-  }
-};
+      <section class="panel">
 
-function read() {
-  return {
-    active: $("active").checked,
-    title: $("title").value.trim(),
-    eyebrow: $("eyebrow").value.trim(),
-    dateText: $("dateText").value.trim(),
-    timeText: $("timeText").value.trim(),
-    location: $("location").value.trim(),
-    link: $("link").value.trim(),
-    start: $("start").value,
-    end: $("end").value
-  };
-}
+        <div class="panel-title">
 
-function preview() {
-  const d = read();
+          <div>
 
-  $("previewEyebrow").textContent =
-    d.eyebrow || "HV NOVITAS PRESENTEERT";
+            <h2>
+              Bannerinstellingen
+            </h2>
 
-  const w = (d.title || "EVENEMENT").split(/\s+/);
+          </div>
 
-  $("previewTitle").replaceChildren(
-    document.createTextNode(
-      w.slice(0, -1).join(" ") + (w.length > 1 ? " " : "")
-    )
-  );
+          <div
+            id="status"
+            class="pill neutral">
+            Laden...
+          </div>
 
-  const s = document.createElement("strong");
-  s.textContent = w[w.length - 1];
-  $("previewTitle").append(s);
+        </div>
 
-  $("previewDate").textContent = d.dateText || "DATUM";
-  $("previewTime").textContent = d.timeText || "TIJD";
-  $("previewLocation").textContent = d.location || "LOCATIE";
-}
 
-function status() {
-  const s = $("status");
-  const now = Date.now();
+        <form id="eventForm">
 
-  const a = current.start
-    ? new Date(current.start).getTime()
-    : 0;
 
-  const b = current.end
-    ? new Date(current.end).getTime()
-    : 0;
+          <!-- ACTIEF -->
 
-  s.textContent = !current.active
-    ? "Uitgeschakeld"
-    : !a || !b
-      ? "Nog niet gepland"
-      : now < a
-        ? "Ingepland"
-        : now <= b
-          ? "Actief volgens planning"
-          : "Periode verstreken";
-}
+          <label class="toggle-row">
 
-function message(t, c = "") {
-  clearTimeout(timer);
+            <input
+              id="active"
+              type="checkbox">
 
-  $("message").textContent = t;
-  $("message").className = "message show " + c;
+            <span>
 
-  timer = setTimeout(() => {
-    $("message").className = "message";
-  }, 4000);
-}
+              <strong>
+                Banner actief
+              </strong>
+
+              <small>
+                Alleen binnen de ingestelde periode wordt de banner getoond.
+              </small>
+
+            </span>
+
+          </label>
+
+
+          <!-- TITEL -->
+
+          <label>
+
+            Titel
+
+            <input
+              id="title"
+              type="text"
+              placeholder="Bijvoorbeeld: Muziek Bingo"
+              autocomplete="off">
+
+          </label>
+
+
+          <!-- BOVENREGEL -->
+
+          <label>
+
+            Bovenregel
+
+            <input
+              id="eyebrow"
+              type="text"
+              placeholder="HV NOVITAS PRESENTEERT"
+              autocomplete="off">
+
+          </label>
+
+
+          <!-- DATUM + TIJD -->
+
+          <div class="two">
+
+            <label>
+
+              Datumtekst
+
+              <input
+                id="dateText"
+                type="text"
+                placeholder="Zaterdag 28 november 2026">
+
+            </label>
+
+
+            <label>
+
+              Tijdtekst
+
+              <input
+                id="timeText"
+                type="text"
+                placeholder="19.00 uur">
+
+            </label>
+
+          </div>
+
+
+          <!-- LOCATIE -->
+
+          <label>
+
+            Locatie
+
+            <input
+              id="location"
+              type="text"
+              placeholder="Den Dullaert"
+              autocomplete="off">
+
+          </label>
+
+
+          <!-- LINK -->
+
+          <label>
+
+            Link
+
+            <input
+              id="link"
+              type="url"
+              placeholder="https://www.hvnovitas.nl/..."
+              inputmode="url">
+
+            <small>
+              Optioneel. De hele banner wordt klikbaar wanneer hier een link staat.
+            </small>
+
+          </label>
+
+
+          <!-- ZICHTBAARHEID -->
+
+          <div class="two">
+
+            <label>
+
+              Zichtbaar vanaf
+
+              <input
+                id="start"
+                type="datetime-local">
+
+            </label>
+
+
+            <label>
+
+              Zichtbaar tot
+
+              <input
+                id="end"
+                type="datetime-local">
+
+            </label>
+
+          </div>
+
+
+          <!-- KNOPPEN -->
+
+          <div class="actions">
+
+            <button
+              type="submit"
+              class="primary">
+              Banner opslaan
+            </button>
+
+
+            <button
+              type="button"
+              id="previewBtn"
+              class="secondary">
+              Naar voorbeeld
+            </button>
+
+
+            <button
+              type="button"
+              id="clearBtn"
+              class="danger">
+              Banner leegmaken
+            </button>
+
+          </div>
+
+
+          <p class="note">
+
+            De banner gebruikt de vaste HV Novitas-vormgeving.
+            Je hoeft hier alleen de tekst, periode en eventuele link in te vullen.
+
+          </p>
+
+
+        </form>
+
+      </section>
+
+
+      <!-- =========================================
+           VOORBEELD
+           ========================================= -->
+
+      <section
+        class="panel"
+        id="previewPanel">
+
+        <div class="panel-title">
+
+          <div>
+
+            <h2>
+              Voorbeeld
+            </h2>
+
+            <p class="note">
+              Dit voorbeeld verandert direct terwijl je de velden invult.
+            </p>
+
+          </div>
+
+
+          <div class="pill">
+            Voorbeeld
+          </div>
+
+        </div>
+
+
+        <div id="preview">
+
+
+          <section class="event-banner">
+
+
+            <div
+              class="art"
+              aria-hidden="true">
+
+
+              <span class="music one">
+                ♪
+              </span>
+
+
+              <span class="music two">
+                ♫
+              </span>
+
+
+              <span class="ball left">
+                5
+              </span>
+
+
+              <span class="ball mid">
+                17
+              </span>
+
+
+              <span class="ball right">
+                28
+              </span>
+
+
+              <div class="bingo">
+
+                BINGO
+
+                <small>
+                  ★ ★ ★
+                </small>
+
+              </div>
+
+
+            </div>
+
+
+            <div class="content">
+
+
+              <div
+                id="previewEyebrow"
+                class="eyebrow">
+
+                HV NOVITAS PRESENTEERT
+
+              </div>
+
+
+              <div
+                id="previewTitle"
+                class="title">
+
+                MUZIEK
+                <strong>BINGO</strong>
+
+              </div>
+
+
+              <div class="rule">
+              </div>
+
+
+              <div class="details">
+
+
+                <span id="previewDate">
+                  DATUM
+                </span>
+
+
+                <i>
+                  •
+                </i>
+
+
+                <span id="previewTime">
+                  TIJD
+                </span>
+
+
+                <i>
+                  •
+                </i>
+
+
+                <span id="previewLocation">
+                  LOCATIE
+                </span>
+
+
+              </div>
+
+
+            </div>
+
+
+          </section>
+
+
+        </div>
+
+
+      </section>
+
+
+    </div>
+
+
+    <!-- =========================================
+         UITLEG
+         ========================================= -->
+
+    <section class="panel guidance">
+
+      <b>
+        Gebruik
+      </b>
+
+      <p>
+
+        Zet eerst de banner aan.
+        Vul daarna titel, datum, tijd en locatie in.
+        Stel vervolgens de zichtbaarheidperiode in en klik op
+        <strong>Banner opslaan</strong>.
+
+      </p>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- MELDINGEN -->
+
+  <div
+    id="message"
+    class="message"
+    aria-live="polite">
+  </div>
+
+
+  <!-- SCRIPT -->
+
+  <script
+    type="module"
+    src="evenementenbanner.js">
+  </script>
+
+
+</body>
+</html>
