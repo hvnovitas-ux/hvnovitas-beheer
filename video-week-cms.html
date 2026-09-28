@@ -139,6 +139,9 @@ import { ref, get, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 const userInfo = document.getElementById("userInfo");
+window.addEventListener("error", (event) => {
+  console.error("JavaScript fout:", event.error || event.message);
+});
 const logoutButton = document.getElementById("logoutButton");
 const form = document.getElementById("videoForm");
 const activeInput = document.getElementById("active");
@@ -279,9 +282,9 @@ function extractYouTubeId(value) {
 
   const patterns = [
     /[?&]v=([A-Za-z0-9_-]{11})/,
-    /youtu\\.be\\/([A-Za-z0-9_-]{11})/,
-    /youtube\\.com\\/shorts\\/([A-Za-z0-9_-]{11})/,
-    /youtube\\.com\\/embed\\/([A-Za-z0-9_-]{11})/
+    /youtu\.be\/([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/embed\/([A-Za-z0-9_-]{11})/
   ];
 
   for (const pattern of patterns) {
