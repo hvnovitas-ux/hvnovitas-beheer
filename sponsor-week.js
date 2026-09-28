@@ -1,7 +1,6 @@
 /* =====================================================
    HV NOVITAS
    SPONSOR VAN DE WEEK
-   Zonder pictogrammen
 ===================================================== */
 
 import { db } from "./firebase.js";
@@ -41,10 +40,6 @@ async function loadSponsorOfTheWeek() {
 
     try {
 
-        /* -------------------------------------------------
-           FIREBASE
-        ------------------------------------------------- */
-
         const snapshot =
             await get(
                 ref(
@@ -57,10 +52,6 @@ async function loadSponsorOfTheWeek() {
         const data =
             snapshot.val() || {};
 
-
-        /* -------------------------------------------------
-           SPONSORS OPBOUWEN
-        ------------------------------------------------- */
 
         const sponsors =
             Object.entries(data)
@@ -105,10 +96,6 @@ async function loadSponsorOfTheWeek() {
                 );
 
 
-        /* -------------------------------------------------
-           GEEN SPONSORS
-        ------------------------------------------------- */
-
         if (
             sponsors.length === 0
         ) {
@@ -124,19 +111,11 @@ async function loadSponsorOfTheWeek() {
         }
 
 
-        /* -------------------------------------------------
-           SPONSOR VAN DEZE WEEK
-        ------------------------------------------------- */
-
         const sponsor =
             getSponsorForCurrentWeek(
                 sponsors
             );
 
-
-        /* -------------------------------------------------
-           SPONSOR TONEN
-        ------------------------------------------------- */
 
         renderSponsor(
             sponsor
@@ -163,7 +142,7 @@ async function loadSponsorOfTheWeek() {
 
 
 /* =====================================================
-   SPONSOR VOOR HUIDIGE WEEK
+   SPONSOR VAN DE HUIDIGE WEEK
 ===================================================== */
 
 function getSponsorForCurrentWeek(
@@ -212,7 +191,9 @@ function getISOWeekNumber(
 
 
     const day =
-        tempDate.getUTCDay() || 7;
+        tempDate.getUTCDay()
+        ||
+        7;
 
 
     tempDate.setUTCDate(
@@ -258,7 +239,7 @@ function getISOWeekNumber(
 
 
 /* =====================================================
-   SPONSOR RENDEREN
+   SPONSOR TONEN
 ===================================================== */
 
 function renderSponsor(
@@ -284,9 +265,9 @@ function renderSponsor(
         );
 
 
-    /* -------------------------------------------------
+    /* =================================================
        MET WEBSITE
-    ------------------------------------------------- */
+    ================================================= */
 
     if (website) {
 
@@ -328,9 +309,9 @@ function renderSponsor(
     }
 
 
-    /* -------------------------------------------------
+    /* =================================================
        ZONDER WEBSITE
-    ------------------------------------------------- */
+    ================================================= */
 
     content.innerHTML = `
 
@@ -358,7 +339,7 @@ function renderSponsor(
 
 
 /* =====================================================
-   URL CONTROLEREN
+   URL NORMALISEREN
 ===================================================== */
 
 function normalizeUrl(
