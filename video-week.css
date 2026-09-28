@@ -14,7 +14,7 @@ body {
 .video-week {
   position: relative;
   width: 100%;
-  height: 340px;
+  height: 430px;
   overflow: hidden;
   border-radius: 18px;
   background:
@@ -78,7 +78,7 @@ body {
 }
 
 .video-week-content {
-  height: 278px;
+  height: 368px;
   padding: 10px 12px 11px;
   overflow: hidden;
   background:
@@ -93,7 +93,7 @@ body {
 .video-week-player {
   position: relative;
   width: 100%;
-  height: 156px;
+  height: 195px;
   overflow: hidden;
   border-radius: 11px;
   background: #000000;
@@ -166,7 +166,7 @@ body {
 .video-week-empty,
 .loading,
 .error {
-  height: 278px;
+  height: 368px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -179,7 +179,7 @@ body {
 @media (max-width: 600px) {
 
   .video-week {
-    height: 340px;
+    height: 430px;
     border-radius: 14px;
   }
 
@@ -197,12 +197,12 @@ body {
   }
 
   .video-week-content {
-    height: 282px;
+    height: 372px;
     padding: 10px;
   }
 
   .video-week-player {
-    height: 148px;
+    height: 205px;
   }
 
   .video-week-name {
