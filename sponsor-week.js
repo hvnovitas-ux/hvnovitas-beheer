@@ -142,7 +142,7 @@ async function loadSponsorOfTheWeek() {
 
 
 /* =====================================================
-   SPONSOR VAN DE HUIDIGE WEEK
+   SPONSOR VOOR HUIDIGE WEEK
 ===================================================== */
 
 function getSponsorForCurrentWeek(
@@ -288,11 +288,13 @@ function renderSponsor(
                     alt="${name}"
                 >
 
+
                 <div
                     class="sponsor-week-name"
                 >
                     ${name}
                 </div>
+
 
                 <div
                     class="sponsor-week-visit"
@@ -325,6 +327,7 @@ function renderSponsor(
                 alt="${name}"
             >
 
+
             <div
                 class="sponsor-week-name"
             >
@@ -347,9 +350,7 @@ function normalizeUrl(
 ) {
 
     if (!url) {
-
         return "";
-
     }
 
 
@@ -360,20 +361,14 @@ function normalizeUrl(
 
 
     if (!url) {
-
         return "";
-
     }
 
 
     if (
-        url.startsWith(
-            "https://"
-        )
+        url.startsWith("https://")
         ||
-        url.startsWith(
-            "http://"
-        )
+        url.startsWith("http://")
     ) {
 
         return url;
@@ -382,9 +377,7 @@ function normalizeUrl(
 
 
     if (
-        url.startsWith(
-            "www."
-        )
+        url.startsWith("www.")
     ) {
 
         return (
