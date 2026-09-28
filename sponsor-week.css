@@ -1,7 +1,6 @@
 /* =====================================================
    HV NOVITAS
    SPONSOR VAN DE WEEK
-   SPOTLIGHT DESIGN
 ===================================================== */
 
 * {
@@ -44,8 +43,8 @@ body {
     background:
         linear-gradient(
             145deg,
-            #0d0d0d 0%,
-            #1a1a1a 48%,
+            #0b0b0b 0%,
+            #181818 55%,
             #090909 100%
         );
 
@@ -54,22 +53,21 @@ body {
         rgba(255,255,255,.08);
 
     box-shadow:
-        0 18px 38px
+        0 16px 34px
         rgba(0,0,0,.20);
 
 }
 
 
 /* =====================================================
-   ORANJE RAND
+   ORANJE BOVENRAND
 ===================================================== */
 
 .sponsor-week::before {
 
     content: "";
 
-    position:
-        absolute;
+    position: absolute;
 
     top: 0;
     left: 0;
@@ -80,9 +78,9 @@ body {
     background:
         linear-gradient(
             90deg,
-            #ff8a00,
-            #ff6500,
-            #ff8a00
+            #ff8a00 0%,
+            #ff6500 50%,
+            #ff8a00 100%
         );
 
     z-index: 10;
@@ -98,19 +96,30 @@ body {
 
     position: relative;
 
-    padding:
-        15px
-        15px
-        11px;
+    width: 100%;
 
-    text-align:
-        center;
+    min-height: 64px;
+
+    padding:
+        17px
+        14px
+        12px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
 
     background:
         linear-gradient(
             180deg,
-            #242424,
-            #171717
+            #242424 0%,
+            #111111 100%
         );
 
 }
@@ -123,7 +132,7 @@ body {
 .sponsor-week-title {
 
     color:
-        #ffffff;
+        #ffffff !important;
 
     font-size:
         18px;
@@ -140,13 +149,17 @@ body {
     text-transform:
         uppercase;
 
+    text-shadow:
+        0 2px 5px
+        rgba(0,0,0,.45);
+
 }
 
 
 .sponsor-week-title span {
 
     color:
-        #ff7000;
+        #ff7000 !important;
 
 }
 
@@ -158,15 +171,13 @@ body {
 .sponsor-week-line {
 
     width:
-        72px;
+        75px;
 
     height:
         4px;
 
-    margin:
-        10px
-        auto
-        0;
+    margin-top:
+        10px;
 
     border-radius:
         999px;
@@ -180,14 +191,14 @@ body {
         );
 
     box-shadow:
-        0 0 14px
-        rgba(255,106,0,.65);
+        0 0 12px
+        rgba(255,106,0,.60);
 
 }
 
 
 /* =====================================================
-   CONTENT
+   SPONSOR CONTENT
 ===================================================== */
 
 .sponsor-week-content {
@@ -202,9 +213,9 @@ body {
         190px;
 
     padding:
-        18px
-        18px
-        16px;
+        15px
+        14px
+        14px;
 
     display:
         flex;
@@ -220,21 +231,21 @@ body {
 
     background:
         radial-gradient(
-            ellipse at 50% 40%,
-            rgba(255,255,255,.15),
-            transparent 23%
+            ellipse at 50% 45%,
+            rgba(255,255,255,.13),
+            transparent 20%
         ),
 
         radial-gradient(
-            ellipse at 50% 55%,
-            rgba(255,106,0,.24),
-            transparent 48%
+            ellipse at 50% 50%,
+            rgba(255,132,0,.30),
+            transparent 52%
         ),
 
         linear-gradient(
             180deg,
-            #1b1b1b 0%,
-            #101010 100%
+            #1a1a1a 0%,
+            #0e0e0e 100%
         );
 
 }
@@ -256,13 +267,13 @@ body {
         50%;
 
     top:
-        38%;
+        45%;
 
     width:
-        270px;
+        280px;
 
     height:
-        145px;
+        150px;
 
     transform:
         translate(
@@ -276,18 +287,18 @@ body {
     background:
         radial-gradient(
             ellipse,
-            rgba(255,255,255,.96) 0%,
-            rgba(255,255,255,.88) 19%,
-            rgba(255,237,210,.62) 36%,
-            rgba(255,132,0,.30) 56%,
-            rgba(255,106,0,0) 76%
+            rgba(255,255,255,.98) 0%,
+            rgba(255,255,255,.88) 18%,
+            rgba(255,235,205,.65) 35%,
+            rgba(255,135,0,.30) 56%,
+            rgba(255,106,0,0) 77%
         );
 
     filter:
         blur(2px);
 
     opacity:
-        .95;
+        .96;
 
     pointer-events:
         none;
@@ -299,7 +310,7 @@ body {
 
 
 /* =====================================================
-   ZACHTE ORANJE GLOED
+   ORANJE GLOED
 ===================================================== */
 
 .sponsor-week-content::after {
@@ -317,7 +328,7 @@ body {
         -55px;
 
     width:
-        240px;
+        250px;
 
     height:
         120px;
@@ -331,12 +342,12 @@ body {
     background:
         radial-gradient(
             ellipse,
-            rgba(255,106,0,.38),
+            rgba(255,106,0,.40),
             transparent 68%
         );
 
     filter:
-        blur(15px);
+        blur(16px);
 
     pointer-events:
         none;
@@ -378,7 +389,7 @@ body {
         center;
 
     gap:
-        8px;
+        7px;
 
     color:
         #ffffff;
@@ -402,18 +413,18 @@ body {
         auto;
 
     height:
-        105px;
+        96px;
 
     max-width:
-        90%;
+        88%;
 
     object-fit:
         contain;
 
     filter:
         drop-shadow(
-            0 8px 15px
-            rgba(0,0,0,.30)
+            0 9px 16px
+            rgba(0,0,0,.35)
         );
 
     transition:
@@ -423,32 +434,28 @@ body {
 }
 
 
-/* =====================================================
-   HOVER
-===================================================== */
-
 .sponsor-week-link:hover
 .sponsor-week-logo {
 
     transform:
-        scale(1.045);
+        scale(1.04);
 
     filter:
         drop-shadow(
-            0 10px 20px
+            0 11px 21px
             rgba(0,0,0,.42)
         )
 
         drop-shadow(
-            0 0 14px
-            rgba(255,145,50,.20)
+            0 0 13px
+            rgba(255,145,50,.18)
         );
 
 }
 
 
 /* =====================================================
-   NAAM SPONSOR
+   SPONSORNAAM
 ===================================================== */
 
 .sponsor-week-name {
@@ -457,26 +464,29 @@ body {
         relative;
 
     z-index:
-        2;
+        3;
+
+    max-width:
+        96%;
 
     color:
         #ffffff;
 
     font-size:
-        18px;
+        17px;
 
     font-weight:
         1000;
 
     line-height:
-        1.1;
+        1.08;
 
     text-align:
         center;
 
     text-shadow:
         0 2px 8px
-        rgba(0,0,0,.55);
+        rgba(0,0,0,.60);
 
 }
 
@@ -491,7 +501,7 @@ body {
         relative;
 
     z-index:
-        2;
+        3;
 
     display:
         inline-flex;
@@ -503,15 +513,15 @@ body {
         center;
 
     min-height:
-        28px;
+        27px;
 
     padding:
         5px
-        13px;
+        12px;
 
     border:
         1px solid
-        rgba(255,131,35,.58);
+        rgba(255,132,35,.60);
 
     border-radius:
         999px;
@@ -529,7 +539,7 @@ body {
         900;
 
     letter-spacing:
-        .045em;
+        .04em;
 
     text-transform:
         uppercase;
@@ -538,7 +548,7 @@ body {
 
 
 /* =====================================================
-   GEEN WEBSITE
+   ZONDER WEBSITE
 ===================================================== */
 
 .sponsor-week-no-link {
@@ -568,16 +578,22 @@ body {
         center;
 
     gap:
-        9px;
+        7px;
 
 }
 
 
 /* =====================================================
-   LOADING
+   LADEN
 ===================================================== */
 
 .loading {
+
+    position:
+        relative;
+
+    z-index:
+        3;
 
     width:
         100%;
@@ -608,6 +624,12 @@ body {
 ===================================================== */
 
 .error {
+
+    position:
+        relative;
+
+    z-index:
+        3;
 
     width:
         100%;
@@ -650,16 +672,13 @@ body {
         min-height:
             175px;
 
-        padding:
-            14px;
-
     }
 
 
     .sponsor-week-logo {
 
         height:
-            92px;
+            88px;
 
     }
 
@@ -667,7 +686,7 @@ body {
     .sponsor-week-name {
 
         font-size:
-            17px;
+            16px;
 
     }
 
@@ -690,10 +709,13 @@ body {
 
     .sponsor-week-header {
 
+        min-height:
+            58px;
+
         padding:
-            12px
+            13px
             10px
-            9px;
+            10px;
 
     }
 
@@ -711,13 +733,16 @@ body {
         min-height:
             150px;
 
+        padding:
+            12px;
+
     }
 
 
     .sponsor-week-logo {
 
         height:
-            75px;
+            72px;
 
     }
 
@@ -725,7 +750,7 @@ body {
     .sponsor-week-name {
 
         font-size:
-            16px;
+            15px;
 
     }
 
