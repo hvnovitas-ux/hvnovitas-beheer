@@ -5,26 +5,19 @@
 
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta
     name="description"
     content="HV Novitas – handbal, plezier en clubgevoel in Zeeuws-Vlaanderen."
   >
 
-  <title>
-    HV Novitas
-  </title>
-
+  <title>HV Novitas</title>
 
   <link
     rel="stylesheet"
     href="/style.css?v=20260926"
   >
-
 
   <style>
 
@@ -33,82 +26,290 @@
        ===================================================== */
 
     .event-banner-section {
-
       margin: 0 !important;
-
-      padding:
-        10px
-        0
-        12px !important;
-
-      background:
-        #fffaf6;
-
-      line-height:
-        0;
-
+      padding: 10px 0 12px !important;
+      background: #fffaf6;
+      line-height: 0;
     }
-
 
     .event-banner-section iframe {
-
-      display:
-        block;
-
-      width:
-        100%;
-
-      height:
-        190px;
-
-      margin:
-        0;
-
-      padding:
-        0;
-
-      border:
-        0;
-
-      overflow:
-        hidden;
-
+      display: block;
+      width: 100%;
+      height: 190px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
     }
-
 
     .event-banner-section + main .section.intro {
+      padding-top: 24px !important;
+    }
 
-      padding-top:
-        24px !important;
+
+    /* =====================================================
+       AGENDA
+       ===================================================== */
+
+    .agenda-layout {
+      display: grid;
+      grid-template-columns: 1.55fr 0.95fr 1.15fr;
+      grid-template-areas:
+        "agenda banners sponsor";
+      gap: 14px;
+      align-items: start;
+    }
+
+    .agenda-column {
+      min-width: 0;
+      grid-area: agenda;
+    }
+
+    .agenda-box {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .agenda-box iframe {
+      display: block;
+      width: 100%;
+      height: 560px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+    }
+
+
+    /* =====================================================
+       MIDDENKOLOM
+       ===================================================== */
+
+    .agenda-sponsor {
+      min-width: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow: visible;
+      grid-area: sponsor;
+    }
+
+
+    /* =====================================================
+       SPONSOR VAN DE WEEK
+       ===================================================== */
+
+    .week-sponsor-wrap {
+      width: 100%;
+      height: 205px;
+      overflow: hidden;
+      flex: 0 0 205px;
+    }
+
+    .week-sponsor-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 205px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+    }
+
+
+    /* =====================================================
+       VIDEO VAN DE WEEK
+       ===================================================== */
+
+    .week-video-wrap {
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+      flex: 0 0 400px;
+    }
+
+    .week-video-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 400px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+
+      /* BELANGRIJK: fullscreen doorgeven aan de geneste YouTube-player */
+      allow: fullscreen;
+    }
+
+
+    /* =====================================================
+       RECHTER BANNERS
+       ===================================================== */
+
+    .agenda-banners {
+      min-width: 0;
+      grid-area: banners;
+    }
+
+    @media (min-width: 901px) {
+      .agenda-banners {
+        min-width: 250px;
+      }
+    }
+
+    .agenda-banners .side-banners {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .agenda-banners .promo-banner {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow:
+        0 10px 24px rgba(24,25,27,.13);
+    }
+
+    .agenda-banners .promo-banner img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+    }
+
+
+    /* =====================================================
+       15 JAAR BANNER
+       ===================================================== */
+
+    .photos-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .novitas-15-banner {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      height: 190px;
+      margin-top: -190px;
+      overflow: hidden;
+      border-radius: 0 0 18px 18px;
+      background: #111111;
+    }
+
+    .novitas-15-banner img {
+      display: block;
+      width: 100%;
+      height: 190px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      object-fit: cover;
+      object-position: center;
+    }
+
+
+    /* =====================================================
+       TABLET
+       ===================================================== */
+
+    @media (max-width: 900px) {
+
+      .agenda-layout {
+        grid-template-columns: 1.55fr 0.85fr;
+        grid-template-areas:
+          "agenda sponsor"
+          "banners banners";
+      }
+
+      .agenda-banners {
+        grid-column: auto;
+      }
+
+      .agenda-banners .side-banners {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
 
     }
 
+
+    /* =====================================================
+       MOBIEL
+       ===================================================== */
 
     @media (max-width: 600px) {
 
       .event-banner-section {
-
-        padding:
-          6px
-          0
-          8px !important;
-
+        padding: 6px 0 8px !important;
       }
-
 
       .event-banner-section iframe {
-
-        height:
-          190px;
-
+        height: 190px;
       }
 
-
       .event-banner-section + main .section.intro {
+        padding-top: 18px !important;
+      }
 
-        padding-top:
-          18px !important;
+      .agenda-layout {
+        display: flex;
+        flex-direction: column;
+      }
 
+      .agenda-column,
+      .agenda-sponsor,
+      .agenda-banners {
+        width: 100%;
+      }
+
+      .agenda-column {
+        order: 1;
+      }
+
+      .agenda-banners {
+        order: 2;
+      }
+
+      .agenda-sponsor {
+        order: 3;
+      }
+
+      .agenda-box iframe {
+        height: 560px;
+      }
+
+      .week-sponsor-wrap,
+      .week-sponsor-wrap iframe {
+        height: 205px;
+      }
+
+      .week-video-wrap {
+        height: 400px;
+      }
+
+      .week-video-wrap iframe {
+        height: 400px;
+      }
+
+      .agenda-banners .side-banners {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .novitas-15-banner {
+        height: 145px;
+        margin-top: -145px;
+      }
+
+      .novitas-15-banner img {
+        height: 145px;
       }
 
     }
@@ -140,35 +341,28 @@
 
     <div class="hero-inner">
 
-
       <div class="hero-copy">
-
 
         <div class="eyebrow">
           HANDBALCLUB HULST
         </div>
 
-
         <h1>
           HV NOVITAS
         </h1>
-
 
         <div class="slogan">
           NO STRESS, ENJOY!
         </div>
 
-
         <p>
           Handbal, plezier en clubgevoel in Zeeuws-Vlaanderen.
         </p>
-
 
         <div
           class="hero-socials"
           aria-label="Social media"
         >
-
 
           <a
             class="social-youtube"
@@ -177,14 +371,11 @@
             rel="noopener"
             aria-label="YouTube"
           >
-
             <img
               src="https://cdn.simpleicons.org/youtube/ffffff"
               alt=""
             >
-
           </a>
-
 
           <a
             class="social-facebook"
@@ -193,14 +384,11 @@
             rel="noopener"
             aria-label="Facebook"
           >
-
             <img
               src="https://cdn.simpleicons.org/facebook/ffffff"
               alt=""
             >
-
           </a>
-
 
           <a
             class="social-tiktok"
@@ -209,14 +397,11 @@
             rel="noopener"
             aria-label="TikTok"
           >
-
             <img
               src="https://cdn.simpleicons.org/tiktok/000000"
               alt=""
             >
-
           </a>
-
 
           <a
             class="social-instagram"
@@ -225,23 +410,18 @@
             rel="noopener"
             aria-label="Instagram"
           >
-
             <img
               src="https://cdn.simpleicons.org/instagram/ffffff"
               alt=""
             >
-
           </a>
 
-
         </div>
-
 
       </div>
 
 
       <div class="hero-announcement">
-
 
         <iframe
           src="https://hvnovitas-ux.github.io/hvnovitas-beheer/aankondiging.html"
@@ -249,14 +429,11 @@
           loading="eager">
         </iframe>
 
-
       </div>
-
 
     </div>
 
   </section>
-
 
 
   <!-- =====================================================
@@ -268,7 +445,6 @@
     aria-label="Evenementen HV Novitas"
   >
 
-
     <iframe
       src="https://hvnovitas-ux.github.io/hvnovitas-beheer/evenementenbanner-widget.html?v=20260926-1500"
       title="Evenementenbanner HV Novitas"
@@ -276,9 +452,7 @@
       scrolling="no">
     </iframe>
 
-
   </section>
-
 
 
   <main>
@@ -290,75 +464,54 @@
 
     <section class="section intro">
 
-
       <div class="content-narrow">
-
 
         <p class="section-label">
           WELKOM BIJ HV NOVITAS
         </p>
 
-
         <h2>
           We presteren met plezier, voor het spel.
         </h2>
 
-
         <p>
-
           Bij HV Novitas geloven we dat plezier de basis is van alles.
           Samen sporten, groeien als team en genieten van het spel –
           daar doen we het voor.
-
         </p>
-
 
         <h3>
           Voor iedereen die houdt van snelheid.
         </h3>
 
-
         <p>
-
           Handbal is snel, dynamisch en zit vol energie.
           Benieuwd of <strong>handbal in Hulst</strong> iets voor jou is?
 
           Kom gerust eens langs voor een training of kennismaking –
           je bent van harte welkom!
-
         </p>
-
 
         <h3>
           Meer dan alleen handbal
         </h3>
 
-
         <p>
-
           Onze vereniging is ook een plek voor gezelligheid en verbinding.
 
           We organiseren jeugdkampen, feestavonden, BBQ's en gaan regelmatig
           naar internationale toernooien.
-
         </p>
-
 
         <p>
-
           Ook buiten het veld is er genoeg te beleven – zoals onze gezellige
           pubquiz, waar ook niet-leden welkom zijn.
-
         </p>
 
 
-
-        <!-- =================================================
-             SNELLE LINKS
-             ================================================= -->
+        <!-- SNELLE LINKS -->
 
         <div class="quick-links">
-
 
           <a
             href="https://sites.google.com/site/hvnovitas/Jeugd-Teams?authuser=0"
@@ -368,7 +521,6 @@
             Don Nova's Jeugdclub
           </a>
 
-
           <a
             href="https://docs.google.com/forms/d/1Naoxd0nUkjq9F0AQxLanIGKehbu98ApGIFrrVLhocy0/edit"
             target="_blank"
@@ -376,7 +528,6 @@
           >
             Proeftrainingen
           </a>
-
 
           <a
             href="https://sites.google.com/site/hvnovitas/toernooien?authuser=0"
@@ -386,6 +537,13 @@
             Toernooien
           </a>
 
+          <a
+            href="https://sites.google.com/site/hvnovitas/vrienden-van-novitas?authuser=0"
+            target="_blank"
+            rel="noopener"
+          >
+            Vrienden van Novitas
+          </a>
 
           <a
             href="https://sites.google.com/site/hvnovitas/10-jaar-geleden?authuser=0"
@@ -395,7 +553,6 @@
             10 jaar geleden
           </a>
 
-
           <a
             href="https://clubs.stanno.com/nl/hv-novitas/clubcollectie"
             target="_blank"
@@ -403,7 +560,6 @@
           >
             Webshop
           </a>
-
 
           <a
             href="https://hvnovitas-ux.github.io/hvnovitas-beheer/inschrijven.html"
@@ -413,7 +569,6 @@
             Lid worden
           </a>
 
-
           <a
             href="https://sites.google.com/site/hvnovitas/privacy-policy?authuser=0"
             target="_blank"
@@ -421,7 +576,6 @@
           >
             Privacy Policy
           </a>
-
 
           <a
             href="https://www.youtube.com/channel/UCmzIaCENgsWdXidFF4Bq_eg"
@@ -431,15 +585,11 @@
             Video's
           </a>
 
-
         </div>
-
 
       </div>
 
-
     </section>
-
 
 
     <!-- =====================================================
@@ -451,12 +601,9 @@
       id="nieuws"
     >
 
-
       <div class="content-wide">
 
-
         <div class="news-frame-wrap">
-
 
           <iframe
             src="https://hvnovitas-ux.github.io/hvnovitas-beheer/news-home.html"
@@ -465,12 +612,9 @@
             scrolling="no">
           </iframe>
 
-
         </div>
 
-
         <div class="news-more-wrap">
-
 
           <a
             class="news-more"
@@ -481,15 +625,11 @@
             Meer nieuws →
           </a>
 
-
         </div>
-
 
       </div>
 
-
     </section>
-
 
 
     <!-- =====================================================
@@ -500,17 +640,13 @@
       class="section sponsors-section"
     >
 
-
       <div class="content-wide">
-
 
         <p class="section-label">
           ONZE SPONSORS
         </p>
 
-
         <div class="sponsor-frame-wrap">
-
 
           <iframe
             class="sponsor-frame"
@@ -519,15 +655,11 @@
             loading="lazy">
           </iframe>
 
-
         </div>
-
 
       </div>
 
-
     </section>
-
 
 
     <!-- =====================================================
@@ -538,22 +670,20 @@
       class="section image-sections"
     >
 
-
       <div class="content-wide">
-
 
         <div class="image-sections-grid">
 
+
+          <!-- HIGHLIGHTS -->
 
           <article
             class="image-section-card"
           >
 
-
             <div
               class="embed-frame-wrap highlights-wrap"
             >
-
 
               <iframe
                 class="embed-frame"
@@ -562,23 +692,20 @@
                 loading="lazy">
               </iframe>
 
-
             </div>
-
 
           </article>
 
 
+          <!-- FOTO'S + 15 JAAR -->
 
           <article
             class="image-section-card photos-card"
           >
 
-
             <div
               class="embed-frame-wrap omejan-wrap"
             >
-
 
               <iframe
                 class="embed-frame"
@@ -587,21 +714,26 @@
                 loading="lazy">
               </iframe>
 
+            </div>
+
+            <div
+              class="novitas-15-banner"
+            >
+
+              <img
+                src="images/novitas-15-jaar-2012-2027.png"
+                alt="HV Novitas 15 jaar 2012 - 2027"
+              >
 
             </div>
 
-
           </article>
-
 
         </div>
 
-
       </div>
 
-
     </section>
-
 
 
     <!-- =====================================================
@@ -612,9 +744,7 @@
       class="section media-section"
     >
 
-
       <div class="content-wide">
-
 
         <div class="media-grid">
 
@@ -623,19 +753,15 @@
             class="media-card forever-text"
           >
 
-
             <p class="section-label">
               FOREVER NOVITAS
             </p>
-
 
             <h2>
               Terugkijken naar onze geschiedenis
             </h2>
 
-
             <p>
-
               <strong>Forever Novitas</strong>
               is een nostalgische videoserie waarin we terugkijken
               naar de geschiedenis van HV Novitas.
@@ -643,59 +769,45 @@
               Met beelden uit verschillende jaren brengen we mooie herinneringen
               opnieuw tot leven en laten we zien hoe onze vereniging zich door
               de jaren heen heeft ontwikkeld.
-
             </p>
 
-
             <p>
-
               Iedere aflevering neemt je mee terug naar bijzondere momenten
               uit het verleden.
 
               Voor oud-leden een feest van herkenning en voor nieuwe leden
               een mooie kennismaking met de geschiedenis van onze vereniging.
-
             </p>
-
 
             <p>
               Veel kijkplezier!
             </p>
 
-
             <p>
               🤾‍♂️ <strong>Lijkt handbal jou ook leuk?</strong>
             </p>
 
-
             <p>
-
               Of je nu ervaring hebt of nog nooit een handbal hebt vastgehouden,
               je bent altijd welkom om vrijblijvend een keer mee te trainen.
-
             </p>
-
 
           </article>
 
 
-
           <div class="forever-video-column">
 
-
             <div class="forever-video-box">
-
 
               <iframe
                 src="https://www.youtube.com/embed/videoseries?list=PLK1aboL2Hk9I"
                 title="Forever Novitas"
                 loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                 allowfullscreen>
               </iframe>
 
-
             </div>
-
 
             <a
               class="promo-banner gold-dry-banner"
@@ -710,35 +822,154 @@
 
             </a>
 
-
           </div>
-
 
         </div>
 
-
       </div>
-
 
     </section>
 
 
-  </main>
+    <!-- =====================================================
+         AGENDA
+         ===================================================== -->
 
+    <section
+      class="section agenda-section"
+    >
+
+      <div class="content-wide">
+
+        <p class="section-label">
+          ONZE AGENDA
+        </p>
+
+        <div class="agenda-layout">
+
+
+          <!-- AGENDA -->
+
+          <div class="agenda-column">
+
+            <div class="agenda-box">
+
+              <iframe
+                src="https://www.hvnovitas.nl/agenda-widget.html?v=20260926-8"
+                title="Agenda HV Novitas"
+                loading="lazy"
+                scrolling="no">
+              </iframe>
+
+            </div>
+
+          </div>
+
+
+          <!-- SPONSOR + VIDEO VAN DE WEEK -->
+
+          <div class="agenda-sponsor">
+
+
+            <!-- SPONSOR VAN DE WEEK -->
+
+            <div class="week-sponsor-wrap">
+
+              <iframe
+                src="https://hvnovitas-ux.github.io/hvnovitas-beheer/sponsor-week.html?v=20260928-3"
+                title="Sponsor van de Week"
+                loading="lazy"
+                scrolling="no">
+              </iframe>
+
+            </div>
+
+
+            <!-- VIDEO VAN DE WEEK -->
+
+            <div class="week-video-wrap">
+
+              <iframe
+                src="https://hvnovitas-ux.github.io/hvnovitas-beheer/video-week.html?v=20260928-4"
+                title="Video van de Week"
+                loading="lazy"
+                scrolling="no"
+                allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+
+            </div>
+
+          </div>
+
+
+          <!-- RECHTER BANNERS -->
+
+          <aside
+            class="agenda-banners"
+          >
+
+            <div
+              class="side-banners"
+            >
+
+              <a
+                class="promo-banner"
+                href="https://docs.google.com/forms/d/1Naoxd0nUkjq9F0AQxLanIGKehbu98ApGIFrrVLhocy0/edit"
+                target="_blank"
+                rel="noopener"
+              >
+
+                <img
+                  src="images/proeftrainingen.png"
+                  alt="Gratis proeftrainingen"
+                >
+
+              </a>
+
+
+              <a
+                class="promo-banner"
+                href="https://gooijijdebaldoor.nl/schools"
+                target="_blank"
+                rel="noopener"
+              >
+
+                <img
+                  src="images/gooi-jij-de-bal-door.png"
+                  alt="Gooi jij de bal door?"
+                >
+
+              </a>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
 
 
   <!-- =====================================================
        FOOTER
        ===================================================== -->
 
-  <footer class="footer">
+  <footer
+    class="footer"
+  >
 
+    <div
+      class="content-wide"
+    >
 
-    <div class="content-wide">
-
-
-      <div class="footer-left">
-
+      <div
+        class="footer-left"
+      >
 
         <a
           class="footer-home"
@@ -747,7 +978,6 @@
           HV Novitas
         </a>
 
-
         <a
           class="footer-email"
           href="mailto:info@hvnovitas.nl"
@@ -755,17 +985,15 @@
           info@hvnovitas.nl
         </a>
 
-
       </div>
-
 
       <span>
         Handbalclub Hulst – Zeeuws-Vlaanderen
       </span>
 
-
-      <div class="social-links">
-
+      <div
+        class="social-links"
+      >
 
         <a
           href="https://www.youtube.com/channel/UCmzIaCENgsWdXidFF4Bq_eg"
@@ -775,17 +1003,15 @@
           YouTube
         </a>
 
-
       </div>
 
-
     </div>
-
 
   </footer>
 
 
   <script src="script.js"></script>
+
 
 </body>
 
