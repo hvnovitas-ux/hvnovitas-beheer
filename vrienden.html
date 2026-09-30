@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vrienden van HV Novitas - Beheer</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#222}
+.topbar{background:#ff6a00;color:#fff;padding:15px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.title{font-size:20px}
+.userbox{display:flex;align-items:center;gap:10px;font-size:14px}
+button{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:bold;background:#ff6a00;color:#fff}
+.logout{background:#fff;color:#222}
+.page{max-width:980px;margin:30px auto;padding:0 20px}
+.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 4px 16px rgba(0,0,0,.07);margin-bottom:18px}
+h1,h2{margin-top:0}
+.help{color:#6b7280;line-height:1.5}
+.form-row{display:flex;gap:10px}
+input{flex:1;width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font:inherit}
+.list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.item{position:relative;min-height:105px;padding:18px;border-radius:15px;background:linear-gradient(145deg,#ff7c1c,#ee5900);color:#fff;box-shadow:0 7px 18px rgba(237,91,0,.16)}
+.item strong{display:block;padding-right:80px;font-size:17px;line-height:1.2}
+.item small{display:block;margin-top:8px;color:rgba(255,255,255,.75);font-size:11px}
+.remove{position:absolute;right:10px;top:10px;background:rgba(255,255,255,.18);color:#fff;padding:7px 9px;border-radius:7px}
+.status{min-height:20px;margin-top:10px;font-size:13px;color:#6b7280}
+.back{display:inline-block;margin-top:2px;color:#2563eb;text-decoration:none;font-weight:bold}
+.empty{padding:18px;border:1px dashed #d1d5db;border-radius:12px;color:#6b7280}
+@media(max-width:760px){.form-row{flex-direction:column}.list{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}.page{margin-top:20px}}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="title">🧡 HV NOVITAS CMS</div>
+  <div class="userbox">
+    <span id="userInfo">Laden...</span>
+    <button id="logoutButton" class="logout" type="button">Uitloggen</button>
+  </div>
+</header>
+
+<main class="page">
+  <section class="card">
+    <h1>❤️ Vrienden van HV Novitas</h1>
+    <p class="help">
+      Voeg hier een nieuwe Vriend toe. De naam verschijnt daarna automatisch
+      als oranje tegel op de openbare pagina.
+    </p>
+
+    <div class="form-row">
+      <input id="friendName" type="text" placeholder="Naam, bijvoorbeeld Familie Jansen">
+      <button id="saveFriend" type="button">Toevoegen</button>
+    </div>
+
+    <div id="status" class="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>Huidige Vrienden</h2>
+    <div id="friendList" class="list"></div>
+  </section>
+
+  <a class="back" href="dashboard.html">← Terug naar dashboard</a>
+</main>
+
+<script type="module">
+import { auth } from "./firebase.js";
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const userInfo = document.getElementById("userInfo");
+const logoutButton = document.getElementById("logoutButton");
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  userInfo.textContent = "👋 " + (user.displayName || user.email || "Admin");
+});
+
+logoutButton.addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    window.location.href = "login.html";
+  } catch (error) {
+    console.error(error);
+    alert("Uitloggen is niet gelukt.");
+  }
+});
+</script>
+
+<script type="module">
+import { db } from "./firebase.js";
+import {
+  ref,
+  push,
+  onValue,
+  remove
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const list = document.getElementById("friendList");
+const input = document.getElementById("friendName");
+const save = document.getElementById("saveFriend");
+const status = document.getElementById("status");
+
+function escapeHTML(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+let seeding = false;
+
+async function seedExistingFriends() {
+  if (seeding) return;
+
+  seeding = true;
+
+  const existing = [
+    "Familie Bel",
+    "Familie Thijs",
+    "Ria Maas"
+  ];
+
+  try {
+    for (const name of existing) {
+      await push(ref(db, "vrienden"), {
+        name,
+        created: Date.now()
+      });
+    }
+
+    status.textContent = "De drie bestaande Vrienden zijn toegevoegd.";
+  } catch (error) {
+    console.error(error);
+    status.textContent = "De bestaande Vrienden konden niet automatisch worden toegevoegd.";
+  } finally {
+    seeding = false;
+  }
+}
+
+save.addEventListener("click", async () => {
+  const name = input.value.trim();
+
+  if (!name) {
+    status.textContent = "Vul eerst een naam in.";
+    input.focus();
+    return;
+  }
+
+  try {
+    await push(ref(db, "vrienden"), {
+      name,
+      created: Date.now()
+    });
+
+    input.value = "";
+    status.textContent = "Vriend toegevoegd.";
+    input.focus();
+  } catch (error) {
+    console.error(error);
+    status.textContent = "Opslaan is niet gelukt.";
+  }
+});
+
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    save.click();
+  }
+});
+
+onValue(ref(db, "vrienden"), async snapshot => {
+  const data = snapshot.val() || {};
+
+  const entries = Object.entries(data)
+    .filter(([, item]) => item && String(item.name || "").trim());
+
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty">Nog geen Vrienden. De drie bestaande Vrienden worden eenmalig toegevoegd.</div>';
+    await seedExistingFriends();
+    return;
+  }
+
+  entries.sort((a, b) =>
+    String(a[1].name).localeCompare(
+      String(b[1].name),
+      "nl",
+      { sensitivity: "base" }
+    )
+  );
+
+  list.innerHTML = entries.map(([id, item]) => `
+    <div class="item">
+      <strong>${escapeHTML(item.name)}</strong>
+      <small>Wordt automatisch op de openbare pagina getoond.</small>
+      <button class="remove" type="button" data-id="${escapeHTML(id)}">Verwijderen</button>
+    </div>
+  `).join("");
+
+  list.querySelectorAll("[data-id]").forEach(button => {
+    button.addEventListener("click", async () => {
+      if (!confirm("Deze Vriend verwijderen?")) return;
+
+      try {
+        await remove(ref(db, "vrienden/" + button.dataset.id));
+        status.textContent = "Vriend verwijderd.";
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Verwijderen is niet gelukt.";
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>

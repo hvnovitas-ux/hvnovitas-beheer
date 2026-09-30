@@ -271,8 +271,6 @@ a{text-decoration:none}
   background:linear-gradient(145deg,#ff7c1c 0%,#f45a00 68%,#dc4d00 100%);
   box-shadow:0 9px 22px rgba(237,91,0,.18);
 }
-.friend:nth-child(2){background:linear-gradient(145deg,#172532,#223342)}
-.friend:nth-child(3){background:linear-gradient(145deg,#2b2520,#3b3028)}
 .friend:after{
   content:"";
   position:absolute;
@@ -499,35 +497,26 @@ a{text-decoration:none}
         <div class="section-kicker">Ze zijn er al 🧡</div>
         <h2>Onze Vrienden</h2>
       </div>
-      <p>Deze drie Vrienden zijn momenteel al aangemeld bij HV Novitas.</p>
+      <p><span id="vriendenCount">Onze Vrienden</span> zijn momenteel aangemeld bij HV Novitas.</p>
     </div>
 
-    <div class="friends-grid">
-      <article class="friend">
-        <div class="friend-top">
-          <div class="friend-icon">FB</div>
-          <small>Vriend van Novitas</small>
-        </div>
-        <strong>Familie Bel</strong>
-        <p>Bedankt voor jullie steun!</p>
-      </article>
+    <div id="vriendenList" class="friends-grid"></div>
+  </section>
 
-      <article class="friend">
-        <div class="friend-top">
-          <div class="friend-icon">FT</div>
-          <small>Vriend van Novitas</small>
-        </div>
-        <strong>Familie Thijs</strong>
-        <p>Bedankt voor jullie steun!</p>
-      </article>
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Extra verbonden</div>
+        <h2>Uitnodigingen voor activiteiten</h2>
+      </div>
+      <p>Vrienden van Novitas ontvangen ook uitnodigingen voor activiteiten die HV Novitas organiseert.</p>
+    </div>
 
-      <article class="friend">
-        <div class="friend-top">
-          <div class="friend-icon">RM</div>
-          <small>Vriend van Novitas</small>
-        </div>
-        <strong>Ria Maas</strong>
-        <p>Bedankt voor je steun!</p>
+    <div class="club-grid">
+      <article class="club-card">
+        <div class="num">★</div>
+        <strong>Uitnodigingen</strong>
+        <p>Als Vriend van Novitas ontvang je ook uitnodigingen voor activiteiten die door HV Novitas worden georganiseerd.</p>
       </article>
     </div>
   </section>
@@ -580,5 +569,6 @@ a{text-decoration:none}
   </footer>
 
 </main>
+<script type="module" src="./vrienden-view.js"></script>
 </body>
 </html>
