@@ -1,158 +1,35 @@
-
-/* =========================================================
-   HV NOVITAS - SPONSOR VAN DE WEEK
-   Alleen logo + naam sponsor
-========================================================= */
-
 *{box-sizing:border-box}
-
-html,body{
-  width:100%;
-  height:100%;
-  margin:0;
-  padding:0;
-  background:transparent;
-  font-family:Arial,Helvetica,sans-serif;
-}
-
+html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;font-family:Arial,Helvetica,sans-serif}
 .sponsor-week{
-  position:relative;
-  width:100%;
-  height:205px;
-  overflow:hidden;
-  border-radius:18px;
-  background:
-    radial-gradient(ellipse at center,rgba(255,132,0,.28),transparent 55%),
-    linear-gradient(145deg,#0b0b0b,#181818 55%,#090909);
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 16px 34px rgba(0,0,0,.20);
+  position:relative;width:100%;height:390px;overflow:hidden;border-radius:18px;
+  background:radial-gradient(ellipse at center,rgba(255,132,0,.30),transparent 55%),
+             linear-gradient(145deg,#0b0b0b,#181818 55%,#090909);
+  border:1px solid rgba(255,255,255,.08);box-shadow:0 16px 34px rgba(0,0,0,.20)
 }
-
-.sponsor-week::before{
-  content:"";
-  position:absolute;
-  top:0;left:0;right:0;
-  height:5px;
-  background:linear-gradient(90deg,#ff8a00,#ff6500,#ff8a00);
-  z-index:10;
-}
-
+.sponsor-week::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#ff8a00,#ff6500,#ff8a00);z-index:10}
 .sponsor-week-header{
-  position:relative;
-  width:100%;
-  height:58px;
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  background:linear-gradient(180deg,#242424,#111);
+  position:relative;width:100%;height:78px;padding:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,#242424,#111)
 }
-
-.sponsor-week-title{
-  color:#fff!important;
-  font-size:19px;
-  font-weight:900;
-  line-height:1;
-  letter-spacing:.055em;
-  text-transform:uppercase;
-}
-
+.sponsor-week-title{color:#fff!important;font-size:23px;font-weight:900;line-height:1;letter-spacing:.055em;text-transform:uppercase}
 .sponsor-week-title span{color:#ff7000!important}
-
-.sponsor-week-line{
-  width:70px;
-  height:3px;
-  margin-top:7px;
-  border-radius:999px;
-  background:linear-gradient(90deg,transparent,#ff6a00,transparent);
-  box-shadow:0 0 10px rgba(255,106,0,.60);
-}
-
-.sponsor-week-content{
-  position:relative;
-  width:100%;
-  height:147px;
-  padding:6px 12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-}
-
+.sponsor-week-line{width:70px;height:3px;margin-top:8px;border-radius:999px;background:linear-gradient(90deg,transparent,#ff6a00,transparent);box-shadow:0 0 10px rgba(255,106,0,.60)}
+.sponsor-week-content{position:relative;width:100%;height:312px;padding:20px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .sponsor-week-content::before{
-  content:"";
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:280px;
-  height:120px;
-  transform:translate(-50%,-50%);
-  border-radius:50%;
-  background:radial-gradient(ellipse,rgba(255,255,255,.98) 0%,rgba(255,255,255,.82) 18%,rgba(255,235,205,.52) 36%,rgba(255,135,0,.24) 57%,transparent 78%);
-  filter:blur(2px);
-  z-index:0;
+  content:"";position:absolute;left:50%;top:50%;width:360px;height:190px;transform:translate(-50%,-50%);
+  border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.98) 0%,rgba(255,255,255,.82) 18%,rgba(255,235,205,.52) 36%,rgba(255,135,0,.24) 57%,transparent 78%);filter:blur(2px);z-index:0
 }
-
-.sponsor-week-link,
-.sponsor-week-no-link{
-  position:relative;
-  z-index:3;
-  width:100%;
-  height:135px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:5px;
-  color:#fff;
-  text-decoration:none;
+.sponsor-week-link,.sponsor-week-no-link{
+  position:relative;z-index:3;width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;color:#fff;text-decoration:none
 }
-
-.sponsor-week-logo{
-  display:block;
-  width:auto;
-  height:76px;
-  max-width:82%;
-  object-fit:contain;
-  filter:drop-shadow(0 7px 14px rgba(0,0,0,.35));
-}
-
-.sponsor-week-name{
-  max-width:96%;
-  color:#fff;
-  font-size:17px;
-  font-weight:900;
-  line-height:1.05;
-  text-align:center;
-  text-shadow:0 2px 8px rgba(0,0,0,.60);
-}
-
-/* Bewust verborgen: gebruiker wil alleen logo + naam */
-.sponsor-week-visit{display:none!important;}
-
-.loading{
-  position:relative;
-  z-index:3;
-  color:rgba(255,255,255,.65);
-  font-size:13px;
-}
-
-.error{
-  position:relative;
-  z-index:3;
-  color:#ddd;
-  font-size:13px;
-  font-weight:700;
-  text-align:center;
-}
-
+.sponsor-week-logo{display:block;width:auto;height:125px;max-width:70%;object-fit:contain;filter:drop-shadow(0 7px 14px rgba(0,0,0,.35))}
+.sponsor-week-name{max-width:96%;color:#fff;font-size:25px;font-weight:900;line-height:1.05;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.60)}
+.sponsor-week-visit{display:none!important}
+.loading{position:relative;z-index:3;color:rgba(255,255,255,.65);font-size:13px}
+.error{position:relative;z-index:3;color:#ddd;font-size:13px;font-weight:700;text-align:center}
 @media(max-width:480px){
-  .sponsor-week{height:205px;border-radius:14px}
-  .sponsor-week-header{height:52px}
-  .sponsor-week-title{font-size:15px}
-  .sponsor-week-content{height:153px}
-  .sponsor-week-logo{height:70px}
-  .sponsor-week-name{font-size:15px}
+  .sponsor-week{height:320px;border-radius:14px}.sponsor-week-header{height:60px}
+  .sponsor-week-title{font-size:17px}.sponsor-week-content{height:260px}
+  .sponsor-week-logo{height:95px}.sponsor-week-name{font-size:19px}
 }
