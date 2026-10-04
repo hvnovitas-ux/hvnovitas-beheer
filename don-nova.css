@@ -14,145 +14,51 @@ a{text-decoration:none}
 .dn-hero{background:linear-gradient(180deg,#0b0b0b,#151515);padding:0}
 .dn-hero-inner{width:min(1180px,calc(100% - 40px));margin:0 auto}
 .dn-hero-link{display:block;line-height:0}
-.dn-hero-image{
-  display:block;
-  width:100%;
-  height:auto;
-  border-radius:0 0 20px 20px;
-  box-shadow:0 18px 40px rgba(0,0,0,.28)
-}
+.dn-hero-image{display:block;width:100%;height:auto;border-radius:0 0 20px 20px;box-shadow:0 18px 40px rgba(0,0,0,.28)}
 
 .dn-section{padding:52px 0}
 .dn-light{background:#fff}
-.dn-dark{
-  background:
-    radial-gradient(circle at 12% 22%,rgba(255,106,0,.13),transparent 26%),
-    linear-gradient(135deg,#101010 0%,#1c1c1c 58%,#090909 100%);
-  color:#fff
-}
+.dn-dark{background:radial-gradient(circle at 12% 22%,rgba(255,106,0,.13),transparent 26%),linear-gradient(135deg,#101010 0%,#1c1c1c 58%,#090909 100%);color:#fff}
 .dn-strip-section{padding:28px 0;background:#f7f7f7}
 .dn-wide{width:min(1180px,calc(100% - 40px));margin:0 auto}
 
-.dn-video-text{
-  display:grid;
-  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
-  gap:42px;
-  align-items:center
-}
-.dn-video{
-  width:100%;
-  aspect-ratio:16/9;
-  overflow:hidden;
-  border-radius:18px;
-  background:#0c0c0c;
-  box-shadow:var(--shadow)
-}
+.dn-video-text{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:42px;align-items:center}
+.dn-video{width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:18px;background:#0c0c0c;box-shadow:var(--shadow)}
 .dn-video iframe{display:block;width:100%;height:100%;border:0}
-.dn-video-loading{
-  width:100%;
-  height:100%;
-  display:grid;
-  place-items:center;
-  padding:20px;
-  text-align:center;
-  background:linear-gradient(145deg,#151515,#242424);
-  color:#aaa;
-  font-weight:700
-}
+.dn-video-loading{width:100%;height:100%;display:grid;place-items:center;padding:20px;text-align:center;background:linear-gradient(145deg,#151515,#242424);color:#aaa;font-weight:700}
 
 .dn-copy{min-width:0}
-.dn-label{
-  display:inline-block;
-  margin-bottom:12px;
-  color:var(--orange);
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:.12em;
-  text-transform:uppercase
-}
-.dn-copy h2{
-  margin:0 0 18px;
-  font-size:clamp(2rem,3.3vw,3.2rem);
-  line-height:1.02;
-  letter-spacing:-.035em
-}
+.dn-label{display:inline-block;margin-bottom:12px;color:var(--orange);font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.dn-copy h2{margin:0 0 18px;font-size:clamp(2rem,3.3vw,3.2rem);line-height:1.02;letter-spacing:-.035em}
 .dn-copy p{margin:0;font-size:1.08rem;line-height:1.7}
 .dn-dark .dn-copy p{color:#ececec}
 .dn-dark .dn-copy h2{color:#fff}
 
-.dn-strip-wrap{
-  border-radius:18px;
-  overflow:hidden;
-  background:#fff;
-  box-shadow:var(--shadow);
-  border:1px solid rgba(0,0,0,.08)
-}
+.dn-strip-wrap{border-radius:18px;overflow:hidden;background:#fff;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.08)}
 .dn-strip-wrap img{display:block;width:100%;height:auto}
 
-.dn-bottom-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
-  gap:42px;
-  align-items:start
-}
-.dn-trial{
-  display:block;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  line-height:0
-}
-.dn-trial img{display:block;width:100%;height:auto}
+.dn-bottom-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:42px;align-items:start}
+
+/* Nieuwe Don Nova-foto: de oude proeftraining-box is verwijderd.
+   De bronafbeelding staat in de images-map van hvnovitas-home en bevat
+   links de mascotte; via deze crop wordt alleen dat linkerdeel getoond. */
+.dn-photo{width:100%;align-self:stretch;min-width:0}
+.dn-photo-crop{width:100%;aspect-ratio:1.54 / 1;border-radius:18px;overflow:hidden;background-image:url("https://hvnovitas-ux.github.io/hvnovitas-home/images/Energieke%20handbalmascotte%20naast%20verenigingsbelofte.png");background-repeat:no-repeat;background-position:left center;background-size:214% auto;box-shadow:var(--shadow);background-color:#111}
 
 .dn-reasons{padding:10px 0}
-.dn-reasons h2{
-  margin:0 0 22px;
-  font-size:clamp(1.8rem,3vw,2.6rem);
-  line-height:1.05
-}
-.dn-reasons ul{
-  list-style:none;
-  padding:0;
-  margin:0;
-  display:grid;
-  gap:15px
-}
-.dn-reasons li{
-  position:relative;
-  padding-left:34px;
-  font-size:1.05rem;
-  line-height:1.45
-}
-.dn-reasons li:before{
-  content:"🤾";
-  position:absolute;
-  left:0;
-  top:0
-}
+.dn-reasons h2{margin:0 0 22px;font-size:clamp(1.8rem,3vw,2.6rem);line-height:1.05}
+.dn-reasons ul{list-style:none;padding:0;margin:0;display:grid;gap:15px}
+.dn-reasons li{position:relative;padding-left:34px;font-size:1.05rem;line-height:1.45}
+.dn-reasons li:before{content:"🤾";position:absolute;left:0;top:0}
 
-.dn-footer{
-  color:#fff;
-  background:#111;
-  border-top:5px solid var(--orange);
-  padding:24px 0
-}
-.dn-footer-inner{
-  width:min(1180px,calc(100% - 40px));
-  margin:0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  flex-wrap:wrap
-}
+.dn-footer{color:#fff;background:#111;border-top:5px solid var(--orange);padding:24px 0}
+.dn-footer-inner{width:min(1180px,calc(100% - 40px));margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .dn-footer a{color:#fff}
 .dn-footer a:hover{text-decoration:underline}
 
 @media(max-width:900px){
-  .dn-video-text,.dn-bottom-grid{
-    grid-template-columns:1fr;
-    gap:26px
-  }
+  .dn-video-text,.dn-bottom-grid{grid-template-columns:1fr;gap:26px}
+  .dn-photo-crop{aspect-ratio:1.54 / 1}
 }
 @media(max-width:600px){
   .dn-hero-inner,.dn-wide,.dn-footer-inner{width:calc(100% - 28px)}
@@ -162,5 +68,4 @@ a{text-decoration:none}
   .dn-copy p{font-size:1rem}
   .dn-copy h2{font-size:2rem}
   .dn-reasons h2{font-size:1.9rem}
-  .dn-footer-inner{flex-direction:column;align-items:flex-start}
 }

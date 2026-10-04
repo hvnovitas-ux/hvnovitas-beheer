@@ -21,32 +21,16 @@ onValue(
       stripImage.src = data.strip.imageUrl;
     }
 
-    text1Heading.textContent =
-      data.text1?.heading || "Meer dan alleen handbal";
-
-    text1Body.textContent =
-      data.text1?.body ||
+    text1Heading.textContent = data.text1?.heading || "Meer dan alleen handbal";
+    text1Body.textContent = data.text1?.body ||
       "Bij HV Novitas draait het om veel meer dan alleen wedstrijden. We organiseren regelmatig leuke activiteiten, ouder-kindwedstrijden, afsluitingsdagen en andere gezellige momenten. Zo leer je niet alleen handballen, maar maak je ook nieuwe vrienden en beleef je samen een geweldige tijd.";
 
-    text2Heading.textContent =
-      data.text2?.heading ||
-      "Een perfecte afsluiting van het seizoen.";
-
-    text2Body.textContent =
-      data.text2?.body ||
+    text2Heading.textContent = data.text2?.heading || "Een perfecte afsluiting van het seizoen.";
+    text2Body.textContent = data.text2?.body ||
       "Bij HV Novitas hebben we het seizoen afgesloten met een waterdag vol spelletjes, lachen en teamgevoel. Geen training vandaag... maar plezier, zon en samen genieten. Jeugd, ouders en trainers deden allemaal mee aan een dag vol energie en gezelligheid. Dit is waar een club voor staat.";
 
-    renderVideo(
-      video1,
-      data.video1?.youtubeUrl,
-      data.video1?.title || "Don Video 1"
-    );
-
-    renderVideo(
-      video2,
-      data.video2?.youtubeUrl,
-      data.video2?.title || "Don Video 2"
-    );
+    renderVideo(video1, data.video1?.youtubeUrl, data.video1?.title || "Don Video 1");
+    renderVideo(video2, data.video2?.youtubeUrl, data.video2?.title || "Don Video 2");
   },
   (error) => {
     console.error("Don Nova Firebase-fout:", error);
@@ -57,8 +41,7 @@ function renderVideo(target, youtubeUrl, title) {
   const videoId = extractYouTubeId(youtubeUrl);
 
   if (!videoId) {
-    target.innerHTML =
-      '<div class="dn-video-loading">Don Video kan via het CMS worden ingesteld.</div>';
+    target.innerHTML = '<div class="dn-video-loading">Don Video kan via het CMS worden ingesteld.</div>';
     return;
   }
 
@@ -92,12 +75,9 @@ function extractYouTubeId(value) {
       if (validId(watchId)) return watchId;
 
       const parts = url.pathname.split("/").filter(Boolean);
-
       for (const type of ["shorts", "embed"]) {
         const index = parts.indexOf(type);
-        if (index >= 0 && validId(parts[index + 1])) {
-          return parts[index + 1];
-        }
+        if (index >= 0 && validId(parts[index + 1])) return parts[index + 1];
       }
     }
   } catch (error) {
@@ -108,16 +88,9 @@ function extractYouTubeId(value) {
 }
 
 function validId(value) {
-  return typeof value === "string" &&
-    value.length === 11 &&
-    /^[A-Za-z0-9_-]+$/.test(value);
+  return typeof value === "string" && value.length === 11 && /^[A-Za-z0-9_-]+$/.test(value);
 }
 
 function escapeHtml(value = "") {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
