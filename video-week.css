@@ -6,24 +6,71 @@ html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;font-
 .video-week-title{color:#fff;font-size:19px;font-weight:900;line-height:1;letter-spacing:.055em;text-transform:uppercase}
 .video-week-title span{color:#ff7000}
 .video-week-subtitle{margin-top:6px;color:rgba(255,255,255,.68);font-size:11px}
-.video-week-content{height:328px;padding:10px 12px 12px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,rgba(255,106,0,.16),transparent 45%),#111}
 
-/* Belangrijk: de video is lager gemaakt zodat ook de CMS-tekst onder de titel past. */
-.video-week-player{position:relative;width:100%;height:240px;overflow:hidden;border-radius:11px;background:#000;border:1px solid rgba(255,255,255,.12);box-shadow:0 12px 22px rgba(0,0,0,.28)}
+/* De beschikbare ruimte in het kader wordt nu bewust verdeeld:
+   kleinere video + volledige metadata eronder. */
+.video-week-content{
+  height:328px;
+  padding:10px 12px 12px;
+  overflow:hidden;
+  background:radial-gradient(ellipse at 50% 30%,rgba(255,106,0,.16),transparent 45%),#111;
+}
+
+.video-week-player{
+  position:relative;
+  width:100%;
+  height:205px;
+  overflow:hidden;
+  border-radius:11px;
+  background:#000;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 12px 22px rgba(0,0,0,.28);
+}
 .video-week-player iframe{display:block;width:100%;height:100%;border:0}
 
-.video-week-meta{padding:8px 3px 0}
-.video-week-name{color:#fff;font-size:18px;font-weight:900;line-height:1.15;white-space:normal;overflow:visible}
-.video-week-description{margin-top:5px;color:rgba(255,255,255,.84);font-size:12px;line-height:1.3;display:block;max-height:31px;overflow:hidden}
+.video-week-meta{
+  padding:8px 3px 0;
+  overflow:visible;
+}
+
+.video-week-name{
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  line-height:1.15;
+  white-space:normal;
+  overflow:visible;
+}
+
+.video-week-description{
+  margin-top:5px;
+  color:rgba(255,255,255,.88);
+  font-size:12px;
+  line-height:1.35;
+  display:block;
+  max-height:49px;
+  overflow:hidden;
+}
+
 .video-week-button{display:none!important}
-.video-week-empty,.loading,.error{height:328px;display:flex;align-items:center;justify-content:center;padding:20px;color:rgba(255,255,255,.7);text-align:center;font-size:13px}
+
+.video-week-empty,.loading,.error{
+  height:328px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  color:rgba(255,255,255,.7);
+  text-align:center;
+  font-size:13px;
+}
 
 @media(max-width:600px){
-.video-week{height:320px}
-.video-week-header{height:55px;padding:11px}
-.video-week-title{font-size:16px}
-.video-week-content{height:265px;padding:8px 10px}
-.video-week-player{height:190px}
-.video-week-name{font-size:16px}
-.video-week-description{font-size:10px;max-height:28px}
+  .video-week{height:320px}
+  .video-week-header{height:55px;padding:11px}
+  .video-week-title{font-size:16px}
+  .video-week-content{height:265px;padding:8px 10px}
+  .video-week-player{height:175px}
+  .video-week-name{font-size:16px}
+  .video-week-description{font-size:10px;line-height:1.3;max-height:39px}
 }
