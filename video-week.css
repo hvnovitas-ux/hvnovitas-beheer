@@ -20,7 +20,6 @@ html,body{
   box-shadow:0 16px 34px rgba(0,0,0,.20);
 }
 
-/* Oranje balk boven */
 .video-week::before{
   content:"";
   position:absolute;
@@ -32,7 +31,6 @@ html,body{
   z-index:10;
 }
 
-/* Oranje balk onder */
 .video-week::after{
   content:"";
   position:absolute;
@@ -74,7 +72,7 @@ html,body{
 .video-week-content{
   height:330px;
   padding:10px 12px 12px;
-  overflow:visible;
+  overflow:hidden;
   background:
     radial-gradient(
       ellipse at 50% 30%,
@@ -84,10 +82,11 @@ html,body{
     #111;
 }
 
+/* Grotere video: het kader wordt nu echt benut. */
 .video-week-player{
   position:relative;
   width:100%;
-  height:175px;
+  height:230px;
   overflow:hidden;
   border-radius:11px;
   background:#000;
@@ -103,8 +102,8 @@ html,body{
 }
 
 .video-week-meta{
-  padding:9px 3px 0;
-  overflow:visible;
+  padding:8px 3px 0;
+  overflow:hidden;
 }
 
 .video-week-name{
@@ -118,13 +117,13 @@ html,body{
 
 .video-week-description{
   display:block;
-  margin-top:6px;
+  margin-top:5px;
   color:rgba(255,255,255,.92);
   font-size:12px;
-  line-height:1.4;
+  line-height:1.35;
   white-space:normal;
-  overflow:visible;
-  max-height:96px;
+  overflow:hidden;
+  max-height:42px;
 }
 
 .video-week-button{
@@ -168,7 +167,7 @@ html,body{
   }
 
   .video-week-player{
-    height:155px;
+    height:190px;
   }
 
   .video-week-meta{
@@ -182,7 +181,7 @@ html,body{
   .video-week-description{
     margin-top:4px;
     font-size:10px;
-    line-height:1.35;
-    max-height:67px;
+    line-height:1.3;
+    max-height:42px;
   }
 }
