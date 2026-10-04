@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Don Nova's Jeugdclub - CMS</title>
+<link rel="stylesheet" href="don-nova-cms.css?v=20261004-1">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="title">🧡 HV NOVITAS — DON NOVA'S JEUGDCLUB</div>
+  <div class="userbox">
+    <span id="userInfo">Laden...</span>
+    <a class="back" href="dashboard.html">← Dashboard</a>
+    <button class="logout" id="logoutButton" type="button">Uitloggen</button>
+  </div>
+</header>
+
+<main class="page">
+
+  <section class="intro">
+    <h1>Don Nova's Jeugdclub beheren</h1>
+    <p>Hier kun je de strip, Don Video 1, Don Video 2 en de teksten ernaast wijzigen.</p>
+  </section>
+
+  <form id="donForm">
+
+    <section class="card">
+      <h2>Don Nova strip</h2>
+
+      <div class="filebox">
+        <label for="stripFile">Nieuwe strip uploaden</label>
+        <input id="stripFile" type="file" accept="image/*">
+        <div class="small" style="margin-top:8px;">
+          De nieuwe afbeelding wordt via Cloudinary opgeslagen en daarna automatisch op de openbare Don Nova-pagina gebruikt.
+        </div>
+
+        <div class="preview-strip">
+          <img id="stripPreview" src="images/don-nova-strip.png" alt="Voorbeeld Don Nova strip">
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+
+      <section class="card">
+
+        <div class="video-card">
+          <h3>Don Video 1</h3>
+
+          <div class="field">
+            <label for="v1Url">YouTube URL</label>
+            <input id="v1Url" type="url" placeholder="https://www.youtube.com/watch?v=...">
+          </div>
+
+          <div class="field">
+            <label for="v1Title">Videotitel</label>
+            <input id="v1Title" type="text" maxlength="120" placeholder="Don Video 1">
+          </div>
+
+          <div class="field">
+            <label for="v1Heading">Teksttitel ernaast</label>
+            <input id="v1Heading" type="text" maxlength="160" placeholder="Meer dan alleen handbal">
+          </div>
+
+          <div class="field">
+            <label for="v1Body">Tekst ernaast</label>
+            <textarea id="v1Body"></textarea>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <h3>Don Video 2</h3>
+
+          <div class="field">
+            <label for="v2Url">YouTube URL</label>
+            <input id="v2Url" type="url" placeholder="https://www.youtube.com/watch?v=...">
+          </div>
+
+          <div class="field">
+            <label for="v2Title">Videotitel</label>
+            <input id="v2Title" type="text" maxlength="120" placeholder="Don Video 2">
+          </div>
+
+          <div class="field">
+            <label for="v2Heading">Teksttitel ernaast</label>
+            <input id="v2Heading" type="text" maxlength="160" placeholder="Een perfecte afsluiting van het seizoen.">
+          </div>
+
+          <div class="field">
+            <label for="v2Body">Tekst ernaast</label>
+            <textarea id="v2Body"></textarea>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button class="primary" type="submit">💾 Don Nova opslaan</button>
+        </div>
+
+        <div id="status" class="status"></div>
+      </section>
+
+      <section class="card">
+        <h2>Wat wordt hierdoor beheerd?</h2>
+
+        <div class="note">
+          <strong>Don Nova strip</strong><br>
+          De grote afbeelding bovenaan.
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="note">
+          <strong>Don Video 1</strong><br>
+          Video + titel + teksttitel + tekst ernaast.
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="note">
+          <strong>Don Video 2</strong><br>
+          Video + titel + teksttitel + tekst ernaast.
+        </div>
+
+        <div style="height:20px"></div>
+
+        <p class="small">
+          De vaste tekst “Waarom kiezen voor HV Novitas?” en de proeftraining-banner blijven voorlopig vast op de pagina.
+        </p>
+      </section>
+
+    </div>
+
+  </form>
+
+</main>
+
+<script type="module" src="don-nova-cms.js?v=20261004-1"></script>
+</body>
+</html>

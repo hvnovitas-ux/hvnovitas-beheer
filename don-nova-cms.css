@@ -1,0 +1,28 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#222}
+.topbar{background:#ff6a00;color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px;font-weight:700}
+.title{font-size:20px}.userbox{display:flex;align-items:center;gap:10px;font-size:14px}
+.back,.logout,button{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700;text-decoration:none}
+.back{background:#fff;color:#222}.logout{background:#222;color:#fff}
+.page{width:min(1180px,calc(100% - 40px));margin:30px auto}
+.intro,.card{background:#fff;border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.intro{padding:22px;margin-bottom:20px}.intro h1{margin:0 0 8px}.intro p{margin:0;color:#6b7280}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:20px}
+.card{padding:24px}.card h2{margin:0 0 18px}
+.field{margin-bottom:17px}.field label{display:block;margin-bottom:7px;font-weight:700;font-size:14px}
+input,textarea{width:100%;border:1px solid #d7dce1;border-radius:9px;padding:12px 13px;font:inherit;outline:none}
+input:focus,textarea:focus{border-color:#ff6a00;box-shadow:0 0 0 3px rgba(255,106,0,.12)}
+textarea{min-height:110px;resize:vertical}
+.filebox{padding:16px;border:1px dashed #cbd5e1;border-radius:12px;background:#fafafa}
+.preview-strip{margin-top:12px;border-radius:12px;overflow:hidden;background:#111}
+.preview-strip img{display:block;width:100%}
+.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.primary{background:#ff6a00;color:#fff}.secondary{background:#e5e7eb;color:#222}
+.status{display:none;margin-top:14px;padding:11px 12px;border-radius:9px;font-size:13px;font-weight:700}
+.status.ok{display:block;background:#ecfdf3;color:#18794e}.status.error{display:block;background:#fff1f0;color:#b42318}
+.note{padding:12px;border-radius:10px;background:#fff7ed;color:#7c4a19;font-size:13px;line-height:1.45}
+.video-card{padding:18px;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:16px}
+.video-card:last-child{margin-bottom:0}.video-card h3{margin:0 0 16px}
+.small{font-size:12px;color:#6b7280;line-height:1.4}
+@media(max-width:850px){.grid{grid-template-columns:1fr}}
+@media(max-width:600px){.topbar{flex-direction:column;align-items:flex-start}.page{width:min(100% - 28px,1180px);margin-top:20px}.card{padding:18px}}
