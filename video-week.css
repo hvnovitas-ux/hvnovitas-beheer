@@ -1,35 +1,97 @@
 *{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;font-family:Arial,Helvetica,sans-serif}
-.video-week{position:relative;width:100%;height:390px;overflow:hidden;border-radius:18px;background:linear-gradient(145deg,#0b0b0b,#181818 55%,#090909);border:1px solid rgba(255,255,255,.08);box-shadow:0 16px 34px rgba(0,0,0,.20)}
-.video-week::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#ff8a00,#ff6500,#ff8a00);z-index:10}
-.video-week-header{position:relative;height:62px;padding:12px 15px 8px;background:linear-gradient(180deg,#242424,#111)}
-.video-week-title{color:#fff;font-size:19px;font-weight:900;line-height:1;letter-spacing:.055em;text-transform:uppercase}
-.video-week-title span{color:#ff7000}
-.video-week-subtitle{margin-top:6px;color:rgba(255,255,255,.68);font-size:11px}
 
-/* De beschikbare ruimte in het kader wordt nu bewust verdeeld:
-   kleinere video + volledige metadata eronder. */
-.video-week-content{
-  height:328px;
-  padding:10px 12px 12px;
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  background:transparent;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+.video-week{
+  position:relative;
+  width:100%;
+  height:390px;
   overflow:hidden;
-  background:radial-gradient(ellipse at 50% 30%,rgba(255,106,0,.16),transparent 45%),#111;
+  border-radius:18px;
+  background:linear-gradient(145deg,#0b0b0b,#181818 55%,#090909);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 16px 34px rgba(0,0,0,.20);
+}
+
+.video-week::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:5px;
+  background:linear-gradient(90deg,#ff8a00,#ff6500,#ff8a00);
+  z-index:10;
+}
+
+.video-week-header{
+  position:relative;
+  height:60px;
+  padding:11px 15px 7px;
+  background:linear-gradient(180deg,#242424,#111);
+}
+
+.video-week-title{
+  color:#fff;
+  font-size:19px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+
+.video-week-title span{
+  color:#ff7000;
+}
+
+.video-week-subtitle{
+  margin-top:6px;
+  color:rgba(255,255,255,.68);
+  font-size:11px;
+  line-height:1.2;
+}
+
+/* De volledige resterende ruimte van het kader wordt gebruikt. */
+.video-week-content{
+  height:330px;
+  padding:10px 12px 12px;
+  overflow:visible;
+  background:
+    radial-gradient(
+      ellipse at 50% 30%,
+      rgba(255,106,0,.16),
+      transparent 45%
+    ),
+    #111;
 }
 
 .video-week-player{
   position:relative;
   width:100%;
-  height:205px;
+  height:175px;
   overflow:hidden;
   border-radius:11px;
   background:#000;
   border:1px solid rgba(255,255,255,.12);
   box-shadow:0 12px 22px rgba(0,0,0,.28);
 }
-.video-week-player iframe{display:block;width:100%;height:100%;border:0}
+
+.video-week-player iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+}
 
 .video-week-meta{
-  padding:8px 3px 0;
+  padding:9px 3px 0;
   overflow:visible;
 }
 
@@ -43,19 +105,24 @@ html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;font-
 }
 
 .video-week-description{
-  margin-top:5px;
-  color:rgba(255,255,255,.88);
-  font-size:12px;
-  line-height:1.35;
   display:block;
-  max-height:49px;
-  overflow:hidden;
+  margin-top:6px;
+  color:rgba(255,255,255,.92);
+  font-size:12px;
+  line-height:1.4;
+  white-space:normal;
+  overflow:visible;
+  max-height:96px;
 }
 
-.video-week-button{display:none!important}
+.video-week-button{
+  display:none!important;
+}
 
-.video-week-empty,.loading,.error{
-  height:328px;
+.video-week-empty,
+.loading,
+.error{
+  height:330px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -66,11 +133,44 @@ html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;font-
 }
 
 @media(max-width:600px){
-  .video-week{height:320px}
-  .video-week-header{height:55px;padding:11px}
-  .video-week-title{font-size:16px}
-  .video-week-content{height:265px;padding:8px 10px}
-  .video-week-player{height:175px}
-  .video-week-name{font-size:16px}
-  .video-week-description{font-size:10px;line-height:1.3;max-height:39px}
+  .video-week{
+    height:320px;
+  }
+
+  .video-week-header{
+    height:55px;
+    padding:10px 11px 6px;
+  }
+
+  .video-week-title{
+    font-size:16px;
+  }
+
+  .video-week-subtitle{
+    font-size:10px;
+  }
+
+  .video-week-content{
+    height:265px;
+    padding:8px 10px 10px;
+  }
+
+  .video-week-player{
+    height:155px;
+  }
+
+  .video-week-meta{
+    padding-top:7px;
+  }
+
+  .video-week-name{
+    font-size:16px;
+  }
+
+  .video-week-description{
+    margin-top:4px;
+    font-size:10px;
+    line-height:1.35;
+    max-height:67px;
+  }
 }
