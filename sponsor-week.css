@@ -130,9 +130,7 @@ html,body{
 }
 
 /* Bewust verborgen: gebruiker wil alleen logo + naam */
-.sponsor-week-visit{
-  display:none!important;
-}
+.sponsor-week-visit{display:none!important;}
 
 .loading{
   position:relative;
