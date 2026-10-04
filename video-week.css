@@ -20,12 +20,25 @@ html,body{
   box-shadow:0 16px 34px rgba(0,0,0,.20);
 }
 
+/* Oranje balk boven */
 .video-week::before{
   content:"";
   position:absolute;
   top:0;
   left:0;
   right:0;
+  height:5px;
+  background:linear-gradient(90deg,#ff8a00,#ff6500,#ff8a00);
+  z-index:10;
+}
+
+/* Oranje balk onder */
+.video-week::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
   height:5px;
   background:linear-gradient(90deg,#ff8a00,#ff6500,#ff8a00);
   z-index:10;
@@ -58,7 +71,6 @@ html,body{
   line-height:1.2;
 }
 
-/* De volledige resterende ruimte van het kader wordt gebruikt. */
 .video-week-content{
   height:330px;
   padding:10px 12px 12px;
