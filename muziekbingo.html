@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muziekbingo – HV Novitas</title>
+  <link rel="stylesheet" href="muziekbingo.css">
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div>
+        <div class="eyebrow">HV NOVITAS · CMS</div>
+        <h1>🎵 Muziekbingo</h1>
+        <p class="intro">Maak ieder jaar vier rondes met volledig unieke A4-bingokaarten.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>1. Bingo instellen</h2>
+      <div class="grid two">
+        <label>Jaar
+          <input id="year" type="number" min="2000" max="2100" value="2026">
+        </label>
+        <label>Aantal rondes
+          <input id="roundCount" type="number" min="1" max="8" value="4">
+        </label>
+        <label>Aantal kaarten per ronde
+          <input id="cardCount" type="number" min="1" max="500" value="100">
+        </label>
+      </div>
+      <button id="makeRounds" class="primary">Rondes aanmaken</button>
+    </section>
+
+    <section id="roundsSection" class="card hidden">
+      <h2>2. Rondes en songlijsten</h2>
+      <div id="rounds"></div>
+      <div class="actions">
+        <button id="generateAll" class="primary">🎟️ Genereer alle PDF's</button>
+        <button id="saveConfig" class="secondary">Instellingen lokaal bewaren</button>
+      </div>
+      <div id="status" class="status"></div>
+    </section>
+
+    <section class="card info">
+      <h2>Vaste regels</h2>
+      <ul>
+        <li>Per ronde zijn minimaal <strong>60 nummers</strong> nodig.</li>
+        <li>Iedere kaart is uniek binnen de ronde.</li>
+        <li>De 5×5 kaart bevat 24 liedjes en een gekleurd vrij vak in het midden.</li>
+        <li>Nummers worden zowel geselecteerd als over de kaart verdeeld.</li>
+        <li>Elke PDF bevat één kaart per A4-pagina.</li>
+        <li>Er wordt per ronde één aparte PDF gemaakt.</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- jsPDF wordt alleen gebruikt voor het lokaal in de browser maken van de PDF's. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script type="module" src="muziekbingo.js"></script>
+</body>
+</html>
