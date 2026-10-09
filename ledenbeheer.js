@@ -426,9 +426,6 @@ el("previewImportButton").addEventListener("click", async () => {
   el("importPreview").innerHTML = "<p class='muted'>Bestand wordt ingelezen en vergeleken…</p>";
   try {
     const result = await parseWorkbook(file);
-    if (result.isFullHistory && currentRecords().some((member) => member.historicalImportComplete === true)) {
-      throw new Error("De volledige historie is al succesvol ingelezen. Gebruik voortaan alleen Administratie HV Novitas 2026-2027.xlsm voor updates.");
-    }
     if (!result.importable.length && !result.skippedNoDate.length) throw new Error("Ik kon geen ledenregels vinden. Controleer of het bestand een tabblad met de kolommen ‘Nummer’, ‘Naam’ en ‘Lid per’ bevat.");
     currentPreview = buildImportPreview(result);
     renderImportPreview(currentPreview, result);
@@ -564,6 +561,22 @@ function parseExcelDate(value) {
 
 function buildImportPreview(parsed) {
   const existing = currentRecords();
+
+  // De volledige historie is een expliciete vervang-import: de huidige lijst wordt
+  // niet gemengd met oude records. De echte vervanging gebeurt pas na preview,
+  // bevestiging én het typen van VERVANG.
+  if (parsed.isFullHistory) {
+    const entries = parsed.importable.map((incoming) => ({ type: "new", incoming }));
+    return {
+      ...parsed,
+      entries,
+      toWrite: entries,
+      existingCount: existing.length,
+      replacesAll: true,
+      generatedAt: Date.now()
+    };
+  }
+
   const usedKeys = new Set();
   const entries = parsed.importable.map((incoming) => {
     let match = null;
@@ -604,23 +617,42 @@ function renderImportPreview(preview) {
     duplicates: preview.duplicateRows.length
   };
   el("importSummary").hidden = false;
-  el("importSummary").innerHTML = `
-    <strong>Controle van ${escapeHtml(preview.fileName)}</strong>
-    <p class="muted">Werkblad: ${escapeHtml(preview.sheetName)} · ${preview.importable.length} bruikbare ledenregels</p>
-    ${preview.isFullHistory ? '<p class="small-note history-import-note"><strong>Volledige historie herkend.</strong> Dit is de eenmalige import vanaf 2012. Na verwerking moet je direct het actuele bestand Administratie HV Novitas 2026-2027.xlsm inlezen om de huidige actieve leden te synchroniseren.</p>' : ''}
-    <div class="summary-grid">
-      <div class="summary-item"><strong>${counts.new}</strong><span>Nieuwe leden</span></div>
-      <div class="summary-item"><strong>${counts.changed}</strong><span>Gewijzigd</span></div>
-      <div class="summary-item"><strong>${counts.same}</strong><span>Ongewijzigd</span></div>
-      <div class="summary-item"><strong>${counts.noDate}</strong><span>Zonder lid-datum overgeslagen</span></div>
-      <div class="summary-item"><strong>${counts.duplicates}</strong><span>Dubbele regels overgeslagen</span></div>
-      <div class="summary-item"><strong>${preview.skippedNoName.length}</strong><span>Lege regels overgeslagen</span></div>
-    </div>
-    <p>${preview.isFullHistory ? 'Bij bevestigen worden de historische records éénmalig opgeslagen, inclusief ongewijzigde regels. Na afloop lees je het actuele ledenbestand in om de huidige status bij te werken.' : 'Bij bevestigen worden alleen nieuwe of gewijzigde regels verwerkt. Leden die ontbreken in het Excel-bestand blijven behouden. Handmatig afgemelde leden worden niet automatisch weer actief gemaakt.'}</p>
-  `;
+  if (preview.isFullHistory) {
+    el("importSummary").innerHTML = `
+      <strong>Controle van ${escapeHtml(preview.fileName)}</strong>
+      <p class="muted">Werkblad: ${escapeHtml(preview.sheetName)} · ${preview.importable.length} bruikbare lidmaatschapsregels</p>
+      <p class="small-note history-import-note"><strong>Let op: dit is een volledige vervanging.</strong> Bij bevestiging worden alle ${preview.existingCount} bestaande records in de ledenlijst verwijderd/vervangen door de records uit dit Excel-bestand. Alleen de ledenlijst wordt aangepast; dashboard en andere CMS-onderdelen blijven ongemoeid.</p>
+      <div class="summary-grid">
+        <div class="summary-item"><strong>${preview.importable.length}</strong><span>Records uit de volledige historie</span></div>
+        <div class="summary-item"><strong>${preview.existingCount}</strong><span>Bestaande records die worden vervangen</span></div>
+        <div class="summary-item"><strong>${counts.noDate}</strong><span>Zonder lid-datum overgeslagen</span></div>
+        <div class="summary-item"><strong>${counts.duplicates}</strong><span>Dubbele Excel-regels overgeslagen</span></div>
+        <div class="summary-item"><strong>${preview.skippedNoName.length}</strong><span>Lege regels overgeslagen</span></div>
+      </div>
+      <p>Na de vervanging tellen de grafieken opnieuw vanaf de historische bron. Controleer de lijst daarna; importeer het actuele bestand 2026–2027 alleen als de actuele statussen bijgewerkt moeten worden.</p>
+    `;
+  } else {
+    el("importSummary").innerHTML = `
+      <strong>Controle van ${escapeHtml(preview.fileName)}</strong>
+      <p class="muted">Werkblad: ${escapeHtml(preview.sheetName)} · ${preview.importable.length} bruikbare ledenregels</p>
+      <div class="summary-grid">
+        <div class="summary-item"><strong>${counts.new}</strong><span>Nieuwe leden</span></div>
+        <div class="summary-item"><strong>${counts.changed}</strong><span>Gewijzigd</span></div>
+        <div class="summary-item"><strong>${counts.same}</strong><span>Ongewijzigd</span></div>
+        <div class="summary-item"><strong>${counts.noDate}</strong><span>Zonder lid-datum overgeslagen</span></div>
+        <div class="summary-item"><strong>${counts.duplicates}</strong><span>Dubbele regels overgeslagen</span></div>
+        <div class="summary-item"><strong>${preview.skippedNoName.length}</strong><span>Lege regels overgeslagen</span></div>
+      </div>
+      <p>Bij bevestigen worden alleen nieuwe of gewijzigde regels verwerkt. Leden die ontbreken in het Excel-bestand blijven behouden. Handmatig afgemelde leden worden niet automatisch weer actief gemaakt.</p>
+    `;
+  }
   const previewRows = [];
   for (const item of preview.entries) {
-    const tag = item.type === "new" ? '<span class="pill pill-new">Nieuw</span>' : item.type === "changed" ? `<span class="pill pill-change">Gewijzigd: ${escapeHtml(item.changedFields.join(", "))}</span>` : '<span class="pill pill-same">Geen wijziging</span>';
+    const tag = preview.isFullHistory
+      ? '<span class="pill pill-change">Wordt opnieuw ingelezen</span>'
+      : item.type === "new" ? '<span class="pill pill-new">Nieuw</span>'
+      : item.type === "changed" ? `<span class="pill pill-change">Gewijzigd: ${escapeHtml(item.changedFields.join(", "))}</span>`
+      : '<span class="pill pill-same">Geen wijziging</span>';
     previewRows.push(`<tr><td>${escapeHtml(item.incoming.nummer || "—")}</td><td>${escapeHtml(item.incoming.naam)}</td><td>${escapeHtml(formatDate(item.incoming.lidSinds))}</td><td>${escapeHtml(item.incoming.categorie || "—")}</td><td>${tag}</td></tr>`);
   }
   for (const item of preview.skippedNoDate) {
@@ -639,14 +671,61 @@ el("applyImportButton").addEventListener("click", async () => {
   const changedCount = preview.toWrite.filter((item) => item.type === "changed").length;
   const sameCount = preview.toWrite.filter((item) => item.type === "same").length;
   const confirmation = preview.isFullHistory
-    ? `De VOLLEDIGE ledenhistorie eenmalig verwerken?\n\nLedenregels met datum: ${preview.toWrite.length}\nNieuwe records: ${freshCount}\nBijgewerkte records: ${changedCount}\nOngewijzigde bestaande records: ${sameCount}\nOvergeslagen zonder lid-datum: ${preview.skippedNoDate.length}\n\nNa afloop importeer je direct het actuele bestand Administratie HV Novitas 2026-2027.xlsm. Daarna gebruik je alleen dat actuele bestand.`
+    ? `LET OP: DE BESTAANDE LEDENLIJST WORDT VERVANGEN.\n\nBestaande records die worden vervangen: ${preview.existingCount}\nNieuwe records uit Administratie HV Novitas.xlsm: ${preview.importable.length}\nOvergeslagen zonder lid-datum: ${preview.skippedNoDate.length}\n\nDit vervangt uitsluitend ledenadministratie/leden. Het dashboard en andere CMS-gegevens blijven staan. Wil je doorgaan?`
     : `De gecontroleerde import verwerken?\n\nNieuwe leden: ${freshCount}\nBijgewerkte records: ${changedCount}\nOvergeslagen zonder lid-datum: ${preview.skippedNoDate.length}\n\nLeden die niet in het bestand staan, worden niet verwijderd.`;
   if (!confirm(confirmation)) return;
+  if (preview.isFullHistory) {
+    const typed = prompt("Laatste controle: typ VERVANG om de bestaande ledenlijst volledig te vervangen door de historie vanaf 2012.");
+    if (String(typed || "").trim().toUpperCase() !== "VERVANG") {
+      showNotice("Vervanging afgebroken. Er is niets gewijzigd.", "info");
+      return;
+    }
+  }
 
   importBusy = true;
   el("applyImportButton").disabled = true;
   el("previewImportButton").disabled = true;
   try {
+    if (preview.isFullHistory) {
+      const replacementData = {};
+      const now = Date.now();
+      for (const item of preview.toWrite) {
+        const incoming = item.incoming;
+        const memberRef = push(ledenRef);
+        replacementData[memberRef.key] = {
+          nummer: incoming.nummer,
+          naam: incoming.naam,
+          lidSinds: incoming.lidSinds,
+          categorie: incoming.categorie,
+          active: incoming.sourceActive,
+          endDate: null,
+          deactivatedManually: false,
+          source: "historie",
+          historicalRecord: true,
+          historicalImportComplete: true,
+          historicalImportedAt: now,
+          createdAt: now,
+          updatedAt: now,
+          importedAt: now,
+          updatedBy: user?.email || "CMS"
+        };
+      }
+      if (!Object.keys(replacementData).length) {
+        throw new Error("De historie bevat geen bruikbare records. De bestaande ledenlijst is niet aangepast.");
+      }
+
+      // Eén atomaire write: eerst staat de preview klaar; na VERVANG wordt alleen
+      // ledenadministratie/leden volledig vervangen. Andere Firebase-paden blijven onaangeroerd.
+      await set(ledenRef, replacementData);
+      currentPreview = null;
+      el("importSummary").hidden = true;
+      el("importPreview").innerHTML = "";
+      el("applyImportButton").disabled = true;
+      el("importFile").value = "";
+      showNotice(`Volledige ledenadministratie opnieuw opgebouwd: ${Object.keys(replacementData).length} lidmaatschapsrecords geladen. De historische grafiek is nu gebaseerd op deze bron. Controleer de actuele ledenstatussen; importeer het bestand 2026–2027 als die nog moeten worden bijgewerkt.`);
+      return;
+    }
+
     let added = 0;
     let updated = 0;
     let unchangedMarked = 0;

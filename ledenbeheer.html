@@ -136,7 +136,7 @@
       <section class="panel import-panel">
         <h2>Excel opnieuw invoeren</h2>
         <p class="muted">Kies het ledenbestand (.xlsm of .xlsx). Eerst wordt alles vergeleken; er wordt niets opgeslagen totdat je de import bevestigt.</p>
-        <p class="small-note history-import-note"><strong>Eerste keer:</strong> importeer eerst eenmalig <em>Administratie HV Novitas.xlsm</em> (de volledige historie vanaf 2012). Verwerk daarna direct <em>Administratie HV Novitas 2026-2027.xlsm</em> om de huidige actieve leden bij te werken. Daarna gebruik je alleen het actuele bestand; de volledige historie kan niet per ongeluk nogmaals worden geïmporteerd.</p>
+        <p class="small-note history-import-note"><strong>Volledige historie opnieuw opbouwen:</strong> kies <em>Administratie HV Novitas.xlsm</em>. Na controle vraagt het CMS nadrukkelijk om bevestiging en het woord VERVANG. Hiermee vervang je alleen alle bestaande ledenrecords door de historische regels vanaf 2012; het dashboard en andere CMS-onderdelen blijven ongemoeid. Voor gewone updates gebruik je daarna alleen <em>Administratie HV Novitas 2026-2027.xlsm</em>.</p>
         <div class="field">
           <label for="importFile">Excel-bestand</label>
           <input id="importFile" type="file" accept=".xlsm,.xlsx,.xls,.xlsb,.csv">
@@ -145,7 +145,7 @@
         <button id="applyImportButton" class="button button-secondary" type="button" disabled>Bevestigde wijzigingen verwerken</button>
         <div id="importSummary" class="import-summary" hidden></div>
         <div id="importPreview" class="import-preview"></div>
-        <p class="small-note">Veiligheidsregel: leden die niet in een nieuwe import staan, worden niet automatisch verwijderd. Leden zonder ‘Lid per’-datum worden overgeslagen, omdat ze volgens de gekozen werkwijze nog niet meetellen als lid.</p>
+        <p class="small-note">Veiligheidsregel: alleen de import van het volledige historie-bestand vervangt de complete ledenlijst, na een aparte bevestiging. Een gewone actuele import voegt alleen nieuwe records toe of werkt bestaande records bij; ontbrekende leden worden niet automatisch verwijderd. Regels zonder ‘Lid per’-datum worden overgeslagen.</p>
       </section>
     </section>
 
