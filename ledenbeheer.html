@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ledenadministratie - HV Novitas</title>
+  <link rel="stylesheet" href="ledenbeheer.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🧡 HV NOVITAS CMS</div>
+    <div class="userbox">
+      <span id="userInfo">Laden...</span>
+      <button id="logoutButton" class="button button-light" type="button">Uitloggen</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="intro panel">
+      <div>
+        <p class="eyebrow">CMS · LEDEN</p>
+        <h1>Ledenadministratie</h1>
+        <p>Bekijk aanmeldingen per jaar, beheer tussentijdse wijzigingen en controleer een nieuwe Excel-import voordat die wordt opgeslagen.</p>
+      </div>
+      <a class="button button-secondary" href="dashboard.html">← Terug naar dashboard</a>
+    </section>
+
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <section class="stats-grid" aria-label="Ledenaantallen">
+      <article class="stat-card stat-primary">
+        <div class="stat-label">Huidige leden</div>
+        <div id="activeCount" class="stat-number">—</div>
+        <div class="stat-note">Actief en met een aanmelddatum</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-label">Afgemeld</div>
+        <div id="inactiveCount" class="stat-number">—</div>
+        <div class="stat-note">Historisch bewaarde leden</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-label">Totaal geregistreerd</div>
+        <div id="recordCount" class="stat-number">—</div>
+        <div class="stat-note">Inclusief afgemelde leden</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-label">Aanmeldingen dit jaar</div>
+        <div id="yearCount" class="stat-number">—</div>
+        <div id="thisYearLabel" class="stat-note">Op basis van de aanmelddatum</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h2>Aanmeldingen per kalenderjaar</h2>
+          <p class="muted">Iedere persoon wordt één keer geteld in het jaar van de aanmelddatum. Afmeldingen blijven in de historische grafiek staan.</p>
+        </div>
+      </div>
+      <div id="annualChart" class="chart-wrap">
+        <p class="muted">Nog geen ledengegevens. Importeer eerst het Excel-bestand.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table year-table">
+          <thead><tr><th>Jaar</th><th>Aanmeldingen</th></tr></thead>
+          <tbody id="annualTableBody"><tr><td colspan="2" class="empty-cell">Nog geen gegevens</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="two-columns">
+      <section class="panel">
+        <h2>Lid handmatig toevoegen</h2>
+        <p class="muted">Gebruik dit wanneer iemand tussentijds lid wordt. Een aanmelddatum is verplicht voor de telling.</p>
+        <form id="memberForm">
+          <div class="field">
+            <label for="memberNumber">Lidnummer (optioneel)</label>
+            <input id="memberNumber" name="memberNumber" type="text" autocomplete="off" placeholder="Bijv. 226">
+          </div>
+          <div class="field">
+            <label for="memberName">Naam *</label>
+            <input id="memberName" name="memberName" type="text" required maxlength="120" autocomplete="off" placeholder="Voor- en achternaam">
+          </div>
+          <div class="field">
+            <label for="memberSince">Aanmelddatum *</label>
+            <input id="memberSince" name="memberSince" type="date" required>
+          </div>
+          <div class="field">
+            <label for="memberCategory">Categorie</label>
+            <select id="memberCategory" name="memberCategory">
+              <option value="">Kies een categorie</option>
+              <option>Dames - Spelend</option>
+              <option>Dames - Recreanten</option>
+              <option>Dames - Niet Spelend</option>
+              <option>Heren - Spelend</option>
+              <option>Heren - Recreanten</option>
+              <option>Heren - Niet Spelend</option>
+              <option>Jeugd - Spelend</option>
+              <option>Jeugd - Niet Spelend</option>
+              <option>Overig</option>
+            </select>
+          </div>
+          <button id="saveMemberButton" class="button" type="submit">+ Lid toevoegen</button>
+        </form>
+      </section>
+
+      <section class="panel import-panel">
+        <h2>Excel opnieuw invoeren</h2>
+        <p class="muted">Kies het ledenbestand (.xlsm of .xlsx). Eerst wordt alles vergeleken; er wordt niets opgeslagen totdat je de import bevestigt.</p>
+        <div class="field">
+          <label for="importFile">Excel-bestand</label>
+          <input id="importFile" type="file" accept=".xlsm,.xlsx,.xls,.xlsb,.csv">
+        </div>
+        <button id="previewImportButton" class="button" type="button">Bestand controleren</button>
+        <button id="applyImportButton" class="button button-secondary" type="button" disabled>Bevestigde wijzigingen verwerken</button>
+        <div id="importSummary" class="import-summary" hidden></div>
+        <div id="importPreview" class="import-preview"></div>
+        <p class="small-note">Veiligheidsregel: leden die niet in een nieuwe import staan, worden niet automatisch verwijderd. Leden zonder ‘Lid per’-datum worden overgeslagen, omdat ze volgens de gekozen werkwijze nog niet meetellen als lid.</p>
+      </section>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading member-list-heading">
+        <div>
+          <h2>Leden beheren</h2>
+          <p class="muted">Afgemelde leden blijven bewaard voor de historische telling.</p>
+        </div>
+        <button id="exportButton" type="button" class="button button-secondary">Exporteren als CSV</button>
+      </div>
+      <div class="filters">
+        <div class="field search-field">
+          <label for="searchMembers">Zoeken</label>
+          <input id="searchMembers" type="search" placeholder="Naam, lidnummer of categorie">
+        </div>
+        <div class="field filter-field">
+          <label for="memberStatusFilter">Toon</label>
+          <select id="memberStatusFilter">
+            <option value="active">Huidige leden</option>
+            <option value="inactive">Afgemeld</option>
+            <option value="all">Alle leden</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Lidnr.</th><th>Naam</th><th>Lid per</th><th>Categorie</th><th>Status</th><th>Actie</th></tr>
+          </thead>
+          <tbody id="membersTableBody"><tr><td colspan="6" class="empty-cell">Leden laden...</td></tr></tbody>
+        </table>
+      </div>
+      <p id="memberListCount" class="muted list-count"></p>
+    </section>
+
+    <footer class="footer">HV Novitas · Ledenadministratie · Excel-bestanden worden in deze browser ingelezen.</footer>
+  </main>
+  <script type="module" src="ledenbeheer.js"></script>
+</body>
+</html>
