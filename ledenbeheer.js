@@ -3,6 +3,8 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { ref, onValue, push, set, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const DB_PATH = "ledenadministratie/leden";
+const HISTORICAL_START_YEAR = 2012;
+const HISTORICAL_START_DATE = `${HISTORICAL_START_YEAR}-01-01`;
 const ledenRef = ref(db, DB_PATH);
 const el = (id) => document.getElementById(id);
 let user = null;
@@ -52,6 +54,13 @@ function normalize(value) {
   return String(value ?? "").trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ");
 }
 
+// Deze twee schrijfwijzen verwijzen in de ledenhistorie naar dezelfde persoon.
+function canonicalPersonKey(value) {
+  const key = normalize(value);
+  if (key === "saskia van goethem" || key === "saskia van goethen") return "saskia van goethem";
+  return key;
+}
+
 function escapeHtml(value = "") {
   return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
@@ -72,8 +81,8 @@ function currentRecords() {
 }
 
 function isCurrentMember(member) {
-  // Alleen records met een echte aanmelddatum tellen mee als lid.
-  return member.active !== false && validISODate(member.lidSinds);
+  // Alleen records met een echte aanmelddatum vanaf de start van Novitas tellen mee.
+  return member.active !== false && validISODate(member.lidSinds) && member.lidSinds >= HISTORICAL_START_DATE;
 }
 
 function renderDashboard() {
@@ -81,7 +90,7 @@ function renderDashboard() {
   const active = records.filter(isCurrentMember);
   const inactive = records.filter((member) => !isCurrentMember(member));
   const year = new Date().getFullYear();
-  const datedRecords = records.filter((member) => validISODate(member.lidSinds));
+  const datedRecords = records.filter((member) => validISODate(member.lidSinds) && member.lidSinds >= HISTORICAL_START_DATE);
   const joinedThisYear = datedRecords.filter((member) => Number(member.lidSinds.slice(0, 4)) === year).length;
 
   el("activeCount").textContent = String(active.length);
@@ -97,7 +106,7 @@ function renderDashboard() {
   for (const member of datedRecords) {
     const y = Number(member.lidSinds.slice(0, 4));
     counts.set(y, (counts.get(y) || 0) + 1);
-    const personKey = normalize(member.naam);
+    const personKey = canonicalPersonKey(member.naam);
     if (!personKey) continue;
     const previous = firstMembershipByPerson.get(personKey);
     if (!previous || member.lidSinds < previous.date) {
@@ -120,7 +129,7 @@ function renderDashboard() {
     uniqueCounts.set(y, (uniqueCounts.get(y) || 0) + 1);
   }
   const years = [...counts.keys()].sort((a, b) => a - b);
-  const firstYear = years[0];
+  const firstYear = Math.max(HISTORICAL_START_YEAR, years[0]);
   const lastYear = Math.max(years[years.length - 1], year);
   const chartYears = [];
   for (let y = firstYear; y <= lastYear; y++) chartYears.push(y);
@@ -183,7 +192,8 @@ function renderLongevityRanking() {
   const today = new Date();
   const cutoffDate = new Date(today.getFullYear() - 8, today.getMonth(), today.getDate());
   const cutoffISO = `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, "0")}-${String(cutoffDate.getDate()).padStart(2, "0")}`;
-  const activeRecords = currentRecords().filter(isCurrentMember);
+  const allRecords = currentRecords().filter((member) => validISODate(member.lidSinds) && member.lidSinds >= HISTORICAL_START_DATE);
+  const activeRecords = allRecords.filter(isCurrentMember);
   const patricia = activeRecords.find((member) => normalize(member.naam) === "patricia bel");
   const existingErwin = activeRecords.find((member) => normalize(member.naam) === "erwin bel");
 
@@ -195,24 +205,38 @@ function renderLongevityRanking() {
       return name !== "erwin bel" && name !== "mischa de vliegere";
     })
     .map((member) => {
-      const name = normalize(member.naam);
-      // De weergegeven aanmelddatum blijft de datum uit de administratie.
-      // Voor deze leden wordt de lidmaatschapsduur één jaar korter berekend.
-      const durationAdjustmentNames = new Set([
-        "carsten van waterschoot",
-        "erik pijpelink",
-        "kay scheele"
-      ]);
-      const rankingDate = member.lidSinds;
+      const name = canonicalPersonKey(member.naam);
+      let displayName = member.naam;
+      let rankingDate = member.lidSinds;
+
+      // De actuele Excel schrijft Saskia's achternaam soms als "Goethen".
+      // Gebruik voor haar ranglijst de oudste bekende aanmelddatum uit de historie.
+      if (name === "saskia van goethem") {
+        const historicSaskia = allRecords
+          .filter((record) => canonicalPersonKey(record.naam) === "saskia van goethem")
+          .sort((a, b) => a.lidSinds.localeCompare(b.lidSinds))[0];
+        if (historicSaskia) rankingDate = historicSaskia.lidSinds;
+        displayName = "Saskia van Goethem";
+      }
+
+      // De datum in de kolom blijft de oorspronkelijke datum. Alleen de getoonde
+      // duur wordt gecorrigeerd voor de afgesproken seizoenen elders.
+      const durationAdjustmentYears = {
+        "carsten van waterschoot": 1,
+        "erik pijpelink": 1,
+        "kay scheele": 1,
+        "saskia van goethem": 3
+      };
+      const yearsToSubtract = durationAdjustmentYears[name] || 0;
       let durationStartDate = rankingDate;
-      if (durationAdjustmentNames.has(name)) {
+      if (yearsToSubtract > 0) {
         const date = localDateFromISO(rankingDate);
         if (date) {
-          date.setFullYear(date.getFullYear() + 1);
+          date.setFullYear(date.getFullYear() + yearsToSubtract);
           durationStartDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
         }
       }
-      return { ...member, rankingDate, durationStartDate };
+      return { ...member, naam: displayName, rankingDate, durationStartDate };
     });
 
   const erwinDate = validISODate(patricia?.lidSinds)
@@ -471,6 +495,7 @@ async function parseWorkbook(file) {
 
   const importable = [];
   const skippedNoDate = [];
+  const skippedBeforeStart = [];
   const skippedNoName = [];
   const duplicateRows = [];
   const seenNumbers = new Set();
@@ -493,6 +518,10 @@ async function parseWorkbook(file) {
       skippedNoDate.push({ nummer, naam, categorie, rowNumber: i + 1, reason: "Geen ‘Lid per’-datum; volgens afspraak nog niet meetellen als lid." });
       continue;
     }
+    if (lidSinds < HISTORICAL_START_DATE) {
+      skippedBeforeStart.push({ nummer, naam, categorie, lidSinds, rowNumber: i + 1, reason: "Aanmelddatum ligt vóór de start van HV Novitas in 2012." });
+      continue;
+    }
     const numberKey = normalize(nummer);
     const nameKey = normalize(naam);
     // Een lidnummer is de primaire identiteit van een aanmelding. Dezelfde naam
@@ -506,7 +535,7 @@ async function parseWorkbook(file) {
     else seenNames.add(nameKey);
     importable.push({ nummer, naam, lidSinds, categorie, sourceActive, rowNumber: i + 1 });
   }
-  return { fileName: file.name, sheetName, isFullHistory: isFullHistoryWorkbook(file.name), importable, skippedNoDate, skippedNoName, duplicateRows };
+  return { fileName: file.name, sheetName, isFullHistory: isFullHistoryWorkbook(file.name), importable, skippedNoDate, skippedBeforeStart, skippedNoName, duplicateRows };
 }
 
 
@@ -614,6 +643,7 @@ function renderImportPreview(preview) {
     changed: preview.entries.filter((item) => item.type === "changed").length,
     same: preview.entries.filter((item) => item.type === "same").length,
     noDate: preview.skippedNoDate.length,
+    beforeStart: (preview.skippedBeforeStart || []).length,
     duplicates: preview.duplicateRows.length
   };
   el("importSummary").hidden = false;
@@ -626,6 +656,7 @@ function renderImportPreview(preview) {
         <div class="summary-item"><strong>${preview.importable.length}</strong><span>Records uit de volledige historie</span></div>
         <div class="summary-item"><strong>${preview.existingCount}</strong><span>Bestaande records die worden vervangen</span></div>
         <div class="summary-item"><strong>${counts.noDate}</strong><span>Zonder lid-datum overgeslagen</span></div>
+        <div class="summary-item"><strong>${counts.beforeStart}</strong><span>Vóór 2012 uitgesloten</span></div>
         <div class="summary-item"><strong>${counts.duplicates}</strong><span>Dubbele Excel-regels overgeslagen</span></div>
         <div class="summary-item"><strong>${preview.skippedNoName.length}</strong><span>Lege regels overgeslagen</span></div>
       </div>
@@ -640,6 +671,7 @@ function renderImportPreview(preview) {
         <div class="summary-item"><strong>${counts.changed}</strong><span>Gewijzigd</span></div>
         <div class="summary-item"><strong>${counts.same}</strong><span>Ongewijzigd</span></div>
         <div class="summary-item"><strong>${counts.noDate}</strong><span>Zonder lid-datum overgeslagen</span></div>
+        <div class="summary-item"><strong>${counts.beforeStart}</strong><span>Vóór 2012 uitgesloten</span></div>
         <div class="summary-item"><strong>${counts.duplicates}</strong><span>Dubbele regels overgeslagen</span></div>
         <div class="summary-item"><strong>${preview.skippedNoName.length}</strong><span>Lege regels overgeslagen</span></div>
       </div>
@@ -657,6 +689,9 @@ function renderImportPreview(preview) {
   }
   for (const item of preview.skippedNoDate) {
     previewRows.push(`<tr><td>${escapeHtml(item.nummer || "—")}</td><td>${escapeHtml(item.naam)}</td><td>Geen datum</td><td>${escapeHtml(item.categorie || "—")}</td><td><span class="pill pill-skip">Overgeslagen: nog geen lid</span></td></tr>`);
+  }
+  for (const item of (preview.skippedBeforeStart || [])) {
+    previewRows.push(`<tr><td>${escapeHtml(item.nummer || "—")}</td><td>${escapeHtml(item.naam)}</td><td>${escapeHtml(formatDate(item.lidSinds))}</td><td>${escapeHtml(item.categorie || "—")}</td><td><span class="pill pill-skip">Uitgesloten: vóór 2012</span></td></tr>`);
   }
   for (const item of preview.duplicateRows) {
     previewRows.push(`<tr><td>${escapeHtml(item.nummer || "—")}</td><td>${escapeHtml(item.naam)}</td><td>—</td><td>—</td><td><span class="pill pill-inactive">Dubbele Excel-regel</span></td></tr>`);
@@ -806,7 +841,7 @@ el("applyImportButton").addEventListener("click", async () => {
     el("importPreview").innerHTML = "";
     el("applyImportButton").disabled = true;
     el("importFile").value = "";
-    const skippedText = `${preview.skippedNoDate.length} regels zonder ‘Lid per’-datum zijn niet geïmporteerd.`;
+    const skippedText = `${preview.skippedNoDate.length} regels zonder ‘Lid per’-datum zijn niet geïmporteerd; ${(preview.skippedBeforeStart || []).length} regels met een aanmelddatum vóór 2012 zijn uitgesloten.`;
     if (preview.isFullHistory) {
       showNotice(`Volledige historie verwerkt: ${added} nieuwe lidmaatschapsrecords toegevoegd, ${updated} bijgewerkt en ${unchangedMarked} ongewijzigde records gemarkeerd. ${skippedText} Importeer nu het actuele bestand Administratie HV Novitas 2026-2027.xlsm om actieve statussen bij te werken.`);
     } else {
