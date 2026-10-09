@@ -181,8 +181,7 @@ function renderLongevityRanking() {
   const patricia = activeRecords.find((member) => normalize(member.naam) === "patricia bel");
   const existingErwin = activeRecords.find((member) => normalize(member.naam) === "erwin bel");
 
-  // Erwin wordt alleen voor deze ranglijst gekoppeld aan Patricia's datum.
-  // Er wordt geen record toegevoegd of gewijzigd in Firebase.
+  // De ranglijst gebruikt de afgesproken datum voor de weergave; Firebase-records blijven ongewijzigd.
   const rankingMembers = activeRecords
     .filter((member) => normalize(member.naam) !== "erwin bel")
     .map((member) => ({ ...member, rankingDate: member.lidSinds }));
@@ -192,7 +191,7 @@ function renderLongevityRanking() {
     naam: "Erwin Bel",
     lidSinds: linkedDate,
     rankingDate: linkedDate,
-    linkedToPatricia: true
+    rankingOnly: true
   });
 
   const eligible = rankingMembers
@@ -207,8 +206,7 @@ function renderLongevityRanking() {
         return 2;
       };
       return priority(a) - priority(b) || normalize(a.naam).localeCompare(normalize(b.naam), "nl");
-    })
-    .slice(0, 10);
+    });
 
   if (!eligible.length) {
     body.innerHTML = '<tr><td colspan="4" class="empty-cell">Nog geen huidige leden met minimaal 8 jaar lidmaatschap.</td></tr>';
@@ -218,10 +216,9 @@ function renderLongevityRanking() {
 
   body.innerHTML = eligible.map((member, index) => {
     const duration = getMembershipDuration(member.rankingDate, today);
-    const linkedNote = member.linkedToPatricia ? ' <span class="linked-note">gekoppeld aan Patricia</span>' : "";
-    return `<tr><td class="rank-cell">${index + 1}</td><td><strong>${escapeHtml(member.naam)}</strong>${linkedNote}</td><td>${escapeHtml(formatDate(member.rankingDate))}</td><td><strong>${escapeHtml(formatMembershipDuration(duration))}</strong></td></tr>`;
+    return `<tr><td class="rank-cell">${index + 1}</td><td><strong>${escapeHtml(member.naam)}</strong></td><td>${escapeHtml(formatDate(member.rankingDate))}</td><td><strong>${escapeHtml(formatMembershipDuration(duration))}</strong></td></tr>`;
   }).join("");
-  countLabel.textContent = `${eligible.length} ${eligible.length === 1 ? "lid" : "leden"} in de Top 10 (minimaal 8 jaar lid).`;
+  countLabel.textContent = `${eligible.length} ${eligible.length === 1 ? "lid" : "leden"} met minimaal 8 jaar lidmaatschap.`;
 }
 
 function renderCumulativeChart(series) {
