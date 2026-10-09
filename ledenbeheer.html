@@ -47,7 +47,7 @@
       <article class="stat-card stat-total-ever">
         <div class="stat-label">Totaal ooit lid geweest</div>
         <div id="everCount" class="stat-number">—</div>
-        <div class="stat-note">Inclusief 55 vaste historische leden</div>
+        <div class="stat-note">Unieke personen op basis van de volledige historie</div>
       </article>
       <article class="stat-card">
         <div class="stat-label">Aanmeldingen dit jaar</div>
@@ -60,22 +60,22 @@
       <div class="section-heading">
         <div>
           <h2>Aanmeldingen per kalenderjaar</h2>
-          <p class="muted">Vaste historische basis: 2012 (13), 2013 (33) en 2014 (9) voor 55 personen die ontbreken in het actuele Excel-bestand. Er worden hiervoor geen namen opgeslagen. Aanmeldingen uit de CMS-ledenadministratie worden erbij opgeteld; afmeldingen blijven in de historische grafiek staan.</p>
+          <p class="muted">De staafgrafiek telt iedere aanmelding met een geldige datum per kalenderjaar, ook als iemand later is afgemeld of opnieuw lid is geworden. De totaalteller en cumulatieve grafiek tellen iedere persoon één keer op basis van de eerste bekende aanmelddatum.</p>
         </div>
       </div>
       <div id="annualChart" class="chart-wrap">
         <p class="muted">Nog geen ledengegevens. Importeer eerst het Excel-bestand.</p>
       </div>
       <div class="cumulative-block">
-        <h3>Totaal leden opgebouwd door de jaren heen</h3>
-        <p class="muted">Dit is het cumulatieve totaal: de historische basis plus alle geregistreerde aanmeldingen tot en met elk jaar.</p>
+        <h3>Totaal verschillende leden door de jaren heen</h3>
+        <p class="muted">Dit is het cumulatieve aantal verschillende personen, vanaf hun eerste geregistreerde aanmelddatum.</p>
         <div id="cumulativeChart" class="chart-wrap">
           <p class="muted">Nog geen ledengegevens.</p>
         </div>
       </div>
       <div class="table-wrap">
         <table class="data-table year-table">
-          <thead><tr><th>Jaar</th><th>Aanmeldingen in dat jaar</th><th>Totaal leden t/m dat jaar</th></tr></thead>
+          <thead><tr><th>Jaar</th><th>Aanmeldingen in dat jaar</th><th>Verschillende leden t/m dat jaar</th></tr></thead>
           <tbody id="annualTableBody"><tr><td colspan="3" class="empty-cell">Nog geen gegevens</td></tr></tbody>
         </table>
       </div>
@@ -136,6 +136,7 @@
       <section class="panel import-panel">
         <h2>Excel opnieuw invoeren</h2>
         <p class="muted">Kies het ledenbestand (.xlsm of .xlsx). Eerst wordt alles vergeleken; er wordt niets opgeslagen totdat je de import bevestigt.</p>
+        <p class="small-note history-import-note"><strong>Eerste keer:</strong> importeer eerst eenmalig <em>Administratie HV Novitas.xlsm</em> (de volledige historie vanaf 2012). Verwerk daarna direct <em>Administratie HV Novitas 2026-2027.xlsm</em> om de huidige actieve leden bij te werken. Daarna gebruik je alleen het actuele bestand; de volledige historie kan niet per ongeluk nogmaals worden geïmporteerd.</p>
         <div class="field">
           <label for="importFile">Excel-bestand</label>
           <input id="importFile" type="file" accept=".xlsm,.xlsx,.xls,.xlsb,.csv">

@@ -3,14 +3,6 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { ref, onValue, push, set, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const DB_PATH = "ledenadministratie/leden";
-// Vaste historische basis uit het oude ledenbestand.
-// Dit zijn alleen aantallen van namen die niet in het bestand 2026-2027 staan;
-// er worden voor deze historische basis geen namen opgeslagen.
-const HISTORICAL_BASELINE_BY_YEAR = Object.freeze({
-  2012: 13,
-  2013: 33,
-  2014: 9
-});
 const ledenRef = ref(db, DB_PATH);
 const el = (id) => document.getElementById(id);
 let user = null;
@@ -89,7 +81,8 @@ function renderDashboard() {
   const active = records.filter(isCurrentMember);
   const inactive = records.filter((member) => !isCurrentMember(member));
   const year = new Date().getFullYear();
-  const joinedThisYear = records.filter((member) => validISODate(member.lidSinds) && Number(member.lidSinds.slice(0, 4)) === year).length;
+  const datedRecords = records.filter((member) => validISODate(member.lidSinds));
+  const joinedThisYear = datedRecords.filter((member) => Number(member.lidSinds.slice(0, 4)) === year).length;
 
   el("activeCount").textContent = String(active.length);
   el("inactiveCount").textContent = String(inactive.length);
@@ -97,35 +90,48 @@ function renderDashboard() {
   el("yearCount").textContent = String(joinedThisYear);
   el("thisYearLabel").textContent = `Aanmelddatums in ${year}`;
 
-  // Begin met de vaste historische aantallen voor leden die ontbreken
-  // in het actuele Excel-bestand. Tel daarna de opgeslagen CMS/Excel-records erbij.
-  const counts = new Map(
-    Object.entries(HISTORICAL_BASELINE_BY_YEAR).map(([y, count]) => [Number(y), count])
-  );
-  for (const member of records) {
-    if (!validISODate(member.lidSinds)) continue;
+  // De staafgrafiek telt iedere lidmaatschapsaanmelding met een geldige datum.
+  // Dezelfde persoon kan meerdere aanmeldingen hebben, bijvoorbeeld na een terugkeer.
+  const counts = new Map();
+  const firstMembershipByPerson = new Map();
+  for (const member of datedRecords) {
     const y = Number(member.lidSinds.slice(0, 4));
     counts.set(y, (counts.get(y) || 0) + 1);
+    const personKey = normalize(member.naam);
+    if (!personKey) continue;
+    const previous = firstMembershipByPerson.get(personKey);
+    if (!previous || member.lidSinds < previous.date) {
+      firstMembershipByPerson.set(personKey, { name: member.naam, date: member.lidSinds });
+    }
   }
-  const years = [...counts.keys()].sort((a, b) => a - b);
-  if (!years.length) {
-    el("annualChart").innerHTML = '<p class="muted">Nog geen ledengegevens. Importeer eerst het Excel-bestand.</p>';
+
+  if (!datedRecords.length) {
+    el("everCount").textContent = "0";
+    el("annualChart").innerHTML = '<p class="muted">Nog geen ledengegevens. Importeer eerst de volledige ledenhistorie.</p>';
+    el("cumulativeChart").innerHTML = '<p class="muted">Nog geen ledengegevens.</p>';
     el("annualTableBody").innerHTML = '<tr><td colspan="3" class="empty-cell">Nog geen gegevens</td></tr>';
     return;
   }
 
-  // Toon ook tussenliggende jaren zonder aanmeldingen, zodat hiaten zichtbaar zijn.
+  // Voor het cumulatieve overzicht telt iedere persoon één keer, vanaf de eerste bekende aanmelddatum.
+  const uniqueCounts = new Map();
+  for (const person of firstMembershipByPerson.values()) {
+    const y = Number(person.date.slice(0, 4));
+    uniqueCounts.set(y, (uniqueCounts.get(y) || 0) + 1);
+  }
+  const years = [...counts.keys()].sort((a, b) => a - b);
+  const firstYear = years[0];
+  const lastYear = Math.max(years[years.length - 1], year);
   const chartYears = [];
-  for (let y = years[0]; y <= Math.max(years[years.length - 1], year); y++) chartYears.push(y);
+  for (let y = firstYear; y <= lastYear; y++) chartYears.push(y);
   const series = chartYears.map((y) => ({ year: y, count: counts.get(y) || 0 }));
-  let runningTotal = 0;
-  const cumulativeSeries = series.map(({ year: y, count }) => {
-    runningTotal += count;
-    return { year: y, count, total: runningTotal };
+  let runningUniqueTotal = 0;
+  const cumulativeSeries = chartYears.map((y) => {
+    runningUniqueTotal += uniqueCounts.get(y) || 0;
+    return { year: y, count: counts.get(y) || 0, total: runningUniqueTotal };
   });
-  // Het cumulatieve totaal is de vaste historische basis plus alle CMS-records
-  // met een geldige aanmelddatum. Er worden geen historische namen vastgelegd.
-  el("everCount").textContent = String(cumulativeSeries[cumulativeSeries.length - 1]?.total || 0);
+
+  el("everCount").textContent = String(firstMembershipByPerson.size);
   renderBarChart(series);
   renderCumulativeChart(cumulativeSeries);
   el("annualTableBody").innerHTML = cumulativeSeries.slice().reverse().map(({ year: y, count, total }) => `<tr><td>${y}</td><td><strong>${count}</strong></td><td><strong>${total}</strong></td></tr>`).join("");
@@ -420,6 +426,9 @@ el("previewImportButton").addEventListener("click", async () => {
   el("importPreview").innerHTML = "<p class='muted'>Bestand wordt ingelezen en vergeleken…</p>";
   try {
     const result = await parseWorkbook(file);
+    if (result.isFullHistory && currentRecords().some((member) => member.historicalImportComplete === true)) {
+      throw new Error("De volledige historie is al succesvol ingelezen. Gebruik voortaan alleen Administratie HV Novitas 2026-2027.xlsm voor updates.");
+    }
     if (!result.importable.length && !result.skippedNoDate.length) throw new Error("Ik kon geen ledenregels vinden. Controleer of het bestand een tabblad met de kolommen ‘Nummer’, ‘Naam’ en ‘Lid per’ bevat.");
     currentPreview = buildImportPreview(result);
     renderImportPreview(currentPreview, result);
@@ -489,15 +498,23 @@ async function parseWorkbook(file) {
     }
     const numberKey = normalize(nummer);
     const nameKey = normalize(naam);
-    if ((numberKey && seenNumbers.has(numberKey)) || seenNames.has(nameKey)) {
+    // Een lidnummer is de primaire identiteit van een aanmelding. Dezelfde naam
+    // met een ander lidnummer blijft bewaard als aparte historische inschrijving.
+    const duplicate = numberKey ? seenNumbers.has(numberKey) : seenNames.has(nameKey);
+    if (duplicate) {
       duplicateRows.push({ nummer, naam, rowNumber: i + 1 });
       continue;
     }
     if (numberKey) seenNumbers.add(numberKey);
-    seenNames.add(nameKey);
+    else seenNames.add(nameKey);
     importable.push({ nummer, naam, lidSinds, categorie, sourceActive, rowNumber: i + 1 });
   }
-  return { fileName: file.name, sheetName, importable, skippedNoDate, skippedNoName, duplicateRows };
+  return { fileName: file.name, sheetName, isFullHistory: isFullHistoryWorkbook(file.name), importable, skippedNoDate, skippedNoName, duplicateRows };
+}
+
+
+function isFullHistoryWorkbook(fileName) {
+  return /^administratie hv novitas(?: \(\d+\))?\.xlsm$/i.test(normalize(fileName));
 }
 
 function normalizeHeader(value) {
@@ -528,8 +545,12 @@ function parseExcelDate(value) {
   }
   match = text.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
   if (match) {
-    const iso = `${match[3]}-${String(match[2]).padStart(2, "0")}-${String(match[1]).padStart(2, "0")}`;
-    return validISODate(iso) ? iso : "";
+    // Probeer eerst de Nederlandse notatie dd/mm/jjjj. Als die ongeldig is,
+    // probeer mm/dd/jjjj; in de historische administratie komt bijvoorbeeld 3/31/2022 voor.
+    const dutchISO = `${match[3]}-${String(match[2]).padStart(2, "0")}-${String(match[1]).padStart(2, "0")}`;
+    if (validISODate(dutchISO)) return dutchISO;
+    const usISO = `${match[3]}-${String(match[1]).padStart(2, "0")}-${String(match[2]).padStart(2, "0")}`;
+    return validISODate(usISO) ? usISO : "";
   }
   if (/^\d+(\.\d+)?$/.test(text)) {
     const serial = Number(text);
@@ -546,8 +567,11 @@ function buildImportPreview(parsed) {
   const usedKeys = new Set();
   const entries = parsed.importable.map((incoming) => {
     let match = null;
-    if (incoming.nummer) match = existing.find((record) => !usedKeys.has(record.key) && normalize(record.nummer) === normalize(incoming.nummer));
-    if (!match) match = existing.find((record) => !usedKeys.has(record.key) && normalize(record.naam) === normalize(incoming.naam));
+    if (incoming.nummer) {
+      match = existing.find((record) => !usedKeys.has(record.key) && normalize(record.nummer) === normalize(incoming.nummer));
+    } else {
+      match = existing.find((record) => !usedKeys.has(record.key) && !record.nummer && normalize(record.naam) === normalize(incoming.naam));
+    }
     if (!match) return { type: "new", incoming };
     usedKeys.add(match.key);
 
@@ -565,7 +589,9 @@ function buildImportPreview(parsed) {
     }
     return { type: changedFields.length ? "changed" : "same", incoming, existingKey: match.key, existing: match, changedFields, preserveManualInactive };
   });
-  const toWrite = entries.filter((item) => item.type === "new" || item.type === "changed");
+  // Bij de volledige historie verwerken we ook ongewijzigde regels zodat alle
+  // rijen een migratiemarkering krijgen en een succesvolle import herkenbaar is.
+  const toWrite = parsed.isFullHistory ? entries : entries.filter((item) => item.type === "new" || item.type === "changed");
   return { ...parsed, entries, toWrite, generatedAt: Date.now() };
 }
 
@@ -581,6 +607,7 @@ function renderImportPreview(preview) {
   el("importSummary").innerHTML = `
     <strong>Controle van ${escapeHtml(preview.fileName)}</strong>
     <p class="muted">Werkblad: ${escapeHtml(preview.sheetName)} · ${preview.importable.length} bruikbare ledenregels</p>
+    ${preview.isFullHistory ? '<p class="small-note history-import-note"><strong>Volledige historie herkend.</strong> Dit is de eenmalige import vanaf 2012. Na verwerking moet je direct het actuele bestand Administratie HV Novitas 2026-2027.xlsm inlezen om de huidige actieve leden te synchroniseren.</p>' : ''}
     <div class="summary-grid">
       <div class="summary-item"><strong>${counts.new}</strong><span>Nieuwe leden</span></div>
       <div class="summary-item"><strong>${counts.changed}</strong><span>Gewijzigd</span></div>
@@ -589,7 +616,7 @@ function renderImportPreview(preview) {
       <div class="summary-item"><strong>${counts.duplicates}</strong><span>Dubbele regels overgeslagen</span></div>
       <div class="summary-item"><strong>${preview.skippedNoName.length}</strong><span>Lege regels overgeslagen</span></div>
     </div>
-    <p>Bij bevestigen worden alleen nieuwe of gewijzigde regels verwerkt. Leden die ontbreken in het Excel-bestand blijven behouden. Handmatig afgemelde leden worden niet automatisch weer actief gemaakt.</p>
+    <p>${preview.isFullHistory ? 'Bij bevestigen worden de historische records éénmalig opgeslagen, inclusief ongewijzigde regels. Na afloop lees je het actuele ledenbestand in om de huidige status bij te werken.' : 'Bij bevestigen worden alleen nieuwe of gewijzigde regels verwerkt. Leden die ontbreken in het Excel-bestand blijven behouden. Handmatig afgemelde leden worden niet automatisch weer actief gemaakt.'}</p>
   `;
   const previewRows = [];
   for (const item of preview.entries) {
@@ -610,7 +637,11 @@ el("applyImportButton").addEventListener("click", async () => {
   const preview = currentPreview;
   const freshCount = preview.toWrite.filter((item) => item.type === "new").length;
   const changedCount = preview.toWrite.filter((item) => item.type === "changed").length;
-  if (!confirm(`De gecontroleerde import verwerken?\n\nNieuwe leden: ${freshCount}\nBijgewerkte records: ${changedCount}\nOvergeslagen zonder lid-datum: ${preview.skippedNoDate.length}\n\nLeden die niet in het bestand staan, worden niet verwijderd.`)) return;
+  const sameCount = preview.toWrite.filter((item) => item.type === "same").length;
+  const confirmation = preview.isFullHistory
+    ? `De VOLLEDIGE ledenhistorie eenmalig verwerken?\n\nLedenregels met datum: ${preview.toWrite.length}\nNieuwe records: ${freshCount}\nBijgewerkte records: ${changedCount}\nOngewijzigde bestaande records: ${sameCount}\nOvergeslagen zonder lid-datum: ${preview.skippedNoDate.length}\n\nNa afloop importeer je direct het actuele bestand Administratie HV Novitas 2026-2027.xlsm. Daarna gebruik je alleen dat actuele bestand.`
+    : `De gecontroleerde import verwerken?\n\nNieuwe leden: ${freshCount}\nBijgewerkte records: ${changedCount}\nOvergeslagen zonder lid-datum: ${preview.skippedNoDate.length}\n\nLeden die niet in het bestand staan, worden niet verwijderd.`;
+  if (!confirm(confirmation)) return;
 
   importBusy = true;
   el("applyImportButton").disabled = true;
@@ -618,6 +649,8 @@ el("applyImportButton").addEventListener("click", async () => {
   try {
     let added = 0;
     let updated = 0;
+    let unchangedMarked = 0;
+    const processedHistoryKeys = [];
     for (const item of preview.toWrite) {
       const incoming = item.incoming;
       if (item.type === "new") {
@@ -631,26 +664,39 @@ el("applyImportButton").addEventListener("click", async () => {
           active: incoming.sourceActive,
           endDate: null,
           deactivatedManually: false,
-          source: "excel",
+          source: preview.isFullHistory ? "historie" : "excel",
+          ...(preview.isFullHistory ? { historicalRecord: true, historicalImportComplete: false, historicalImportedAt: now } : {}),
           createdAt: now,
           updatedAt: now,
           importedAt: now,
           updatedBy: user?.email || "CMS"
         });
         added++;
+        if (preview.isFullHistory) processedHistoryKeys.push(newRef.key);
+      } else if (item.type === "same" && preview.isFullHistory) {
+        const now = Date.now();
+        await update(ref(db, `${DB_PATH}/${item.existingKey}`), {
+          historicalRecord: true,
+          historicalImportComplete: false,
+          historicalImportedAt: now
+        });
+        processedHistoryKeys.push(item.existingKey);
+        unchangedMarked++;
       } else {
         const existing = item.existing || {};
         const nextActive = item.preserveManualInactive ? false : incoming.sourceActive;
+        const now = Date.now();
         const patch = {
           nummer: incoming.nummer,
           naam: incoming.naam,
           lidSinds: incoming.lidSinds,
           categorie: incoming.categorie,
           active: nextActive,
-          source: existing.source === "cms" ? "cms+excel" : "excel",
-          updatedAt: Date.now(),
-          importedAt: Date.now(),
-          updatedBy: user?.email || "CMS"
+          source: preview.isFullHistory ? "historie" : (existing.source === "cms" ? "cms+excel" : "excel"),
+          updatedAt: now,
+          importedAt: now,
+          updatedBy: user?.email || "CMS",
+          ...(preview.isFullHistory ? { historicalRecord: true, historicalImportComplete: false, historicalImportedAt: now } : {})
         };
         if (item.preserveManualInactive) {
           patch.endDate = existing.endDate || null;
@@ -664,17 +710,32 @@ el("applyImportButton").addEventListener("click", async () => {
         }
         await update(ref(db, `${DB_PATH}/${item.existingKey}`), patch);
         updated++;
+        if (preview.isFullHistory) processedHistoryKeys.push(item.existingKey);
       }
     }
+
+    if (preview.isFullHistory && processedHistoryKeys.length) {
+      // Pas nadat alle gegevens zijn verwerkt, wordt de volledige import als geslaagd gemarkeerd.
+      // Bij een gedeeltelijke fout kan de import daardoor veilig opnieuw worden geprobeerd.
+      const completionPatch = {};
+      for (const key of processedHistoryKeys) completionPatch[`${key}/historicalImportComplete`] = true;
+      await update(ledenRef, completionPatch);
+    }
+
     currentPreview = null;
     el("importSummary").hidden = true;
     el("importPreview").innerHTML = "";
     el("applyImportButton").disabled = true;
     el("importFile").value = "";
-    showNotice(`Import verwerkt: ${added} nieuwe leden toegevoegd en ${updated} bestaande records bijgewerkt. ${preview.skippedNoDate.length} regels zonder ‘Lid per’-datum zijn niet geïmporteerd.`);
+    const skippedText = `${preview.skippedNoDate.length} regels zonder ‘Lid per’-datum zijn niet geïmporteerd.`;
+    if (preview.isFullHistory) {
+      showNotice(`Volledige historie verwerkt: ${added} nieuwe lidmaatschapsrecords toegevoegd, ${updated} bijgewerkt en ${unchangedMarked} ongewijzigde records gemarkeerd. ${skippedText} Importeer nu het actuele bestand Administratie HV Novitas 2026-2027.xlsm om actieve statussen bij te werken.`);
+    } else {
+      showNotice(`Import verwerkt: ${added} nieuwe leden toegevoegd en ${updated} bestaande records bijgewerkt. ${skippedText}`);
+    }
   } catch (error) {
     console.error(error);
-    showNotice("De import is niet volledig verwerkt. Controleer de ledenlijst voordat je opnieuw importeert; de import kan gedeeltelijk zijn opgeslagen.", "error");
+    showNotice("De import is niet volledig verwerkt. Controleer de ledenlijst voordat je opnieuw importeert; de import kan gedeeltelijk zijn opgeslagen. Bij de volledige historie kun je dezelfde historische import opnieuw proberen zolang de afronding niet is bevestigd.", "error");
   } finally {
     importBusy = false;
     el("previewImportButton").disabled = false;
