@@ -3,6 +3,14 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { ref, onValue, push, set, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const DB_PATH = "ledenadministratie/leden";
+// Vaste historische basis uit het oude ledenbestand.
+// Dit zijn alleen aantallen van namen die niet in het bestand 2026-2027 staan;
+// er worden voor deze historische basis geen namen opgeslagen.
+const HISTORICAL_BASELINE_BY_YEAR = Object.freeze({
+  2012: 13,
+  2013: 33,
+  2014: 9
+});
 const ledenRef = ref(db, DB_PATH);
 const el = (id) => document.getElementById(id);
 let user = null;
@@ -88,7 +96,11 @@ function renderDashboard() {
   el("yearCount").textContent = String(joinedThisYear);
   el("thisYearLabel").textContent = `Aanmelddatums in ${year}`;
 
-  const counts = new Map();
+  // Begin met de vaste historische aantallen voor leden die ontbreken
+  // in het actuele Excel-bestand. Tel daarna de opgeslagen CMS/Excel-records erbij.
+  const counts = new Map(
+    Object.entries(HISTORICAL_BASELINE_BY_YEAR).map(([y, count]) => [Number(y), count])
+  );
   for (const member of records) {
     if (!validISODate(member.lidSinds)) continue;
     const y = Number(member.lidSinds.slice(0, 4));
@@ -105,8 +117,54 @@ function renderDashboard() {
   const chartYears = [];
   for (let y = years[0]; y <= Math.max(years[years.length - 1], year); y++) chartYears.push(y);
   const series = chartYears.map((y) => ({ year: y, count: counts.get(y) || 0 }));
+  let runningTotal = 0;
+  const cumulativeSeries = series.map(({ year: y, count }) => {
+    runningTotal += count;
+    return { year: y, count, total: runningTotal };
+  });
+  // Het cumulatieve totaal is de vaste historische basis plus alle CMS-records
+  // met een geldige aanmelddatum. Er worden geen historische namen vastgelegd.
+  el("everCount").textContent = String(cumulativeSeries[cumulativeSeries.length - 1]?.total || 0);
   renderBarChart(series);
-  el("annualTableBody").innerHTML = series.slice().reverse().map(({ year: y, count }) => `<tr><td>${y}</td><td><strong>${count}</strong></td></tr>`).join("");
+  renderCumulativeChart(cumulativeSeries);
+  el("annualTableBody").innerHTML = cumulativeSeries.slice().reverse().map(({ year: y, count, total }) => `<tr><td>${y}</td><td><strong>${count}</strong></td><td><strong>${total}</strong></td></tr>`).join("");
+}
+
+function renderCumulativeChart(series) {
+  const container = el("cumulativeChart");
+  if (!series.length) {
+    container.innerHTML = '<p class="muted">Nog geen ledengegevens.</p>';
+    return;
+  }
+  const width = 1000, height = 310;
+  const margin = { top: 28, right: 28, bottom: 48, left: 48 };
+  const plotW = width - margin.left - margin.right;
+  const plotH = height - margin.top - margin.bottom;
+  const maxValue = Math.max(1, ...series.map((d) => d.total));
+  const tickMax = Math.ceil(maxValue / 5) * 5 || 5;
+  const slot = series.length > 1 ? plotW / (series.length - 1) : plotW;
+  const pointX = (i) => series.length > 1 ? margin.left + i * slot : margin.left + plotW / 2;
+  const pointY = (value) => margin.top + plotH - (value / tickMax) * plotH;
+  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Lijngrafiek van het cumulatieve aantal leden dat HV Novitas door de jaren heen heeft gehad"><title>Totaal leden opgebouwd door de jaren heen</title>`;
+  for (let tick = 0; tick <= tickMax; tick += tickMax / 5) {
+    const y = pointY(tick);
+    svg += `<line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" stroke="#e5e9ef" stroke-width="1"/>`;
+    svg += `<text x="${margin.left - 10}" y="${y + 4}" text-anchor="end" font-size="12" fill="#707987">${Math.round(tick)}</text>`;
+  }
+  const points = series.map((item, i) => `${pointX(i)},${pointY(item.total)}`).join(" ");
+  const areaPoints = `${pointX(0)},${margin.top + plotH} ${points} ${pointX(series.length - 1)},${margin.top + plotH}`;
+  svg += `<polygon points="${areaPoints}" fill="#ff6a00" opacity="0.10"/>`;
+  svg += `<polyline points="${points}" fill="none" stroke="#ff6a00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  series.forEach((item, i) => {
+    const x = pointX(i), y = pointY(item.total);
+    svg += `<circle cx="${x}" cy="${y}" r="4.5" fill="#ff6a00" stroke="#ffffff" stroke-width="2"><title>${item.year}: ${item.total} leden in totaal</title></circle>`;
+    if (series.length <= 18 || i % 2 === 0) {
+      svg += `<text x="${x}" y="${height - 19}" text-anchor="middle" font-size="12" fill="#596272">${item.year}</text>`;
+      if (series.length <= 16) svg += `<text x="${x}" y="${Math.max(15, y - 10)}" text-anchor="middle" font-size="12" font-weight="700" fill="#343b46">${item.total}</text>`;
+    }
+  });
+  svg += "</svg>";
+  container.innerHTML = svg;
 }
 
 function renderBarChart(series) {

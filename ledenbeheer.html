@@ -42,7 +42,12 @@
       <article class="stat-card">
         <div class="stat-label">Totaal geregistreerd</div>
         <div id="recordCount" class="stat-number">—</div>
-        <div class="stat-note">Inclusief afgemelde leden</div>
+        <div class="stat-note">Records in het CMS</div>
+      </article>
+      <article class="stat-card stat-total-ever">
+        <div class="stat-label">Totaal ooit lid geweest</div>
+        <div id="everCount" class="stat-number">—</div>
+        <div class="stat-note">Inclusief 55 vaste historische leden</div>
       </article>
       <article class="stat-card">
         <div class="stat-label">Aanmeldingen dit jaar</div>
@@ -55,16 +60,23 @@
       <div class="section-heading">
         <div>
           <h2>Aanmeldingen per kalenderjaar</h2>
-          <p class="muted">Iedere persoon wordt één keer geteld in het jaar van de aanmelddatum. Afmeldingen blijven in de historische grafiek staan.</p>
+          <p class="muted">Vaste historische basis: 2012 (13), 2013 (33) en 2014 (9) voor 55 personen die ontbreken in het actuele Excel-bestand. Er worden hiervoor geen namen opgeslagen. Aanmeldingen uit de CMS-ledenadministratie worden erbij opgeteld; afmeldingen blijven in de historische grafiek staan.</p>
         </div>
       </div>
       <div id="annualChart" class="chart-wrap">
         <p class="muted">Nog geen ledengegevens. Importeer eerst het Excel-bestand.</p>
       </div>
+      <div class="cumulative-block">
+        <h3>Totaal leden opgebouwd door de jaren heen</h3>
+        <p class="muted">Dit is het cumulatieve totaal: de historische basis plus alle geregistreerde aanmeldingen tot en met elk jaar.</p>
+        <div id="cumulativeChart" class="chart-wrap">
+          <p class="muted">Nog geen ledengegevens.</p>
+        </div>
+      </div>
       <div class="table-wrap">
         <table class="data-table year-table">
-          <thead><tr><th>Jaar</th><th>Aanmeldingen</th></tr></thead>
-          <tbody id="annualTableBody"><tr><td colspan="2" class="empty-cell">Nog geen gegevens</td></tr></tbody>
+          <thead><tr><th>Jaar</th><th>Aanmeldingen in dat jaar</th><th>Totaal leden t/m dat jaar</th></tr></thead>
+          <tbody id="annualTableBody"><tr><td colspan="3" class="empty-cell">Nog geen gegevens</td></tr></tbody>
         </table>
       </div>
     </section>
