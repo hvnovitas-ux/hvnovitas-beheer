@@ -42,6 +42,7 @@ el("logoutButton").addEventListener("click", async () => {
 onValue(ledenRef, (snapshot) => {
   members = snapshot.val() || {};
   renderDashboard();
+  renderLongevityRanking();
   renderMemberList();
 }, (error) => {
   console.error("Ledenadministratie kon niet worden gelezen:", error);
@@ -109,7 +110,7 @@ function renderDashboard() {
   const years = [...counts.keys()].sort((a, b) => a - b);
   if (!years.length) {
     el("annualChart").innerHTML = '<p class="muted">Nog geen ledengegevens. Importeer eerst het Excel-bestand.</p>';
-    el("annualTableBody").innerHTML = '<tr><td colspan="2" class="empty-cell">Nog geen gegevens</td></tr>';
+    el("annualTableBody").innerHTML = '<tr><td colspan="3" class="empty-cell">Nog geen gegevens</td></tr>';
     return;
   }
 
@@ -128,6 +129,99 @@ function renderDashboard() {
   renderBarChart(series);
   renderCumulativeChart(cumulativeSeries);
   el("annualTableBody").innerHTML = cumulativeSeries.slice().reverse().map(({ year: y, count, total }) => `<tr><td>${y}</td><td><strong>${count}</strong></td><td><strong>${total}</strong></td></tr>`).join("");
+}
+
+function localDateFromISO(value) {
+  if (!validISODate(value)) return null;
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function getMembershipDuration(startISO, endDate = new Date()) {
+  const start = localDateFromISO(startISO);
+  if (!start) return null;
+  const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+  if (start > end) return null;
+
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
+  if (days < 0) {
+    months -= 1;
+    days += new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+  return { years, months, days };
+}
+
+function formatMembershipDuration(duration) {
+  if (!duration) return "—";
+  const parts = [];
+  if (duration.years) parts.push(`${duration.years} ${duration.years === 1 ? "jaar" : "jaar"}`);
+  if (duration.months) parts.push(`${duration.months} ${duration.months === 1 ? "maand" : "maanden"}`);
+  if (duration.days) parts.push(`${duration.days} ${duration.days === 1 ? "dag" : "dagen"}`);
+  if (!parts.length) return "minder dan een dag";
+  if (parts.length === 1) return parts[0];
+  if (parts.length === 2) return `${parts[0]} en ${parts[1]}`;
+  return `${parts[0]}, ${parts[1]} en ${parts[2]}`;
+}
+
+function renderLongevityRanking() {
+  const body = el("longevityTableBody");
+  const countLabel = el("longevityCount");
+  if (!body || !countLabel) return;
+
+  const today = new Date();
+  const cutoffDate = new Date(today.getFullYear() - 8, today.getMonth(), today.getDate());
+  const cutoffISO = `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, "0")}-${String(cutoffDate.getDate()).padStart(2, "0")}`;
+  const activeRecords = currentRecords().filter(isCurrentMember);
+  const patricia = activeRecords.find((member) => normalize(member.naam) === "patricia bel");
+  const existingErwin = activeRecords.find((member) => normalize(member.naam) === "erwin bel");
+
+  // Erwin wordt alleen voor deze ranglijst gekoppeld aan Patricia's datum.
+  // Er wordt geen record toegevoegd of gewijzigd in Firebase.
+  const rankingMembers = activeRecords
+    .filter((member) => normalize(member.naam) !== "erwin bel")
+    .map((member) => ({ ...member, rankingDate: member.lidSinds }));
+  const linkedDate = validISODate(patricia?.lidSinds) ? patricia.lidSinds : "2012-05-09";
+  rankingMembers.push({
+    ...(existingErwin || {}),
+    naam: "Erwin Bel",
+    lidSinds: linkedDate,
+    rankingDate: linkedDate,
+    linkedToPatricia: true
+  });
+
+  const eligible = rankingMembers
+    .filter((member) => validISODate(member.rankingDate) && member.rankingDate <= cutoffISO)
+    .sort((a, b) => {
+      const dateOrder = a.rankingDate.localeCompare(b.rankingDate);
+      if (dateOrder) return dateOrder;
+      const priority = (member) => {
+        const name = normalize(member.naam);
+        if (name === "patricia bel") return 0;
+        if (name === "erwin bel") return 1;
+        return 2;
+      };
+      return priority(a) - priority(b) || normalize(a.naam).localeCompare(normalize(b.naam), "nl");
+    })
+    .slice(0, 10);
+
+  if (!eligible.length) {
+    body.innerHTML = '<tr><td colspan="4" class="empty-cell">Nog geen huidige leden met minimaal 8 jaar lidmaatschap.</td></tr>';
+    countLabel.textContent = "Alleen huidige leden met minimaal 8 jaar lidmaatschap worden getoond.";
+    return;
+  }
+
+  body.innerHTML = eligible.map((member, index) => {
+    const duration = getMembershipDuration(member.rankingDate, today);
+    const linkedNote = member.linkedToPatricia ? ' <span class="linked-note">gekoppeld aan Patricia</span>' : "";
+    return `<tr><td class="rank-cell">${index + 1}</td><td><strong>${escapeHtml(member.naam)}</strong>${linkedNote}</td><td>${escapeHtml(formatDate(member.rankingDate))}</td><td><strong>${escapeHtml(formatMembershipDuration(duration))}</strong></td></tr>`;
+  }).join("");
+  countLabel.textContent = `${eligible.length} ${eligible.length === 1 ? "lid" : "leden"} in de Top 10 (minimaal 8 jaar lid).`;
 }
 
 function renderCumulativeChart(series) {
