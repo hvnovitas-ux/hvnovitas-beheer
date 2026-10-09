@@ -293,6 +293,26 @@ onValue(ref(db, "highlights"), (snapshot) => {
 function renderHighlights() {
   const entries = Object.entries(highlightData)
     .sort((a, b) => {
+      // Sorteer op maand en dag; het jaartal telt niet mee.
+      const getMonthDay = (value) => {
+        const parts = String(value?.date || "").split("-");
+        const month = Number(parts[1]);
+        const day = Number(parts[2]);
+
+        if (
+          !Number.isInteger(month) || month < 1 || month > 12 ||
+          !Number.isInteger(day) || day < 1 || day > 31
+        ) {
+          return 9999;
+        }
+
+        return month * 100 + day;
+      };
+
+      const dateDiff = getMonthDay(a[1]) - getMonthDay(b[1]);
+      if (dateDiff !== 0) return dateDiff;
+
+      // Bij dezelfde maand en dag blijft de laatst toegevoegde bovenaan.
       const ca = Number(a[1]?.created || 0);
       const cb = Number(b[1]?.created || 0);
       return cb - ca;
