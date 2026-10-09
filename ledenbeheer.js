@@ -181,17 +181,26 @@ function renderLongevityRanking() {
   const patricia = activeRecords.find((member) => normalize(member.naam) === "patricia bel");
   const existingErwin = activeRecords.find((member) => normalize(member.naam) === "erwin bel");
 
-  // De ranglijst gebruikt de afgesproken datum voor de weergave; Firebase-records blijven ongewijzigd.
+  // Ranglijst: alle huidige leden met minimaal acht jaar lidmaatschap.
+  // Erwin verschijnt onder Patricia met dezelfde datum, zonder dit in de UI te vermelden.
   const rankingMembers = activeRecords
-    .filter((member) => normalize(member.naam) !== "erwin bel")
+    .filter((member) => {
+      const name = normalize(member.naam);
+      return name !== "erwin bel" && name !== "mischa de vliegere";
+    })
     .map((member) => ({ ...member, rankingDate: member.lidSinds }));
-  const linkedDate = validISODate(patricia?.lidSinds) ? patricia.lidSinds : "2012-05-09";
+
+  const erwinDate = validISODate(patricia?.lidSinds)
+    ? patricia.lidSinds
+    : validISODate(existingErwin?.lidSinds)
+      ? existingErwin.lidSinds
+      : "2012-05-09";
+
   rankingMembers.push({
     ...(existingErwin || {}),
     naam: "Erwin Bel",
-    lidSinds: linkedDate,
-    rankingDate: linkedDate,
-    rankingOnly: true
+    lidSinds: erwinDate,
+    rankingDate: erwinDate
   });
 
   const eligible = rankingMembers
@@ -214,6 +223,7 @@ function renderLongevityRanking() {
     return;
   }
 
+  // Geen Top 10-limiet: de nummering loopt door voor ieder lid dat aan de voorwaarde voldoet.
   body.innerHTML = eligible.map((member, index) => {
     const duration = getMembershipDuration(member.rankingDate, today);
     return `<tr><td class="rank-cell">${index + 1}</td><td><strong>${escapeHtml(member.naam)}</strong></td><td>${escapeHtml(formatDate(member.rankingDate))}</td><td><strong>${escapeHtml(formatMembershipDuration(duration))}</strong></td></tr>`;
