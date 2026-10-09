@@ -188,7 +188,26 @@ function renderLongevityRanking() {
       const name = normalize(member.naam);
       return name !== "erwin bel" && name !== "mischa de vliegere";
     })
-    .map((member) => ({ ...member, rankingDate: member.lidSinds }));
+    .map((member) => {
+      const name = normalize(member.naam);
+      // De weergegeven aanmelddatum blijft de datum uit de administratie.
+      // Voor deze leden wordt de lidmaatschapsduur één jaar korter berekend.
+      const durationAdjustmentNames = new Set([
+        "carsten van waterschoot",
+        "erik pijpelink",
+        "kay scheele"
+      ]);
+      const rankingDate = member.lidSinds;
+      let durationStartDate = rankingDate;
+      if (durationAdjustmentNames.has(name)) {
+        const date = localDateFromISO(rankingDate);
+        if (date) {
+          date.setFullYear(date.getFullYear() + 1);
+          durationStartDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        }
+      }
+      return { ...member, rankingDate, durationStartDate };
+    });
 
   const erwinDate = validISODate(patricia?.lidSinds)
     ? patricia.lidSinds
@@ -204,9 +223,9 @@ function renderLongevityRanking() {
   });
 
   const eligible = rankingMembers
-    .filter((member) => validISODate(member.rankingDate) && member.rankingDate <= cutoffISO)
+    .filter((member) => validISODate(member.durationStartDate || member.rankingDate) && (member.durationStartDate || member.rankingDate) <= cutoffISO)
     .sort((a, b) => {
-      const dateOrder = a.rankingDate.localeCompare(b.rankingDate);
+      const dateOrder = (a.durationStartDate || a.rankingDate).localeCompare(b.durationStartDate || b.rankingDate);
       if (dateOrder) return dateOrder;
       const priority = (member) => {
         const name = normalize(member.naam);
@@ -225,7 +244,7 @@ function renderLongevityRanking() {
 
   // Geen Top 10-limiet: de nummering loopt door voor ieder lid dat aan de voorwaarde voldoet.
   body.innerHTML = eligible.map((member, index) => {
-    const duration = getMembershipDuration(member.rankingDate, today);
+    const duration = getMembershipDuration(member.durationStartDate || member.rankingDate, today);
     return `<tr><td class="rank-cell">${index + 1}</td><td><strong>${escapeHtml(member.naam)}</strong></td><td>${escapeHtml(formatDate(member.rankingDate))}</td><td><strong>${escapeHtml(formatMembershipDuration(duration))}</strong></td></tr>`;
   }).join("");
   countLabel.textContent = `${eligible.length} ${eligible.length === 1 ? "lid" : "leden"} met minimaal 8 jaar lidmaatschap.`;
