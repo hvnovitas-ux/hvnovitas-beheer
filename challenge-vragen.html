@@ -1,24 +1,80 @@
 <!DOCTYPE html>
-<html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HV Novitas – Vragenbeheer</title><link rel="stylesheet" href="cms.css">
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HV Novitas – Challenge vragen</title>
+<link rel="stylesheet" href="cms.css">
 <style>
-.question-form{display:grid;gap:12px}.answer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.answer-field{display:flex;gap:9px;align-items:center}.answer-field input[type=text]{flex:1;min-width:0}.correct-choice{width:auto!important;flex:0 0 auto}.question-card{display:block}.question-card h3{margin:0 0 10px;line-height:1.4}.question-card ol{margin:8px 0 12px;padding-left:24px}.question-card li{padding:3px 0}.question-card li.correct{font-weight:bold;color:#187344}.question-meta{font-size:13px;color:#64748b;margin-bottom:10px}.question-actions{display:flex;gap:8px;flex-wrap:wrap}.secondary{background:#475569}.danger{background:#dc2626}.primary-note{color:#64748b;font-size:14px;line-height:1.5}@media(max-width:650px){.answer-grid{grid-template-columns:1fr}.question-actions button{flex:1}}
-</style></head>
+.main{width:min(1200px,calc(100% - 28px));margin:24px auto}
+.panel{background:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+h1{margin:0 0 8px;font-size:25px}.muted{color:#6b7280}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+input[type=text],textarea{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:11px;font:inherit}
+textarea{min-height:75px;resize:vertical}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.answer{border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+.answer label{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:7px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:bold;background:#ff6a00;color:#fff}
+.btn.secondary{background:#e5e7eb;color:#222}.btn.danger{background:#b91c1c}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input{flex:1;min-width:220px}
+.question{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:10px 0}
+.question h3{font-size:17px;margin:0 0 10px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.option{padding:8px 10px;background:#f3f4f6;border-radius:7px;font-size:14px}
+.option.correct{background:#dcfce7;border:1px solid #86efac;font-weight:bold}
+#message{margin-top:10px;font-weight:bold}
+@media(max-width:650px){.formgrid,.answers,.options{grid-template-columns:1fr}.panel{padding:15px}.main{width:calc(100% - 18px)}}
+</style>
+</head>
 <body>
-<div class="topbar"><div class="title">🧡 HV NOVITAS CMS · VRAGENBEHEER</div><div class="userbox"><span id="userInfo">Controleren...</span><button type="button" class="logout" id="logoutButton">Uitloggen</button></div></div>
-<main class="page">
-<section class="section"><h1>🤾 Handbalchallenge – vragen en antwoorden</h1><p class="primary-note">Alle vragen uit de challenge staan hieronder. Je kunt vragen toevoegen, aanpassen of verwijderen. Iedere vraag heeft vier antwoordopties. Selecteer het rondje vóór het juiste antwoord.</p><p id="status" role="status">Vragen laden...</p><div class="fields"><input id="searchQuestions" class="full" type="search" placeholder="Zoek op vraag of antwoord..."></div></section>
-<section class="section" id="editorSection"><h2 id="formHeading">➕ Nieuwe vraag</h2><form id="questionForm" class="question-form"><input id="questionText" type="text" maxlength="500" placeholder="Typ de vraag..." required><div class="answer-grid">
-<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="0" checked aria-label="Antwoord 1 is juist"><input type="text" id="answer0" maxlength="250" placeholder="Antwoord 1" required></div>
-<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="1" aria-label="Antwoord 2 is juist"><input type="text" id="answer1" maxlength="250" placeholder="Antwoord 2" required></div>
-<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="2" aria-label="Antwoord 3 is juist"><input type="text" id="answer2" maxlength="250" placeholder="Antwoord 3" required></div>
-<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="3" aria-label="Antwoord 4 is juist"><input type="text" id="answer3" maxlength="250" placeholder="Antwoord 4" required></div></div><div class="actions"><button type="submit" id="saveQuestion">Vraag toevoegen</button><button type="button" id="cancelEdit" class="secondary" hidden>Annuleren</button></div></form></section>
-<section class="section"><h2>📚 Vragenoverzicht <span id="questionCount"></span></h2><div id="questionsList" class="list"><p>Vragen laden...</p></div></section>
-<a class="back" href="dashboard.html">← Terug naar dashboard</a></main>
-<script type="module">
-import { auth } from "./firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-const userInfo=document.getElementById("userInfo");
-document.getElementById("logoutButton").addEventListener("click",async()=>{try{await signOut(auth);location.href="login.html"}catch(e){console.error(e);alert("Uitloggen is niet gelukt.")}});
-onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return}userInfo.textContent="👋 "+(user.displayName||user.email||"Admin")});
-</script><script type="module" src="challenge-vragen.js"></script></body></html>
+<header class="topbar">
+  <div class="title">🧡 HV NOVITAS – CHALLENGE VRAGEN</div>
+  <div class="userbox"><span id="userInfo">Laden...</span><button id="logoutButton" type="button">Uitloggen</button></div>
+</header>
+<main class="main">
+  <section class="panel">
+    <div class="actions" style="margin-top:0;margin-bottom:12px">
+      <a class="btn secondary" href="dashboard.html" style="text-decoration:none">← Terug naar dashboard</a>
+    </div>
+    <h1>Handbalchallenge beheren</h1>
+    <p class="muted">Bekijk de vragen, voeg vragen toe en pas bestaande vragen aan. Het groene antwoord is het juiste antwoord.</p>
+    <div id="message" role="status"></div>
+  </section>
+
+  <section class="panel">
+    <h2 id="formTitle">➕ Nieuwe vraag toevoegen</h2>
+    <form id="questionForm">
+      <input type="hidden" id="questionId">
+      <div class="field">
+        <label for="questionText"><strong>Vraag</strong></label>
+        <textarea id="questionText" required maxlength="500" placeholder="Typ hier de handbalvraag..."></textarea>
+      </div>
+      <div class="answers">
+        <div class="answer"><label><input type="radio" name="correct" value="0" required> Dit is het juiste antwoord</label><input type="text" id="answer0" required maxlength="250" placeholder="Antwoord 1"></div>
+        <div class="answer"><label><input type="radio" name="correct" value="1" required> Dit is het juiste antwoord</label><input type="text" id="answer1" required maxlength="250" placeholder="Antwoord 2"></div>
+        <div class="answer"><label><input type="radio" name="correct" value="2" required> Dit is het juiste antwoord</label><input type="text" id="answer2" required maxlength="250" placeholder="Antwoord 3"></div>
+        <div class="answer"><label><input type="radio" name="correct" value="3" required> Dit is het juiste antwoord</label><input type="text" id="answer3" required maxlength="250" placeholder="Antwoord 4"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" type="submit" id="saveButton">Vraag opslaan</button>
+        <button class="btn secondary" type="button" id="cancelEdit" hidden>Annuleren</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>📚 Alle vragen <span id="count" class="muted"></span></h2>
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="Zoek in vragen en antwoorden...">
+      <button class="btn secondary" id="refreshButton" type="button">Vernieuwen</button>
+    </div>
+    <div id="questionList">Vragen laden...</div>
+  </section>
+</main>
+<script type="module" src="challenge-vragen.js"></script>
+</body>
+</html>
