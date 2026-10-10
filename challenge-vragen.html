@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HV Novitas – Vragenbeheer</title><link rel="stylesheet" href="cms.css">
+<style>
+.question-form{display:grid;gap:12px}.answer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.answer-field{display:flex;gap:9px;align-items:center}.answer-field input[type=text]{flex:1;min-width:0}.correct-choice{width:auto!important;flex:0 0 auto}.question-card{display:block}.question-card h3{margin:0 0 10px;line-height:1.4}.question-card ol{margin:8px 0 12px;padding-left:24px}.question-card li{padding:3px 0}.question-card li.correct{font-weight:bold;color:#187344}.question-meta{font-size:13px;color:#64748b;margin-bottom:10px}.question-actions{display:flex;gap:8px;flex-wrap:wrap}.secondary{background:#475569}.danger{background:#dc2626}.primary-note{color:#64748b;font-size:14px;line-height:1.5}@media(max-width:650px){.answer-grid{grid-template-columns:1fr}.question-actions button{flex:1}}
+</style></head>
+<body>
+<div class="topbar"><div class="title">🧡 HV NOVITAS CMS · VRAGENBEHEER</div><div class="userbox"><span id="userInfo">Controleren...</span><button type="button" class="logout" id="logoutButton">Uitloggen</button></div></div>
+<main class="page">
+<section class="section"><h1>🤾 Handbalchallenge – vragen en antwoorden</h1><p class="primary-note">Alle vragen uit de challenge staan hieronder. Je kunt vragen toevoegen, aanpassen of verwijderen. Iedere vraag heeft vier antwoordopties. Selecteer het rondje vóór het juiste antwoord.</p><p id="status" role="status">Vragen laden...</p><div class="fields"><input id="searchQuestions" class="full" type="search" placeholder="Zoek op vraag of antwoord..."></div></section>
+<section class="section" id="editorSection"><h2 id="formHeading">➕ Nieuwe vraag</h2><form id="questionForm" class="question-form"><input id="questionText" type="text" maxlength="500" placeholder="Typ de vraag..." required><div class="answer-grid">
+<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="0" checked aria-label="Antwoord 1 is juist"><input type="text" id="answer0" maxlength="250" placeholder="Antwoord 1" required></div>
+<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="1" aria-label="Antwoord 2 is juist"><input type="text" id="answer1" maxlength="250" placeholder="Antwoord 2" required></div>
+<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="2" aria-label="Antwoord 3 is juist"><input type="text" id="answer2" maxlength="250" placeholder="Antwoord 3" required></div>
+<div class="answer-field"><input class="correct-choice" type="radio" name="correctAnswer" value="3" aria-label="Antwoord 4 is juist"><input type="text" id="answer3" maxlength="250" placeholder="Antwoord 4" required></div></div><div class="actions"><button type="submit" id="saveQuestion">Vraag toevoegen</button><button type="button" id="cancelEdit" class="secondary" hidden>Annuleren</button></div></form></section>
+<section class="section"><h2>📚 Vragenoverzicht <span id="questionCount"></span></h2><div id="questionsList" class="list"><p>Vragen laden...</p></div></section>
+<a class="back" href="dashboard.html">← Terug naar dashboard</a></main>
+<script type="module">
+import { auth } from "./firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+const userInfo=document.getElementById("userInfo");
+document.getElementById("logoutButton").addEventListener("click",async()=>{try{await signOut(auth);location.href="login.html"}catch(e){console.error(e);alert("Uitloggen is niet gelukt.")}});
+onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return}userInfo.textContent="👋 "+(user.displayName||user.email||"Admin")});
+</script><script type="module" src="challenge-vragen.js"></script></body></html>
