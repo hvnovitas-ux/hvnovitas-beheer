@@ -353,10 +353,10 @@ $("eventForm")
         readForm();
 
 
-      if (!data.title) {
+      if (!data.title && !data.imageUrl) {
 
         message(
-          "Vul een titel in.",
+          "Vul een titel in of kies een bannerafbeelding.",
           "error"
         );
 
