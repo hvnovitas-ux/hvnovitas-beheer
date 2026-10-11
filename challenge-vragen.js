@@ -168,6 +168,8 @@ list.addEventListener("click", async event => {
     }
   }
 });
+const photoBase = "https://raw.githubusercontent.com/hvnovitas-ux/hvnovitas-handbal-challenge/main/fotos/";
+const photoListApi = "https://api.github.com/repos/hvnovitas-ux/hvnovitas-handbal-challenge/contents/fotos?ref=main";
 function validImageUrl(value) {
   try {
     const url = new URL(String(value || ""));
@@ -176,10 +178,38 @@ function validImageUrl(value) {
     return false;
   }
 }
+function photoNameFromUrl(value) {
+  if (!value) return "";
+  try { return decodeURIComponent(new URL(value).pathname.split("/").pop() || ""); }
+  catch { return ""; }
+}
+async function loadPhotoChoices() {
+  const select = $("imageUrl");
+  const status = $("photoListStatus");
+  const current = select.value;
+  try {
+    const response = await fetch(photoListApi, { headers: { "Accept": "application/vnd.github+json" } });
+    if (!response.ok) throw new Error("GitHub API antwoordde met " + response.status);
+    const files = await response.json();
+    const allowed = /\\.(jpe?g|png|gif|webp)$/i;
+    const photos = files.filter(file => file.type === "file" && allowed.test(file.name)).sort((a,b) => a.name.localeCompare(b.name, "nl"));
+    select.replaceChildren(new Option("Geen foto", ""));
+    for (const photo of photos) {
+      const url = photoBase + encodeURIComponent(photo.name);
+      select.add(new Option(photo.name, url));
+    }
+    if (current && [...select.options].some(option => option.value === current)) select.value = current;
+    status.textContent = photos.length ? photos.length + " foto('s) gevonden in de map fotos." : "Nog geen foto's gevonden. Voeg eerst afbeeldingen toe aan de map fotos.";
+  } catch (error) {
+    console.error("Foto's laden mislukt:", error);
+    status.textContent = "De fotolijst kon niet worden geladen. Controleer de map fotos en probeer opnieuw.";
+  }
+  updateImagePreview();
+}
 function updateImagePreview() {
-  const input = $("imageUrl");
+  const select = $("imageUrl");
   const preview = $("imagePreview");
-  const value = input.value.trim();
+  const value = select.value.trim();
   if (!value || !validImageUrl(value)) {
     preview.hidden = true;
     preview.removeAttribute("src");
@@ -189,7 +219,8 @@ function updateImagePreview() {
   preview.onerror = () => { preview.hidden = true; };
   preview.src = value;
 }
-$("imageUrl").addEventListener("input", updateImagePreview);
+$("imageUrl").addEventListener("change", updateImagePreview);
+loadPhotoChoices();
 $("cancelEdit").addEventListener("click", resetForm);
 $("searchInput").addEventListener("input", render);
 $("refreshButton").addEventListener("click", () => render());
