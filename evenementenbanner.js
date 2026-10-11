@@ -22,6 +22,30 @@ const $ = id =>
   document.getElementById(id);
 
 let current = {};
+let allBanners = {};
+let selectedSlot = "base";
+
+const defaultBase = {
+  active: true,
+  title: "HV Novitas",
+  eyebrow: "HANDBALVERENIGING",
+  dateText: "",
+  timeText: "",
+  location: "Hulst",
+  link: "",
+  start: "",
+  end: ""
+};
+
+function isStructured(value) {
+  return !!value && ["base", "event1", "event2"].some(
+    key => Object.prototype.hasOwnProperty.call(value, key)
+  );
+}
+
+function getSlotData(slot = selectedSlot) {
+  return allBanners[slot] || (slot === "base" ? { ...defaultBase } : {});
+}
 
 let messageTimer = null;
 
@@ -59,9 +83,21 @@ function loadBanner() {
 
     snapshot => {
 
-      current =
-        snapshot.val() || {};
-
+      const stored = snapshot.val() || {};
+      if (isStructured(stored)) {
+        allBanners = {
+          base: stored.base || { ...defaultBase },
+          event1: stored.event1 || {},
+          event2: stored.event2 || {}
+        };
+      } else {
+        allBanners = {
+          base: { ...defaultBase },
+          event1: stored,
+          event2: {}
+        };
+      }
+      current = getSlotData();
       fillForm();
 
       updatePreview();
@@ -93,6 +129,9 @@ function loadBanner() {
    ========================================================= */
 
 function fillForm() {
+  current = getSlotData();
+  $("bannerSlot").value = selectedSlot;
+  $("scheduleFields").hidden = selectedSlot === "base";
 
   $("active").checked =
     !!current.active;
@@ -229,6 +268,18 @@ function readForm() {
    LIVE PREVIEW
    ========================================================= */
 
+$("bannerSlot")?.addEventListener("change", () => {
+  selectedSlot = $("bannerSlot").value;
+  fillForm();
+  updatePreview();
+  updateStatus();
+  const frame = $("previewFrame");
+  if (frame) {
+    frame.src = "evenementenbanner-widget.html?preview=1&slot=" +
+      encodeURIComponent(selectedSlot) + "&v=20261011-slots";
+  }
+});
+
 [
   "active",
   "title",
@@ -292,8 +343,8 @@ $("eventForm")
 
 
       if (
-        !data.start ||
-        !data.end
+        selectedSlot !== "base" &&
+        (!data.start || !data.end)
       ) {
 
         message(
@@ -306,24 +357,14 @@ $("eventForm")
       }
 
 
-      const startDate =
-        new Date(
-          data.start
-        );
-
-      const endDate =
-        new Date(
-          data.end
-        );
-
+      const startDate = data.start ? new Date(data.start) : null;
+      const endDate = data.end ? new Date(data.end) : null;
 
       if (
-        Number.isNaN(
-          startDate.getTime()
-        ) ||
-        Number.isNaN(
-          endDate.getTime()
-        )
+        selectedSlot !== "base" &&
+        (!startDate || !endDate ||
+          Number.isNaN(startDate.getTime()) ||
+          Number.isNaN(endDate.getTime()))
       ) {
 
         message(
@@ -337,6 +378,7 @@ $("eventForm")
 
 
       if (
+        selectedSlot !== "base" &&
         endDate <= startDate
       ) {
 
@@ -369,19 +411,12 @@ $("eventForm")
 
       try {
 
-        await set(
-          ref(
-            db,
-            PATH
-          ),
-
-          {
-            ...data,
-
-            updatedAt:
-              Date.now()
-          }
-        );
+        allBanners = {
+          ...allBanners,
+          [selectedSlot]: { ...data, updatedAt: Date.now() }
+        };
+        await set(ref(db, PATH), allBanners);
+        current = allBanners[selectedSlot];
 
 
         message(
@@ -451,22 +486,15 @@ $("clearBtn")
 
       try {
 
-        await remove(
-          ref(
-            db,
-            PATH
-          )
-        );
-
-
-        $("eventForm")
-          ?.reset();
-
-
-        current = {};
-
+        if (selectedSlot === "base") {
+          allBanners.base = { ...defaultBase };
+        } else {
+          allBanners[selectedSlot] = {};
+        }
+        await set(ref(db, PATH), allBanners);
+        current = getSlotData();
+        fillForm();
         updatePreview();
-
         updateStatus();
 
 
@@ -532,6 +560,12 @@ function updateStatus() {
   element.className =
     "pill";
 
+
+  if (selectedSlot === "base") {
+    element.textContent = "Basisbanner als reserve";
+    element.className = "pill";
+    return;
+  }
 
   if (!current.active) {
 
@@ -601,19 +635,17 @@ function updateStatus() {
 
 function updatePreview() {
 
-  const root =
-    $("previewRoot");
+  const root = $("previewRoot");
+  const data = readForm();
+  const frame = $("previewFrame");
 
-
-  if (!root) {
+  if (frame) {
+    frame.src = "evenementenbanner-widget.html?preview=1&slot=" +
+      encodeURIComponent(selectedSlot) + "&v=20261011-slots";
     return;
   }
 
-
-  const data =
-    readForm();
-
-
+  if (!root) return;
   root.replaceChildren();
 
 
