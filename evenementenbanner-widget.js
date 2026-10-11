@@ -136,8 +136,8 @@ function render() {
     if (isPreview && slotFromQuery) {
       displayData = data[slotFromQuery] || (slotFromQuery === "base" ? (data.base || baseFallback) : null);
     } else {
-      displayData = isInWindow(data.event1) ? displayData.event1 :
-        isInWindow(data.event2) ? displayData.event2 : (displayData.base || baseFallback);
+      displayData = isInWindow(data.event1) ? data.event1 :
+        isInWindow(data.event2) ? data.event2 : (data.base || baseFallback);
     }
   } else {
     displayData = isInWindow(data) ? data : baseFallback;
@@ -148,7 +148,7 @@ function render() {
      ------------------------------------------------------- */
 
   if (!displayData || !displayData.title ||
-      (!isPreview && displayData !== (structured ? (displayData.base || baseFallback) : baseFallback) &&
+      (!isPreview && displayData !== (structured ? (data.base || baseFallback) : baseFallback) &&
        !isInWindow(displayData))) {
 
     root.hidden =
