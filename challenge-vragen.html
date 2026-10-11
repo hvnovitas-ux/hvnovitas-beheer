@@ -53,6 +53,12 @@ textarea{min-height:75px;resize:vertical}
         <label for="questionText"><strong>Vraag</strong></label>
         <textarea id="questionText" required maxlength="500" placeholder="Typ hier de handbalvraag..."></textarea>
       </div>
+      <div class="field">
+        <label for="imageUrl"><strong>Foto bij de vraag (optioneel)</strong></label>
+        <input type="text" id="imageUrl" placeholder="Plak hier de https-link naar een foto">
+        <small class="muted">Gebruik voorlopig een directe https-link naar de afbeelding. Een uploadknop vanaf je computer vraagt om aparte foto-opslag.</small>
+        <img id="imagePreview" alt="Voorbeeld van de foto bij de vraag" hidden style="max-width:100%;max-height:240px;object-fit:contain;align-self:flex-start;border-radius:10px;margin-top:8px">
+      </div>
       <div class="answers">
         <div class="answer"><label><input type="radio" name="correct" value="0" required> Dit is het juiste antwoord</label><input type="text" id="answer0" required maxlength="250" placeholder="Antwoord 1"></div>
         <div class="answer"><label><input type="radio" name="correct" value="1" required> Dit is het juiste antwoord</label><input type="text" id="answer1" required maxlength="250" placeholder="Antwoord 2"></div>
