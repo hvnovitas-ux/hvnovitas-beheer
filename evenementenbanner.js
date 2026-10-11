@@ -418,6 +418,11 @@ $("eventForm")
         await set(ref(db, PATH), allBanners);
         current = allBanners[selectedSlot];
 
+        const previewFrame = $("previewFrame");
+        if (previewFrame) {
+          previewFrame.src = "evenementenbanner-widget.html?preview=1&slot=" +
+            encodeURIComponent(selectedSlot) + "&v=20261011-slots";
+        }
 
         message(
           "Evenementenbanner opgeslagen.",
@@ -637,13 +642,6 @@ function updatePreview() {
 
   const root = $("previewRoot");
   const data = readForm();
-  const frame = $("previewFrame");
-
-  if (frame) {
-    frame.src = "evenementenbanner-widget.html?preview=1&slot=" +
-      encodeURIComponent(selectedSlot) + "&v=20261011-slots";
-    return;
-  }
 
   if (!root) return;
   root.replaceChildren();
