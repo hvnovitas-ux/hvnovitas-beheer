@@ -113,7 +113,9 @@ function createElement(
 
 function render() {
 
-  const slotFromQuery = new URLSearchParams(window.location.search).get("slot");
+  const params = new URLSearchParams(window.location.search);
+  const slotFromQuery = params.get("slot");
+  const imagePreviewSpecified = isPreview && params.has("imagePreview");
   const structured = !!data && ["base", "event1", "event2"].some(
     key => Object.prototype.hasOwnProperty.call(data, key)
   );
@@ -124,7 +126,13 @@ function render() {
     dateText: "",
     timeText: "",
     location: "Hulst",
-    link: ""
+    link: "",
+    imageUrl: "https://www.hvnovitas.nl/banners/kom-handballen-bij-novitas.webp"
+  };
+  const baseData = {
+    ...baseFallback,
+    ...(structured && data.base ? data.base : {}),
+    imageUrl: (structured && data.base && data.base.imageUrl) || baseFallback.imageUrl
   };
   const isInWindow = item => !!item && item.active && item.title &&
     item.start && item.end &&
@@ -134,13 +142,28 @@ function render() {
   let displayData;
   if (structured) {
     if (isPreview && slotFromQuery) {
-      displayData = data[slotFromQuery] || (slotFromQuery === "base" ? (data.base || baseFallback) : null);
+      displayData = slotFromQuery === "base" ? baseData : (data[slotFromQuery] || null);
     } else {
       displayData = isInWindow(data.event1) ? data.event1 :
-        isInWindow(data.event2) ? data.event2 : (data.base || baseFallback);
+        isInWindow(data.event2) ? data.event2 : baseData;
     }
   } else {
-    displayData = isInWindow(data) ? data : baseFallback;
+    displayData = isInWindow(data) ? data : baseData;
+  }
+
+  if (imagePreviewSpecified) {
+    displayData = {
+      ...(displayData || {
+        active: true,
+        title: "Banner voorbeeld",
+        eyebrow: "HV NOVITAS",
+        dateText: "",
+        timeText: "",
+        location: "",
+        link: ""
+      }),
+      imageUrl: params.get("imagePreview") || ""
+    };
   }
 
   /* -------------------------------------------------------
@@ -148,7 +171,7 @@ function render() {
      ------------------------------------------------------- */
 
   if (!displayData || !displayData.title ||
-      (!isPreview && displayData !== (structured ? (data.base || baseFallback) : baseFallback) &&
+      (!isPreview && displayData !== baseData &&
        !isInWindow(displayData))) {
 
     root.hidden =
@@ -187,6 +210,28 @@ function render() {
       "event-banner"
     );
 
+  if (displayData.imageUrl && /^https?:\/\//i.test(String(displayData.imageUrl))) {
+    root.replaceChildren();
+    banner.classList.add("event-banner--image");
+    const image = createElement("img", "event-banner-image");
+    image.src = String(displayData.imageUrl).trim();
+    image.alt = displayData.title || "HV Novitas";
+    image.draggable = false;
+    banner.append(image);
+
+    if (displayData.link && /^https?:\/\//i.test(String(displayData.link))) {
+      const link = createElement("a", "event-link");
+      link.href = displayData.link;
+      link.setAttribute("aria-label", displayData.title || "HV Novitas");
+      link.append(banner);
+      root.append(link);
+    } else {
+      root.append(banner);
+    }
+
+    root.hidden = false;
+    return;
+  }
 
   /* =======================================================
      DECORATIE

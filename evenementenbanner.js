@@ -17,6 +17,9 @@ import {
    ========================================================= */
 
 const PATH = "evenementenbanner";
+const BANNERS_API = "https://api.github.com/repos/hvnovitas-ux/hvnovitas-home/contents/banners?ref=main";
+const BANNERS_SITE_PATH = "https://www.hvnovitas.nl/banners/";
+const BANNER_VERSION = "20261011-imagepicker";
 
 const $ = id =>
   document.getElementById(id);
@@ -24,6 +27,7 @@ const $ = id =>
 let current = {};
 let allBanners = {};
 let selectedSlot = "base";
+let availableBannerImages = [];
 
 const defaultBase = {
   active: true,
@@ -33,6 +37,7 @@ const defaultBase = {
   timeText: "",
   location: "Hulst",
   link: "",
+  imageUrl: "https://www.hvnovitas.nl/banners/kom-handballen-bij-novitas.webp",
   start: "",
   end: ""
 };
@@ -44,7 +49,15 @@ function isStructured(value) {
 }
 
 function getSlotData(slot = selectedSlot) {
-  return allBanners[slot] || (slot === "base" ? { ...defaultBase } : {});
+  if (slot === "base") {
+    const base = allBanners.base || {};
+    return {
+      ...defaultBase,
+      ...base,
+      imageUrl: base.imageUrl || defaultBase.imageUrl
+    };
+  }
+  return allBanners[slot] || {};
 }
 
 let messageTimer = null;
@@ -86,7 +99,11 @@ function loadBanner() {
       const stored = snapshot.val() || {};
       if (isStructured(stored)) {
         allBanners = {
-          base: stored.base || { ...defaultBase },
+          base: {
+            ...defaultBase,
+            ...(stored.base || {}),
+            imageUrl: (stored.base && stored.base.imageUrl) || defaultBase.imageUrl
+          },
           event1: stored.event1 || {},
           event2: stored.event2 || {}
         };
@@ -99,6 +116,7 @@ function loadBanner() {
       }
       current = getSlotData();
       fillForm();
+      renderBannerGallery();
 
       updatePreview();
 
@@ -153,6 +171,11 @@ function fillForm() {
 
   $("link").value =
     current.link || "";
+
+  $("imageUrl").value =
+    current.imageUrl || (selectedSlot === "base" ? defaultBase.imageUrl : "");
+
+  renderBannerGallery();
 
   $("start").value =
     toDateTimeLocal(
@@ -253,6 +276,9 @@ function readForm() {
     link:
       $("link").value.trim(),
 
+    imageUrl:
+      $("imageUrl").value.trim(),
+
     start:
       $("start").value,
 
@@ -274,10 +300,7 @@ $("bannerSlot")?.addEventListener("change", () => {
   updatePreview();
   updateStatus();
   const frame = $("previewFrame");
-  if (frame) {
-    frame.src = "evenementenbanner-widget.html?preview=1&slot=" +
-      encodeURIComponent(selectedSlot) + "&v=20261011-slots";
-  }
+  refreshFramePreview();
 });
 
 [
@@ -393,6 +416,18 @@ $("eventForm")
 
 
       if (
+        data.imageUrl &&
+        !/^https?:\/\//i.test(data.imageUrl)
+      ) {
+        message(
+          "De geselecteerde afbeeldingslink is ongeldig.",
+          "error"
+        );
+        return;
+      }
+
+
+      if (
         data.link &&
         !/^https?:\/\//i.test(
           data.link
@@ -418,11 +453,7 @@ $("eventForm")
         await set(ref(db, PATH), allBanners);
         current = allBanners[selectedSlot];
 
-        const previewFrame = $("previewFrame");
-        if (previewFrame) {
-          previewFrame.src = "evenementenbanner-widget.html?preview=1&slot=" +
-            encodeURIComponent(selectedSlot) + "&v=20261011-slots";
-        }
+        refreshFramePreview();
 
         message(
           "Evenementenbanner opgeslagen.",
@@ -639,21 +670,119 @@ function updateStatus() {
    ========================================================= */
 
 function updatePreview() {
-
   const root = $("previewRoot");
   const data = readForm();
 
   if (!root) return;
   root.replaceChildren();
-
-
-  renderBanner(
-    root,
-    data,
-    false
-  );
-
+  renderBanner(root, data, false);
 }
+
+function refreshFramePreview() {
+  const frame = $("previewFrame");
+  if (!frame) return;
+
+  const url = new URL("evenementenbanner-widget.html", window.location.href);
+  url.searchParams.set("preview", "1");
+  url.searchParams.set("slot", selectedSlot);
+  url.searchParams.set("v", BANNER_VERSION);
+  // Een lege waarde overschrijft ook tijdelijk een eerder opgeslagen afbeelding.
+  url.searchParams.set("imagePreview", $("imageUrl")?.value.trim() || "");
+  frame.src = url.toString();
+}
+
+const imageExtensions = /\.(?:png|jpe?g|webp|gif|avif)$/i;
+
+async function loadBannerImages() {
+  const gallery = $("bannerImageGallery");
+  if (!gallery) return;
+
+  try {
+    const response = await fetch(BANNERS_API, {
+      headers: { Accept: "application/vnd.github+json" }
+    });
+    if (!response.ok) throw new Error("GitHub gaf status " + response.status);
+    const contents = await response.json();
+
+    availableBannerImages = contents
+      .filter(item => item.type === "file" && imageExtensions.test(item.name))
+      .map(item => ({
+        name: item.name,
+        sha: item.sha || "",
+        url: BANNERS_SITE_PATH + encodeURIComponent(item.name) +
+          (item.sha ? "?v=" + item.sha.slice(0, 8) : "")
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, "nl"));
+
+    renderBannerGallery();
+  } catch (error) {
+    console.error("Bannerafbeeldingen laden mislukt:", error);
+    gallery.replaceChildren();
+    const errorBox = document.createElement("div");
+    errorBox.className = "banner-image-message";
+    errorBox.textContent = "De map banners kon niet automatisch worden ingelezen. Controleer of de afbeeldingen in hvnovitas-home/banners staan en laad deze pagina opnieuw.";
+    gallery.append(errorBox);
+    const label = $("imageSelectedLabel");
+    if (label) label.textContent = "Afbeeldingenlijst niet beschikbaar.";
+  }
+}
+
+function renderBannerGallery() {
+  const gallery = $("bannerImageGallery");
+  if (!gallery) return;
+  gallery.replaceChildren();
+
+  if (!availableBannerImages.length) {
+    const empty = document.createElement("div");
+    empty.className = "banner-image-message";
+    empty.textContent = "Nog geen afbeeldingen gevonden. Plaats een JPG-, PNG- of WebP-bestand in de map banners en laad deze pagina opnieuw.";
+    gallery.append(empty);
+    return;
+  }
+
+  const selectedUrl = $("imageUrl")?.value.trim() || "";
+  let selectedName = "";
+
+  availableBannerImages.forEach(item => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "banner-image-option";
+    const selected = selectedUrl.includes("/banners/" + item.name);
+    if (selected) {
+      button.classList.add("selected");
+      selectedName = item.name;
+    }
+    button.setAttribute("aria-pressed", String(selected));
+    button.setAttribute("aria-label", "Selecteer banner " + item.name);
+
+    const image = document.createElement("img");
+    image.src = item.url;
+    image.alt = item.name;
+    image.loading = "lazy";
+
+    const caption = document.createElement("span");
+    caption.textContent = item.name;
+    button.append(image, caption);
+
+    button.addEventListener("click", () => {
+      $("imageUrl").value = item.url;
+      renderBannerGallery();
+      updatePreview();
+      refreshFramePreview();
+    });
+
+    gallery.append(button);
+  });
+
+  const label = $("imageSelectedLabel");
+  if (label) {
+    label.textContent = selectedName
+      ? "Geselecteerd: " + selectedName
+      : "Klik op een afbeelding om deze voor deze banner te kiezen.";
+  }
+}
+
+loadBannerImages();
 
 
 /* =========================================================

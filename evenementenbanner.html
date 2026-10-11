@@ -1000,6 +1000,67 @@
 
 
     /* =====================================================
+       BANNERAFBEELDINGEN KIEZEN
+       ===================================================== */
+    .banner-image-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 8px 0 18px;
+    }
+    .banner-image-option {
+      display: block;
+      min-width: 0;
+      padding: 8px;
+      border: 2px solid #d9e0e9;
+      border-radius: 12px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .banner-image-option:hover { border-color: #ff9b59; }
+    .banner-image-option.selected {
+      border-color: #ff6500;
+      box-shadow: 0 0 0 3px rgba(255,101,0,.14);
+    }
+    .banner-image-option img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3.315 / 1;
+      object-fit: cover;
+      border-radius: 7px;
+      background: #171717;
+    }
+    .banner-image-option span {
+      display: block;
+      margin-top: 7px;
+      color: #172033;
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .banner-image-option.selected span::before {
+      content: "✓ Gekozen · ";
+      color: #c34f00;
+    }
+    .banner-image-message {
+      grid-column: 1 / -1;
+      padding: 12px;
+      border: 1px dashed #cfd7e4;
+      border-radius: 10px;
+      color: #667085;
+      background: #f8fafc;
+      font-size: 13px;
+    }
+    .image-selected-label {
+      display: block;
+      margin: 0 0 8px;
+      color: #667085;
+      font-size: 12px;
+    }
+
+    /* =====================================================
        TABLET
        ===================================================== */
 
@@ -1223,6 +1284,18 @@
             </select>
             <small class="help-text">Je kunt twee evenementen vooraf instellen. De basisbanner verschijnt automatisch wanneer geen evenement actief is.</small>
           </label>
+
+
+          <!-- AFBEELDING UIT DE MAP BANNERS -->
+          <input id="imageUrl" type="hidden" value="">
+          <div class="form-field">
+            <span class="form-label">Kies een bannerafbeelding</span>
+            <p class="help-text">De afbeeldingen worden automatisch opgehaald uit de map <strong>banners</strong> in de website-repository. Klik op een afbeelding om deze voor de geselecteerde banner te kiezen.</p>
+            <div id="bannerImageGallery" class="banner-image-gallery" aria-live="polite">
+              <div class="banner-image-message">Afbeeldingen uit de map banners laden…</div>
+            </div>
+            <span id="imageSelectedLabel" class="image-selected-label">Afbeeldingen worden geladen…</span>
+          </div>
 
 
           <!-- ACTIEF -->
@@ -1587,7 +1660,7 @@
 
   <script
     type="module"
-    src="evenementenbanner.js?v=20261011-slots"
+    src="evenementenbanner.js?v=20261011-imagepicker"
   ></script>
 
 
