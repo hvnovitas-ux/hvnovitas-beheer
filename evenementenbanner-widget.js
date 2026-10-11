@@ -134,7 +134,8 @@ function render() {
     ...(structured && data.base ? data.base : {}),
     imageUrl: (structured && data.base && data.base.imageUrl) || baseFallback.imageUrl
   };
-  const isInWindow = item => !!item && item.active && item.title &&
+  const isInWindow = item => !!item && item.active &&
+    (item.title || item.imageUrl) &&
     item.start && item.end &&
     Date.now() >= new Date(item.start).getTime() &&
     Date.now() <= new Date(item.end).getTime();
@@ -170,7 +171,7 @@ function render() {
      CONTROLE NORMALE WEBSITE
      ------------------------------------------------------- */
 
-  if (!displayData || !displayData.title ||
+  if (!displayData || (!displayData.title && !displayData.imageUrl) ||
       (!isPreview && displayData !== baseData &&
        !isInWindow(displayData))) {
 
