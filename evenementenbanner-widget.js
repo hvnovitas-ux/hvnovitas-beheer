@@ -113,29 +113,43 @@ function createElement(
 
 function render() {
 
+  const slotFromQuery = new URLSearchParams(window.location.search).get("slot");
+  const structured = !!data && ["base", "event1", "event2"].some(
+    key => Object.prototype.hasOwnProperty.call(data, key)
+  );
+  const baseFallback = {
+    active: true,
+    title: "HV Novitas",
+    eyebrow: "HANDBALVERENIGING",
+    dateText: "",
+    timeText: "",
+    location: "Hulst",
+    link: ""
+  };
+  const isInWindow = item => !!item && item.active && item.title &&
+    item.start && item.end &&
+    Date.now() >= new Date(item.start).getTime() &&
+    Date.now() <= new Date(item.end).getTime();
+
+  let displayData;
+  if (structured) {
+    if (isPreview && slotFromQuery) {
+      displayData = data[slotFromQuery] || (slotFromQuery === "base" ? (data.base || baseFallback) : null);
+    } else {
+      displayData = isInWindow(data.event1) ? displayData.event1 :
+        isInWindow(data.event2) ? displayData.event2 : (displayData.base || baseFallback);
+    }
+  } else {
+    displayData = isInWindow(data) ? data : baseFallback;
+  }
 
   /* -------------------------------------------------------
      CONTROLE NORMALE WEBSITE
      ------------------------------------------------------- */
 
-  if (
-    !isPreview &&
-    (
-      !data ||
-      !data.active ||
-      !data.title ||
-      !data.start ||
-      !data.end ||
-      Date.now() <
-        new Date(
-          data.start
-        ).getTime() ||
-      Date.now() >
-        new Date(
-          data.end
-        ).getTime()
-    )
-  ) {
+  if (!displayData || !displayData.title ||
+      (!isPreview && displayData !== (structured ? (displayData.base || baseFallback) : baseFallback) &&
+       !isInWindow(displayData))) {
 
     root.hidden =
       true;
@@ -151,13 +165,7 @@ function render() {
      CONTROLE PREVIEW
      ------------------------------------------------------- */
 
-  if (
-    isPreview &&
-    (
-      !data ||
-      !data.title
-    )
-  ) {
+  if (isPreview && (!displayData || !displayData.title)) {
 
     root.hidden =
       true;
@@ -353,7 +361,7 @@ function render() {
     createElement(
       "div",
       "eyebrow",
-      data.eyebrow ||
+      displayData.eyebrow ||
       "HV NOVITAS PRESENTEERT"
     );
 
@@ -371,7 +379,7 @@ function render() {
 
   const words =
     String(
-      data.title ||
+      displayData.title ||
       "EVENEMENT"
     )
       .trim()
@@ -451,11 +459,11 @@ function render() {
 
   const detailValues = [
 
-    data.dateText,
+    displayData.dateText,
 
-    data.timeText,
+    displayData.timeText,
 
-    data.location
+    displayData.location
 
   ]
     .filter(
@@ -526,10 +534,10 @@ function render() {
      ======================================================= */
 
   if (
-    data.link &&
+    displayData.link &&
     /^https?:\/\//i.test(
       String(
-        data.link
+        displayData.link
       )
     )
   ) {
@@ -542,12 +550,12 @@ function render() {
 
 
     link.href =
-      data.link;
+      displayData.link;
 
 
     link.setAttribute(
       "aria-label",
-      data.title ||
+      displayData.title ||
       "Evenement"
     );
 
