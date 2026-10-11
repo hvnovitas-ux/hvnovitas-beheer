@@ -1214,6 +1214,16 @@
 
         <form id="eventForm">
 
+          <label class="form-field">
+            <span class="form-label">Welke banner wil je instellen?</span>
+            <select id="bannerSlot" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:12px;font:inherit;background:#fff">
+              <option value="base">Basisbanner (als er geen evenement actief is)</option>
+              <option value="event1">Evenementbanner 1</option>
+              <option value="event2">Evenementbanner 2</option>
+            </select>
+            <small class="help-text">Je kunt twee evenementen vooraf instellen. De basisbanner verschijnt automatisch wanneer geen evenement actief is.</small>
+          </label>
+
 
           <!-- ACTIEF -->
 
@@ -1516,7 +1526,7 @@
 
           <iframe
             id="previewFrame"
-            src="evenementenbanner-widget.html?preview=1&v=20260926-1700"
+            src="evenementenbanner-widget.html?preview=1&slot=base&v=20261011-slots"
             title="Voorbeeld evenementenbanner"
             loading="eager"
             scrolling="no">
@@ -1577,7 +1587,7 @@
 
   <script
     type="module"
-    src="evenementenbanner.js?v=20260926-1700"
+    src="evenementenbanner.js?v=20261011-slots"
   ></script>
 
 
