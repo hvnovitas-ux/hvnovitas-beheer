@@ -43,7 +43,8 @@ function normalized(data) {
     id,
     q: String(q.q || ""),
     a: Array.isArray(q.a) ? q.a.slice(0, 4).map(String) : ["","","",""],
-    c: Number.isInteger(Number(q.c)) ? Number(q.c) : 0
+    c: Number.isInteger(Number(q.c)) ? Number(q.c) : 0,
+    imageUrl: validImageUrl(q.imageUrl) ? String(q.imageUrl) : ""
   }));
 }
 function render() {
@@ -57,6 +58,7 @@ function render() {
   list.innerHTML = shown.map((q, i) => `
     <article class="question">
       <h3>${i + 1}. ${escapeHtml(q.q)}</h3>
+      ${q.imageUrl ? `<img src="${escapeHtml(q.imageUrl)}" alt="Foto bij de vraag" loading="lazy" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:8px;margin:0 0 12px">` : ""}
       <div class="options">
         ${q.a.map((a, n) => `<div class="option ${n === q.c ? "correct" : ""}">${n === q.c ? "✓ " : ""}${escapeHtml(a)}</div>`).join("")}
       </div>
@@ -69,6 +71,7 @@ function render() {
 function resetForm() {
   form.reset();
   $("questionId").value = "";
+  updateImagePreview();
   $("formTitle").textContent = "➕ Nieuwe vraag toevoegen";
   $("saveButton").textContent = "Vraag opslaan";
   $("cancelEdit").hidden = true;
@@ -78,6 +81,8 @@ function beginEdit(id) {
   if (!q) return;
   $("questionId").value = q.id;
   $("questionText").value = q.q;
+  $("imageUrl").value = q.imageUrl || "";
+  updateImagePreview();
   for (let i = 0; i < 4; i++) $(`answer${i}`).value = q.a[i] || "";
   const radio = document.querySelector(`input[name="correct"][value="${q.c}"]`);
   if (radio) radio.checked = true;
@@ -120,7 +125,13 @@ form.addEventListener("submit", async event => {
     say("Vul de vraag en alle vier antwoorden in en kies het juiste antwoord.", true);
     return;
   }
-  const payload = { q, a, c: Number(correct.value), updatedAt: new Date().toISOString() };
+  const imageUrlRaw = $("imageUrl").value.trim();
+  const imageUrl = imageUrlRaw ? validImageUrl(imageUrlRaw) ? imageUrlRaw : null : "";
+  if (imageUrl === null) {
+    say("Gebruik een geldige foto-link die begint met https:// of http://.", true);
+    return;
+  }
+  const payload = { q, a, c: Number(correct.value), imageUrl, updatedAt: new Date().toISOString() };
   const id = $("questionId").value;
   $("saveButton").disabled = true;
   try {
@@ -157,6 +168,28 @@ list.addEventListener("click", async event => {
     }
   }
 });
+function validImageUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return (url.protocol === "https:" || url.protocol === "http:") && Boolean(url.hostname);
+  } catch {
+    return false;
+  }
+}
+function updateImagePreview() {
+  const input = $("imageUrl");
+  const preview = $("imagePreview");
+  const value = input.value.trim();
+  if (!value || !validImageUrl(value)) {
+    preview.hidden = true;
+    preview.removeAttribute("src");
+    return;
+  }
+  preview.onload = () => { preview.hidden = false; };
+  preview.onerror = () => { preview.hidden = true; };
+  preview.src = value;
+}
+$("imageUrl").addEventListener("input", updateImagePreview);
 $("cancelEdit").addEventListener("click", resetForm);
 $("searchInput").addEventListener("input", render);
 $("refreshButton").addEventListener("click", () => render());
