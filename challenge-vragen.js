@@ -191,7 +191,7 @@ async function loadPhotoChoices() {
     const response = await fetch(photoListApi, { headers: { "Accept": "application/vnd.github+json" } });
     if (!response.ok) throw new Error("GitHub API antwoordde met " + response.status);
     const files = await response.json();
-    const allowed = /\\.(jpe?g|png|gif|webp)$/i;
+    const allowed = /\.(jpe?g|png|gif|webp)$/i;
     const photos = files.filter(file => file.type === "file" && allowed.test(file.name)).sort((a,b) => a.name.localeCompare(b.name, "nl"));
     select.replaceChildren(new Option("Geen foto", ""));
     for (const photo of photos) {
