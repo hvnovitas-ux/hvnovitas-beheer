@@ -265,6 +265,26 @@ h1 span{color:var(--orange)}
   .keeper {width:91px;height:122px;top:65%}
   .goal-frame:before {height:11px;background-size:auto}
 }
+
+/* Echte handbal-look: sporthalwand, vloerbelijning en Novitas-schutter */
+.arena{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(180deg,transparent 0 59%,rgba(10,15,22,.18) 59.2%,transparent 62%),repeating-linear-gradient(0deg,transparent 0 17px,rgba(255,255,255,.035) 18px,transparent 19px),repeating-linear-gradient(90deg,transparent 0 52px,rgba(0,0,0,.2) 53px,transparent 56px),linear-gradient(180deg,#292a2d 0%,#4a3527 18%,#65462f 37%,#2d302d 59%,#23618a 60%,#16466e 100%)!important}
+.arena:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 24px,rgba(20,15,12,.4) 25px,transparent 27px),repeating-linear-gradient(90deg,transparent 0 30px,rgba(240,239,226,.06) 31px,transparent 32px),repeating-linear-gradient(45deg,transparent 0 12px,rgba(255,255,255,.045) 13px,transparent 14px);mask-image:linear-gradient(180deg,#000 0%,#000 57%,transparent 63%);opacity:.78}
+.lights{z-index:1;height:100%;background:radial-gradient(ellipse at 18% 5%,rgba(255,242,207,.23),transparent 15%),radial-gradient(ellipse at 83% 4%,rgba(255,242,207,.22),transparent 15%),linear-gradient(180deg,rgba(255,255,255,.1),transparent 28%)!important;pointer-events:none}
+.court-line{z-index:1;width:120%;left:-10%;bottom:-146px;height:270px;border:2px solid rgba(255,255,255,.42);border-radius:50%;background:transparent}
+.court-line:before{content:"";position:absolute;left:12%;right:12%;top:24px;height:155px;border:2px solid rgba(255,255,255,.24);border-bottom:0;border-radius:50% 50% 0 0}
+.shooter{position:absolute;z-index:9;left:0;bottom:-19px;width:clamp(142px,21%,218px);height:clamp(212px,80%,292px);pointer-events:none;filter:drop-shadow(0 12px 7px rgba(0,0,0,.44));transform-origin:70% 84%}
+.shooter svg{display:block;width:100%;height:100%;overflow:visible}
+.throw-arm{transform-box:view-box;transform-origin:143px 100px}
+.shooter.is-throwing{animation:shooterFollowThrough .44s cubic-bezier(.2,.7,.25,1)}
+.shooter.is-throwing .throw-arm{animation:armFollowThrough .42s cubic-bezier(.2,.7,.25,1)}
+@keyframes shooterFollowThrough{0%{transform:translate(0,0) rotate(0)}36%{transform:translate(8px,-10px) rotate(2deg)}100%{transform:translate(2px,-2px) rotate(0)}}
+@keyframes armFollowThrough{0%{transform:rotate(0)}38%{transform:rotate(30deg)}100%{transform:rotate(17deg)}}
+.goal{z-index:4;left:54%;top:18px;width:min(80%,720px);height:260px;transform:translateX(-50%)}
+.net{z-index:1;opacity:.98}.keeper{z-index:3}.target-grid{z-index:5}.goal-frame{z-index:8}.arena-footer{z-index:11}
+#throwHand{pointer-events:none}
+@media(max-width:600px){.shooter{width:clamp(116px,30%,166px);height:228px;left:-5px;bottom:-12px}.goal{left:57%;top:27px;width:76%;height:225px}.court-line{bottom:-151px;height:240px}}
+@media(prefers-reduced-motion:reduce){.shooter.is-throwing,.shooter.is-throwing .throw-arm{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -282,13 +302,49 @@ h1 span{color:var(--orange)}
     <div class="stat"><span class="stat-label">Doelpunten</span><span class="stat-value orange" id="goals">0</span></div>
     <div class="stat"><span class="stat-label">Keeper redt</span><span class="stat-value" id="saves">0</span></div>
     <div class="stat"><span class="stat-label">Schoten over</span><span class="stat-value" id="shotsLeft">10</span></div>
-    <div class="stat"><span class="stat-label">Reeks</span><span class="stat-value" id="streak">0</span></div>
+    <div class="stat"><span class="stat-label">Op rij</span><span class="stat-value" id="streak">0</span></div>
   </section>
 
   <section class="arena" id="arena" aria-label="Handbaldoel. Kies een vak om te schieten.">
     <div class="lights"></div>
     <div class="court-line"></div>
 
+    <div class="shooter" id="shooter" aria-hidden="true">
+      <svg viewBox="0 0 220 300" role="presentation" aria-hidden="true">
+        <defs>
+          <linearGradient id="novitasShirt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a38"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#c64200"/></linearGradient>
+          <linearGradient id="novitasShorts" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#25272b"/><stop offset="1" stop-color="#08090b"/></linearGradient>
+          <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6b18e"/><stop offset="1" stop-color="#a76b4c"/></linearGradient>
+        </defs>
+        <ellipse cx="112" cy="289" rx="66" ry="8" fill="#000" opacity=".34"/>
+        <path d="M83 174 L126 179 L119 220 L94 256 L67 278 Q57 284 45 276 L43 269 L79 235 L85 204Z" fill="url(#novitasShorts)" stroke="#08090b" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M119 181 L157 179 L169 217 L183 252 L199 269 Q202 277 194 281 L169 279 L152 263 L132 229 L112 205Z" fill="url(#novitasShorts)" stroke="#08090b" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M49 269 L73 274 L68 288 L39 290 Q30 286 39 279Z" fill="#f2f0e9" stroke="#191919" stroke-width="3"/>
+        <path d="M171 267 L196 267 L211 280 L209 288 L179 286 L166 279Z" fill="#f2f0e9" stroke="#191919" stroke-width="3"/>
+        <path d="M47 282 L65 285 M183 280 L202 282" stroke="#ff6a00" stroke-width="4"/>
+        <path d="M91 102 Q68 107 58 132 L44 157" fill="none" stroke="#08090b" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M91 102 Q68 107 58 132 L44 157" fill="none" stroke="#202226" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M42 151 L48 159 L40 171 L30 166 L32 155Z" fill="url(#skin)" stroke="#784832" stroke-width="2"/>
+        <g class="throw-arm" id="throwArm">
+          <path d="M143 100 Q160 81 169 58 L169 42" fill="none" stroke="#090a0c" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M143 100 Q160 81 169 58 L169 42" fill="none" stroke="url(#novitasShirt)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M157 52 L164 35 Q170 29 177 35 L180 43 L174 52 L167 56Z" fill="url(#skin)" stroke="#784832" stroke-width="2"/>
+          <circle id="throwHand" cx="170" cy="42" r="4" fill="#ff7412" opacity=".01"/>
+        </g>
+        <path d="M90 89 Q108 78 133 87 L151 103 L145 160 Q119 177 82 159 L78 111Z" fill="#090a0c" stroke="#050505" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M91 91 Q110 82 132 91 L145 105 L140 155 Q116 167 87 154 L84 110Z" fill="url(#novitasShirt)" stroke="#ffbe83" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M88 103 L75 113 L78 139 L90 143 L96 119Z" fill="#16171a" stroke="#090a0c" stroke-width="3"/>
+        <path d="M135 99 L151 108 L157 132 L144 140 L137 119Z" fill="#16171a" stroke="#090a0c" stroke-width="3"/>
+        <path d="M91 104 L137 105" stroke="#242424" stroke-width="2" opacity=".7"/>
+        <text x="115" y="120" text-anchor="middle" font-size="13" font-family="Arial,Helvetica,sans-serif" font-weight="900" letter-spacing=".7" fill="#171717">NOVITAS</text>
+        <text x="116" y="151" text-anchor="middle" font-size="35" font-family="Arial,Helvetica,sans-serif" font-weight="900" fill="#fff" stroke="#e5e5e5" stroke-width=".6">9</text>
+        <path d="M104 83 L105 96 L123 98 L128 85Z" fill="url(#skin)" stroke="#90563a" stroke-width="2"/>
+        <path d="M108 32 Q91 40 98 61 L111 75 L102 83 L90 68 Q81 52 89 33 Q98 16 117 18 Q138 19 143 39 L139 57 L130 48 Q126 35 108 32Z" fill="#4b2e20"/>
+        <path d="M91 39 Q82 57 95 73 L84 84 Q69 67 77 44 Q81 30 96 22Z" fill="#5b3824"/>
+        <path d="M101 28 Q115 15 130 29 Q139 39 133 56 L124 69 Q113 76 103 65 L97 51Z" fill="url(#skin)" stroke="#87563d" stroke-width="2.5"/>
+        <path d="M99 37 Q100 24 114 23 Q129 22 137 34 L132 39 L122 33 L108 36 L100 44Z" fill="#1a1715"/>
+      </svg>
+    </div>
     <div class="goal" id="goal">
       <div class="net"></div>
       <div class="keeper" id="keeper" aria-hidden="true">
@@ -384,6 +440,8 @@ h1 span{color:var(--orange)}
   const goal = document.getElementById("goal");
   const keeper = document.getElementById("keeper");
   const ball = document.getElementById("ball");
+  const shooter = document.getElementById("shooter");
+  const throwHand = document.getElementById("throwHand");
   const resultBanner = document.getElementById("resultBanner");
   const status = document.getElementById("status");
   const goalsEl = document.getElementById("goals");
@@ -432,6 +490,19 @@ h1 span{color:var(--orange)}
     } else {
       status.textContent = message;
     }
+  }
+
+  function throwHandPoint(){
+    const handRect=throwHand.getBoundingClientRect();
+    const ar=arena.getBoundingClientRect();
+    return {x:handRect.left+handRect.width/2-ar.left,y:handRect.top+handRect.height/2-ar.top};
+  }
+  function positionBallAtHand(){
+    const p=throwHandPoint();ball.style.left=p.x+"px";ball.style.top=p.y+"px";ball.style.transform="translate(-50%,-50%) rotate(0deg)";
+  }
+  function animateShooterThrow(){
+    shooter.classList.remove("is-throwing");void shooter.offsetWidth;shooter.classList.add("is-throwing");
+    window.setTimeout(function(){shooter.classList.remove("is-throwing");},470);
   }
 
   function zoneCenter(index){
@@ -520,7 +591,7 @@ h1 span{color:var(--orange)}
   }
 
   function showResult(saved){
-    resultBanner.textContent = saved ? "GEPAKT!" : (streak >= 3 ? "HATTRICK!" : "GOAL!");
+    resultBanner.textContent = saved ? "GEPAKT!" : "GOAL!";
     resultBanner.classList.toggle("saved",saved);
     resultBanner.classList.add("show");
     window.clearTimeout(resultTimer);
@@ -539,8 +610,10 @@ h1 span{color:var(--orange)}
     const saved = isSaved(index,diveZone);
     const destination = zoneCenter(index);
     const ar = arena.getBoundingClientRect();
-    const startX = ar.width / 2;
-    const startY = ar.height - 28;
+    const handPoint=throwHandPoint();
+    const startX=handPoint.x;
+    const startY=handPoint.y;
+    animateShooterThrow();
 
     if (ballAnimation) {
       try { ballAnimation.cancel(); } catch(e) {}
@@ -582,9 +655,7 @@ h1 span{color:var(--orange)}
       }
       if (saved) ball.classList.add("caught");
       window.setTimeout(function(){
-        ball.style.left = "50%";
-        ball.style.top = "calc(100% - 28px)";
-        ball.style.transform = "translate(-50%,-50%)";
+        positionBallAtHand();
         ball.style.zIndex = "7";
         ball.classList.remove("caught");
 
@@ -625,7 +696,7 @@ h1 span{color:var(--orange)}
     }
     endTitle.textContent = title;
     endScore.textContent = goals + " van de 10 penalty's raak";
-    endCopy.textContent = copy + " Beste doelpuntenreeks: " + bestStreak + ".";
+    endCopy.textContent = copy + " Langste reeks op rij: " + bestStreak + ".";
     endPanel.classList.add("show");
     roundIndicator.textContent = "KLAAR!";
   }
@@ -652,9 +723,7 @@ h1 span{color:var(--orange)}
     keeperDivePose = restingKeeperPose;
     ball.classList.remove("caught");
     ball.style.zIndex = "7";
-    ball.style.left = "50%";
-    ball.style.top = "calc(100% - 28px)";
-    ball.style.transform = "translate(-50%,-50%)";
+    positionBallAtHand();
     zones.forEach(function(zone){ zone.disabled = false; });
     resultBanner.classList.remove("show","saved");
     endPanel.classList.remove("show");
@@ -672,6 +741,8 @@ h1 span{color:var(--orange)}
   restartBtn.addEventListener("click",resetGame);
   playAgainBtn.addEventListener("click",resetGame);
   updateScore();
+  positionBallAtHand();
+  window.addEventListener("resize",function(){if(!busy) positionBallAtHand();});
 })();
 </script>
 </body>
