@@ -285,6 +285,47 @@ h1 span{color:var(--orange)}
 @media(max-width:600px){.shooter{width:clamp(116px,30%,166px);height:228px;left:-5px;bottom:-12px}.goal{left:57%;top:27px;width:76%;height:225px}.court-line{bottom:-151px;height:240px}}
 @media(prefers-reduced-motion:reduce){.shooter.is-throwing,.shooter.is-throwing .throw-arm{animation:none!important}}
 
+
+/* Eindversie: de realistische penalty-scène is de speelvloer; de bediening blijft echt interactief. */
+html,body{min-height:0;background:#090b0e!important}
+.game-shell{width:100%;max-width:980px;min-height:0;margin:0 auto;padding:0!important;border:0!important;border-radius:0!important;background:#090b0e!important;box-shadow:none!important;overflow:visible}
+.game-shell:before,.game-header,.scoreboard{display:none!important}
+.arena{position:relative;width:100%;height:auto!important;aspect-ratio:3/2;overflow:hidden;isolation:isolate;border:0!important;border-radius:0!important;background:#090b0e url("./don-nova-penalty-bg.webp") center center/100% 100% no-repeat!important;box-shadow:none!important}
+.arena:before,.lights,.court-line,.shooter,.net,.goal-frame,.keeper,.arena-footer{display:none!important}
+.goal{position:absolute!important;inset:0!important;left:0!important;top:0!important;width:100%!important;height:100%!important;transform:none!important;filter:none!important;pointer-events:none}
+.target-grid{position:absolute!important;left:36.9%!important;top:21.8%!important;width:50.4%!important;height:41.4%!important;inset:auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:0!important;z-index:20!important;pointer-events:auto}
+.target{min-width:0;min-height:0;border:2px solid transparent!important;border-radius:50%!important;background:transparent!important;color:transparent!important;cursor:pointer;pointer-events:auto;transition:background .14s,border-color .14s,box-shadow .14s}
+.target:before{display:none!important}
+.target:hover:not(:disabled),.target:focus-visible{border-color:rgba(255,255,255,.95)!important;background:radial-gradient(circle,rgba(255,106,0,.22),transparent 72%)!important;box-shadow:0 0 0 5px rgba(255,106,0,.12),0 0 23px rgba(255,106,0,.5)!important}
+.target:disabled{cursor:default}
+.scene-number{position:absolute;z-index:30;top:7.05%;height:3.8%;display:grid;place-items:center;background:rgba(4,5,6,.97);color:#fff;font-weight:1000;line-height:1;white-space:nowrap;font-size:clamp(12px,1.85vw,22px);font-variant-numeric:tabular-nums;pointer-events:none}
+#sceneGoals{left:42.5%;width:8.1%;color:#ff8a24}
+#sceneShots{left:58.6%;width:8.5%;font-size:clamp(10px,1.5vw,18px)}
+#sceneBest{left:74.2%;width:7.8%;color:#ff8a24}
+.scene-mark{position:absolute;z-index:31;left:93.05%;transform:translate(-50%,-50%);width:2.5%;aspect-ratio:1;display:grid;place-items:center;color:#fff;border-radius:50%;font-size:clamp(8px,1vw,12px);font-weight:1000;line-height:1;pointer-events:none}
+.scene-mark.scored{background:#159b62;box-shadow:0 0 7px rgba(26,226,130,.65)}
+.scene-mark.saved{background:#d84d39;box-shadow:0 0 7px rgba(255,83,57,.55)}
+.ball{z-index:28!important;width:clamp(20px,4.4%,44px)!important;height:auto!important;aspect-ratio:1;border-radius:50%;will-change:left,top,transform}
+.result-banner{z-index:35!important;left:52%!important;top:69%!important;max-width:86%;padding:clamp(8px,1.2vw,14px) clamp(14px,2.4vw,26px)!important;font-size:clamp(17px,2.8vw,30px)!important;white-space:nowrap;text-shadow:0 2px 3px rgba(0,0,0,.5)}
+.result-banner.hattrick{background:linear-gradient(180deg,#ffb13f,#ff6500);box-shadow:0 0 0 4px rgba(255,255,255,.16),0 0 35px rgba(255,106,0,.75);animation:hattrickPop .45s cubic-bezier(.15,.85,.25,1.2)}
+@keyframes hattrickPop{0%{transform:translate(-50%,-50%) scale(.55) rotate(-4deg)}70%{transform:translate(-50%,-50%) scale(1.08) rotate(2deg)}100%{transform:translate(-50%,-50%) scale(1) rotate(0)}}
+.end-panel{z-index:45!important}
+.game-controls{max-width:980px;margin:10px auto 0;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.status{font-size:14px;line-height:1.45;color:#eee}
+.restart,.play-again{touch-action:manipulation}
+.footer-line{max-width:980px;margin:12px auto 0;padding:0 12px;color:#aaa;font-size:12px}
+@media(max-width:600px){
+ .game-shell{width:100%;padding:0!important}
+ .scene-number{font-size:clamp(10px,2.1vw,14px)}
+ #sceneShots{font-size:clamp(9px,1.8vw,12px)}
+ .scene-mark{font-size:8px}
+ .game-controls{padding:0 10px;gap:8px}
+ .status{font-size:12px}
+ .restart{padding:8px 10px;min-height:36px}
+ .footer-line{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.result-banner.hattrick{animation:none}}
+
 </style>
 </head>
 <body>
@@ -306,6 +347,20 @@ h1 span{color:var(--orange)}
   </section>
 
   <section class="arena" id="arena" aria-label="Handbaldoel. Kies een vak om te schieten.">
+
+    <div class="scene-number" id="sceneGoals" aria-hidden="true">0</div>
+    <div class="scene-number" id="sceneShots" aria-hidden="true">1 / 10</div>
+    <div class="scene-number" id="sceneBest" aria-hidden="true">0</div>
+    <span class="scene-mark" style="top:24.2%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:27.9%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:31.5%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:35.2%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:39.1%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:42.8%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:46.6%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:50.1%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:53.8%" aria-hidden="true"></span>
+    <span class="scene-mark" style="top:57.3%" aria-hidden="true"></span>
     <div class="lights"></div>
     <div class="court-line"></div>
 
@@ -442,6 +497,10 @@ h1 span{color:var(--orange)}
   const ball = document.getElementById("ball");
   const shooter = document.getElementById("shooter");
   const throwHand = document.getElementById("throwHand");
+  const sceneGoals = document.getElementById("sceneGoals");
+  const sceneShots = document.getElementById("sceneShots");
+  const sceneBest = document.getElementById("sceneBest");
+  const sceneMarks = Array.from(document.querySelectorAll(".scene-mark"));
   const resultBanner = document.getElementById("resultBanner");
   const status = document.getElementById("status");
   const goalsEl = document.getElementById("goals");
@@ -478,6 +537,9 @@ h1 span{color:var(--orange)}
     shotsLeftEl.textContent = String(Math.max(0, 10 - shots));
     streakEl.textContent = String(streak);
     roundIndicator.textContent = shots >= 10 ? "KLAAR!" : "SCHOT " + (shots + 1) + " / 10";
+    sceneGoals.textContent = String(goals);
+    sceneShots.textContent = (shots >= 10 ? 10 : shots + 1) + " / 10";
+    sceneBest.textContent = String(bestScore);
   }
 
   function setStatus(message, emphasis){
@@ -493,9 +555,9 @@ h1 span{color:var(--orange)}
   }
 
   function throwHandPoint(){
-    const handRect=throwHand.getBoundingClientRect();
     const ar=arena.getBoundingClientRect();
-    return {x:handRect.left+handRect.width/2-ar.left,y:handRect.top+handRect.height/2-ar.top};
+    /* Start precies bij de bal in de foto; de schotanimatie vliegt vanaf daar naar het gekozen doelvak. */
+    return {x:ar.width*0.285,y:ar.height*0.235};
   }
   function positionBallAtHand(){
     const p=throwHandPoint();ball.style.left=p.x+"px";ball.style.top=p.y+"px";ball.style.transform="translate(-50%,-50%) rotate(0deg)";
@@ -591,8 +653,10 @@ h1 span{color:var(--orange)}
   }
 
   function showResult(saved){
-    resultBanner.textContent = saved ? "GEPAKT!" : "GOAL!";
+    const hattrick = !saved && streak === 3;
+    resultBanner.textContent = saved ? "GEPAKT!" : hattrick ? "HATTRICK!" : "GOAL!";
     resultBanner.classList.toggle("saved",saved);
+    resultBanner.classList.toggle("hattrick",hattrick);
     resultBanner.classList.add("show");
     window.clearTimeout(resultTimer);
     resultTimer = window.setTimeout(function(){ resultBanner.classList.remove("show"); }, 1050);
@@ -634,6 +698,11 @@ h1 span{color:var(--orange)}
       goals += 1;
       streak += 1;
       bestStreak = Math.max(bestStreak,streak);
+    }
+    if (sceneMarks[shots-1]) {
+      sceneMarks[shots-1].textContent = saved ? "×" : "✓";
+      sceneMarks[shots-1].classList.toggle("saved",saved);
+      sceneMarks[shots-1].classList.toggle("scored",!saved);
     }
     updateScore();
 
@@ -694,6 +763,7 @@ h1 span{color:var(--orange)}
     } else {
       copy += " Jouw beste score op dit apparaat: " + bestScore + "/10.";
     }
+    sceneBest.textContent = String(bestScore);
     endTitle.textContent = title;
     endScore.textContent = goals + " van de 10 penalty's raak";
     endCopy.textContent = copy + " Langste reeks op rij: " + bestStreak + ".";
@@ -725,7 +795,8 @@ h1 span{color:var(--orange)}
     ball.style.zIndex = "7";
     positionBallAtHand();
     zones.forEach(function(zone){ zone.disabled = false; });
-    resultBanner.classList.remove("show","saved");
+    sceneMarks.forEach(function(mark){ mark.textContent = ""; mark.classList.remove("saved","scored"); });
+    resultBanner.classList.remove("show","saved","hattrick");
     endPanel.classList.remove("show");
     arenaTip.textContent = "Tik op een vak in het doel om te mikken en te schieten.";
     setStatus("Kies een hoek en laat die bal vliegen!","Succes!");
