@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101010">
+<title>Don Nova Penalty Challenge | HV Novitas</title>
+<style>
+:root{color-scheme:dark;--orange:#ff6a00;--orange2:#ff9238;--cream:#fff4e9;--muted:#b9b5b1;--panel:#191919;--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#101010;font-family:Arial,Helvetica,sans-serif;color:#fff}
+body{padding:0;overflow-x:hidden}
+button{font:inherit}
+.game-shell{position:relative;isolation:isolate;overflow:hidden;min-height:700px;padding:22px clamp(14px,3vw,30px) 24px;background:radial-gradient(ellipse at 50% -14%,rgba(255,106,0,.25),transparent 45%),linear-gradient(150deg,#171717,#080808 72%);border:1px solid rgba(255,106,0,.38);border-radius:22px;box-shadow:0 18px 45px rgba(0,0,0,.28)}
+.game-shell:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.2;background:radial-gradient(circle,rgba(255,255,255,.35) 1px,transparent 1.7px) 0 0/24px 24px}
+.game-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.brand{display:inline-flex;align-items:center;gap:8px;margin-bottom:7px;color:var(--orange2);font-size:11px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}
+.brand-ball{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:linear-gradient(145deg,#ffb56d,var(--orange) 65%,#ba3e00);color:#151515;font-size:14px;box-shadow:0 0 20px rgba(255,106,0,.27)}
+h1{margin:0;font-size:clamp(25px,4vw,40px);line-height:.98;font-weight:1000;font-style:italic;letter-spacing:-.045em;text-transform:uppercase}
+h1 span{color:var(--orange)}
+.subtitle{margin:8px 0 0;color:#d4d0cc;font-size:13px;line-height:1.4}
+.round-label{flex:0 0 auto;padding:9px 12px;border:1px solid rgba(255,140,51,.38);border-radius:999px;background:rgba(255,106,0,.1);color:#ffc18d;font-size:11px;font-weight:900;letter-spacing:.07em;white-space:nowrap}
+.scoreboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:14px}
+.stat{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025))}
+.stat-label{display:block;margin-bottom:5px;color:#a9a5a1;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.stat-value{display:block;color:#fff;font-size:24px;line-height:1;font-weight:1000;font-variant-numeric:tabular-nums}
+.stat-value.orange{color:var(--orange2)}
+.arena{position:relative;height:355px;overflow:hidden;border:1px solid rgba(255,255,255,.1);border-radius:17px;background:radial-gradient(ellipse at 50% 27%,rgba(255,255,255,.13),transparent 36%),linear-gradient(180deg,#252525 0%,#171717 54%,#145b4f 54.2%,#0d3d37 100%)}
+.lights{position:absolute;inset:0 0 auto;height:115px;background:linear-gradient(180deg,rgba(255,255,255,.09),transparent),radial-gradient(ellipse at 15% 0,rgba(255,255,255,.2),transparent 16%),radial-gradient(ellipse at 85% 0,rgba(255,255,255,.2),transparent 16%);pointer-events:none}
+.court-line{position:absolute;left:-8%;right:-8%;bottom:-95px;height:210px;border:2px solid rgba(255,255,255,.19);border-radius:50%;pointer-events:none}
+.court-line:before{content:"";position:absolute;left:19%;right:19%;top:17px;height:160px;border:2px solid rgba(255,255,255,.12);border-radius:50%}
+.goal{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:min(80%,620px);height:245px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.28))}
+.net{position:absolute;inset:7px 0 0;background-color:rgba(220,236,230,.09);background-image:linear-gradient(rgba(230,244,239,.43) 1px,transparent 1px),linear-gradient(90deg,rgba(230,244,239,.43) 1px,transparent 1px);background-size:21px 19px;overflow:hidden}
+.net:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 30%,rgba(0,0,0,.18))}
+.goal-frame{position:absolute;inset:0;z-index:5;border:7px solid #f4f0e8;border-bottom-width:9px;border-radius:4px 4px 1px 1px;box-shadow:inset 0 0 0 2px rgba(12,12,12,.25),0 2px 0 rgba(0,0,0,.5);pointer-events:none}
+.target-grid{position:absolute;inset:6px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));z-index:4}
+.target{position:relative;min-width:0;min-height:0;border:1px dashed rgba(255,255,255,.12);border-radius:0;background:rgba(255,255,255,.015);color:transparent;cursor:pointer;transition:background .12s,border-color .12s,box-shadow .12s}
+.target:focus-visible{outline:3px solid white;outline-offset:-4px}
+.target:before{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.24);border-radius:50%;opacity:.9}
+.target:hover:not(:disabled),.target:focus-visible{z-index:2;background:rgba(255,106,0,.32);border-color:rgba(255,158,85,.8);box-shadow:inset 0 0 20px rgba(255,106,0,.22)}
+.target:hover:not(:disabled):before,.target:focus-visible:before{width:24px;height:24px;border:3px solid #fff;background:rgba(255,106,0,.5);box-shadow:0 0 20px rgba(255,106,0,.6)}
+.target:disabled{cursor:not-allowed}
+.keeper{position:absolute;z-index:3;left:50%;top:58%;width:100px;height:132px;transform:translate(-50%,-50%) rotate(0deg);transition:left .32s cubic-bezier(.2,.8,.25,1),top .32s cubic-bezier(.2,.8,.25,1),transform .32s ease;filter:drop-shadow(0 8px 5px rgba(0,0,0,.38));pointer-events:none}
+.keeper svg{display:block;width:100%;height:100%;overflow:visible}
+.keeper.dive-left{transform:translate(-50%,-50%) rotate(-24deg)}
+.keeper.dive-right{transform:translate(-50%,-50%) rotate(24deg)}
+.keeper.dive-top{transform:translate(-50%,-50%) scale(.94)}
+.ball{position:absolute;z-index:7;left:50%;top:calc(100% - 28px);width:31px;height:31px;transform:translate(-50%,-50%);border:2px solid rgba(0,0,0,.55);border-radius:50%;background:radial-gradient(circle at 30% 25%,#ffb16e 0 10%,#f27a1b 30%,#131313 32% 44%,#f27a1b 46% 60%,#111 62% 72%,#ff8a24 74%);box-shadow:0 4px 9px rgba(0,0,0,.4);pointer-events:none}
+.result-banner{position:absolute;z-index:9;left:50%;top:48%;transform:translate(-50%,-50%) scale(.85);opacity:0;padding:10px 22px;border:2px solid rgba(255,255,255,.9);border-radius:10px;background:linear-gradient(180deg,#ff8a22,#f05a00);color:#fff;font-size:clamp(22px,4vw,37px);font-weight:1000;font-style:italic;letter-spacing:.03em;text-shadow:0 3px 0 rgba(0,0,0,.22);box-shadow:0 10px 32px rgba(0,0,0,.42);pointer-events:none;transition:opacity .18s,transform .18s}
+.result-banner.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.result-banner.saved{background:linear-gradient(180deg,#444,#151515)}
+.arena-footer{position:absolute;left:12px;right:12px;bottom:10px;z-index:8;display:flex;justify-content:space-between;gap:8px;align-items:center;pointer-events:none}
+.arena-tip{max-width:80%;padding:7px 10px;border-radius:7px;background:rgba(0,0,0,.48);color:#fff;font-size:11px;font-weight:700;line-height:1.35}
+.round-indicator{flex:0 0 auto;color:#fff;font-size:10px;font-weight:900;letter-spacing:.06em;text-shadow:0 1px 4px #000}
+.game-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px}
+.status{min-height:20px;color:#d7d2cd;font-size:13px;font-weight:700;line-height:1.4}
+.status strong{color:var(--orange2)}
+.restart{flex:0 0 auto;min-height:39px;padding:9px 15px;border:1px solid rgba(255,255,255,.16);border-radius:10px;background:#292929;color:#fff;font-size:12px;font-weight:900;cursor:pointer;transition:background .15s,border-color .15s}
+.restart:hover{border-color:var(--orange);background:#37302a}
+.footer-line{display:flex;align-items:center;gap:9px;margin-top:15px;padding-top:13px;border-top:1px solid var(--line);color:#a9a39d;font-size:10px;line-height:1.45}
+.footer-dot{width:7px;height:7px;flex:0 0 auto;border-radius:50%;background:var(--orange);box-shadow:0 0 10px rgba(255,106,0,.6)}
+.end-panel{position:absolute;z-index:12;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:24px;text-align:center;background:rgba(7,7,7,.87);backdrop-filter:blur(7px)}
+.end-panel.show{display:flex}
+.end-tag{color:var(--orange2);font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase}
+.end-title{font-size:clamp(28px,5vw,42px);font-weight:1000;font-style:italic;line-height:1}
+.end-score{color:#fff;font-size:18px;font-weight:900}
+.end-copy{max-width:400px;color:#dad3cc;font-size:13px;line-height:1.5}
+.play-again{min-height:43px;margin-top:3px;padding:11px 20px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff9a39,#ff6500);color:#fff;font-size:13px;font-weight:1000;cursor:pointer;box-shadow:0 7px 20px rgba(255,106,0,.25)}
+.play-again:hover{filter:brightness(1.08)}
+@media(max-width:600px){
+ .game-shell{min-height:680px;padding:16px 12px 18px;border-radius:15px}
+ .game-header{align-items:flex-start;gap:8px;margin-bottom:13px}
+ .round-label{padding:7px 8px;font-size:9px;letter-spacing:0}
+ .subtitle{font-size:12px}
+ .scoreboard{gap:6px;margin-bottom:10px}
+ .stat{padding:9px 8px;border-radius:9px}
+ .stat-label{font-size:8px;letter-spacing:.04em}
+ .stat-value{font-size:22px}
+ .arena{height:330px;border-radius:13px}
+ .goal{top:30px;width:91%;height:225px}
+ .keeper{width:83px;height:116px}
+ .target:before{width:8px;height:8px}
+ .arena-tip{font-size:10px;max-width:76%}
+ .game-controls{align-items:flex-start}
+ .status{font-size:12px}
+ .restart{padding:8px 10px;font-size:11px}
+ .footer-line{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="game-shell">
+  <header class="game-header">
+    <div>
+      <div class="brand"><span class="brand-ball">DN</span> Don Nova's Gamezone</div>
+      <h1>PENALTY <span>CHALLENGE</span></h1>
+      <p class="subtitle">10 schoten. De keeper staat klaar. Mik jij raak?</p>
+    </div>
+    <div class="round-label">🤾 10 SCHOTS</div>
+  </header>
+
+  <section class="scoreboard" aria-label="Jouw score">
+    <div class="stat"><span class="stat-label">Doelpunten</span><span class="stat-value orange" id="goals">0</span></div>
+    <div class="stat"><span class="stat-label">Keeper redt</span><span class="stat-value" id="saves">0</span></div>
+    <div class="stat"><span class="stat-label">Schoten over</span><span class="stat-value" id="shotsLeft">10</span></div>
+    <div class="stat"><span class="stat-label">Reeks</span><span class="stat-value" id="streak">0</span></div>
+  </section>
+
+  <section class="arena" id="arena" aria-label="Handbaldoel. Kies een vak om te schieten.">
+    <div class="lights"></div>
+    <div class="court-line"></div>
+
+    <div class="goal" id="goal">
+      <div class="net"></div>
+      <div class="keeper" id="keeper" aria-hidden="true">
+        <svg viewBox="0 0 120 150" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a31"/><stop offset=".5" stop-color="#ff6500"/><stop offset="1" stop-color="#a93600"/></linearGradient>
+            <linearGradient id="trouser" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#252525"/><stop offset="1" stop-color="#090909"/></linearGradient>
+          </defs>
+          <ellipse cx="60" cy="146" rx="32" ry="4" fill="#000" opacity=".35"/>
+          <path d="M45 98 L36 128 L48 143 L58 143 L59 115 L65 143 L78 144 L84 126 L75 96Z" fill="url(#trouser)" stroke="#090909" stroke-width="2"/>
+          <path d="M43 135 L58 135 L60 143 L39 145 Q32 143 38 138Z" fill="#ece8e2"/>
+          <path d="M65 135 L80 136 L87 143 L65 145Z" fill="#ece8e2"/>
+          <path d="M43 46 Q60 37 78 47 L87 88 Q72 100 38 91 L34 65Z" fill="url(#shirt)" stroke="#ffb269" stroke-width="2"/>
+          <path d="M43 51 L31 71 L16 58 L9 39" fill="none" stroke="#ff8b27" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M77 50 L91 34 L107 41 L115 29" fill="none" stroke="#ff8b27" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11 38 L4 34 L2 45 L10 49 L18 44Z" fill="#f4f0e8" stroke="#fff" stroke-width="2"/>
+          <path d="M112 28 L116 20 L120 26 L119 37 L112 38 L107 33Z" fill="#f4f0e8" stroke="#fff" stroke-width="2"/>
+          <circle cx="60" cy="25" r="19" fill="#e5ad82" stroke="#c98659" stroke-width="2"/>
+          <path d="M42 23 Q39 5 58 4 Q78 4 79 22 L72 15 L49 16Z" fill="#181818"/>
+          <path d="M52 25 L56 25 M65 25 L69 25" stroke="#171717" stroke-width="3" stroke-linecap="round"/>
+          <path d="M55 34 Q61 37 66 33" fill="none" stroke="#7e3926" stroke-width="2" stroke-linecap="round"/>
+          <path d="M40 54 L60 62 L80 53" fill="none" stroke="#ffd3a5" stroke-width="2" opacity=".65"/>
+          <text x="60" y="83" text-anchor="middle" font-size="16" font-family="Arial" font-weight="900" fill="#191919">DN</text>
+        </svg>
+      </div>
+      <div class="target-grid" id="targetGrid" aria-label="Schietvak kiezen">
+        <button class="target" type="button" data-zone="0" aria-label="Schiet linksboven"></button>
+        <button class="target" type="button" data-zone="1" aria-label="Schiet midden boven"></button>
+        <button class="target" type="button" data-zone="2" aria-label="Schiet rechtsboven"></button>
+        <button class="target" type="button" data-zone="3" aria-label="Schiet links in het midden"></button>
+        <button class="target" type="button" data-zone="4" aria-label="Schiet midden in het doel"></button>
+        <button class="target" type="button" data-zone="5" aria-label="Schiet rechts in het midden"></button>
+        <button class="target" type="button" data-zone="6" aria-label="Schiet linksonder"></button>
+        <button class="target" type="button" data-zone="7" aria-label="Schiet midden onder"></button>
+        <button class="target" type="button" data-zone="8" aria-label="Schiet rechtsonder"></button>
+      </div>
+      <div class="goal-frame"></div>
+    </div>
+
+    <div class="ball" id="ball" aria-hidden="true"></div>
+    <div class="result-banner" id="resultBanner" aria-live="polite">GOAL!</div>
+    <div class="arena-footer">
+      <div class="arena-tip" id="arenaTip">Tik op een vak in het doel om te mikken en te schieten.</div>
+      <div class="round-indicator" id="roundIndicator">SCHOT 1 / 10</div>
+    </div>
+
+    <div class="end-panel" id="endPanel" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+      <div class="end-tag">Don Nova Challenge afgerond</div>
+      <div class="end-title" id="endTitle">GOED GESPEELD!</div>
+      <div class="end-score" id="endScore">0 van de 10 raak</div>
+      <div class="end-copy" id="endCopy">Elke topspeler blijft oefenen. Probeer nog een keer en verbeter je score!</div>
+      <button class="play-again" id="playAgain" type="button">SPEEL OPNIEUW ↻</button>
+    </div>
+  </section>
+
+  <div class="game-controls">
+    <div class="status" id="status" aria-live="polite">Kies een hoek en laat die bal vliegen! <strong>Succes!</strong></div>
+    <button class="restart" id="restart" type="button">↻ Opnieuw</button>
+  </div>
+  <div class="footer-line"><span class="footer-dot"></span><span>Train je mikpunt, versla de keeper en verbeter je eigen record. Dit is jouw moment, penalty-kampioen!</span></div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  const zones = Array.from(document.querySelectorAll(".target"));
+  const arena = document.getElementById("arena");
+  const goal = document.getElementById("goal");
+  const keeper = document.getElementById("keeper");
+  const ball = document.getElementById("ball");
+  const resultBanner = document.getElementById("resultBanner");
+  const status = document.getElementById("status");
+  const goalsEl = document.getElementById("goals");
+  const savesEl = document.getElementById("saves");
+  const shotsLeftEl = document.getElementById("shotsLeft");
+  const streakEl = document.getElementById("streak");
+  const roundIndicator = document.getElementById("roundIndicator");
+  const arenaTip = document.getElementById("arenaTip");
+  const endPanel = document.getElementById("endPanel");
+  const endTitle = document.getElementById("endTitle");
+  const endScore = document.getElementById("endScore");
+  const endCopy = document.getElementById("endCopy");
+  const restartBtn = document.getElementById("restart");
+  const playAgainBtn = document.getElementById("playAgain");
+
+  let goals = 0;
+  let saves = 0;
+  let shots = 0;
+  let streak = 0;
+  let bestStreak = 0;
+  let busy = false;
+  let ended = false;
+  let ballAnimation = null;
+  let resultTimer = null;
+  let bestScore = 0;
+
+  try { bestScore = Number(localStorage.getItem("donNovaPenaltyBest") || 0) || 0; } catch(e) {}
+
+  function updateScore(){
+    goalsEl.textContent = String(goals);
+    savesEl.textContent = String(saves);
+    shotsLeftEl.textContent = String(Math.max(0, 10 - shots));
+    streakEl.textContent = String(streak);
+    roundIndicator.textContent = shots >= 10 ? "KLAAR!" : "SCHOT " + (shots + 1) + " / 10";
+  }
+
+  function setStatus(message, emphasis){
+    status.replaceChildren();
+    if (emphasis) {
+      status.appendChild(document.createTextNode(message + " "));
+      const strong = document.createElement("strong");
+      strong.textContent = emphasis;
+      status.appendChild(strong);
+    } else {
+      status.textContent = message;
+    }
+  }
+
+  function zoneCenter(index){
+    const button = zones[index];
+    const rect = button.getBoundingClientRect();
+    const ar = arena.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2 - ar.left,
+      y: rect.top + rect.height / 2 - ar.top
+    };
+  }
+
+  function keeperPosition(index){
+    const row = Math.floor(index / 3);
+    const col = index % 3;
+    keeper.style.left = (((col + 0.5) / 3) * 100) + "%";
+    keeper.style.top = (((row + 0.5) / 3) * 100) + "%";
+    keeper.classList.remove("dive-left","dive-right","dive-top");
+    if (col === 0) keeper.classList.add("dive-left");
+    if (col === 2) keeper.classList.add("dive-right");
+    if (row === 0) keeper.classList.add("dive-top");
+  }
+
+  function distance(a,b){
+    return Math.abs(Math.floor(a / 3) - Math.floor(b / 3)) + Math.abs((a % 3) - (b % 3));
+  }
+
+  function isSaved(aim, dive){
+    const d = distance(aim,dive);
+    const roll = Math.random();
+    if (d === 0) return roll < 0.82;
+    if (d === 1) return roll < 0.38;
+    if (d === 2) return roll < 0.15;
+    return roll < 0.04;
+  }
+
+  function showResult(saved){
+    resultBanner.textContent = saved ? "GEPAKT!" : (streak >= 3 ? "HATTRICK!" : "GOAL!");
+    resultBanner.classList.toggle("saved",saved);
+    resultBanner.classList.add("show");
+    window.clearTimeout(resultTimer);
+    resultTimer = window.setTimeout(function(){ resultBanner.classList.remove("show"); }, 1050);
+  }
+
+  function shoot(index){
+    if (busy || ended || shots >= 10) return;
+    busy = true;
+    zones.forEach(function(zone){ zone.disabled = true; });
+    arenaTip.textContent = "Daar gaat ie…";
+    resultBanner.classList.remove("show");
+    window.clearTimeout(resultTimer);
+
+    const diveZone = Math.floor(Math.random() * 9);
+    const saved = isSaved(index,diveZone);
+    const destination = zoneCenter(index);
+    const ar = arena.getBoundingClientRect();
+    const startX = ar.width / 2;
+    const startY = ar.height - 28;
+
+    if (ballAnimation) {
+      try { ballAnimation.cancel(); } catch(e) {}
+    }
+    ball.style.left = startX + "px";
+    ball.style.top = startY + "px";
+    ball.style.transform = "translate(-50%,-50%) rotate(0deg)";
+    keeperPosition(diveZone);
+
+    shots += 1;
+    if (saved) {
+      saves += 1;
+      streak = 0;
+    } else {
+      goals += 1;
+      streak += 1;
+      bestStreak = Math.max(bestStreak,streak);
+    }
+    updateScore();
+
+    const flight = Math.max(370, Math.min(650, 450 + Math.abs(startY-destination.y) * .35));
+    ballAnimation = ball.animate([
+      { left:startX + "px", top:startY + "px", transform:"translate(-50%,-50%) scale(1) rotate(0deg)" },
+      { left:destination.x + "px", top:destination.y + "px", transform:"translate(-50%,-50%) scale(.58) rotate(260deg)" }
+    ],{duration:flight,easing:"cubic-bezier(.18,.72,.32,1)",fill:"forwards"});
+
+    ballAnimation.onfinish = function(){
+      showResult(saved);
+      if (saved) {
+        setStatus("De keeper heeft hem!", "Kies straks een andere hoek.");
+        arenaTip.textContent = "GERED! Zoek een gaatje bij je volgende schot.";
+      } else {
+        setStatus("Lekker geschoten!", "GOAL!");
+        arenaTip.textContent = "RAAK! Blijf mikken en bouw je doelpuntenreeks op.";
+      }
+      window.setTimeout(function(){
+        ball.style.left = "50%";
+        ball.style.top = "calc(100% - 28px)";
+        ball.style.transform = "translate(-50%,-50%)";
+        if (shots >= 10) {
+          finishGame();
+        } else {
+          zones.forEach(function(zone){ zone.disabled = false; });
+          busy = false;
+        }
+      }, 420);
+    };
+  }
+
+  function finishGame(){
+    ended = true;
+    busy = false;
+    zones.forEach(function(zone){ zone.disabled = true; });
+    let title = "GOED GESPEELD!";
+    let copy = "Elke topspeler blijft oefenen. Speel nog een ronde en probeer je score te verbeteren!";
+    if (goals >= 9) {
+      title = "PENALTY-KAMPIOEN!";
+      copy = "Wat een schotkracht! De keeper had bijna geen kans. Jij bent een echte Don Nova-ster!";
+    } else if (goals >= 7) {
+      title = "TOPGESCHOTEN!";
+      copy = "Wat een sterke score! Met nog wat extra oefening wordt die keeper helemaal kansloos.";
+    } else if (goals >= 4) {
+      title = "MOOI GEDAAN!";
+      copy = "Je bent goed op weg. Blijf de hoeken zoeken en probeer het nog een keer.";
+    }
+    if (goals > bestScore) {
+      bestScore = goals;
+      try { localStorage.setItem("donNovaPenaltyBest",String(bestScore)); } catch(e) {}
+      copy += " Nieuw persoonlijk record!";
+    } else {
+      copy += " Jouw beste score op dit apparaat: " + bestScore + "/10.";
+    }
+    endTitle.textContent = title;
+    endScore.textContent = goals + " van de 10 penalty's raak";
+    endCopy.textContent = copy + " Beste doelpuntenreeks: " + bestStreak + ".";
+    endPanel.classList.add("show");
+    roundIndicator.textContent = "KLAAR!";
+  }
+
+  function resetGame(){
+    if (ballAnimation) {
+      try { ballAnimation.cancel(); } catch(e) {}
+    }
+    window.clearTimeout(resultTimer);
+    goals = 0;
+    saves = 0;
+    shots = 0;
+    streak = 0;
+    bestStreak = 0;
+    busy = false;
+    ended = false;
+    keeper.style.left = "50%";
+    keeper.style.top = "58%";
+    keeper.className = "keeper";
+    ball.style.left = "50%";
+    ball.style.top = "calc(100% - 28px)";
+    ball.style.transform = "translate(-50%,-50%)";
+    zones.forEach(function(zone){ zone.disabled = false; });
+    resultBanner.classList.remove("show","saved");
+    endPanel.classList.remove("show");
+    arenaTip.textContent = "Tik op een vak in het doel om te mikken en te schieten.";
+    setStatus("Kies een hoek en laat die bal vliegen!","Succes!");
+    updateScore();
+  }
+
+  zones.forEach(function(zone){
+    zone.addEventListener("click",function(){
+      const index = Number(zone.dataset.zone);
+      if (Number.isInteger(index) && index >= 0 && index < 9) shoot(index);
+    });
+  });
+  restartBtn.addEventListener("click",resetGame);
+  playAgainBtn.addEventListener("click",resetGame);
+  updateScore();
+})();
+</script>
+</body>
+</html>
