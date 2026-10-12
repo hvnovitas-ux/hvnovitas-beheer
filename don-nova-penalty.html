@@ -272,7 +272,7 @@ h1 span{color:var(--orange)}
 .lights{z-index:1;height:100%;background:radial-gradient(ellipse at 18% 5%,rgba(255,242,207,.23),transparent 15%),radial-gradient(ellipse at 83% 4%,rgba(255,242,207,.22),transparent 15%),linear-gradient(180deg,rgba(255,255,255,.1),transparent 28%)!important;pointer-events:none}
 .court-line{z-index:1;width:120%;left:-10%;bottom:-146px;height:270px;border:2px solid rgba(255,255,255,.42);border-radius:50%;background:transparent}
 .court-line:before{content:"";position:absolute;left:12%;right:12%;top:24px;height:155px;border:2px solid rgba(255,255,255,.24);border-bottom:0;border-radius:50% 50% 0 0}
-.shooter{position:absolute;z-index:9;left:0;bottom:-19px;width:clamp(142px,21%,218px);height:clamp(212px,80%,292px);pointer-events:none;filter:drop-shadow(0 12px 7px rgba(0,0,0,.44));transform-origin:70% 84%}
+.shooter{position:absolute;z-index:6;left:0;bottom:-19px;width:clamp(142px,21%,218px);height:clamp(212px,80%,292px);pointer-events:none;filter:drop-shadow(0 12px 7px rgba(0,0,0,.44));transform-origin:70% 84%}
 .shooter svg{display:block;width:100%;height:100%;overflow:visible}
 .throw-arm{transform-box:view-box;transform-origin:143px 100px}
 .shooter.is-throwing{animation:shooterFollowThrough .44s cubic-bezier(.2,.7,.25,1)}
@@ -624,7 +624,7 @@ h1 span{color:var(--orange)}
     animateKeeperDive(diveZone);
 
     ball.classList.remove("caught");
-    ball.style.zIndex = saved ? "3" : "7";
+    ball.style.zIndex = "7";
 
     shots += 1;
     if (saved) {
