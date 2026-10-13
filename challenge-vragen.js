@@ -54,6 +54,8 @@ function render() {
   const term = $("searchInput").value.trim().toLowerCase();
   const shown = questions.filter(q => [q.q, ...q.a].join(" ").toLowerCase().includes(term));
   $("count").textContent = `(${questions.length})`;
+  const importButton = $("importOriginalButton");
+  if (importButton) importButton.hidden = questions.length > 0;
   if (!shown.length) {
     list.innerHTML = `<p class="muted">${questions.length ? "Geen vragen gevonden." : "Nog geen vragen in de database."}</p>`;
     return;
@@ -272,3 +274,56 @@ loadPhotoChoices();
 $("cancelEdit").addEventListener("click", resetForm);
 $("searchInput").addEventListener("input", render);
 $("refreshButton").addEventListener("click", () => render());
+
+/* Herstel de 60 bestaande basisvragen als de dynamische database leeg is.
+   Bestaande vragen worden nooit overschreven; dubbelen worden overgeslagen. */
+$("importOriginalButton").addEventListener("click", async () => {
+  if (!currentUser || currentUser.email !== ADMIN_EMAIL || currentUser.emailVerified !== true) {
+    say("Log eerst in met het bevoegde account hvnovitas@gmail.com.", true);
+    return;
+  }
+  if (questions.length) {
+    say("Er staan al vragen in de database. De basisvragen zijn daarom niet geïmporteerd.", true);
+    return;
+  }
+  if (!confirm("De database is leeg. De 60 bestaande basisvragen herstellen in de Handbalchallenge?")) return;
+
+  const button = $("importOriginalButton");
+  button.disabled = true;
+  say("Basisvragen ophalen en importeren…");
+  try {
+    const response = await fetch("./original-questions.json?v=20261013-restore", { cache: "no-store" });
+    if (!response.ok) throw new Error("Basisvragen konden niet worden geladen (HTTP " + response.status + ").");
+    const source = await response.json();
+    if (!Array.isArray(source) || !source.length) throw new Error("Het bestand met basisvragen is leeg of ongeldig.");
+
+    const existing = new Set(questions.map(item => item.q.trim().toLowerCase()));
+    const missing = source.filter(item => item && typeof item.q === "string" &&
+      item.q.trim() && !existing.has(item.q.trim().toLowerCase()));
+
+    if (!missing.length) {
+      say("Alle basisvragen staan al in de database.");
+      return;
+    }
+
+    const additions = {};
+    for (const item of missing) {
+      const newRef = push(questionsRef);
+      additions[newRef.key] = {
+        q: item.q.trim(),
+        a: Array.isArray(item.a) ? item.a.slice(0, 4).map(value => String(value ?? "")) : ["", "", "", ""],
+        c: Number.isInteger(Number(item.c)) && Number(item.c) >= 0 && Number(item.c) <= 3 ? Number(item.c) : 0,
+        imageUrl: "",
+        createdAt: new Date().toISOString(),
+        importedFrom: "original-questions.json"
+      };
+    }
+    await update(questionsRef, additions);
+    say(missing.length + " basisvragen zijn hersteld. Je kunt ze nu bekijken en bewerken.");
+  } catch (error) {
+    console.error("Basisvragen herstellen mislukt:", error);
+    say("Herstellen mislukt. Controleer of de regels van de Firebase-database HV Novitas Handbal Challenge schrijven toestaan. " + (error.message || ""), true);
+  } finally {
+    button.disabled = false;
+  }
+});
