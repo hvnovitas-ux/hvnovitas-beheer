@@ -1,12 +1,11 @@
-import { auth } from "./firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 /*
- * De CMS-database is bewust de database die ook de openbare challenge moet gebruiken.
- * Vul hieronder de Firebase-configuratie van hv-novitas-handbal-challenge in.
- * De bestaande CMS-login blijft via ./firebase.js lopen.
+ * Quizvragen staan in het aparte Firebase-project hv-novitas-handbal-challenge.
+ * Daarom meldt dit beheeronderdeel zich ook aan bij dát project; een login bij
+ * hv-novitas-beheer geeft namelijk niet automatisch schrijftoegang tot deze database.
  */
 const challengeConfig = {
   apiKey: "AIzaSyBCUZeWMIxIz__7TfNG_b0V47H_pYFPyQ",
@@ -20,6 +19,10 @@ const challengeConfig = {
 const challengeApp = getApps().find(app => app.name === "novitasChallengeAdmin")
   || initializeApp(challengeConfig, "novitasChallengeAdmin");
 const challengeDb = getDatabase(challengeApp);
+const challengeAuth = getAuth(challengeApp);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
+const ADMIN_EMAIL = "hvnovitas@gmail.com";
 const questionsRef = ref(challengeDb, "questions");
 
 const $ = id => document.getElementById(id);
@@ -91,26 +94,67 @@ function beginEdit(id) {
   $("cancelEdit").hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "login.html";
+function showLogin() {
+  currentUser = null;
+  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+  $("userInfo").textContent = "Niet ingelogd";
+  $("loginButton").hidden = false;
+  $("logoutButton").hidden = true;
+  $("saveButton").disabled = true;
+  questions = [];
+  render();
+}
+function beginAdmin(user) {
+  if (user.email !== ADMIN_EMAIL || user.emailVerified !== true) {
+    say("Alleen het geverifieerde Google-account hvnovitas@gmail.com mag quizvragen beheren.", true);
+    signOut(challengeAuth).catch(console.error);
     return;
   }
-  $("userInfo").textContent = "👋 " + (user.displayName || user.email || "Admin");
+  currentUser = user;
+  $("userInfo").textContent = "👋 " + (user.displayName || user.email || "Beheerder");
+  $("loginButton").hidden = true;
+  $("logoutButton").hidden = false;
+  $("saveButton").disabled = false;
   if (unsubscribe) unsubscribe();
   unsubscribe = onValue(questionsRef, snapshot => {
     questions = normalized(snapshot.val());
     render();
     say("Vragen geladen.");
   }, error => {
-    console.error(error);
-    say("De vragen konden niet worden geladen. Controleer de Firebase-database-regels en verbinding.", true);
+    console.error("Quizvragen laden mislukt:", error);
+    say("Vragen laden mislukt. Controleer de regels van de database HV Novitas Handbal Challenge.", true);
   });
+}
+onAuthStateChanged(challengeAuth, user => user ? beginAdmin(user) : showLogin());
+$("loginButton").addEventListener("click", async () => {
+  $("loginButton").disabled = true;
+  say("Google-inloggen voor de Handbalchallenge openen…");
+  try {
+    const result = await signInWithPopup(challengeAuth, provider);
+    if (result.user.email !== ADMIN_EMAIL || result.user.emailVerified !== true) {
+      await signOut(challengeAuth);
+      say("Dit is niet het bevoegde account. Gebruik hvnovitas@gmail.com.", true);
+    } else {
+      say("Ingelogd. Quizvragen laden…");
+    }
+  } catch (error) {
+    console.error("Challenge-login mislukt:", error);
+    const messages = {
+      "auth/operation-not-allowed": "Google-inloggen staat nog niet aan in Firebase Authentication van HV Novitas Handbal Challenge.",
+      "auth/unauthorized-domain": "Voeg hvnovitas-ux.github.io toe aan de toegestane domeinen van Firebase Authentication in het Challenge-project.",
+      "auth/popup-blocked": "De browser blokkeerde het inlogvenster. Sta pop-ups toe en probeer opnieuw.",
+      "auth/popup-closed-by-user": "Het inlogvenster is gesloten voordat het inloggen klaar was.",
+      "auth/network-request-failed": "Geen verbinding. Controleer je internet."
+    };
+    say(messages[error.code] || ("Inloggen mislukt (" + (error.code || "onbekende fout") + "). Controleer Google-login in het Challenge-project."), true);
+  } finally {
+    $("loginButton").disabled = false;
+  }
 });
 $("logoutButton").addEventListener("click", async () => {
   try {
-    await signOut(auth);
-    window.location.href = "login.html";
+    await signOut(challengeAuth);
+    say("Je bent uitgelogd.");
   } catch (error) {
     console.error(error);
     say("Uitloggen is niet gelukt.", true);
@@ -118,6 +162,10 @@ $("logoutButton").addEventListener("click", async () => {
 });
 form.addEventListener("submit", async event => {
   event.preventDefault();
+  if (!currentUser || currentUser.email !== ADMIN_EMAIL || currentUser.emailVerified !== true) {
+    say("Log eerst in met het bevoegde account hvnovitas@gmail.com.", true);
+    return;
+  }
   const q = $("questionText").value.trim();
   const a = [0,1,2,3].map(i => $(`answer${i}`).value.trim());
   const correct = document.querySelector('input[name="correct"]:checked');
