@@ -142,6 +142,7 @@ $("loginButton").addEventListener("click", async () => {
   } catch (error) {
     console.error("Challenge-login mislukt:", error);
     const messages = {
+      "auth/configuration-not-found": "Firebase Authentication is nog niet ingesteld voor het Challenge-project. Open Firebase Console > Authentication, klik indien nodig op Aan de slag en schakel Google in.",
       "auth/operation-not-allowed": "Google-inloggen staat nog niet aan in Firebase Authentication van HV Novitas Handbal Challenge.",
       "auth/unauthorized-domain": "Voeg hvnovitas-ux.github.io toe aan de toegestane domeinen van Firebase Authentication in het Challenge-project.",
       "auth/popup-blocked": "De browser blokkeerde het inlogvenster. Sta pop-ups toe en probeer opnieuw.",
