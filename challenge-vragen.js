@@ -31,6 +31,7 @@ const list = $("questionList");
 const message = $("message");
 let questions = [];
 let unsubscribe = null;
+let currentUser = null;
 
 function say(text, error = false) {
   message.textContent = text;
