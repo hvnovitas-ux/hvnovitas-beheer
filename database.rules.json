@@ -107,6 +107,23 @@
           ".validate": "auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true"
         }
       }
+    },
+    "homepageAnnouncement": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true",
+      ".validate": "newData.hasChildren(['text', 'updatedAt', 'updatedBy'])",
+      "text": {
+        ".validate": "newData.isString() && newData.val().length <= 120"
+      },
+      "updatedAt": {
+        ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now + 300000"
+      },
+      "updatedBy": {
+        ".validate": "newData.isString() && newData.val() === auth.token.email"
+      },
+      "$other": {
+        ".validate": false
+      }
     }
   }
 }
