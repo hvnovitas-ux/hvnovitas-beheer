@@ -175,156 +175,173 @@ onValue(ref(db, "highlights"), (snap) => {
    📰 NIEUWS
    ===================================================== */
 
-document
-    .getElementById("saveNews")
-    ?.addEventListener("click", async () => {
-        try {
-            const title =
-                document
-                    .getElementById("newsTitle")
-                    ?.value
-                    ?.trim() || "";
+let currentNewsData = {};
+let currentNewsHighlights = {};
 
-            const text =
-                document
-                    .getElementById("newsText")
-                    ?.value
-                    ?.trim() || "";
+function highlightForNews(newsId, newsItem) {
+    const matches = Object.entries(currentNewsHighlights);
+    return matches.find(([, highlight]) => {
+        if (!highlight) return false;
+        if (highlight.sourceNewsId === newsId) return true;
 
-            const file =
-                document
-                    .getElementById("newsImage")
-                    ?.files?.[0];
+        // Compatibility check for highlights copied before sourceNewsId was added.
+        return Number(newsItem?.created) > 0 &&
+            Number(highlight.created) === Number(newsItem.created) &&
+            String(highlight.title || "") === String(newsItem.title || "") &&
+            String(highlight.text || "") === String(newsItem.text || "") &&
+            String(highlight.imageUrl || "") === String(newsItem.imageUrl || "");
+    }) || null;
+}
 
-            if (!title || !text) {
-                alert("Vul een titel en tekst in.");
-                return;
-            }
-
-            let url = "";
-
-            if (file) {
-                const form = new FormData();
-
-                form.append("file", file);
-
-                form.append(
-                    "upload_preset",
-                    "hvnovitas_upload"
-                );
-
-                const res =
-                    await fetch(
-                        "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
-                        {
-                            method: "POST",
-                            body: form
-                        }
-                    );
-
-                if (!res.ok) {
-                    throw new Error(
-                        "Cloudinary upload mislukt."
-                    );
-                }
-
-                const data = await res.json();
-
-                url =
-                    data.secure_url || "";
-            }
-
-            // Gebruik dezelfde plaatsingsdatum voor nieuws en eventuele highlight.
-            const created = Date.now();
-            const newsRecordRef = push(ref(db, "news"));
-            const changes = {};
-
-            changes[`news/${newsRecordRef.key}`] = {
-                title,
-                text,
-                imageUrl: url,
-                created
-            };
-
-            const alsoHighlight = document.getElementById("newsAsHighlight")?.checked === true;
-
-            if (alsoHighlight) {
-                const placedAt = new Date(created);
-                const date = [
-                    placedAt.getFullYear(),
-                    String(placedAt.getMonth() + 1).padStart(2, "0"),
-                    String(placedAt.getDate()).padStart(2, "0")
-                ].join("-");
-
-                const highlightRecordRef = push(ref(db, "highlights"));
-                changes[`highlights/${highlightRecordRef.key}`] = {
-                    date,
-                    title,
-                    text,
-                    imageUrl: url,
-                    created
-                };
-            }
-
-            // Sla nieuws en de zelfstandige highlight-kopie als één update op.
-            await update(ref(db), changes);
-
-            document.getElementById("newsTitle").value = "";
-            document.getElementById("newsText").value = "";
-            document.getElementById("newsImage").value = "";
-            document.getElementById("newsAsHighlight").checked = false;
-
-            alert(alsoHighlight
-                ? "Nieuws opgeslagen en ook als zelfstandige highlight bewaard."
-                : "Nieuws opgeslagen.");
-        } catch (error) {
-            console.error("❌ Fout bij nieuws:", error);
-            alert("Nieuws kon niet worden opgeslagen.");
-        }
-    });
-
-onValue(ref(db, "news"), (snap) => {
-    const list =
-        document.getElementById("newsList");
-
+function renderNewsList() {
+    const list = document.getElementById("newsList");
     if (!list) return;
 
-    const data = snap.val() || {};
+    list.innerHTML = Object.entries(currentNewsData)
+        .sort(([, a], [, b]) => Number(b?.created || 0) - Number(a?.created || 0))
+        .map(([id, newsItem]) => {
+            const safeId = escapeAttribute(id);
+            const highlighted = Boolean(highlightForNews(id, newsItem));
+            const highlightButton = highlighted
+                ? '<button type="button" class="highlight-news-button" disabled>✓ Staat bij Highlights</button>'
+                : `<button type="button" class="highlight-news-button" data-news-highlight-id="${safeId}">Ook als highlight bewaren</button>`;
 
-    list.innerHTML =
-        Object.entries(data)
-            .sort(
-                ([, a], [, b]) =>
-                    (b.created || 0) -
-                    (a.created || 0)
-            )
-            .map(([id, v]) => `
-                <div class="item">
-                    <strong>${escapeHtml(v.title || "")}</strong>
-
-                    <p>
-                        ${escapeHtml(v.text || "")}
-                    </p>
-
-                    ${
-                        v.imageUrl
-                            ? `
-                                <img
-                                    src="${escapeAttribute(v.imageUrl)}"
-                                    alt="Nieuws">
-                              `
-                            : ""
-                    }
-
-                    <button
-                        type="button"
-                        onclick="del('news','${escapeAttribute(id)}')">
-                        🗑
-                    </button>
+            return `
+                <div class="item news-item">
+                    <div class="news-item-content">
+                        <strong>${escapeHtml(newsItem.title || "")}</strong>
+                        <p>${escapeHtml(newsItem.text || "")}</p>
+                        ${newsItem.imageUrl ? `
+                            <img src="${escapeAttribute(newsItem.imageUrl)}" alt="Nieuws">
+                        ` : ""}
+                        <small>Geplaatst: ${newsItem.created ? escapeHtml(new Date(newsItem.created).toLocaleDateString("nl-NL")) : "datum onbekend"}</small>
+                    </div>
+                    <div class="news-item-actions">
+                        ${highlightButton}
+                        <button type="button" class="danger" onclick="del('news','${safeId}')">Verwijderen</button>
+                    </div>
                 </div>
-            `)
-            .join("") ||
-        "<p>Geen nieuws.</p>";
+            `;
+        })
+        .join("") || "<p>Geen nieuws.</p>";
+}
+
+document.getElementById("newsList")?.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-news-highlight-id]");
+    if (!button) return;
+
+    const newsId = button.dataset.newsHighlightId;
+    const newsItem = currentNewsData[newsId];
+    if (!newsItem) {
+        alert("Dit nieuwsbericht is niet meer beschikbaar. Vernieuw de pagina.");
+        return;
+    }
+
+    if (highlightForNews(newsId, newsItem)) {
+        renderNewsList();
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Highlight opslaan...";
+    try {
+        const created = Number(newsItem.created) || Date.now();
+        const placedAt = new Date(created);
+        const date = [
+            placedAt.getFullYear(),
+            String(placedAt.getMonth() + 1).padStart(2, "0"),
+            String(placedAt.getDate()).padStart(2, "0")
+        ].join("-");
+
+        await push(ref(db, "highlights"), {
+            date,
+            title: newsItem.title || "",
+            text: newsItem.text || "",
+            imageUrl: newsItem.imageUrl || "",
+            created,
+            sourceNewsId: newsId
+        });
+
+        alert("Het bestaande nieuwsbericht is ook als zelfstandige highlight bewaard.");
+    } catch (error) {
+        console.error("Nieuws omzetten naar highlight mislukt:", error);
+        alert("De highlight kon niet worden opgeslagen. Controleer de Firebase-regels en probeer het opnieuw.");
+    } finally {
+        renderNewsList();
+    }
+});
+
+document.getElementById("saveNews")?.addEventListener("click", async () => {
+    try {
+        const title = document.getElementById("newsTitle")?.value?.trim() || "";
+        const text = document.getElementById("newsText")?.value?.trim() || "";
+        const file = document.getElementById("newsImage")?.files?.[0];
+
+        if (!title || !text) {
+            alert("Vul een titel en tekst in.");
+            return;
+        }
+
+        let url = "";
+        if (file) {
+            const form = new FormData();
+            form.append("file", file);
+            form.append("upload_preset", "hvnovitas_upload");
+
+            const res = await fetch(
+                "https://api.cloudinary.com/v1_1/hwxe3jzg/image/upload",
+                { method: "POST", body: form }
+            );
+
+            if (!res.ok) throw new Error("Cloudinary upload mislukt.");
+            const data = await res.json();
+            url = data.secure_url || "";
+        }
+
+        const created = Date.now();
+        const newsRecordRef = push(ref(db, "news"));
+        const changes = {};
+        changes[`news/${newsRecordRef.key}`] = { title, text, imageUrl: url, created };
+
+        const alsoHighlight = document.getElementById("newsAsHighlight")?.checked === true;
+        if (alsoHighlight) {
+            const placedAt = new Date(created);
+            const date = [
+                placedAt.getFullYear(),
+                String(placedAt.getMonth() + 1).padStart(2, "0"),
+                String(placedAt.getDate()).padStart(2, "0")
+            ].join("-");
+            const highlightRecordRef = push(ref(db, "highlights"));
+            changes[`highlights/${highlightRecordRef.key}`] = {
+                date, title, text, imageUrl: url, created,
+                sourceNewsId: newsRecordRef.key
+            };
+        }
+
+        await update(ref(db), changes);
+
+        document.getElementById("newsTitle").value = "";
+        document.getElementById("newsText").value = "";
+        document.getElementById("newsImage").value = "";
+        document.getElementById("newsAsHighlight").checked = false;
+
+        alert(alsoHighlight
+            ? "Nieuws opgeslagen en ook als zelfstandige highlight bewaard."
+            : "Nieuws opgeslagen.");
+    } catch (error) {
+        console.error("Fout bij nieuws:", error);
+        alert("Nieuws kon niet worden opgeslagen.");
+    }
+});
+
+onValue(ref(db, "news"), (snap) => {
+    currentNewsData = snap.val() || {};
+    renderNewsList();
+});
+
+onValue(ref(db, "highlights"), (snap) => {
+    currentNewsHighlights = snap.val() || {};
+    renderNewsList();
 });
 
 /* =====================================================
