@@ -2,8 +2,6 @@ import { db } from "./firebase.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const element = document.getElementById("homepageAnnouncement");
-const DEFAULT_TEXT = "Ze komt 17 april";
-
 // Forceer de hoofdkleur ook als een oudere stylesheet nog gecachet is.
 function applyReadableStyle() {
   if (!element) return;
@@ -13,9 +11,9 @@ function applyReadableStyle() {
 }
 
 if (element) {
-  // Toon meteen de aankondiging; een opgeslagen beheer-tekst krijgt voorrang.
-  element.textContent = DEFAULT_TEXT;
-  element.hidden = false;
+  // Toon geen oude standaardregel terwijl de opgeslagen tekst wordt geladen.
+  element.textContent = "";
+  element.hidden = true;
   applyReadableStyle();
 
   onValue(
@@ -25,16 +23,16 @@ if (element) {
         const data = snapshot.val();
         element.textContent = typeof data?.text === "string" ? data.text.trim() : "";
       } else {
-        element.textContent = DEFAULT_TEXT;
+        element.textContent = "";
       }
       element.hidden = !element.textContent;
       applyReadableStyle();
     },
     error => {
       console.error("Homepage neonregel kon niet worden geladen:", error);
-      // Laat de tijdelijke standaardtekst zien als Firebase nog niet bereikbaar is.
-      element.textContent = DEFAULT_TEXT;
-      element.hidden = false;
+      // Bij een laadfout geen oude standaardtekst tonen.
+      element.textContent = "";
+      element.hidden = true;
       applyReadableStyle();
     }
   );
