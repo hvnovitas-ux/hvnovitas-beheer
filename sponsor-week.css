@@ -185,3 +185,177 @@ html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;font-
   .sponsor-week-visit { transition: none; }
 }
 
+/* =========================================================
+   NOVITAS CLUB EDITION — meer sfeer, clubidentiteit en detail
+   ========================================================= */
+.sponsor-week {
+  isolation: isolate;
+  border: 1px solid rgba(255, 112, 0, .46);
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse at 50% 57%, rgba(255, 111, 0, .25) 0%, transparent 48%),
+    repeating-linear-gradient(135deg, transparent 0 48px, rgba(255, 255, 255, .018) 49px 50px, transparent 51px 96px),
+    linear-gradient(145deg, #090909 0%, #171717 52%, #080808 100%);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.sponsor-week::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  z-index: 8;
+  border: 1px solid rgba(255, 121, 0, .14);
+  border-radius: 14px;
+  pointer-events: none;
+}
+.sponsor-week-header {
+  height: 76px;
+  padding: 8px 12px 7px;
+  gap: 4px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12px 12px, rgba(255, 112, 0, .15) 1px, transparent 1.8px) 0 0 / 10px 10px,
+    linear-gradient(180deg, #242424 0%, #101010 100%);
+}
+.sponsor-week-header::before,
+.sponsor-week-header::after {
+  content: "";
+  position: absolute;
+  bottom: 11px;
+  width: 28px;
+  height: 3px;
+  border-radius: 3px;
+  background: #ff7000;
+  box-shadow: 0 0 12px rgba(255, 112, 0, .38);
+}
+.sponsor-week-header::before { left: 16px; transform: skewX(-35deg); }
+.sponsor-week-header::after { right: 16px; transform: skewX(35deg); }
+.sponsor-week-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #ff9a36;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: .19em;
+  text-align: center;
+  white-space: nowrap;
+}
+.sponsor-week-kicker-dash {
+  display: block;
+  width: 17px;
+  height: 2px;
+  border-radius: 2px;
+  background: #ff6a00;
+}
+.sponsor-week-title {
+  font-size: clamp(17px, 4.9vw, 23px);
+  letter-spacing: .05em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .7);
+}
+.sponsor-week-line {
+  width: 88px;
+  height: 3px;
+  margin-top: 1px;
+}
+.sponsor-week-content {
+  height: calc(100% - 76px);
+  padding: 13px 16px 15px;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(255, 126, 0, .08), transparent 60%);
+}
+.sponsor-week-content::before {
+  width: min(92%, 420px);
+  height: min(62%, 280px);
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 244, 225, .86) 0%,
+    rgba(255, 217, 163, .65) 17%,
+    rgba(255, 139, 30, .34) 39%,
+    rgba(255, 106, 0, .15) 58%,
+    transparent 78%
+  );
+  filter: blur(7px);
+}
+.sponsor-week-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .9;
+  background:
+    linear-gradient(145deg, transparent 0 17%, rgba(255, 112, 0, .06) 17.2% 17.7%, transparent 18% 82%, rgba(255, 112, 0, .07) 82.2% 82.7%, transparent 83%),
+    repeating-linear-gradient(135deg, transparent 0 54px, rgba(255, 255, 255, .02) 55px 56px, transparent 57px 108px);
+}
+.sponsor-week-link,
+.sponsor-week-no-link {
+  gap: 10px;
+  padding: 8px 0 12px;
+}
+.sponsor-week-logo {
+  width: clamp(145px, 55%, 205px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  max-width: 84%;
+  max-height: 46%;
+  object-fit: contain;
+  border-radius: 10px;
+  outline: 1px solid rgba(255, 255, 255, .25);
+  box-shadow: 0 0 0 5px rgba(255, 112, 0, .09), 0 12px 30px rgba(0, 0, 0, .48);
+}
+.sponsor-week-name {
+  max-width: 98%;
+  font-size: clamp(22px, 5.8vw, 29px);
+  letter-spacing: -.025em;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, .8);
+}
+.sponsor-week-visit {
+  min-height: 41px;
+  max-width: 96%;
+  padding: 9px 18px;
+  border: 1px solid rgba(255, 194, 133, .5);
+  background: linear-gradient(180deg, #ff8419 0%, #ff6800 54%, #e95100 100%);
+  font-size: clamp(10px, 2.8vw, 12px);
+  letter-spacing: .055em;
+  box-shadow: 0 8px 20px rgba(255, 92, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.sponsor-week-thanks {
+  position: relative;
+  z-index: 3;
+  color: rgba(255, 255, 255, .72);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-align: center;
+  text-transform: uppercase;
+}
+@media (max-width: 600px) {
+  .sponsor-week-header { height: 72px; }
+  .sponsor-week-content { height: calc(100% - 72px); padding: 11px 12px 12px; }
+  .sponsor-week-kicker { font-size: 8px; letter-spacing: .14em; gap: 5px; }
+  .sponsor-week-kicker-dash { width: 12px; }
+  .sponsor-week-title { font-size: 17px; }
+  .sponsor-week-link, .sponsor-week-no-link { gap: 9px; padding: 6px 0 10px; }
+  .sponsor-week-logo { width: clamp(135px, 53%, 190px); max-height: 45%; }
+  .sponsor-week-name { font-size: 21px; }
+  .sponsor-week-visit { min-height: 38px; padding: 8px 12px; font-size: 10px; }
+  .sponsor-week-thanks { font-size: 8px; letter-spacing: .12em; }
+}
+@media (max-height: 340px) {
+  .sponsor-week-header { height: 66px; }
+  .sponsor-week-kicker { font-size: 8px; }
+  .sponsor-week-title { font-size: 17px; }
+  .sponsor-week-content { height: calc(100% - 66px); padding: 5px 10px; }
+  .sponsor-week-link, .sponsor-week-no-link { gap: 6px; padding: 3px 0 7px; }
+  .sponsor-week-logo { width: clamp(95px, 40%, 125px); max-height: 40%; }
+  .sponsor-week-name { font-size: 19px; }
+  .sponsor-week-visit { min-height: 32px; padding: 6px 10px; font-size: 9px; }
+  .sponsor-week-thanks { font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-week-visit { transition: none; }
+}
+
