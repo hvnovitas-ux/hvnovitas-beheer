@@ -314,6 +314,74 @@
 
     }
 
+
+    /* =====================================================
+       NOVITAS NEON-LICHTLIJN — tussen nieuws en sponsors
+       ===================================================== */
+    .novitas-neon-divider {
+      position: relative;
+      width: min(560px, 78%);
+      height: 24px;
+      margin: -3px auto 12px;
+      isolation: isolate;
+      pointer-events: none;
+    }
+
+    .novitas-neon-divider::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 76, 0, .45) 12%,
+        #ff5b00 30%,
+        #ff9a3d 43%,
+        #fff2d8 50%,
+        #ff9a3d 57%,
+        #ff5b00 70%,
+        rgba(255, 76, 0, .45) 88%,
+        transparent 100%
+      );
+      box-shadow:
+        0 0 4px rgba(255, 97, 0, .95),
+        0 0 10px rgba(255, 95, 0, .8),
+        0 0 22px rgba(255, 78, 0, .48);
+    }
+
+    .novitas-neon-divider::after {
+      content: "";
+      position: absolute;
+      left: 15%;
+      right: 15%;
+      top: 50%;
+      height: 13px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(255, 91, 0, .6), transparent);
+      filter: blur(8px);
+      opacity: .9;
+    }
+
+    @media (max-width: 600px) {
+      .novitas-neon-divider {
+        width: 84%;
+        height: 20px;
+        margin: -2px auto 8px;
+      }
+      .novitas-neon-divider::before {
+        box-shadow:
+          0 0 3px rgba(255, 97, 0, .95),
+          0 0 8px rgba(255, 95, 0, .72),
+          0 0 16px rgba(255, 78, 0, .4);
+      }
+    }
+
   </style>
 
 
@@ -631,6 +699,7 @@
 
     </section>
 
+    <div class="novitas-neon-divider" aria-hidden="true"></div>
 
     <!-- =====================================================
          SPONSORS
