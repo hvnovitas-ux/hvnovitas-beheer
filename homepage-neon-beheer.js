@@ -5,6 +5,7 @@ import { ref, get, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 const ADMIN_EMAIL = "hvnovitas@gmail.com";
 const $ = id => document.getElementById(id);
 let authorised = false;
+const DEFAULT_TEXT = "Ze komt 17 april";
 
 function status(message, error = false) {
   $("status").textContent = message;
@@ -22,12 +23,14 @@ async function loadText() {
   try {
     const snapshot = await get(ref(db, "homepageAnnouncement"));
     const data = snapshot.val();
-    $("announcementText").value = typeof data?.text === "string" ? data.text : "";
+    $("announcementText").value = typeof data?.text === "string" ? data.text : DEFAULT_TEXT;
     updatePreview();
     status("De huidige tekst is geladen.");
   } catch (error) {
     console.error("Neonregel laden mislukt:", error);
-    status("Laden is niet gelukt. Controleer of de database-regels voor homepageAnnouncement zijn gepubliceerd.", true);
+    if (!$("announcementText").value) $("announcementText").value = DEFAULT_TEXT;
+    updatePreview();
+    status("De standaardtekst is ingevuld. Opslaan werkt pas als de database-regels voor homepageAnnouncement zijn gepubliceerd.", true);
   }
 }
 
