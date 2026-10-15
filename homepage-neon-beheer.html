@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neonregel homepage beheren - HV Novitas</title>
+<link rel="stylesheet" href="cms.css">
+<style>
+.page{width:min(880px,calc(100% - 28px));margin:24px auto}
+.panel{background:#fff;border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+h1{margin:0 0 8px;font-size:25px}
+.muted{color:#68717d;line-height:1.55}
+label{display:block;font-weight:700;margin:18px 0 7px}
+textarea{width:100%;min-height:100px;resize:vertical;padding:13px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;font-size:18px}
+textarea:focus{outline:2px solid #ff7900;border-color:#ff7900}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button,.back{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:9px;padding:12px 16px;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}
+.primary{background:#ff7100;color:#fff}
+.secondary{background:#e8ebef;color:#222}
+button:disabled{opacity:.55;cursor:wait}
+.status{margin-top:14px;font-weight:700;min-height:22px}
+.preview{background:#111;border-radius:13px;padding:16px;min-height:92px;display:flex;align-items:center;gap:20px;color:#ff8733}
+.preview-text{flex:1;min-width:0;font-size:clamp(16px,3vw,23px);font-weight:900;line-height:1.2;text-transform:uppercase;text-shadow:0 0 4px #ff7200,0 0 12px rgba(255,94,0,.72),0 0 24px rgba(255,70,0,.4);overflow-wrap:anywhere}
+.preview-button{flex:0 0 auto;background:#bd4a00;color:#fff;border-radius:8px;padding:9px 12px;font-size:13px;font-weight:800;white-space:nowrap}
+@media(max-width:600px){.panel{padding:16px}.preview{gap:12px}.preview-button{font-size:11px;padding:8px}.preview-text{font-size:16px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="title">HV NOVITAS BEHEER</div>
+  <div class="userbox"><span id="userInfo">Controleren...</span><button id="logoutButton" type="button">Uitloggen</button></div>
+</header>
+<main class="page">
+  <section class="panel">
+    <a class="back secondary" href="dashboard.html">Terug naar dashboard</a>
+    <h1>Neonregel homepage</h1>
+    <p class="muted">Voer hier de tekst in die links van de knop Meer nieuws op de homepage verschijnt. Gebruik gewone tekst, zonder emoji's of decoratieve symbolen. Laat het veld leeg en sla op om de tekst te verwijderen.</p>
+    <label for="announcementText">Tekst op de homepage</label>
+    <textarea id="announcementText" maxlength="120" placeholder="Bijvoorbeeld: Estavana Polman komt naar HV Novitas" spellcheck="true"></textarea>
+    <p class="muted"><span id="charCount">0</span> van 120 tekens</p>
+    <div class="actions">
+      <button id="saveButton" class="primary" type="button">Tekst opslaan</button>
+      <button id="clearButton" class="secondary" type="button">Tekst verwijderen</button>
+    </div>
+    <div id="status" class="status" role="status"></div>
+  </section>
+  <section class="panel">
+    <h2>Voorbeeld</h2>
+    <p class="muted">Zo krijgt de tekst een oranje neonuitstraling naast Meer nieuws.</p>
+    <div class="preview">
+      <div id="previewText" class="preview-text">Jouw tekst verschijnt hier</div>
+      <div class="preview-button">Meer nieuws</div>
+    </div>
+  </section>
+</main>
+<script type="module" src="homepage-neon-beheer.js?v=20261015-1"></script>
+</body>
+</html>
