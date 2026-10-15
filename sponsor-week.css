@@ -96,3 +96,92 @@ html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;font-
     font-size: 11px;
   }
 }
+
+/* =========================================================
+   SPONSOR VAN DE WEEK — PREMIUM UPDATE (15-10-2026)
+   Rustigere spotlight en groter, prominenter sponsorlogo
+   ========================================================= */
+.sponsor-week {
+  background:
+    radial-gradient(ellipse at 50% 57%, rgba(255, 113, 0, .23) 0%, transparent 54%),
+    linear-gradient(145deg, #101010 0%, #191919 53%, #080808 100%);
+  border: 1px solid rgba(255, 123, 20, .28);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+.sponsor-week-header {
+  background: linear-gradient(180deg, #242424 0%, #111 100%);
+}
+.sponsor-week-title {
+  font-size: clamp(18px, 5.3vw, 24px);
+  letter-spacing: .045em;
+}
+.sponsor-week-content::before {
+  width: min(88%, 390px);
+  height: min(48%, 250px);
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 248, 235, .86) 0%,
+    rgba(255, 224, 182, .58) 20%,
+    rgba(255, 143, 34, .33) 43%,
+    rgba(255, 111, 0, .12) 61%,
+    transparent 78%
+  );
+  filter: blur(5px);
+}
+.sponsor-week-link,
+.sponsor-week-no-link {
+  gap: 15px;
+  padding: 4px 0;
+}
+.sponsor-week-logo {
+  width: clamp(142px, 42%, 168px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  max-width: 84%;
+  max-height: 46%;
+  object-fit: contain;
+  border-radius: 8px;
+  outline: 1px solid rgba(255, 255, 255, .16);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .42), 0 0 0 7px rgba(255, 112, 0, .06);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .28));
+}
+.sponsor-week-name {
+  max-width: 98%;
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.08;
+  letter-spacing: -.025em;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, .70);
+}
+.sponsor-week-visit {
+  min-height: 43px;
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 190, 130, .48);
+  background: linear-gradient(180deg, #ff8118 0%, #f05a00 100%);
+  font-size: clamp(10px, 2.8vw, 12px);
+  letter-spacing: .045em;
+  box-shadow: 0 8px 22px rgba(255, 94, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .20);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.sponsor-week-link:hover .sponsor-week-visit {
+  transform: translateY(-2px);
+  box-shadow: 0 11px 25px rgba(255, 94, 0, .36), inset 0 1px 0 rgba(255, 255, 255, .24);
+}
+@media (max-width: 600px) {
+  .sponsor-week-title { font-size: 17px; }
+  .sponsor-week-link,
+  .sponsor-week-no-link { gap: 11px; }
+  .sponsor-week-logo {
+    width: clamp(132px, 43%, 154px);
+    max-height: 42%;
+  }
+  .sponsor-week-name { font-size: 21px; }
+  .sponsor-week-visit {
+    min-height: 39px;
+    padding: 9px 14px;
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-week-visit { transition: none; }
+}
+
