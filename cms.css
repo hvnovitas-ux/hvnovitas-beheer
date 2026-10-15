@@ -194,3 +194,59 @@ small{
     font-weight: normal;
     line-height: 1.45;
 }
+
+
+/* Acties per nieuwsbericht */
+.news-item {
+    align-items: start;
+}
+
+.news-item-content {
+    min-width: 0;
+}
+
+.news-item-content small {
+    display: inline-block;
+    margin-top: 4px;
+}
+
+.news-item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 180px;
+}
+
+.news-item-actions button {
+    white-space: normal;
+}
+
+.highlight-news-button {
+    background: #fff1e8;
+    color: #a74300;
+    border: 1px solid #fdba74;
+}
+
+.highlight-news-button:hover:not(:disabled) {
+    background: #ffdfc2;
+}
+
+.highlight-news-button:disabled {
+    background: #e8f5e9;
+    color: #256b39;
+    cursor: default;
+    opacity: 1;
+}
+
+@media(max-width:700px) {
+    .news-item {
+        grid-template-columns: 1fr;
+    }
+
+    .news-item-actions {
+        min-width: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
