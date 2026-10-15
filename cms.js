@@ -4,6 +4,7 @@ import {
     ref,
     push,
     onValue,
+    update,
     remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
@@ -233,21 +234,49 @@ document
                     data.secure_url || "";
             }
 
-            await push(
-                ref(db, "news"),
-                {
+            // Gebruik dezelfde plaatsingsdatum voor nieuws en eventuele highlight.
+            const created = Date.now();
+            const newsRecordRef = push(ref(db, "news"));
+            const changes = {};
+
+            changes[`news/${newsRecordRef.key}`] = {
+                title,
+                text,
+                imageUrl: url,
+                created
+            };
+
+            const alsoHighlight = document.getElementById("newsAsHighlight")?.checked === true;
+
+            if (alsoHighlight) {
+                const placedAt = new Date(created);
+                const date = [
+                    placedAt.getFullYear(),
+                    String(placedAt.getMonth() + 1).padStart(2, "0"),
+                    String(placedAt.getDate()).padStart(2, "0")
+                ].join("-");
+
+                const highlightRecordRef = push(ref(db, "highlights"));
+                changes[`highlights/${highlightRecordRef.key}`] = {
+                    date,
                     title,
                     text,
                     imageUrl: url,
-                    created: Date.now()
-                }
-            );
+                    created
+                };
+            }
+
+            // Sla nieuws en de zelfstandige highlight-kopie als één update op.
+            await update(ref(db), changes);
 
             document.getElementById("newsTitle").value = "";
             document.getElementById("newsText").value = "";
             document.getElementById("newsImage").value = "";
+            document.getElementById("newsAsHighlight").checked = false;
 
-            alert("Nieuws opgeslagen.");
+            alert(alsoHighlight
+                ? "Nieuws opgeslagen en ook als zelfstandige highlight bewaard."
+                : "Nieuws opgeslagen.");
         } catch (error) {
             console.error("❌ Fout bij nieuws:", error);
             alert("Nieuws kon niet worden opgeslagen.");
