@@ -294,6 +294,7 @@ function renderSponsor(
                 >
                     ${name}
                 </div>
+                <div class="sponsor-week-thanks">BEDANKT DAT JE NOVITAS STEUNT</div>
 
 
                 <div
@@ -301,6 +302,8 @@ function renderSponsor(
                 >
                     Bezoek de website van onze sponsor
                 </div>
+
+                <div class="sponsor-week-thanks">BEDANKT DAT JE NOVITAS STEUNT</div>
 
             </a>
 
