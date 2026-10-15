@@ -160,3 +160,37 @@ small{
         grid-column:auto;
     }
 }
+
+
+/* Optie om een nieuwsbericht ook zelfstandig als highlight te bewaren */
+.highlight-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    background: #fff8f2;
+    cursor: pointer;
+}
+
+.highlight-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    margin: 3px 0 0;
+    accent-color: #ff6a00;
+}
+
+.highlight-option span {
+    display: grid;
+    gap: 5px;
+}
+
+.highlight-option small {
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1.45;
+}
