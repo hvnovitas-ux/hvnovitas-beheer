@@ -5,9 +5,9 @@ const element = document.getElementById("homepageAnnouncement");
 // Forceer de hoofdkleur ook als een oudere stylesheet nog gecachet is.
 function applyReadableStyle() {
   if (!element) return;
-  element.style.setProperty("color", "#fffaf2", "important");
-  element.style.setProperty("-webkit-text-stroke", "0.45px rgba(105, 35, 0, 0.95)", "important");
-  element.style.setProperty("text-shadow", "0 1px 1px rgba(65, 19, 0, 0.98), 0 0 3px rgba(83, 27, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.72), 0 0 14px rgba(255, 112, 20, 0.95), 0 0 26px rgba(255, 68, 0, 0.72)", "important");
+  element.style.setProperty("color", "#f6f3ef", "important");
+  element.style.setProperty("-webkit-text-stroke", "0", "important");
+  element.style.setProperty("text-shadow", "0 1px 2px rgba(0, 0, 0, 0.65), 0 0 4px rgba(255, 110, 20, 0.16)", "important");
 }
 
 if (element) {
