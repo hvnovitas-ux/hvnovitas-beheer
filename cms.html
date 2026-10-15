@@ -27,6 +27,14 @@
         <textarea id="newsText" class="full" rows="6" maxlength="6000" placeholder="Tekst van het nieuwsbericht" required></textarea>
       </div>
 
+      <label class="highlight-option" for="newsAsHighlight">
+        <input id="newsAsHighlight" type="checkbox">
+        <span>
+          <strong>Ook bewaren als highlight</strong>
+          <small>De titel, tekst, foto en plaatsingsdatum worden automatisch gekopieerd naar Highlights. Deze kopie blijft staan als je het nieuwsbericht later verwijdert.</small>
+        </span>
+      </label>
+
       <div class="actions">
         <button type="button" id="saveNews">Nieuws opslaan</button>
       </div>
@@ -59,6 +67,6 @@
       }
     });
   </script>
-  <script type="module" src="cms.js?v=20261015-news-only"></script>
+  <script type="module" src="cms.js?v=20261015-news-highlight-toggle"></script>
 </body>
 </html>
