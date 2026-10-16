@@ -238,6 +238,24 @@ body {
     <p>Kies hieronder wat je wilt aanpassen. De onderdelen zijn gegroepeerd, zodat je sneller vindt wat je zoekt.</p>
   </section>
 
+  <section class="category category--website" aria-labelledby="analyticsHeading">
+    <div class="category-heading">
+      <h2 id="analyticsHeading">Websitebezoekers</h2>
+      <p>Google Analytics — HV Novitas website</p>
+    </div>
+    <div class="grid">
+      <div class="card" style="cursor:default">
+        <span class="card-title">Actieve gebruikers deze week</span>
+        <span class="card-text" id="gaWeekly" aria-live="polite">Statistieken laden…</span>
+      </div>
+      <div class="card" style="cursor:default">
+        <span class="card-title">Actieve gebruikers sinds de start</span>
+        <span class="card-text" id="gaTotal" aria-live="polite">Statistieken laden…</span>
+      </div>
+    </div>
+    <p id="gaStatus" style="margin:10px 2px 0;color:var(--muted);font-size:12px" aria-live="polite">Gegevens worden veilig opgehaald.</p>
+  </section>
+
   <section class="category category--website" aria-labelledby="contentHeading">
     <div class="category-heading">
       <h2 id="contentHeading">Website en communicatie</h2>
@@ -373,6 +391,34 @@ logoutButton.addEventListener("click", async () => {
     alert("Uitloggen is niet gelukt.");
   }
 });
+
+</script>
+<script type="module">
+import { app } from "./firebase.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
+
+const weeklyEl = document.getElementById("gaWeekly");
+const totalEl = document.getElementById("gaTotal");
+const statusEl = document.getElementById("gaStatus");
+
+try {
+  const functions = getFunctions(app, "europe-west1");
+  const getWebsiteAnalytics = httpsCallable(functions, "getWebsiteAnalytics");
+  const response = await getWebsiteAnalytics();
+  const data = response.data;
+
+  weeklyEl.textContent = Number(data.weeklyActiveUsers).toLocaleString("nl-NL") + " gebruikers";
+  totalEl.textContent = Number(data.totalActiveUsers).toLocaleString("nl-NL") + " gebruikers";
+  statusEl.textContent = "Sinds " + data.startDate + " · bijgewerkt " +
+    new Date(data.updatedAt).toLocaleString("nl-NL");
+} catch (error) {
+  console.error("Websitebezoekers laden mislukt:", error);
+  weeklyEl.textContent = "Nog niet beschikbaar";
+  totalEl.textContent = "Nog niet beschikbaar";
+  statusEl.textContent = error?.message?.includes("GA4_START_DATE")
+    ? "De startdatum van de nieuwe website moet nog worden ingesteld bij de serverfunctie."
+    : "De Analytics-koppeling moet nog worden uitgerold of de toegang moet worden gecontroleerd.";
+}
 </script>
 </body>
 </html>
