@@ -89,6 +89,33 @@ body {
 
 .category {
   margin: 0 0 30px;
+  --group-color: #ed6a1f;
+  --group-color-dark: #b94b0a;
+  --group-line: #f4c9ac;
+}
+
+.category--website {
+  --group-color: #ed6a1f;
+  --group-color-dark: #b94b0a;
+  --group-line: #f4c9ac;
+}
+
+.category--club {
+  --group-color: #2878b8;
+  --group-color-dark: #195481;
+  --group-line: #bfd8ec;
+}
+
+.category--sponsors {
+  --group-color: #26845b;
+  --group-color-dark: #1b6243;
+  --group-line: #c1e0d0;
+}
+
+.category--tools {
+  --group-color: #7957b5;
+  --group-color-dark: #583b8a;
+  --group-line: #d7c9ed;
 }
 
 .category-heading {
@@ -97,11 +124,12 @@ body {
   gap: 12px;
   margin: 0 0 13px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #d9dde3;
+  border-bottom: 2px solid var(--group-line);
 }
 
 .category-heading h2 {
   margin: 0;
+  color: var(--group-color);
   font-size: 19px;
   font-weight: 800;
 }
@@ -127,7 +155,7 @@ body {
   color: var(--ink);
   text-decoration: none;
   border: 1px solid #e7e9ed;
-  border-left: 4px solid var(--orange);
+  border-left: 4px solid var(--group-color, var(--orange));
   border-radius: 11px;
   box-shadow: 0 3px 11px rgba(20, 25, 35, .035);
   transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
@@ -138,7 +166,7 @@ body {
   transform: translateY(-2px);
   background: #fffaf6;
   border-color: #ffd2b4;
-  border-left-color: var(--orange-dark);
+  border-left-color: var(--group-color-dark, var(--orange-dark));
   box-shadow: 0 7px 18px rgba(20, 25, 35, .085);
   outline: none;
 }
@@ -210,7 +238,7 @@ body {
     <p>Kies hieronder wat je wilt aanpassen. De onderdelen zijn gegroepeerd, zodat je sneller vindt wat je zoekt.</p>
   </section>
 
-  <section class="category" aria-labelledby="contentHeading">
+  <section class="category category--website" aria-labelledby="contentHeading">
     <div class="category-heading">
       <h2 id="contentHeading">Website en communicatie</h2>
       <p>Nieuws, aankondigingen en inhoud op de homepage</p>
@@ -259,7 +287,7 @@ body {
     </div>
   </section>
 
-  <section class="category" aria-labelledby="clubHeading">
+  <section class="category category--club" aria-labelledby="clubHeading">
     <div class="category-heading">
       <h2 id="clubHeading">Vereniging en leden</h2>
       <p>Ledenadministratie en activiteiten van de vereniging</p>
@@ -280,7 +308,7 @@ body {
     </div>
   </section>
 
-  <section class="category" aria-labelledby="sponsorHeading">
+  <section class="category category--sponsors" aria-labelledby="sponsorHeading">
     <div class="category-heading">
       <h2 id="sponsorHeading">Sponsoring</h2>
       <p>Sponsorgegevens en sponsoroverzichten</p>
@@ -297,7 +325,7 @@ body {
     </div>
   </section>
 
-  <section class="category" aria-labelledby="toolsHeading">
+  <section class="category category--tools" aria-labelledby="toolsHeading">
     <div class="category-heading">
       <h2 id="toolsHeading">Extra hulpmiddelen</h2>
       <p>Tools voor activiteiten en dagelijks beheer</p>
