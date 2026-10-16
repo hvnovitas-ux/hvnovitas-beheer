@@ -412,7 +412,12 @@ function renderMemberList() {
     const haystack = normalize([m.naam, m.nummer, m.categorie, m.lidSinds].join(" "));
     return !query || haystack.includes(query);
   });
-  list.sort((a, b) => Number(isCurrentMember(b)) - Number(isCurrentMember(a)) || normalize(a.naam).localeCompare(normalize(b.naam), "nl"));
+  // Huidige leden eerst; binnen elke groep oplopend op lidnummer.
+  list.sort((a, b) =>
+    Number(isCurrentMember(b)) - Number(isCurrentMember(a)) ||
+    compareMemberNumbers(a.nummer, b.nummer) ||
+    normalize(a.naam).localeCompare(normalize(b.naam), "nl")
+  );
   if (!list.length) {
     body.innerHTML = '<tr><td colspan="6" class="empty-cell">Geen leden gevonden.</td></tr>';
   } else {
@@ -425,6 +430,25 @@ function renderMemberList() {
     }).join("");
   }
   el("memberListCount").textContent = `${list.length} ${list.length === 1 ? "record" : "records"} getoond.`;
+}
+
+function compareMemberNumbers(a, b) {
+  const left = String(a ?? "").trim();
+  const right = String(b ?? "").trim();
+
+  // Ontbrekende lidnummers komen onderaan te staan.
+  if (!left && !right) return 0;
+  if (!left) return 1;
+  if (!right) return -1;
+
+  const leftNumber = Number(left.replace(",", "."));
+  const rightNumber = Number(right.replace(",", "."));
+
+  if (Number.isFinite(leftNumber) && Number.isFinite(rightNumber) && leftNumber !== rightNumber) {
+    return leftNumber - rightNumber;
+  }
+
+  return left.localeCompare(right, "nl", { numeric: true, sensitivity: "base" });
 }
 
 function formatDate(value) {
