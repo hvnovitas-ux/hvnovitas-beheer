@@ -3,476 +3,348 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HV Novitas Dashboard</title>
-
+<title>HV Novitas Beheer</title>
 <style>
-*{box-sizing:border-box}
+* { box-sizing: border-box; }
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f4f6f8;
-  color:#222
+:root {
+  --orange: #ff6a00;
+  --orange-dark: #b94700;
+  --ink: #202124;
+  --muted: #68717d;
+  --line: #e5e7eb;
+  --page: #f5f6f8;
+  --surface: #ffffff;
 }
 
-.topbar{
-  background:#ff6a00;
-  color:#fff;
-  padding:15px 20px;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page);
+  color: var(--ink);
 }
 
-.title{
-  font-size:20px
+.topbar {
+  min-height: 70px;
+  background: var(--orange);
+  color: #fff;
+  padding: 16px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
 }
 
-.userbox{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:14px
+.title {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: .045em;
 }
 
-.logout{
-  background:#fff;
-  color:#222;
-  border:none;
-  border-radius:7px;
-  padding:8px 12px;
-  cursor:pointer;
-  font-weight:bold
+.userbox {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
 }
 
-.dashboard{
-  width:min(1180px,calc(100% - 40px));
-  margin:30px auto
+.logout {
+  background: #fff;
+  color: var(--orange-dark);
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
 }
 
-.welcome{
-  background:#fff;
-  border-radius:14px;
-  padding:22px;
-  margin-bottom:25px;
-  box-shadow:0 4px 16px rgba(0,0,0,.07)
+.logout:hover { background: #fff4eb; }
+
+.dashboard {
+  width: min(1200px, calc(100% - 48px));
+  margin: 28px auto 0;
 }
 
-.welcome h1{
-  margin:0 0 8px;
-  font-size:26px
+.welcome {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 25px 27px;
+  margin-bottom: 30px;
+  box-shadow: 0 3px 12px rgba(20, 25, 35, .035);
 }
 
-.welcome p{
-  margin:0;
-  color:#6b7280
+.welcome h1 {
+  margin: 0 0 8px;
+  font-size: clamp(25px, 3vw, 32px);
+  letter-spacing: -.025em;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:18px
+.welcome p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
-.card{
-  position:relative;
-  display:flex;
-  align-items:center;
-  min-height:110px;
-  background:#fff;
-  color:#222;
-  text-decoration:none;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:0 4px 16px rgba(0,0,0,.07);
-  border-left:5px solid #ff6a00;
-  transition:transform .15s ease,box-shadow .15s ease,background .15s ease
+.category {
+  margin: 0 0 30px;
 }
 
-.card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 7px 22px rgba(0,0,0,.11);
-  background:#fffaf6
+.category-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 13px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d9dde3;
 }
 
-.icon{
-  width:54px;
-  height:54px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-  background:#fff1e8;
-  border-radius:12px;
-  margin-right:16px;
-  flex-shrink:0
+.category-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
 }
 
-.card-content{
-  min-width:0
+.category-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
-.card-title{
-  font-size:18px;
-  font-weight:bold;
-  margin-bottom:5px
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.card-text{
-  font-size:13px;
-  color:#6b7280
+.card {
+  display: block;
+  min-width: 0;
+  min-height: 104px;
+  padding: 19px 20px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid #e7e9ed;
+  border-left: 4px solid var(--orange);
+  border-radius: 11px;
+  box-shadow: 0 3px 11px rgba(20, 25, 35, .035);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
 }
 
-.external::after{
-  content:"↗";
-  position:absolute;
-  right:16px;
-  bottom:14px;
-  color:#9ca3af;
-  font-size:16px
+.card:hover,
+.card:focus-visible {
+  transform: translateY(-2px);
+  background: #fffaf6;
+  border-color: #ffd2b4;
+  border-left-color: var(--orange-dark);
+  box-shadow: 0 7px 18px rgba(20, 25, 35, .085);
+  outline: none;
 }
 
-.footer{
-  text-align:center;
-  margin-top:30px;
-  padding:20px;
-  font-size:12px;
-  color:#9ca3af
+.card-title {
+  display: block;
+  margin: 0 0 7px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
 }
 
-@media(max-width:900px){
-  .grid{
-    grid-template-columns:repeat(2,minmax(0,1fr))
+.card-text {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.footer {
+  text-align: center;
+  padding: 25px 20px 30px;
+  font-size: 12px;
+  color: #8b929c;
+}
+
+@media (max-width: 950px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 650px) {
+  .topbar {
+    padding: 15px 18px;
+    align-items: flex-start;
+    flex-direction: column;
   }
-}
 
-@media(max-width:750px){
-  .topbar{
-    flex-direction:column;
-    align-items:flex-start
+  .userbox {
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .grid{
-    grid-template-columns:1fr
+  .dashboard {
+    width: calc(100% - 28px);
+    margin-top: 18px;
   }
 
-  .dashboard{
-    width:min(100% - 28px,1180px);
-    margin-top:20px
-  }
-
-  .welcome h1{
-    font-size:22px
-  }
+  .welcome { padding: 21px; }
+  .grid { grid-template-columns: 1fr; gap: 11px; }
+  .card { min-height: 0; padding: 17px 18px; }
+  .category-heading { display: block; }
+  .category-heading p { margin-top: 4px; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="topbar">
-
-  <div class="title">
-    🧡 HV NOVITAS DASHBOARD
-  </div>
-
+<header class="topbar">
+  <div class="title">HV NOVITAS — BEHEER</div>
   <div class="userbox">
     <span id="userInfo">Laden...</span>
-    <button class="logout" id="logoutButton" type="button">
-      Uitloggen
-    </button>
+    <button class="logout" id="logoutButton" type="button">Uitloggen</button>
   </div>
-
-</div>
-
+</header>
 
 <main class="dashboard">
-
   <section class="welcome">
     <h1>Beheer</h1>
-    <p>Welkom in het centrale beheer van HV Novitas.</p>
+    <p>Kies hieronder wat je wilt aanpassen. De onderdelen zijn gegroepeerd, zodat je sneller vindt wat je zoekt.</p>
   </section>
 
-
-  <section class="grid">
-
-
-    <a href="aankondigingsfoto.html" class="card">
-      <div class="icon">📷</div>
-      <div class="card-content">
-        <div class="card-title">Aankondigingsfoto</div>
-        <div class="card-text">
-          Wedstrijd- en aankondigingsfoto's
-        </div>
-      </div>
-    </a>
-
-
-    <a href="evenementenbanner.html" class="card">
-      <div class="icon">📢</div>
-      <div class="card-content">
-        <div class="card-title">Evenementenbanner</div>
-        <div class="card-text">
-          Evenementenbanner beheren
-        </div>
-      </div>
-    </a>
-
-
-    <!-- MUZIEKBINGO -->
-    <a href="muziekbingo.html" class="card">
-      <div class="icon">🎵</div>
-      <div class="card-content">
-        <div class="card-title">Muziekbingo</div>
-        <div class="card-text">
-          Muziekbingo kaarten maken en PDF's genereren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="video-week-cms.html" class="card">
-      <div class="icon">▶</div>
-      <div class="card-content">
-        <div class="card-title">Video van de Week</div>
-        <div class="card-text">
-          Video, titel en tekst beheren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="don-nova-cms.html" class="card">
-      <div class="icon">🤾</div>
-      <div class="card-content">
-        <div class="card-title">Don Nova's Jeugdclub</div>
-        <div class="card-text">
-          Strip, Don Video 1, Don Video 2 en teksten
-        </div>
-      </div>
-    </a>
-
-
-    <a href="challenge/index.html" class="card external">
-      <div class="icon">🎮</div>
-      <div class="card-content">
-        <div class="card-title">Challenge</div>
-        <div class="card-text">
-          HV Novitas Challenge
-        </div>
-      </div>
-    </a>
-
-    <a href="challenge-vragen.html" class="card">
-      <div class="icon">📝</div>
-      <div class="card-content">
-        <div class="card-title">Challenge vragen beheren</div>
-        <div class="card-text">
-          Vragen toevoegen, aanpassen, verwijderen en importeren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="club100.html" class="card">
-      <div class="icon">🧱</div>
-      <div class="card-content">
-        <div class="card-title">Club100</div>
-        <div class="card-text">
-          Leden van Club100 beheren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="highlights.html" class="card">
-      <div class="icon">🏆</div>
-      <div class="card-content">
-        <div class="card-title">Highlights</div>
-        <div class="card-text">
-          Highlights beheren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="inschrijvingen.html" class="card">
-      <div class="icon">📋</div>
-      <div class="card-content">
-        <div class="card-title">Inschrijvingen</div>
-        <div class="card-text">
-          Nieuwe leden en inschrijvingen
-        </div>
-      </div>
-    </a>
-
-
-    <!-- NIEUW: LEDENBEHEER -->
-    <a href="ledenbeheer.html" class="card">
-      <div class="icon">👥</div>
-      <div class="card-content">
-        <div class="card-title">Ledenbeheer</div>
-        <div class="card-text">
-          Ledental, jaargrafiek, leden beheren en Excel controleren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="https://hvnovitasmai.sportsontheweb.net/novmail_login.php" class="card external">
-      <div class="icon">📧</div>
-      <div class="card-content">
-        <div class="card-title">Mailbeheer</div>
-        <div class="card-text">
-          E-mail en mailbox beheren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="cms.html" class="card">
-      <div class="icon">📰</div>
-      <div class="card-content">
-        <div class="card-title">Nieuws beheren</div>
-        <div class="card-text">
-          Nieuwsberichten toevoegen en aanpassen
-        </div>
-      </div>
-    </a>
-
-    <a href="homepage-neon-beheer.html" class="card">
-      <div class="icon">Aa</div>
-      <div class="card-content">
-        <div class="card-title">Homepage aankondiging</div>
-        <div class="card-text">
-          Tekst naast Meer nieuws aanpassen
-        </div>
-      </div>
-    </a>
-
-
-    <a href="omejan.html" class="card">
-      <div class="icon">📸</div>
-      <div class="card-content">
-        <div class="card-title">Ome Jan</div>
-        <div class="card-text">
-          Afbeeldingen van Ome Jan beheren
-        </div>
-      </div>
-    </a>
-
-
-    <a href="proeftrainingen.html" class="card">
-      <div class="icon">🏃</div>
-      <div class="card-content">
-        <div class="card-title">Proeftrainingen</div>
-        <div class="card-text">
-          Aanmeldingen voor proeftrainingen
-        </div>
-      </div>
-    </a>
-
-
-    <a href="sponsors.html" class="card">
-      <div class="icon">🤝</div>
-      <div class="card-content">
-        <div class="card-title">Sponsors</div>
-        <div class="card-text">
-          Sponsors en sponsorbeheer
-        </div>
-      </div>
-    </a>
-
-
-    <a href="sponsorcommissie.html" class="card external">
-      <div class="icon">📊</div>
-      <div class="card-content">
-        <div class="card-title">Sponsorcommissie</div>
-        <div class="card-text">
-          Sponsoroverzicht openen
-        </div>
-      </div>
-    </a>
-
-
-    <a href="vrienden.html" class="card external">
-      <div class="icon">❤️</div>
-      <div class="card-content">
-        <div class="card-title">Vrienden van HV Novitas</div>
-        <div class="card-text">
-          Aanmeldingen bekijken
-        </div>
-      </div>
-    </a>
-
-
+  <section class="category" aria-labelledby="contentHeading">
+    <div class="category-heading">
+      <h2 id="contentHeading">Website en communicatie</h2>
+      <p>Nieuws, aankondigingen en inhoud op de homepage</p>
+    </div>
+    <div class="grid">
+      <a href="cms.html" class="card">
+        <span class="card-title">Nieuws beheren</span>
+        <span class="card-text">Nieuwsberichten plaatsen en bestaande berichten beheren</span>
+      </a>
+      <a href="highlights.html" class="card">
+        <span class="card-title">Highlights</span>
+        <span class="card-text">Belangrijke nieuwsberichten blijvend als highlight bewaren</span>
+      </a>
+      <a href="homepage-neon-beheer.html" class="card">
+        <span class="card-title">Homepage aankondiging</span>
+        <span class="card-text">De tekst naast de knop Meer nieuws aanpassen</span>
+      </a>
+      <a href="aankondigingsfoto.html" class="card">
+        <span class="card-title">Aankondigingsfoto</span>
+        <span class="card-text">Wedstrijd- en aankondigingsfoto's beheren</span>
+      </a>
+      <a href="evenementenbanner.html" class="card">
+        <span class="card-title">Evenementenbanner</span>
+        <span class="card-text">Aankondigingen van evenementen beheren</span>
+      </a>
+      <a href="video-week-cms.html" class="card">
+        <span class="card-title">Video van de Week</span>
+        <span class="card-text">Video, titel en tekst aanpassen</span>
+      </a>
+      <a href="omejan.html" class="card">
+        <span class="card-title">Ome Jan</span>
+        <span class="card-text">Foto's beheren die op de website verschijnen</span>
+      </a>
+    </div>
   </section>
 
+  <section class="category" aria-labelledby="clubHeading">
+    <div class="category-heading">
+      <h2 id="clubHeading">Vereniging en leden</h2>
+      <p>Ledenadministratie en activiteiten van de vereniging</p>
+    </div>
+    <div class="grid">
+      <a href="ledenbeheer.html" class="card">
+        <span class="card-title">Ledenbeheer</span>
+        <span class="card-text">Ledental, jaargrafiek, leden en Excel-controle</span>
+      </a>
+      <a href="inschrijvingen.html" class="card">
+        <span class="card-title">Inschrijvingen</span>
+        <span class="card-text">Aanmeldingen van nieuwe leden bekijken en beheren</span>
+      </a>
+      <a href="proeftrainingen.html" class="card">
+        <span class="card-title">Proeftrainingen</span>
+        <span class="card-text">Aanmeldingen voor een proeftraining bekijken</span>
+      </a>
+      <a href="don-nova-cms.html" class="card">
+        <span class="card-title">Don Nova's Jeugdclub</span>
+        <span class="card-text">Jeugdcontent, video's en teksten beheren</span>
+      </a>
+      <a href="vrienden.html" class="card">
+        <span class="card-title">Vrienden van HV Novitas</span>
+        <span class="card-text">Aanmeldingen van vrienden bekijken</span>
+      </a>
+    </div>
+  </section>
 
-  <div class="footer">
-    HV Novitas CMS
-  </div>
+  <section class="category" aria-labelledby="sponsorHeading">
+    <div class="category-heading">
+      <h2 id="sponsorHeading">Sponsoring</h2>
+      <p>Sponsorgegevens en sponsoroverzichten</p>
+    </div>
+    <div class="grid">
+      <a href="sponsors.html" class="card">
+        <span class="card-title">Sponsors</span>
+        <span class="card-text">Sponsors en sponsorinformatie beheren</span>
+      </a>
+      <a href="sponsorcommissie.html" class="card">
+        <span class="card-title">Sponsorcommissie</span>
+        <span class="card-text">Het sponsoroverzicht openen</span>
+      </a>
+    </div>
+  </section>
 
+  <section class="category" aria-labelledby="toolsHeading">
+    <div class="category-heading">
+      <h2 id="toolsHeading">Extra hulpmiddelen</h2>
+      <p>Tools voor activiteiten en dagelijks beheer</p>
+    </div>
+    <div class="grid">
+      <a href="muziekbingo.html" class="card">
+        <span class="card-title">Muziekbingo</span>
+        <span class="card-text">Bingokaarten maken en pdf-bestanden genereren</span>
+      </a>
+      <a href="challenge-vragen.html" class="card">
+        <span class="card-title">Challengevragen beheren</span>
+        <span class="card-text">Vragen toevoegen, aanpassen, verwijderen en importeren</span>
+      </a>
+      <a href="https://hvnovitasmai.sportsontheweb.net/novmail_login.php" class="card">
+        <span class="card-title">Mailbeheer</span>
+        <span class="card-text">E-mail en mailbox beheren</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">HV Novitas CMS</footer>
 </main>
 
-
 <script type="module">
-
 import { auth } from "./firebase.js";
-
 import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-
-const userInfo =
-  document.getElementById("userInfo");
-
-const logoutButton =
-  document.getElementById("logoutButton");
-
+const userInfo = document.getElementById("userInfo");
+const logoutButton = document.getElementById("logoutButton");
 
 onAuthStateChanged(auth, user => {
-
-  if(!user){
-
+  if (!user) {
     window.location.href = "login.html";
-
     return;
   }
 
-
-  userInfo.textContent =
-    "👋 " +
-    (user.displayName ||
-     user.email ||
-     "Admin");
-
+  userInfo.textContent = user.displayName || user.email || "Beheerder";
 });
-
 
 logoutButton.addEventListener("click", async () => {
-
-  try{
-
+  try {
     await signOut(auth);
-
     window.location.href = "login.html";
-
-  }catch(error){
-
-    console.error(error);
-
+  } catch (error) {
+    console.error("Uitloggen mislukt:", error);
     alert("Uitloggen is niet gelukt.");
-
   }
-
 });
-
 </script>
-
 </body>
 </html>
