@@ -14,7 +14,7 @@ exports.getWebsiteAnalytics = onCall(
     }
 
     const propertyId = "399949687";
-    const startDate = process.env.GA4_START_DATE;
+    const startDate = "2026-10-01";
 
     if (!startDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
       throw new HttpsError(
