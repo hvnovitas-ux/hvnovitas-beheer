@@ -352,7 +352,9 @@ el("memberForm").addEventListener("submit", async (event) => {
   const naam = el("memberName").value.trim();
   const lidSinds = el("memberSince").value;
   const categorie = el("memberCategory").value.trim();
+  const geboorteDatum = el("memberBirthDate").value;
   if (!naam || !validISODate(lidSinds)) return showNotice("Vul een naam en geldige aanmelddatum in.", "error");
+  if (geboorteDatum && (!validISODate(geboorteDatum) || geboorteDatum > todayISO())) return showNotice("Vul een geldige geboortedatum in die niet in de toekomst ligt.", "error");
   const duplicate = currentRecords().find((m) => (nummer && normalize(m.nummer) === normalize(nummer)) || normalize(m.naam) === normalize(naam));
   if (duplicate) return showNotice(`Dit lijkt al geregistreerd te zijn: ${duplicate.naam}${duplicate.nummer ? ` (lidnummer ${duplicate.nummer})` : ""}. Controleer de ledenlijst voordat je een dubbel lid toevoegt.`, "error");
 
@@ -361,7 +363,7 @@ el("memberForm").addEventListener("submit", async (event) => {
   try {
     const newRef = push(ledenRef);
     const now = Date.now();
-    await set(newRef, { nummer, naam, lidSinds, categorie, active: true, endDate: null, deactivatedManually: false, source: "cms", createdAt: now, updatedAt: now, updatedBy: user.email || "CMS" });
+    await set(newRef, { nummer, naam, lidSinds, categorie, geboorteDatum, active: true, endDate: null, deactivatedManually: false, source: "cms", createdAt: now, updatedAt: now, updatedBy: user.email || "CMS" });
     el("memberForm").reset();
     showNotice(`${naam} is toegevoegd. Het lid telt vanaf de aanmelddatum mee in de grafiek.`);
   } catch (error) {
@@ -380,7 +382,24 @@ el("membersTableBody").addEventListener("click", async (event) => {
   const key = button.dataset.key;
   const record = members[key];
   if (!record) return;
-  if (button.dataset.action === "deactivate") {
+  if (button.dataset.action === "saveBirthDate") {
+    const input = el(`birthDate-${key}`);
+    const geboorteDatum = input?.value || "";
+    if (geboorteDatum && (!validISODate(geboorteDatum) || geboorteDatum > todayISO())) {
+      showNotice("Vul een geldige geboortedatum in die niet in de toekomst ligt.", "error");
+      return;
+    }
+    button.disabled = true;
+    try {
+      await update(ref(db, `${DB_PATH}/${key}`), { geboorteDatum, updatedAt: Date.now(), updatedBy: user?.email || "CMS" });
+      showNotice(geboorteDatum ? `Geboortedatum van ${record.naam} opgeslagen.` : `Geboortedatum van ${record.naam} gewist.`);
+    } catch (error) {
+      console.error(error);
+      showNotice(`Geboortedatum van ${record.naam} kon niet worden opgeslagen.`, "error");
+    } finally {
+      button.disabled = false;
+    }
+  } else if (button.dataset.action === "deactivate") {
     if (!confirm(`Meld ${record.naam || "dit lid"} af? Het record blijft bewaard in de historie.`)) return;
     try {
       await update(ref(db, `${DB_PATH}/${key}`), { active: false, endDate: todayISO(), deactivatedManually: true, updatedAt: Date.now(), updatedBy: user?.email || "CMS" });
@@ -409,7 +428,7 @@ function renderMemberList() {
     const active = isCurrentMember(m);
     if (status === "active" && !active) return false;
     if (status === "inactive" && active) return false;
-    const haystack = normalize([m.naam, m.nummer, m.categorie, m.lidSinds].join(" "));
+    const haystack = normalize([m.naam, m.nummer, m.categorie, m.lidSinds, m.geboorteDatum].join(" "));
     return !query || haystack.includes(query);
   });
   // Huidige leden eerst; binnen elke groep oplopend op lidnummer.
@@ -419,14 +438,14 @@ function renderMemberList() {
     normalize(a.naam).localeCompare(normalize(b.naam), "nl")
   );
   if (!list.length) {
-    body.innerHTML = '<tr><td colspan="6" class="empty-cell">Geen leden gevonden.</td></tr>';
+    body.innerHTML = '<tr><td colspan="7" class="empty-cell">Geen leden gevonden.</td></tr>';
   } else {
     body.innerHTML = list.map((m) => {
       const active = isCurrentMember(m);
       const action = active
         ? `<button type="button" class="button button-action button-stop" data-action="deactivate" data-key="${escapeHtml(m.key)}">Afmelden</button>`
         : `<button type="button" class="button button-action button-restore" data-action="reactivate" data-key="${escapeHtml(m.key)}">Actief maken</button>`;
-      return `<tr><td>${escapeHtml(m.nummer || "—")}</td><td><strong>${escapeHtml(m.naam || "")}</strong></td><td>${escapeHtml(formatDate(m.lidSinds))}</td><td>${escapeHtml(m.categorie || "—")}</td><td><span class="pill ${active ? "pill-new" : "pill-inactive"}">${active ? "Actief" : "Niet actief"}</span></td><td>${action}</td></tr>`;
+      return `<tr><td>${escapeHtml(m.nummer || "—")}</td><td><strong>${escapeHtml(m.naam || "")}</strong></td><td>${escapeHtml(formatDate(m.lidSinds))}</td><td><input id="birthDate-${escapeHtml(m.key)}" class="birth-date-input" type="date" aria-label="Geboortedatum ${escapeHtml(m.naam || "")}" value="${escapeHtml(validISODate(m.geboorteDatum) ? m.geboorteDatum : "")}" max="${todayISO()}"><button type="button" class="button button-action button-secondary" data-action="saveBirthDate" data-key="${escapeHtml(m.key)}">Opslaan</button></td><td>${escapeHtml(m.categorie || "—")}</td><td><span class="pill ${active ? "pill-new" : "pill-inactive"}">${active ? "Actief" : "Niet actief"}</span></td><td>${action}</td></tr>`;
     }).join("");
   }
   el("memberListCount").textContent = `${list.length} ${list.length === 1 ? "record" : "records"} getoond.`;
@@ -883,8 +902,8 @@ el("applyImportButton").addEventListener("click", async () => {
 
 el("exportButton").addEventListener("click", () => {
   const records = currentRecords().sort((a, b) => normalize(a.naam).localeCompare(normalize(b.naam), "nl"));
-  const rows = [["Lidnummer", "Naam", "Lid per", "Categorie", "Actief", "Afmelddatum", "Bron"]];
-  for (const m of records) rows.push([m.nummer || "", m.naam || "", m.lidSinds || "", m.categorie || "", isCurrentMember(m) ? "Ja" : "Nee", m.endDate || "", m.source || ""]);
+  const rows = [["Lidnummer", "Naam", "Lid per", "Geboortedatum", "Categorie", "Actief", "Afmelddatum", "Bron"]];
+  for (const m of records) rows.push([m.nummer || "", m.naam || "", m.lidSinds || "", m.geboorteDatum || "", m.categorie || "", isCurrentMember(m) ? "Ja" : "Nee", m.endDate || "", m.source || ""]);
   const csv = "\uFEFF" + rows.map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")).join("\r\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
