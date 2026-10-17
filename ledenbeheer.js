@@ -14,6 +14,42 @@ let importBusy = false;
 
 const notice = el("notice");
 
+function currentSeasonStartYear(date = new Date()) {
+  return date.getMonth() >= 6 ? date.getFullYear() : date.getFullYear() - 1;
+}
+
+function populateSeasonOptions() {
+  const select = el("seasonFilter");
+  if (!select) return;
+  const currentStart = currentSeasonStartYear();
+  const years = [];
+  for (let year = currentStart - 3; year <= currentStart + 8; year++) years.push(year);
+  select.innerHTML = years.map((year) => {
+    const label = `${year}-${String(year + 1).slice(-2)}`;
+    return `<option value="${year}" ${year === currentStart ? "selected" : ""}>${label}</option>`;
+  }).join("");
+}
+
+function nhvCategoryForBirthDate(value, seasonStartYear = Number(el("seasonFilter")?.value) || currentSeasonStartYear()) {
+  if (!validISODate(value)) return { birthYear: "", age: null, category: "Onbekend" };
+  const birthYear = Number(value.slice(0, 4));
+  const age = seasonStartYear - birthYear;
+  let category;
+  if (age < 5) category = "Nog te jong";
+  else if (age === 5) category = "H-jeugd";
+  else if (age === 6) category = "Kabouter";
+  else if (age <= 8) category = "F-jeugd";
+  else if (age <= 10) category = "E-jeugd";
+  else if (age <= 12) category = "D-jeugd";
+  else if (age <= 14) category = "C-jeugd";
+  else if (age <= 16) category = "B-jeugd";
+  else if (age <= 19) category = "A-jeugd";
+  else category = "Senioren";
+  return { birthYear, age, category };
+}
+
+populateSeasonOptions();
+
 onAuthStateChanged(auth, (currentUser) => {
   if (!currentUser) {
     location.href = "login.html";
@@ -376,6 +412,8 @@ el("memberForm").addEventListener("submit", async (event) => {
 
 el("searchMembers").addEventListener("input", renderMemberList);
 el("memberStatusFilter").addEventListener("change", renderMemberList);
+el("seasonFilter").addEventListener("change", renderMemberList);
+el("youthOnlyFilter").addEventListener("change", renderMemberList);
 el("membersTableBody").addEventListener("click", async (event) => {
   const button = event.target.closest("button[data-action]");
   if (!button) return;
@@ -424,11 +462,15 @@ function renderMemberList() {
   const body = el("membersTableBody");
   const query = normalize(el("searchMembers").value);
   const status = el("memberStatusFilter").value;
+  const youthOnly = el("youthOnlyFilter")?.checked === true;
+  const seasonStartYear = Number(el("seasonFilter")?.value) || currentSeasonStartYear();
   let list = currentRecords().filter((m) => {
     const active = isCurrentMember(m);
+    const nhv = nhvCategoryForBirthDate(m.geboorteDatum, seasonStartYear);
     if (status === "active" && !active) return false;
     if (status === "inactive" && active) return false;
-    const haystack = normalize([m.naam, m.nummer, m.categorie, m.lidSinds, m.geboorteDatum].join(" "));
+    if (youthOnly && !["H-jeugd", "Kabouter", "F-jeugd", "E-jeugd", "D-jeugd", "C-jeugd", "B-jeugd", "A-jeugd"].includes(nhv.category)) return false;
+    const haystack = normalize([m.naam, m.nummer, m.categorie, m.lidSinds, m.geboorteDatum, nhv.birthYear, nhv.category].join(" "));
     return !query || haystack.includes(query);
   });
   // Huidige leden eerst; binnen elke groep oplopend op lidnummer.
@@ -438,14 +480,17 @@ function renderMemberList() {
     normalize(a.naam).localeCompare(normalize(b.naam), "nl")
   );
   if (!list.length) {
-    body.innerHTML = '<tr><td colspan="7" class="empty-cell">Geen leden gevonden.</td></tr>';
+    body.innerHTML = '<tr><td colspan="8" class="empty-cell">Geen leden gevonden.</td></tr>';
   } else {
     body.innerHTML = list.map((m) => {
       const active = isCurrentMember(m);
       const action = active
         ? `<button type="button" class="button button-action button-stop" data-action="deactivate" data-key="${escapeHtml(m.key)}">Afmelden</button>`
         : `<button type="button" class="button button-action button-restore" data-action="reactivate" data-key="${escapeHtml(m.key)}">Actief maken</button>`;
-      return `<tr><td>${escapeHtml(m.nummer || "—")}</td><td><strong>${escapeHtml(m.naam || "")}</strong></td><td>${escapeHtml(formatDate(m.lidSinds))}</td><td><input id="birthDate-${escapeHtml(m.key)}" class="birth-date-input" type="date" aria-label="Geboortedatum ${escapeHtml(m.naam || "")}" value="${escapeHtml(validISODate(m.geboorteDatum) ? m.geboorteDatum : "")}" max="${todayISO()}"><button type="button" class="button button-action button-secondary" data-action="saveBirthDate" data-key="${escapeHtml(m.key)}">Opslaan</button></td><td>${escapeHtml(m.categorie || "—")}</td><td><span class="pill ${active ? "pill-new" : "pill-inactive"}">${active ? "Actief" : "Niet actief"}</span></td><td>${action}</td></tr>`;
+      const nhv = nhvCategoryForBirthDate(m.geboorteDatum, Number(el("seasonFilter")?.value) || currentSeasonStartYear());
+      const ageText = nhv.age === null ? "—" : `${nhv.age} jaar`;
+      const nhvText = nhv.birthYear ? `${nhv.birthYear} · ${nhv.category} · ${ageText}` : "Vul geboortedatum in";
+      return `<tr><td>${escapeHtml(m.nummer || "—")}</td><td><strong>${escapeHtml(m.naam || "")}</strong></td><td>${escapeHtml(formatDate(m.lidSinds))}</td><td><input id="birthDate-${escapeHtml(m.key)}" class="birth-date-input" type="date" aria-label="Geboortedatum ${escapeHtml(m.naam || "")}" value="${escapeHtml(validISODate(m.geboorteDatum) ? m.geboorteDatum : "")}" max="${todayISO()}"><button type="button" class="button button-action button-secondary" data-action="saveBirthDate" data-key="${escapeHtml(m.key)}">Opslaan</button></td><td><span class="age-category">${escapeHtml(nhvText)}</span></td><td>${escapeHtml(m.categorie || "—")}</td><td><span class="pill ${active ? "pill-new" : "pill-inactive"}">${active ? "Actief" : "Niet actief"}</span></td><td>${action}</td></tr>`;
     }).join("");
   }
   el("memberListCount").textContent = `${list.length} ${list.length === 1 ? "record" : "records"} getoond.`;
@@ -529,6 +574,7 @@ async function parseWorkbook(file) {
         lidSinds: idxDate,
         categorie: row.indexOf("categorie"),
         categorieAuto: row.indexOf("categorieautomatisch"),
+        geboorteDatum: row.indexOf("geboortedatum"),
         actief: row.indexOf("actief")
       };
       break;
@@ -556,6 +602,8 @@ async function parseWorkbook(file) {
     const lidSinds = parseExcelDate(value("lidSinds"));
     const categoryRaw = value("categorie") || value("categorieAuto");
     const categorie = String(categoryRaw ?? "").trim();
+    const parsedBirthDate = parseExcelDate(value("geboorteDatum"));
+    const geboorteDatum = parsedBirthDate && parsedBirthDate <= todayISO() ? parsedBirthDate : "";
     const sourceActive = parseActive(value("actief"));
     if (!lidSinds) {
       skippedNoDate.push({ nummer, naam, categorie, rowNumber: i + 1, reason: "Geen ‘Lid per’-datum; volgens afspraak nog niet meetellen als lid." });
@@ -576,7 +624,7 @@ async function parseWorkbook(file) {
     }
     if (numberKey) seenNumbers.add(numberKey);
     else seenNames.add(nameKey);
-    importable.push({ nummer, naam, lidSinds, categorie, sourceActive, rowNumber: i + 1 });
+    importable.push({ nummer, naam, lidSinds, categorie, geboorteDatum, sourceActive, rowNumber: i + 1 });
   }
   return { fileName: file.name, sheetName, isFullHistory: isFullHistoryWorkbook(file.name), importable, skippedNoDate, skippedBeforeStart, skippedNoName, duplicateRows };
 }
@@ -667,6 +715,7 @@ function buildImportPreview(parsed) {
     if (String(match.naam || "") !== incoming.naam) changedFields.push("naam");
     if (String(match.lidSinds || "") !== incoming.lidSinds) changedFields.push("lid per");
     if (String(match.categorie || "") !== incoming.categorie) changedFields.push("categorie");
+    if (incoming.geboorteDatum && String(match.geboorteDatum || "") !== incoming.geboorteDatum) changedFields.push("geboortedatum");
     if (Boolean(match.active !== false && validISODate(match.lidSinds)) !== Boolean(targetActive && validISODate(incoming.lidSinds))) changedFields.push("status");
     if (preserveManualInactive) {
       const index = changedFields.indexOf("status");
@@ -775,6 +824,7 @@ el("applyImportButton").addEventListener("click", async () => {
           naam: incoming.naam,
           lidSinds: incoming.lidSinds,
           categorie: incoming.categorie,
+          geboorteDatum: incoming.geboorteDatum || "",
           active: incoming.sourceActive,
           endDate: null,
           deactivatedManually: false,
@@ -818,6 +868,7 @@ el("applyImportButton").addEventListener("click", async () => {
           naam: incoming.naam,
           lidSinds: incoming.lidSinds,
           categorie: incoming.categorie,
+          geboorteDatum: incoming.geboorteDatum || "",
           active: incoming.sourceActive,
           endDate: null,
           deactivatedManually: false,
@@ -848,6 +899,7 @@ el("applyImportButton").addEventListener("click", async () => {
           naam: incoming.naam,
           lidSinds: incoming.lidSinds,
           categorie: incoming.categorie,
+          ...(incoming.geboorteDatum ? { geboorteDatum: incoming.geboorteDatum } : {}),
           active: nextActive,
           source: preview.isFullHistory ? "historie" : (existing.source === "cms" ? "cms+excel" : "excel"),
           updatedAt: now,
