@@ -7,3 +7,7 @@
 
 /* Geboortedatum invullen in de ledenlijst */
 .birth-date-input{display:block;min-width:145px;max-width:175px;width:100%;padding:8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font:inherit;margin-bottom:6px}
+
+/* Seizoen- en jeugdselectie in ledenbeheer */
+.season-field{width:155px}.youth-toggle{min-width:170px;padding-bottom:13px}.youth-toggle label{display:flex;align-items:center;gap:8px;white-space:nowrap}.youth-toggle input{width:auto;min-height:0;margin:0;accent-color:var(--orange)}.age-category{display:inline-block;font-weight:700;color:#8a3900;background:var(--orange-soft);border-radius:7px;padding:6px 8px;font-size:12px}
+@media(max-width:900px){.season-field,.youth-toggle{width:100%;min-width:0}.youth-toggle{padding-bottom:0}}
