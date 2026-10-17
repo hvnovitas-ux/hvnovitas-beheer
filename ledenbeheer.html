@@ -165,7 +165,7 @@
       <div class="filters">
         <div class="field search-field">
           <label for="searchMembers">Zoeken</label>
-          <input id="searchMembers" type="search" placeholder="Naam, lidnummer of categorie">
+          <input id="searchMembers" type="search" placeholder="Naam, lidnummer, geboortejaar of categorie">
         </div>
         <div class="field filter-field">
           <label for="memberStatusFilter">Toon</label>
@@ -175,13 +175,20 @@
             <option value="all">Alle leden</option>
           </select>
         </div>
+        <div class="field season-field">
+          <label for="seasonFilter">NHV-seizoen</label>
+          <select id="seasonFilter" aria-label="Seizoen voor NHV-leeftijdscategorie"></select>
+        </div>
+        <div class="field youth-toggle">
+          <label for="youthOnlyFilter"><input id="youthOnlyFilter" type="checkbox"> Alleen jeugdleden</label>
+        </div>
       </div>
       <div class="table-wrap">
         <table class="data-table">
           <thead>
-            <tr><th>Lidnr.</th><th>Naam</th><th>Lid per</th><th>Geboortedatum invoeren</th><th>Categorie</th><th>Status</th><th>Actie</th></tr>
+            <tr><th>Lidnr.</th><th>Naam</th><th>Lid per</th><th>Geboortedatum invoeren</th><th>Geboortejaar / NHV-categorie</th><th>Verenigingscategorie</th><th>Status</th><th>Actie</th></tr>
           </thead>
-          <tbody id="membersTableBody"><tr><td colspan="7" class="empty-cell">Leden laden...</td></tr></tbody>
+          <tbody id="membersTableBody"><tr><td colspan="8" class="empty-cell">Leden laden...</td></tr></tbody>
         </table>
       </div>
       <p id="memberListCount" class="muted list-count"></p>
@@ -189,6 +196,6 @@
 
     <footer class="footer">HV Novitas · Ledenadministratie · Excel-bestanden worden in deze browser ingelezen.</footer>
   </main>
-  <script type="module" src="ledenbeheer.js?v=20261018-geboortedatum"></script>
+  <script type="module" src="ledenbeheer.js?v=20261018-nhv-seizoen"></script>
 </body>
 </html>
