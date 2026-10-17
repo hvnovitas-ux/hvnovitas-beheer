@@ -117,6 +117,10 @@ function currentRecords() {
 }
 
 function isCurrentMember(member) {
+  // Erwin Bel hoort als oprichter bij de actieve leden; zijn ranglijstvermelding is ook aan 09-05-2012 gekoppeld.
+  if (normalize(member.naam) === "erwin bel") {
+    return validISODate(member.lidSinds) && member.lidSinds >= HISTORICAL_START_DATE;
+  }
   // Alleen records met een echte aanmelddatum vanaf de start van Novitas tellen mee.
   return member.active !== false && validISODate(member.lidSinds) && member.lidSinds >= HISTORICAL_START_DATE;
 }
@@ -261,7 +265,7 @@ function renderLongevityRanking() {
         "carsten van waterschoot": 1,
         "erik pijpelink": 1,
         "kay scheele": 1,
-        "saskia van goethem": 3
+        "saskia van goethem": 2
       };
       const yearsToSubtract = durationAdjustmentYears[name] || 0;
       let durationStartDate = rankingDate;
