@@ -819,12 +819,18 @@ el("applyImportButton").addEventListener("click", async () => {
       for (const item of preview.toWrite) {
         const incoming = item.incoming;
         const memberRef = push(ledenRef);
+        // Bewaar eerder handmatig ingevoerde geboortedata bij een historische herimport.
+        const previousBirthDate = currentRecords().find((record) =>
+          incoming.nummer && normalize(record.nummer) === normalize(incoming.nummer) && validISODate(record.geboorteDatum)
+        )?.geboorteDatum || currentRecords().find((record) =>
+          canonicalPersonKey(record.naam) === canonicalPersonKey(incoming.naam) && validISODate(record.geboorteDatum)
+        )?.geboorteDatum || "";
         replacementData[memberRef.key] = {
           nummer: incoming.nummer,
           naam: incoming.naam,
           lidSinds: incoming.lidSinds,
           categorie: incoming.categorie,
-          geboorteDatum: incoming.geboorteDatum || "",
+          geboorteDatum: incoming.geboorteDatum || previousBirthDate,
           active: incoming.sourceActive,
           endDate: null,
           deactivatedManually: false,
