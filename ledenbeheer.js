@@ -488,8 +488,7 @@ function renderMemberList() {
         ? `<button type="button" class="button button-action button-stop" data-action="deactivate" data-key="${escapeHtml(m.key)}">Afmelden</button>`
         : `<button type="button" class="button button-action button-restore" data-action="reactivate" data-key="${escapeHtml(m.key)}">Actief maken</button>`;
       const nhv = nhvCategoryForBirthDate(m.geboorteDatum, Number(el("seasonFilter")?.value) || currentSeasonStartYear());
-      const ageText = nhv.age === null ? "—" : `${nhv.age} jaar`;
-      const nhvText = nhv.birthYear ? `${nhv.birthYear} · ${nhv.category} · ${ageText}` : "Vul geboortedatum in";
+      const nhvText = nhv.birthYear ? `${nhv.birthYear} · ${nhv.category}` : "Vul geboortedatum in";
       return `<tr><td>${escapeHtml(m.nummer || "—")}</td><td><strong>${escapeHtml(m.naam || "")}</strong></td><td>${escapeHtml(formatDate(m.lidSinds))}</td><td><input id="birthDate-${escapeHtml(m.key)}" class="birth-date-input" type="date" aria-label="Geboortedatum ${escapeHtml(m.naam || "")}" value="${escapeHtml(validISODate(m.geboorteDatum) ? m.geboorteDatum : "")}" max="${todayISO()}"><button type="button" class="button button-action button-secondary" data-action="saveBirthDate" data-key="${escapeHtml(m.key)}">Opslaan</button></td><td><span class="age-category">${escapeHtml(nhvText)}</span></td><td>${escapeHtml(m.categorie || "—")}</td><td><span class="pill ${active ? "pill-new" : "pill-inactive"}">${active ? "Actief" : "Niet actief"}</span></td><td>${action}</td></tr>`;
     }).join("");
   }
