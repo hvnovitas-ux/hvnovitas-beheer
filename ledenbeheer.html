@@ -115,6 +115,11 @@
             <input id="memberSince" name="memberSince" type="date" required>
           </div>
           <div class="field">
+            <label for="memberBirthDate">Geboortedatum</label>
+            <input id="memberBirthDate" name="memberBirthDate" type="date">
+            <small>Optioneel bij toevoegen; je kunt deze ook later per lid invullen.</small>
+          </div>
+          <div class="field">
             <label for="memberCategory">Categorie</label>
             <select id="memberCategory" name="memberCategory">
               <option value="">Kies een categorie</option>
@@ -174,9 +179,9 @@
       <div class="table-wrap">
         <table class="data-table">
           <thead>
-            <tr><th>Lidnr.</th><th>Naam</th><th>Lid per</th><th>Categorie</th><th>Status</th><th>Actie</th></tr>
+            <tr><th>Lidnr.</th><th>Naam</th><th>Lid per</th><th>Geboortedatum invoeren</th><th>Categorie</th><th>Status</th><th>Actie</th></tr>
           </thead>
-          <tbody id="membersTableBody"><tr><td colspan="6" class="empty-cell">Leden laden...</td></tr></tbody>
+          <tbody id="membersTableBody"><tr><td colspan="7" class="empty-cell">Leden laden...</td></tr></tbody>
         </table>
       </div>
       <p id="memberListCount" class="muted list-count"></p>
@@ -184,6 +189,6 @@
 
     <footer class="footer">HV Novitas · Ledenadministratie · Excel-bestanden worden in deze browser ingelezen.</footer>
   </main>
-  <script type="module" src="ledenbeheer.js?v=20261016-lidnummer-sort"></script>
+  <script type="module" src="ledenbeheer.js?v=20261018-geboortedatum"></script>
 </body>
 </html>
