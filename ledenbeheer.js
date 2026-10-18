@@ -390,10 +390,12 @@ el("memberForm").addEventListener("submit", async (event) => {
 
   const nummer = el("memberNumber").value.trim();
   const naam = el("memberName").value.trim();
+  const email = el("memberEmail").value.trim();
   const lidSinds = el("memberSince").value;
   const categorie = el("memberCategory").value.trim();
   const geboorteDatum = el("memberBirthDate").value;
-  if (!naam || !validISODate(lidSinds)) return showNotice("Vul een naam en geldige aanmelddatum in.", "error");
+  if (!naam || !email || !validISODate(lidSinds)) return showNotice("Vul naam, e-mailadres en een geldige aanmelddatum in.", "error");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showNotice("Vul een geldig e-mailadres in.", "error");
   if (geboorteDatum && (!validISODate(geboorteDatum) || geboorteDatum > todayISO())) return showNotice("Vul een geldige geboortedatum in die niet in de toekomst ligt.", "error");
   const duplicate = currentRecords().find((m) => (nummer && normalize(m.nummer) === normalize(nummer)) || normalize(m.naam) === normalize(naam));
   if (duplicate) return showNotice(`Dit lijkt al geregistreerd te zijn: ${duplicate.naam}${duplicate.nummer ? ` (lidnummer ${duplicate.nummer})` : ""}. Controleer de ledenlijst voordat je een dubbel lid toevoegt.`, "error");
@@ -403,7 +405,7 @@ el("memberForm").addEventListener("submit", async (event) => {
   try {
     const newRef = push(ledenRef);
     const now = Date.now();
-    await set(newRef, { nummer, naam, lidSinds, categorie, geboorteDatum, active: true, endDate: null, deactivatedManually: false, source: "cms", createdAt: now, updatedAt: now, updatedBy: user.email || "CMS" });
+    await set(newRef, { nummer, naam, email, lidSinds, categorie, geboorteDatum, active: true, endDate: null, deactivatedManually: false, source: "cms", createdAt: now, updatedAt: now, updatedBy: user.email || "CMS" });
     el("memberForm").reset();
     showNotice(`${naam} is toegevoegd. Het lid telt vanaf de aanmelddatum mee in de grafiek.`);
   } catch (error) {
@@ -424,7 +426,24 @@ el("membersTableBody").addEventListener("click", async (event) => {
   const key = button.dataset.key;
   const record = members[key];
   if (!record) return;
-  if (button.dataset.action === "saveBirthDate") {
+  if (button.dataset.action === "saveEmail") {
+    const input = el(`memberEmail-${key}`);
+    const email = input?.value.trim() || "";
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showNotice("Vul een geldig e-mailadres in.", "error");
+      return;
+    }
+    button.disabled = true;
+    try {
+      await update(ref(db, `${DB_PATH}/${key}`), { email, updatedAt: Date.now(), updatedBy: user?.email || "CMS" });
+      showNotice(`E-mailadres van ${record.naam} opgeslagen.`);
+    } catch (error) {
+      console.error(error);
+      showNotice(`E-mailadres van ${record.naam} kon niet worden opgeslagen.`, "error");
+    } finally {
+      button.disabled = false;
+    }
+  } else if (button.dataset.action === "saveBirthDate") {
     const input = el(`birthDate-${key}`);
     const geboorteDatum = input?.value || "";
     if (geboorteDatum && (!validISODate(geboorteDatum) || geboorteDatum > todayISO())) {
@@ -474,7 +493,7 @@ function renderMemberList() {
     if (status === "active" && !active) return false;
     if (status === "inactive" && active) return false;
     if (youthOnly && !["H-jeugd", "Kabouter", "F-jeugd", "E-jeugd", "D-jeugd", "C-jeugd", "B-jeugd", "A-jeugd"].includes(nhv.category)) return false;
-    const haystack = normalize([m.naam, m.nummer, m.categorie, m.lidSinds, m.geboorteDatum, nhv.birthYear, nhv.category].join(" "));
+    const haystack = normalize([m.naam, m.email, m.nummer, m.categorie, m.lidSinds, m.geboorteDatum, nhv.birthYear, nhv.category].join(" "));
     return !query || haystack.includes(query);
   });
   // Huidige leden eerst; binnen elke groep oplopend op lidnummer.
@@ -484,7 +503,7 @@ function renderMemberList() {
     normalize(a.naam).localeCompare(normalize(b.naam), "nl")
   );
   if (!list.length) {
-    body.innerHTML = '<tr><td colspan="8" class="empty-cell">Geen leden gevonden.</td></tr>';
+    body.innerHTML = '<tr><td colspan="9" class="empty-cell">Geen leden gevonden.</td></tr>';
   } else {
     body.innerHTML = list.map((m) => {
       const active = isCurrentMember(m);
@@ -493,7 +512,7 @@ function renderMemberList() {
         : `<button type="button" class="button button-action button-restore" data-action="reactivate" data-key="${escapeHtml(m.key)}">Actief maken</button>`;
       const nhv = nhvCategoryForBirthDate(m.geboorteDatum, Number(el("seasonFilter")?.value) || currentSeasonStartYear());
       const nhvText = nhv.birthYear ? `${nhv.birthYear} · ${nhv.category}` : "Vul geboortedatum in";
-      return `<tr><td>${escapeHtml(m.nummer || "—")}</td><td><strong>${escapeHtml(m.naam || "")}</strong></td><td>${escapeHtml(formatDate(m.lidSinds))}</td><td><input id="birthDate-${escapeHtml(m.key)}" class="birth-date-input" type="date" aria-label="Geboortedatum ${escapeHtml(m.naam || "")}" value="${escapeHtml(validISODate(m.geboorteDatum) ? m.geboorteDatum : "")}" max="${todayISO()}"><button type="button" class="button button-action button-secondary" data-action="saveBirthDate" data-key="${escapeHtml(m.key)}">Opslaan</button></td><td><span class="age-category">${escapeHtml(nhvText)}</span></td><td>${escapeHtml(m.categorie || "—")}</td><td><span class="pill ${active ? "pill-new" : "pill-inactive"}">${active ? "Actief" : "Niet actief"}</span></td><td>${action}</td></tr>`;
+      return `<tr><td>${escapeHtml(m.nummer || "—")}</td><td><strong>${escapeHtml(m.naam || "")}</strong></td><td><input id="memberEmail-${escapeHtml(m.key)}" class="email-input" type="email" required maxlength="254" aria-label="E-mailadres ${escapeHtml(m.naam || "")}" value="${escapeHtml(m.email || "")}" placeholder="naam@voorbeeld.nl"><button type="button" class="button button-action button-secondary" data-action="saveEmail" data-key="${escapeHtml(m.key)}">Opslaan</button></td><td>${escapeHtml(formatDate(m.lidSinds))}</td><td><input id="birthDate-${escapeHtml(m.key)}" class="birth-date-input" type="date" aria-label="Geboortedatum ${escapeHtml(m.naam || "")}" value="${escapeHtml(validISODate(m.geboorteDatum) ? m.geboorteDatum : "")}" max="${todayISO()}"><button type="button" class="button button-action button-secondary" data-action="saveBirthDate" data-key="${escapeHtml(m.key)}">Opslaan</button></td><td><span class="age-category">${escapeHtml(nhvText)}</span></td><td>${escapeHtml(m.categorie || "—")}</td><td><span class="pill ${active ? "pill-new" : "pill-inactive"}">${active ? "Actief" : "Niet actief"}</span></td><td>${action}</td></tr>`;
     }).join("");
   }
   el("memberListCount").textContent = `${list.length} ${list.length === 1 ? "record" : "records"} getoond.`;
