@@ -49,7 +49,7 @@ button,.linkbtn{border:0;border-radius:8px;padding:11px 15px;font-weight:800;cur
 <script type="module">
 import { db, auth } from "./firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { ref, onValue, remove } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const list = document.getElementById("list");
 const statusBox = document.getElementById("status");
@@ -114,8 +114,10 @@ async function handleAction(event) {
   if (button.dataset.action === "read") {
     const item = records.find(x => x.key === key);
     if (!item) return;
-    try { await update(ref(db, "proeftrainingen_nieuw/" + key), {gelezen: !item.gelezen}); }
-    catch (error) { console.error(error); alert("Status wijzigen is niet gelukt. Controleer de Firebase-toegangsregels."); }
+    if (item.gelezen) localStorage.removeItem("novitas-proeftraining-gezien-" + key);
+    else localStorage.setItem("novitas-proeftraining-gezien-" + key, "1");
+    item.gelezen = !item.gelezen;
+    render();
   }
   if (button.dataset.action === "delete") {
     if (!confirm("Weet je zeker dat je deze proeftrainingaanmelding wilt verwijderen?")) return;
@@ -133,7 +135,7 @@ onAuthStateChanged(auth, user => {
   if (stopListening) stopListening();
   stopListening = onValue(ref(db, "proeftrainingen_nieuw"), snapshot => {
     const value = snapshot.val() || {};
-    records = Object.entries(value).map(([key, item]) => ({...item, key}));
+    records = Object.entries(value).map(([key, item]) => ({...item, key, gelezen: Boolean(item.gelezen) || localStorage.getItem("novitas-proeftraining-gezien-" + key) === "1"}));
     statusBox.style.display = "none";
     render();
   }, error => {
