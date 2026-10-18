@@ -124,6 +124,58 @@
       "$other": {
         ".validate": false
       }
+    },
+    "proeftrainingen_nieuw": {
+      ".read": "auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true",
+      "$entryId": {
+        ".write": "!data.exists() && newData.exists() || (auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true)",
+        ".validate": "newData.hasChildren(['voornaam', 'achternaam', 'geboortedatum', 'email', 'telefoon', 'doelgroep', 'privacyAkkoord', 'status', 'gelezen', 'createdAt', 'bron']) && newData.child('bron').val() === 'website-proeftrainingen'",
+        "voornaam": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 80"
+        },
+        "achternaam": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "geboortedatum": {
+          ".validate": "newData.isString() && newData.val().length === 10"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().length > 3 && newData.val().length <= 254"
+        },
+        "telefoon": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
+        },
+        "doelgroep": {
+          ".validate": "newData.isString() && (newData.val() === 'Jeugd' || newData.val() === 'Volwassene')"
+        },
+        "ouderNaam": {
+          ".validate": "newData.isString() && newData.val().length <= 120"
+        },
+        "ervaring": {
+          ".validate": "newData.isString() && newData.val().length <= 180"
+        },
+        "opmerking": {
+          ".validate": "newData.isString() && newData.val().length <= 1000"
+        },
+        "privacyAkkoord": {
+          ".validate": "newData.isBoolean() && newData.val() === true"
+        },
+        "status": {
+          ".validate": "newData.isString() && newData.val() === 'Nieuw'"
+        },
+        "gelezen": {
+          ".validate": "newData.isBoolean() && newData.val() === false"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now + 300000"
+        },
+        "bron": {
+          ".validate": "newData.isString() && newData.val() === 'website-proeftrainingen'"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }
