@@ -21,3 +21,11 @@
 #membersTableBody td:nth-child(5) input{display:block;min-width:155px;max-width:175px;margin:0 0 6px}
 #membersTableBody td:nth-child(5) button{display:inline-flex;margin:0}
 @media(max-width:900px){.table-wrap{overflow-x:auto}.data-table{min-width:1450px}}
+
+
+/* Meer ruimte voor e-mailveld en korte kolomtitels */
+.data-table th:nth-child(3){min-width:270px}
+#membersTableBody td:nth-child(3){min-width:290px;width:290px}
+#membersTableBody td:nth-child(3) input{min-width:0;max-width:100%;width:100%}
+.data-table th:nth-child(4),#membersTableBody td:nth-child(4){min-width:120px}
+.data-table th:nth-child(5),#membersTableBody td:nth-child(5){min-width:180px}
