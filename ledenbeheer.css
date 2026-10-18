@@ -11,3 +11,13 @@
 /* Seizoen- en jeugdselectie in ledenbeheer */
 .season-field{width:155px}.youth-toggle{min-width:170px;padding-bottom:13px}.youth-toggle label{display:flex;align-items:center;gap:8px;white-space:nowrap}.youth-toggle input{width:auto;min-height:0;margin:0;accent-color:var(--orange)}.age-category{display:inline-block;font-weight:700;color:#8a3900;background:var(--orange-soft);border-radius:7px;padding:6px 8px;font-size:12px}
 @media(max-width:900px){.season-field,.youth-toggle{width:100%;min-width:0}.youth-toggle{padding-bottom:0}}
+
+
+/* Layout fix for member table inputs */
+#membersTableBody td:nth-child(3){min-width:250px}
+#membersTableBody td:nth-child(3) input{display:block;width:100%;min-width:210px;max-width:250px;margin:0 0 6px}
+#membersTableBody td:nth-child(3) button{display:inline-flex;margin:0}
+#membersTableBody td:nth-child(5){min-width:180px}
+#membersTableBody td:nth-child(5) input{display:block;min-width:155px;max-width:175px;margin:0 0 6px}
+#membersTableBody td:nth-child(5) button{display:inline-flex;margin:0}
+@media(max-width:900px){.table-wrap{overflow-x:auto}.data-table{min-width:1450px}}
