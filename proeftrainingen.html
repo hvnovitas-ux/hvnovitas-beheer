@@ -1,88 +1,42 @@
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>HV Novitas CMS - Proeftrainingen</title>
-
-<link rel="stylesheet" href="style.css">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proeftrainingen beheren - HV Novitas CMS</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+*{box-sizing:border-box}:root{--orange:#ff6a00;--ink:#202124;--muted:#68717d;--line:#e5e7eb;--page:#f5f6f8}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--page);color:var(--ink)}
+.topbar{min-height:70px;background:#111;color:#fff;border-bottom:4px solid var(--orange);padding:14px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:18px;font-weight:900;letter-spacing:.045em}.userbox{display:flex;align-items:center;gap:14px;font-size:14px}
+button,.button{font:inherit;font-weight:800;border:0;border-radius:8px;padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.primary{background:var(--orange);color:#fff}.secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}.danger{background:#fff0f0;border:1px solid #fecaca;color:#991b1b}.logout{background:#fff;color:#222}
+main{width:min(1180px,calc(100% - 32px));margin:26px auto}.intro,.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:22px;margin-bottom:18px;box-shadow:0 3px 12px #14192308}
+.intro{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.eyebrow{color:var(--orange);font-size:12px;font-weight:900;letter-spacing:.1em;margin:0 0 5px}
+h1{font-size:clamp(25px,3vw,32px);margin:0 0 7px}h2{font-size:21px;margin:0 0 7px}p{line-height:1.5}.muted{color:var(--muted);margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:12px;padding:17px}.stat span{display:block;color:var(--muted);font-size:13px;font-weight:700}.stat strong{display:block;font-size:30px;margin-top:3px}
+.toolbar{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0}.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}.field label{font-weight:800;font-size:13px}.field input,.field select{min-height:43px;width:100%;padding:10px 12px;border:1px solid #d5d9df;border-radius:8px;font:inherit;background:#fff}
+.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.request{border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:12px;padding:17px;background:#fff;min-width:0}
+.request-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}.request h3{margin:0;font-size:18px;overflow-wrap:anywhere}.date{font-size:12px;color:var(--muted);text-align:right;flex:0 0 auto}
+.status{display:inline-flex;padding:5px 9px;border-radius:999px;background:#fff0e6;color:#a94300;font-size:12px;font-weight:900;margin:0 0 12px}
+.detail{display:grid;grid-template-columns:120px minmax(0,1fr);gap:7px 10px;font-size:14px;line-height:1.45}.detail strong{color:#505762}.detail span{overflow-wrap:anywhere}.notes{padding:10px 12px;margin-top:12px;border-radius:8px;background:#f8f8f8;color:#545b65;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.actions button{font-size:12px;padding:9px 10px}.empty{padding:26px;text-align:center;background:#fafafa;border:1px dashed #d6d9de;border-radius:10px;color:var(--muted);grid-column:1/-1}
+.notice{border-radius:9px;padding:12px 14px;margin:12px 0;background:#eff6ff;color:#1e40af;display:none}.notice.show{display:block}
+.legacy-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}.legacy-frame{width:100%;height:720px;border:1px solid var(--line);border-radius:10px;background:#fff}footer{text-align:center;color:#8b929c;padding:22px;font-size:12px}
+@media(max-width:780px){.list,.stats{grid-template-columns:1fr}.detail{grid-template-columns:100px minmax(0,1fr)}.topbar{padding:14px 16px;align-items:flex-start;flex-direction:column}.userbox{width:100%;justify-content:space-between}.legacy-frame{height:560px}}
+</style>
 </head>
-
 <body>
-
-<div class="dashboard">
-
-    <!-- HEADER -->
-
-    <header class="topbar">
-
-        <div class="logo">
-
-            <img src="images/logo.png" alt="HV Novitas">
-
-            <div class="logo-info">
-
-                <h1>HV NOVITAS CMS</h1>
-
-                <p>Beheeromgeving</p>
-
-            </div>
-
-        </div>
-
-        <div class="user">
-
-            <button class="btn-black"
-                    onclick="location.href='dashboard.html'">
-
-                ⬅ Dashboard
-
-            </button>
-
-        </div>
-
-    </header>
-
-    <!-- PAGINA -->
-
-    <section class="hero">
-
-        <h2>📝 Proeftrainingen</h2>
-
-        <p>
-
-            Bekijk alle ontvangen proeftrainingen.
-
-        </p>
-
-    </section>
-
-    <!-- CONTENT -->
-
-    <section class="content-card">
-
-        <h2>📋 Ontvangen proeftrainingen</h2>
-
-        <iframe
-
-        src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing"
-
-        width="100%"
-
-        height="900"
-
-        frameborder="0">
-
-        </iframe>
-
-    </section>
-
-</div>
-
-</body>
-
-</html>
+<header class="topbar"><div class="brand">🧡 HV NOVITAS CMS — PROEFTRAININGEN</div><div class="userbox"><span id="userInfo">Laden...</span><button id="logoutButton" class="logout" type="button">Uitloggen</button></div></header>
+<main>
+<section class="intro"><div><p class="eyebrow">VERENIGING · AANMELDINGEN</p><h1>Proeftrainingen beheren</h1><p class="muted">Nieuwe aanvragen via de Novitas-website én reacties van het oude Google-formulier.</p></div><a class="button secondary" href="dashboard.html">← Terug naar dashboard</a></section>
+<section class="stats" aria-label="Website-aanmeldingen"><article class="stat"><span>Websiteaanmeldingen</span><strong id="totalCount">—</strong></article><article class="stat"><span>Nog niet opgevolgd</span><strong id="newCount">—</strong></article><article class="stat"><span>Lid geworden</span><strong id="joinedCount">—</strong></article></section>
+<section class="panel"><h2>Nieuwe website-aanmeldingen</h2><p class="muted">Deze aanvragen worden apart van lidmaatschapsinschrijvingen bewaard.</p><div id="notice" class="notice" role="status" aria-live="polite"></div>
+<div class="toolbar"><div class="field"><label for="search">Zoeken</label><input id="search" type="search" placeholder="Naam, e-mail of telefoonnummer"></div><div class="field"><label for="statusFilter">Status</label><select id="statusFilter"><option value="all">Alle aanvragen</option><option value="Nieuw">Nieuw</option><option value="Contact opgenomen">Contact opgenomen</option><option value="Proeftraining gepland">Proeftraining gepland</option><option value="Proeftraining gevolgd">Proeftraining gevolgd</option><option value="Lid geworden">Lid geworden</option></select></div><button id="refresh" class="primary" type="button">↻ Vernieuwen</button></div>
+<div id="requestsList" class="list"><div class="empty">Aanvragen worden geladen...</div></div></section>
+<section class="panel"><div class="legacy-head"><div><h2>Oude Google Form-reacties</h2><p class="muted">Oude inzendingen blijven in het bestaande Google Sheets-overzicht staan.</p></div><a class="button secondary" href="https://docs.google.com/forms/d/1Naoxd0nUkjq9F0AQxLanIGKehbu98ApGIFrrVLhocy0/edit" target="_blank" rel="noopener noreferrer">Oud formulier openen ↗</a></div>
+<iframe class="legacy-frame" src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing" title="Oude proeftrainingaanmeldingen uit Google Forms" loading="lazy"></iframe></section>
+<footer>HV Novitas · Proeftrainingen · Nieuwe en oude aanmeldingen gescheiden</footer></main>
+<script type="module" src="proeftrainingen.js?v=20261018-firebase-trials"></script>
+</body></html>
