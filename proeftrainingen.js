@@ -1,622 +1,127 @@
-// ======================================================
-// HV NOVITAS CMS
-// PROEFTRAININGEN
-// ======================================================
+import { auth, db } from "./firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { ref, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-import {
+const el = (id) => document.getElementById(id);
+let entries = {};
+let currentUser = null;
+let unsubscribe = null;
 
-    getProeftrainingen,
-    deleteRow
-
-} from "./googleSheets.js";
-
-// ======================================================
-// ELEMENTEN
-// ======================================================
-
-const container =
-document.getElementById("aanvragen");
-
-const zoeken =
-document.getElementById("zoeken");
-
-const alleenNieuw =
-document.getElementById("alleenNieuw");
-
-const totaal =
-document.getElementById("totaal");
-
-const nieuw =
-document.getElementById("nieuw");
-
-const gelezen =
-document.getElementById("gelezen");
-
-// ======================================================
-// DATA
-// ======================================================
-
-let aanvragen = [];
-
-let gelezenItems = JSON.parse(
-
-    localStorage.getItem(
-        "novitas_gelezen"
-    ) || "[]"
-
-);
-
-// ======================================================
-// START
-// ======================================================
-
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    start
-
-);
-
-async function start(){
-
-    try{
-
-        await laadAanvragen();
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        container.innerHTML = `
-
-        <div class="content-card">
-
-            <h2>❌ Fout</h2>
-
-            <p>
-
-                ${error.message || error}
-
-            </p>
-
-        </div>
-
-        `;
-
-    }
-
+function escapeHtml(value) {
+  return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
-
-// ======================================================
-// AANVRAGEN LADEN
-// ======================================================
-
-async function laadAanvragen(){
-
-    aanvragen =
-    await getProeftrainingen();
-
-    aanvragen.forEach(item=>{
-
-        item.gelezen =
-
-        gelezenItems.includes(
-
-            item._row
-
-        );
-
-    });
-
-    updateStatus();
-
-    toonAanvragen();
-
+function showNotice(text) {
+  el("notice").textContent = text;
+  el("notice").classList.add("show");
 }
-
-// ======================================================
-// STATUS
-// ======================================================
-
-function updateStatus(){
-
-    totaal.textContent =
-    aanvragen.length;
-
-    const nieuwe =
-
-    aanvragen.filter(
-
-        item => !item.gelezen
-
-    );
-
-    nieuw.textContent =
-    nieuwe.length;
-
-    gelezen.textContent =
-    aanvragen.length -
-    nieuwe.length;
-
+function dateLabel(value) {
+  const date = new Date(Number(value));
+  return Number.isNaN(date.getTime()) ? "Datum onbekend" : date.toLocaleString("nl-NL");
 }
-
-// ======================================================
-// FILTERS
-// ======================================================
-
-zoeken.addEventListener(
-
-    "input",
-
-    toonAanvragen
-
-);
-
-alleenNieuw.addEventListener(
-
-    "change",
-
-    toonAanvragen
-
-);
-// ======================================================
-// AANVRAGEN TONEN
-// ======================================================
-
-function toonAanvragen(){
-
-    let lijst = [...aanvragen];
-
-    // ==========================================
-    // ZOEKEN
-    // ==========================================
-
-    const zoek = zoeken.value
-        .trim()
-        .toLowerCase();
-
-    if(zoek){
-
-        lijst = lijst.filter(item =>
-
-            (item.voornaam || "")
-            .toLowerCase()
-            .includes(zoek)
-
-            ||
-
-            (item.Achternaam || "")
-            .toLowerCase()
-            .includes(zoek)
-
-            ||
-
-            (item.Telefoonnummer || "")
-            .includes(zoek)
-
-            ||
-
-            (item["E-mail"] || "")
-            .toLowerCase()
-            .includes(zoek)
-
-        );
-
-    }
-
-    // ==========================================
-    // ALLEEN NIEUW
-    // ==========================================
-
-    if(alleenNieuw.checked){
-
-        lijst = lijst.filter(
-
-            item => !item.gelezen
-
-        );
-
-    }
-
-    // ==========================================
-    // SORTEER
-    // ==========================================
-
-    lijst.sort((a,b)=>{
-
-        if(a.gelezen===b.gelezen){
-
-            return b._row-a._row;
-
-        }
-
-        return a.gelezen?1:-1;
-
-    });
-
-    container.innerHTML="";
-
-    if(lijst.length===0){
-
-        container.innerHTML=`
-
-        <div class="content-card">
-
-            <h2>
-
-                Geen proeftrainingen gevonden.
-
-            </h2>
-
-        </div>
-
-        `;
-
-        return;
-
-    }
-
-    lijst.forEach(item=>{
-
-        const kaart = maakKaart(item);
-
-        container.appendChild(kaart);
-
-    });
-
+function visibleEntries() {
+  const search = el("search").value.trim().toLocaleLowerCase("nl-NL");
+  const filter = el("statusFilter").value;
+  return Object.entries(entries).map(([id, item]) => ({ id, ...(item || {}) }))
+    .filter(item => {
+      if (filter !== "all" && (item.status || "Nieuw") !== filter) return false;
+      if (!search) return true;
+      return [item.voornaam, item.achternaam, item.email, item.telefoon, item.opmerkingen]
+        .some(value => String(value || "").toLocaleLowerCase("nl-NL").includes(search));
+    }).sort((a, b) => Number(b.created || 0) - Number(a.created || 0));
 }
-
-// ======================================================
-// KAART MAKEN
-// ======================================================
-
-function maakKaart(item){
-
-    const kaart =
-    document.createElement("div");
-
-    kaart.className="proef-card";
-
-    if(!item.gelezen){
-
-        kaart.classList.add("nieuw");
-
-    }
-
-    kaart.innerHTML=`
-
-        <h3>
-
-            👤 ${item.voornaam}
-            ${item.Achternaam}
-
-        </h3>
-
-        <div class="proef-info">
-
-            <div><strong>📅 Aanmelding</strong></div>
-            <div>${item.Tijdstempel || "-"}</div>
-
-            <div><strong>🎂 Geboortedatum</strong></div>
-            <div>${item.Geboortedatum || "-"}</div>
-
-            <div><strong>🚻 Geslacht</strong></div>
-            <div>${item.Geslacht || "-"}</div>
-
-            <div><strong>📞 Telefoon</strong></div>
-            <div>${item.Telefoonnummer || "-"}</div>
-
-            <div><strong>📧 E-mail</strong></div>
-            <div>${item["E-mail"] || "-"}</div>
-
-            <div><strong>📝 Opmerkingen</strong></div>
-            <div>${item.Opmerkingen || "-"}</div>
-
-        </div>
-
-        <div class="knoppen">
-
-            <button
-                class="btn-green"
-                onclick="window.location.href='tel:${item.Telefoonnummer}'">
-
-                📞 Bellen
-
-            </button>
-
-            <button
-                class="btn-orange"
-                onclick="window.location.href='mailto:${item["E-mail"]}'">
-
-                📧 Mail
-
-            </button>
-
-            <button
-                class="btn-black"
-                onclick="markeerGelezen(${item._row})">
-
-                ✔ Gelezen
-
-            </button>
-
-            <button
-                class="btn-red"
-                onclick="verwijderAanvraag(${item._row})">
-
-                🗑 Verwijderen
-
-            </button>
-
-        </div>
-
-    `;
-
-    return kaart;
-
+function render() {
+  const all = Object.values(entries).filter(Boolean);
+  el("totalCount").textContent = String(all.length);
+  el("newCount").textContent = String(all.filter(item => !item.status || item.status === "Nieuw" || item.status === "Contact opgenomen").length);
+  el("joinedCount").textContent = String(all.filter(item => item.status === "Lid geworden").length);
+  const list = el("requestsList");
+  const shown = visibleEntries();
+  if (!shown.length) {
+    list.innerHTML = '<div class="empty">Geen websiteaanmeldingen gevonden. Nieuwe aanvragen verschijnen hier automatisch.</div>';
+    return;
+  }
+  list.innerHTML = shown.map(item => {
+    const status = item.status || "Nieuw";
+    return '<article class="request" data-id="' + escapeHtml(item.id) + '">' +
+      '<div class="request-head"><h3>' + escapeHtml((item.voornaam || "") + " " + (item.achternaam || "")) + '</h3><span class="date">' + escapeHtml(dateLabel(item.created)) + '</span></div>' +
+      '<div class="status">' + escapeHtml(status) + '</div>' +
+      '<div class="detail"><strong>Geboortedatum</strong><span>' + escapeHtml(item.geboortedatum || "—") + '</span><strong>Geslacht</strong><span>' + escapeHtml(item.geslacht || "—") + '</span><strong>E-mail</strong><span><a href="mailto:' + escapeHtml(item.email || "") + '">' + escapeHtml(item.email || "—") + '</a></span><strong>Telefoon</strong><span><a href="tel:' + escapeHtml(item.telefoon || "") + '">' + escapeHtml(item.telefoon || "—") + '</a></span></div>' +
+      (item.opmerkingen ? '<div class="notes"><strong>Opmerking:</strong> ' + escapeHtml(item.opmerkingen) + '</div>' : '') +
+      '<div class="actions"><button class="secondary" type="button" data-status="Contact opgenomen">Contact opgenomen</button><button class="secondary" type="button" data-status="Proeftraining gepland">Training gepland</button><button class="secondary" type="button" data-status="Proeftraining gevolgd">Training gevolgd</button><button class="primary" type="button" data-status="Lid geworden">Lid geworden</button><button class="danger" type="button" data-action="delete">Verwijderen</button></div></article>';
+  }).join("");
 }
-// ======================================================
-// GELEZEN
-// ======================================================
-
-window.markeerGelezen = function(rij){
-
-    if(!gelezenItems.includes(rij)){
-
-        gelezenItems.push(rij);
-
-        localStorage.setItem(
-
-            "novitas_gelezen",
-
-            JSON.stringify(gelezenItems)
-
-        );
-
-    }
-
-    const aanvraag = aanvragen.find(
-
-        item => item._row === rij
-
-    );
-
-    if(aanvraag){
-
-        aanvraag.gelezen = true;
-
-    }
-
-    updateStatus();
-
-    toonAanvragen();
-
-};
-
-// ======================================================
-// VERWIJDEREN
-// ======================================================
-
-window.verwijderAanvraag = async function(rij){
-
-    if(!confirm(
-
-        "Weet je zeker dat je deze proeftraining wilt verwijderen?"
-
-    )){
-
-        return;
-
-    }
-
-    try{
-
-        await deleteRow(rij);
-
-        aanvragen = aanvragen.filter(
-
-            item => item._row !== rij
-
-        );
-
-        gelezenItems = gelezenItems.filter(
-
-            item => item !== rij
-
-        );
-
-        localStorage.setItem(
-
-            "novitas_gelezen",
-
-            JSON.stringify(gelezenItems)
-
-        );
-
-        updateStatus();
-
-        toonAanvragen();
-
-        alert(
-
-            "✅ Aanmelding verwijderd."
-
-        );
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        alert(
-
-            "❌ Verwijderen mislukt."
-
-        );
-
-    }
-
-};
-
-// ======================================================
-// DATUM OPMAKEN
-// ======================================================
-
-function formatDatum(waarde){
-
-    if(!waarde){
-
-        return "-";
-
-    }
-
-    const datum = new Date(waarde);
-
-    if(isNaN(datum)){
-
-        return waarde;
-
-    }
-
-    return datum.toLocaleDateString(
-
-        "nl-NL"
-
-    );
-
+function watchEntries() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = onValue(ref(db, "proeftrainingen"), snapshot => {
+    entries = snapshot.val() || {};
+    render();
+  }, error => {
+    console.error("Websiteproeftrainingen laden mislukt:", error);
+    showNotice("De nieuwe aanmeldingen konden niet worden geladen. Controleer of de Firebase-regels zijn gepubliceerd en of je account beheerrechten heeft.");
+    el("requestsList").innerHTML = '<div class="empty">Geen toegang tot nieuwe aanvragen. Controleer de Firebase-regels.</div>';
+  });
 }
-
-// ======================================================
-// TELEFOON
-// ======================================================
-
-function belNummer(nummer){
-
-    if(!nummer){
-
-        return;
-
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
+  if (user.email !== "hvnovitas@gmail.com" || !user.emailVerified) {
+    showNotice("Log in met het geverifieerde CMS-beheeraccount om de aanvragen te bekijken.");
+    el("requestsList").innerHTML = '<div class="empty">Geen toegang met dit account.</div>';
+    return;
+  }
+  currentUser = user;
+  el("userInfo").textContent = user.displayName || user.email || "Beheerder";
+  watchEntries();
+});
+el("logoutButton").addEventListener("click", async () => {
+  try { await signOut(auth); location.href = "login.html"; }
+  catch (error) { console.error(error); showNotice("Uitloggen is niet gelukt."); }
+});
+el("search").addEventListener("input", render);
+el("statusFilter").addEventListener("change", render);
+el("refresh").addEventListener("click", async () => {
+  if (!currentUser) return;
+  try {
+    const snapshot = await get(ref(db, "proeftrainingen"));
+    entries = snapshot.val() || {};
+    render();
+    showNotice("Websiteaanmeldingen zijn vernieuwd.");
+  } catch (error) {
+    console.error(error);
+    showNotice("Vernieuwen is niet gelukt. Controleer de Firebase-regels.");
+  }
+});
+el("requestsList").addEventListener("click", async event => {
+  const button = event.target.closest("button");
+  const card = event.target.closest("[data-id]");
+  if (!button || !card || !entries[card.dataset.id]) return;
+  const key = card.dataset.id;
+  const item = entries[key];
+  if (button.dataset.status) {
+    const status = button.dataset.status;
+    button.disabled = true;
+    try {
+      await update(ref(db, "proeftrainingen/" + key), { status, updatedAt: Date.now(), updatedBy: currentUser?.email || "CMS" });
+      showNotice("Status bijgewerkt: " + status + ".");
+    } catch (error) {
+      console.error(error);
+      showNotice("De status kon niet worden bijgewerkt. Controleer de Firebase-regels.");
+    } finally { button.disabled = false; }
+    return;
+  }
+  if (button.dataset.action === "delete") {
+    const fullName = ((item.voornaam || "") + " " + (item.achternaam || "")).trim() || "deze aanmelding";
+    if (!confirm("Weet je zeker dat je " + fullName + " wilt verwijderen?")) return;
+    button.disabled = true;
+    try {
+      await remove(ref(db, "proeftrainingen/" + key));
+      showNotice("De websiteaanmelding is verwijderd.");
+    } catch (error) {
+      console.error(error);
+      showNotice("Verwijderen is niet gelukt. Controleer de Firebase-regels.");
+      button.disabled = false;
     }
-
-    window.location.href =
-
-    "tel:" + nummer;
-
-}
-
-// ======================================================
-// MAIL
-// ======================================================
-
-function mailPersoon(mail){
-
-    if(!mail){
-
-        return;
-
-    }
-
-    window.location.href =
-
-    "mailto:" + mail;
-
-}
-
-// ======================================================
-// AUTO REFRESH
-// ======================================================
-
-setInterval(
-
-    laadAanvragen,
-
-    60000
-
-);
-
-console.log(
-
-    "🧡 HV Novitas Proeftrainingen geladen"
-
-);
-// ======================================================
-// HULPFUNCTIES
-// ======================================================
-
-function escapeHtml(tekst){
-
-    if(!tekst){
-
-        return "";
-
-    }
-
-    return String(tekst)
-
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-// ======================================================
-// OPNIEUW LADEN
-// ======================================================
-
-window.verversAanvragen = async function(){
-
-    try{
-
-        await laadAanvragen();
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-    }
-
-};
-
-// ======================================================
-// ELKE MINUUT CONTROLEREN
-// ======================================================
-
-setInterval(
-
-    verversAanvragen,
-
-    60000
-
-);
-
-// ======================================================
-// PAGINA KLAAR
-// ======================================================
-
-window.addEventListener(
-
-    "load",
-
-    ()=>{
-
-        console.log(
-
-            "🧡 HV Novitas Proeftrainingen actief"
-
-        );
-
-    }
-
-);
-
-// ======================================================
-// EINDE
-// ======================================================
+  }
+});
