@@ -23,20 +23,18 @@ h1{font-size:clamp(25px,3vw,32px);margin:0 0 7px}h2{font-size:21px;margin:0 0 7p
 .detail{display:grid;grid-template-columns:120px minmax(0,1fr);gap:7px 10px;font-size:14px;line-height:1.45}.detail strong{color:#505762}.detail span{overflow-wrap:anywhere}.notes{padding:10px 12px;margin-top:12px;border-radius:8px;background:#f8f8f8;color:#545b65;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.actions button{font-size:12px;padding:9px 10px}.empty{padding:26px;text-align:center;background:#fafafa;border:1px dashed #d6d9de;border-radius:10px;color:var(--muted);grid-column:1/-1}
 .notice{border-radius:9px;padding:12px 14px;margin:12px 0;background:#eff6ff;color:#1e40af;display:none}.notice.show{display:block}
-.legacy-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}.legacy-frame{width:100%;height:720px;border:1px solid var(--line);border-radius:10px;background:#fff}footer{text-align:center;color:#8b929c;padding:22px;font-size:12px}
-@media(max-width:780px){.list,.stats{grid-template-columns:1fr}.detail{grid-template-columns:100px minmax(0,1fr)}.topbar{padding:14px 16px;align-items:flex-start;flex-direction:column}.userbox{width:100%;justify-content:space-between}.legacy-frame{height:560px}}
+footer{text-align:center;color:#8b929c;padding:22px;font-size:12px}
+@media(max-width:780px){.list,.stats{grid-template-columns:1fr}.detail{grid-template-columns:100px minmax(0,1fr)}.topbar{padding:14px 16px;align-items:flex-start;flex-direction:column}.userbox{width:100%;justify-content:space-between}}
 </style>
 </head>
 <body>
 <header class="topbar"><div class="brand">🧡 HV NOVITAS CMS — PROEFTRAININGEN</div><div class="userbox"><span id="userInfo">Laden...</span><button id="logoutButton" class="logout" type="button">Uitloggen</button></div></header>
 <main>
-<section class="intro"><div><p class="eyebrow">VERENIGING · AANMELDINGEN</p><h1>Proeftrainingen beheren</h1><p class="muted">Nieuwe aanvragen via de Novitas-website én reacties van het oude Google-formulier.</p></div><a class="button secondary" href="dashboard.html">← Terug naar dashboard</a></section>
+<section class="intro"><div><p class="eyebrow">VERENIGING · AANMELDINGEN</p><h1>Proeftrainingen beheren</h1><p class="muted">Hier beheer je alleen de nieuwe aanvragen die via de Novitas-website binnenkomen.</p></div><a class="button secondary" href="dashboard.html">← Terug naar dashboard</a></section>
 <section class="stats" aria-label="Website-aanmeldingen"><article class="stat"><span>Websiteaanmeldingen</span><strong id="totalCount">—</strong></article><article class="stat"><span>Nog niet opgevolgd</span><strong id="newCount">—</strong></article><article class="stat"><span>Lid geworden</span><strong id="joinedCount">—</strong></article></section>
 <section class="panel"><h2>Nieuwe website-aanmeldingen</h2><p class="muted">Deze aanvragen worden apart van lidmaatschapsinschrijvingen bewaard.</p><div id="notice" class="notice" role="status" aria-live="polite"></div>
 <div class="toolbar"><div class="field"><label for="search">Zoeken</label><input id="search" type="search" placeholder="Naam, e-mail of telefoonnummer"></div><div class="field"><label for="statusFilter">Status</label><select id="statusFilter"><option value="all">Alle aanvragen</option><option value="Nieuw">Nieuw</option><option value="Contact opgenomen">Contact opgenomen</option><option value="Proeftraining gepland">Proeftraining gepland</option><option value="Proeftraining gevolgd">Proeftraining gevolgd</option><option value="Lid geworden">Lid geworden</option></select></div><button id="refresh" class="primary" type="button">↻ Vernieuwen</button></div>
 <div id="requestsList" class="list"><div class="empty">Aanvragen worden geladen...</div></div></section>
-<section class="panel"><div class="legacy-head"><div><h2>Oude Google Form-reacties</h2><p class="muted">Oude inzendingen blijven in het bestaande Google Sheets-overzicht staan.</p></div><a class="button secondary" href="https://docs.google.com/forms/d/1Naoxd0nUkjq9F0AQxLanIGKehbu98ApGIFrrVLhocy0/edit" target="_blank" rel="noopener noreferrer">Oud formulier openen ↗</a></div>
-<iframe class="legacy-frame" src="https://docs.google.com/spreadsheets/d/1rapIJstmllaV0OQyV20NEQxk_UO-IYuNYy7TQh5kMLM/edit?usp=sharing" title="Oude proeftrainingaanmeldingen uit Google Forms" loading="lazy"></iframe></section>
-<footer>HV Novitas · Proeftrainingen · Nieuwe en oude aanmeldingen gescheiden</footer></main>
+<footer>HV Novitas · Proeftrainingen beheren</footer></main>
 <script type="module" src="proeftrainingen.js?v=20261018-firebase-trials"></script>
 </body></html>
