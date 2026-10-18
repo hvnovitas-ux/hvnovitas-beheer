@@ -124,6 +124,49 @@
       "$other": {
         ".validate": false
       }
+    },
+    "proeftrainingen": {
+      ".read": "auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true",
+      "$entryId": {
+        ".write": "!data.exists() && newData.exists()",
+        ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || newData.hasChildren(['voornaam', 'achternaam', 'geboortedatum', 'geslacht', 'email', 'telefoon', 'opmerkingen', 'toestemming', 'status', 'bron', 'created'])",
+        "voornaam": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val().length > 0 && newData.val().length <= 80)"
+        },
+        "achternaam": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val().length > 0 && newData.val().length <= 100)"
+        },
+        "geboortedatum": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val().length === 10)"
+        },
+        "geslacht": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && (newData.val() === 'Man' || newData.val() === 'Vrouw' || newData.val() === 'Anders' || newData.val() === 'Zeg ik liever niet'))"
+        },
+        "email": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val().length > 5 && newData.val().length <= 254 && newData.val().contains('@'))"
+        },
+        "telefoon": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val().length > 4 && newData.val().length <= 40)"
+        },
+        "opmerkingen": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val().length <= 1000)"
+        },
+        "toestemming": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isBoolean() && newData.val() === true)"
+        },
+        "status": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val() === 'Nieuw')"
+        },
+        "bron": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isString() && newData.val() === 'website')"
+        },
+        "created": {
+          ".validate": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (newData.isNumber() && newData.val() > 0 && newData.val() <= now + 300000)"
+        },
+        "$other": {
+          ".validate": "auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true"
+        }
+      }
     }
   }
 }
