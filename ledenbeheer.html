@@ -111,6 +111,10 @@
             <input id="memberName" name="memberName" type="text" required maxlength="120" autocomplete="off" placeholder="Voor- en achternaam">
           </div>
           <div class="field">
+            <label for="memberEmail">E-mailadres *</label>
+            <input id="memberEmail" name="memberEmail" type="email" required maxlength="254" autocomplete="email" placeholder="naam@voorbeeld.nl">
+          </div>
+          <div class="field">
             <label for="memberSince">Aanmelddatum *</label>
             <input id="memberSince" name="memberSince" type="date" required>
           </div>
@@ -186,9 +190,9 @@
       <div class="table-wrap">
         <table class="data-table">
           <thead>
-            <tr><th>Lidnr.</th><th>Naam</th><th>Lid per</th><th>Geboortedatum invoeren</th><th>Geboortejaar / NHV-categorie</th><th>Verenigingscategorie</th><th>Status</th><th>Actie</th></tr>
+            <tr><th>Lidnr.</th><th>Naam</th><th>E-mailadres</th><th>Lid per</th><th>Geboortedatum invoeren</th><th>Geboortejaar / NHV-categorie</th><th>Verenigingscategorie</th><th>Status</th><th>Actie</th></tr>
           </thead>
-          <tbody id="membersTableBody"><tr><td colspan="8" class="empty-cell">Leden laden...</td></tr></tbody>
+          <tbody id="membersTableBody"><tr><td colspan="9" class="empty-cell">Leden laden...</td></tr></tbody>
         </table>
       </div>
       <p id="memberListCount" class="muted list-count"></p>
