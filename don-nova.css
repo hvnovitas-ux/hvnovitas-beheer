@@ -114,3 +114,55 @@ body.dn-playlist-modal-open{overflow:hidden}
 @media(max-width:900px){
   .dn-intro-section{padding-top:30px}
 }
+
+/* Extra CMS-blok boven de Don Nova-strip: tekst links, bescheiden foto rechts */
+.dn-feature-section{
+  padding:34px 0;
+  background:#f7f7f7;
+}
+.dn-feature-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(210px,290px);
+  gap:34px;
+  align-items:center;
+}
+.dn-feature-copy{min-width:0}
+.dn-feature-copy h2{
+  margin:0 0 12px;
+  color:#171717;
+  font-size:clamp(1.5rem,2.4vw,2.1rem);
+  line-height:1.12;
+}
+.dn-feature-copy p{
+  margin:0;
+  color:#4d4d4d;
+  font-size:1.02rem;
+  line-height:1.7;
+  white-space:pre-line;
+}
+.dn-feature-photo-wrap{
+  width:100%;
+  max-width:290px;
+  max-height:205px;
+  margin:0;
+  justify-self:end;
+  overflow:hidden;
+  border-radius:14px;
+  background:#e9e9e9;
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+}
+.dn-feature-photo-wrap img{
+  display:block;
+  width:100%;
+  height:205px;
+  max-height:205px;
+  object-fit:cover;
+}
+.dn-feature-grid:not(.has-photo){grid-template-columns:minmax(0,1fr)}
+.dn-feature-grid:not(.has-photo) .dn-feature-photo-wrap{display:none}
+@media(max-width:700px){
+  .dn-feature-section{padding:27px 0}
+  .dn-feature-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+  .dn-feature-photo-wrap{width:min(100%,290px);justify-self:start}
+  .dn-feature-photo-wrap img{height:auto;max-height:205px;aspect-ratio:4/3}
+}
