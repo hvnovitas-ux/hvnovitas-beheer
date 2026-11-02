@@ -21,6 +21,12 @@ const statusEl = document.getElementById("status");
 const stripFile = document.getElementById("stripFile");
 const stripPreview = document.getElementById("stripPreview");
 
+const extraHeading = document.getElementById("extraHeading");
+const extraBody = document.getElementById("extraBody");
+const extraPhotoFile = document.getElementById("extraPhotoFile");
+const extraPhotoPreview = document.getElementById("extraPhotoPreview");
+const extraPhotoRemove = document.getElementById("extraPhotoRemove");
+
 const v1Url = document.getElementById("v1Url");
 const v1Title = document.getElementById("v1Title");
 const v1Heading = document.getElementById("v1Heading");
@@ -63,6 +69,18 @@ stripFile.addEventListener("change", () => {
   reader.readAsDataURL(file);
 });
 
+extraPhotoFile.addEventListener("change", () => {
+  const file = extraPhotoFile.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    extraPhotoPreview.src = String(reader.result);
+    extraPhotoPreview.hidden = false;
+    extraPhotoRemove.checked = false;
+  };
+  reader.readAsDataURL(file);
+});
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -83,8 +101,32 @@ form.addEventListener("submit", async (event) => {
       };
     }
 
+    let extraSection = current.extraSection || {};
+    let extraImage = {
+      imageUrl: extraSection.imageUrl || "",
+      publicId: extraSection.publicId || ""
+    };
+
+    const extraFile = extraPhotoFile.files?.[0];
+    if (extraFile) {
+      const upload = await uploadToCloudinary(extraFile, "De extra foto kon niet worden geüpload.");
+      extraImage = {
+        imageUrl: upload.secure_url,
+        publicId: upload.public_id || ""
+      };
+    } else if (extraPhotoRemove.checked) {
+      extraImage = { imageUrl: "", publicId: "" };
+    }
+
     const data = {
       strip,
+      extraSection: {
+        heading: extraHeading.value.trim(),
+        body: extraBody.value.trim(),
+        imageUrl: extraImage.imageUrl,
+        publicId: extraImage.publicId,
+        updatedAt: Date.now()
+      },
       video1: {
         youtubeUrl: v1Url.value.trim(),
         title: v1Title.value.trim() || "Don Video 1",
@@ -108,6 +150,8 @@ form.addEventListener("submit", async (event) => {
 
     showStatus("Don Nova is opgeslagen.");
     stripFile.value = "";
+    extraPhotoFile.value = "";
+    extraPhotoRemove.checked = false;
   } catch (error) {
     console.error("Don Nova opslaan mislukt:", error);
     showStatus(error.message || "Opslaan is niet gelukt.", true);
@@ -123,6 +167,17 @@ async function loadData() {
       stripPreview.src = data.strip.imageUrl;
       stripPreview.hidden = false;
     }
+
+    extraHeading.value = data.extraSection?.heading || "";
+    extraBody.value = data.extraSection?.body || "";
+    if (data.extraSection?.imageUrl) {
+      extraPhotoPreview.src = data.extraSection.imageUrl;
+      extraPhotoPreview.hidden = false;
+    } else {
+      extraPhotoPreview.removeAttribute("src");
+      extraPhotoPreview.hidden = true;
+    }
+    extraPhotoRemove.checked = false;
 
     v1Url.value = data.video1?.youtubeUrl || "";
     v1Title.value = data.video1?.title || "Don Video 1";
@@ -141,7 +196,7 @@ async function loadData() {
   }
 }
 
-async function uploadToCloudinary(file) {
+async function uploadToCloudinary(file, errorMessage = "De afbeelding kon niet worden geüpload.") {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
@@ -152,7 +207,7 @@ async function uploadToCloudinary(file) {
   });
 
   if (!response.ok) {
-    throw new Error("De strip kon niet worden geüpload.");
+    throw new Error(errorMessage);
   }
 
   return response.json();
