@@ -22,8 +22,11 @@ onValue(
     }
 
     text1Heading.textContent = data.text1?.heading || "Meer dan alleen handbal";
-    text1Body.textContent = data.text1?.body ||
-      "Bij HV Novitas draait het om veel meer dan alleen wedstrijden. We organiseren regelmatig leuke activiteiten, ouder-kindwedstrijden, afsluitingsdagen en andere gezellige momenten. Zo leer je niet alleen handballen, maar maak je ook nieuwe vrienden en beleef je samen een geweldige tijd.";
+    const introText = data.text1?.body ||
+      "Bij HV Novitas draait het om veel meer dan alleen wedstrijden. We organiseren leuke activiteiten, ouder-kindwedstrijden, gezellige afsluitingen én een jeugdkamp. Zo leer je niet alleen handballen, maar maak je nieuwe vrienden en beleef je samen mooie momenten.";
+    text1Body.textContent = introText.toLowerCase().includes("jeugdkamp")
+      ? introText
+      : introText + " Ook organiseren we een gezellig jeugdkamp!";
 
     text2Heading.textContent = data.text2?.heading || "Een perfecte afsluiting van het seizoen.";
     text2Body.textContent = data.text2?.body ||
