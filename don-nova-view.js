@@ -11,6 +11,12 @@ const text1Heading = document.getElementById("donText1Heading");
 const text1Body = document.getElementById("donText1Body");
 const text2Heading = document.getElementById("donText2Heading");
 const text2Body = document.getElementById("donText2Body");
+const featureSection = document.getElementById("dnFeatureSection");
+const featureGrid = featureSection?.querySelector(".dn-feature-grid");
+const featureHeading = document.getElementById("dnFeatureHeading");
+const featureBody = document.getElementById("dnFeatureBody");
+const featurePhotoWrap = document.getElementById("dnFeaturePhotoWrap");
+const featurePhoto = document.getElementById("dnFeaturePhoto");
 
 onValue(
   ref(db, ROOT),
@@ -29,6 +35,7 @@ onValue(
     text2Body.textContent = data.text2?.body ||
       "Bij HV Novitas hebben we het seizoen afgesloten met een waterdag vol spelletjes, lachen en teamgevoel. Geen training vandaag... maar plezier, zon en samen genieten. Jeugd, ouders en trainers deden allemaal mee aan een dag vol energie en gezelligheid. Dit is waar een club voor staat.";
 
+    renderFeatureSection(data.featureSection || {});
     renderVideo(video1, data.video1?.youtubeUrl, data.video1?.title || "Don Video 1");
     renderVideo(video2, data.video2?.youtubeUrl, data.video2?.title || "Don Video 2");
   },
@@ -36,6 +43,31 @@ onValue(
     console.error("Don Nova Firebase-fout:", error);
   }
 );
+
+function renderFeatureSection(data) {
+  const heading = String(data.heading || "").trim();
+  const body = String(data.body || "").trim();
+  const imageUrl = String(data.imageUrl || "").trim();
+
+  featureHeading.textContent = heading;
+  featureHeading.hidden = !heading;
+  featureBody.textContent = body;
+  featureBody.hidden = !body;
+
+  if (imageUrl) {
+    featurePhoto.src = imageUrl;
+    featurePhoto.alt = heading || "Foto bij Don Nova's Jeugdclub";
+    featurePhotoWrap.hidden = false;
+    featureGrid.classList.add("has-photo");
+  } else {
+    featurePhoto.removeAttribute("src");
+    featurePhoto.alt = "";
+    featurePhotoWrap.hidden = true;
+    featureGrid.classList.remove("has-photo");
+  }
+
+  featureSection.hidden = !(heading || body || imageUrl);
+}
 
 function renderVideo(target, youtubeUrl, title) {
   const videoId = extractYouTubeId(youtubeUrl);
