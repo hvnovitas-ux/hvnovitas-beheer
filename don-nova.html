@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Don Nova's Jeugdclub - HV Novitas</title>
-<link rel="stylesheet" href="don-nova.css?v=20261012-scene5">
+<link rel="stylesheet" href="don-nova.css?v=20261102-playlist1">
 </head>
 <body>
 
@@ -84,18 +84,19 @@
     </div>
   </section>
 
-  <section class="dn-section dn-playlist-section" aria-label="Videoplaylist HV Novitas">
+  <section class="dn-section dn-playlist-section" aria-label="Video's van HV Novitas">
     <div class="dn-wide">
-      <div class="dn-playlist-player">
-        <iframe
-          src="https://www.youtube.com/embed/videoseries?si=GqK1Q5kGuBJiOHDU&amp;list=PLAdncNiOeDP0"
-          title="HV Novitas - videoplaylist"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
+      <div class="dn-playlist-heading">
+        <div class="dn-label">HV NOVITAS IN BEELD</div>
+        <h2>Bekijk onze video's</h2>
       </div>
+
+      <div class="dn-playlist-rail">
+        <button id="dnPlaylistPrev" class="dn-playlist-arrow prev" type="button" aria-label="Vorige video's">‹</button>
+        <div id="dnPlaylistTrack" class="dn-playlist-track" aria-label="Horizontale videocarrousel"></div>
+        <button id="dnPlaylistNext" class="dn-playlist-arrow next" type="button" aria-label="Volgende video's">›</button>
+      </div>
+      <p id="dnPlaylistStatus" class="dn-playlist-status" role="status">De video's worden geladen…</p>
     </div>
   </section>
 
@@ -133,5 +134,6 @@
 </footer>
 
 <script type="module" src="don-nova-view.js?v=20261004-4"></script>
+<script src="don-nova-playlist.js?v=20261102-1" defer></script>
 </body>
 </html>
