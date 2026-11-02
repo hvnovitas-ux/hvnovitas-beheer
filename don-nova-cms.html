@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Don Nova's Jeugdclub - CMS</title>
-<link rel="stylesheet" href="don-nova-cms.css?v=20261004-1">
+<link rel="stylesheet" href="don-nova-cms.css?v=20261102-featureblock1">
 </head>
 <body>
 
@@ -39,6 +39,31 @@
         <div class="preview-strip">
           <img id="stripPreview" src="images/don-nova-strip.png" alt="Voorbeeld Don Nova strip">
         </div>
+      </div>
+    </section>
+
+    <section class="card feature-editor-card">
+      <h2>Extra tekst en foto boven de strip</h2>
+      <p class="small">Dit blok verschijnt op de openbare Don Nova-pagina direct boven de strip. De tekst komt links en de foto rechts. De foto blijft bewust compact.</p>
+
+      <div class="field">
+        <label for="extraHeading">Koptekst (optioneel)</label>
+        <input id="extraHeading" type="text" maxlength="160" placeholder="Bijvoorbeeld: Samen beleven we meer">
+      </div>
+
+      <div class="field">
+        <label for="extraBody">Tekst links</label>
+        <textarea id="extraBody" placeholder="Schrijf hier de extra informatie voor de jeugd..."></textarea>
+      </div>
+
+      <div class="filebox feature-photo-filebox">
+        <label for="extraPhotoFile">Foto rechts uploaden</label>
+        <input id="extraPhotoFile" type="file" accept="image/*">
+        <div class="small" style="margin-top:8px;">De foto wordt via Cloudinary opgeslagen. Op de website wordt hij begrensd tot maximaal 290 pixels breed en 205 pixels hoog.</div>
+        <div class="feature-photo-preview">
+          <img id="extraPhotoPreview" alt="Voorbeeld extra Don Nova-foto" hidden>
+        </div>
+        <label class="remove-photo-option"><input id="extraPhotoRemove" type="checkbox"> Huidige foto verwijderen</label>
       </div>
     </section>
 
@@ -136,6 +161,6 @@
 
 </main>
 
-<script type="module" src="don-nova-cms.js?v=20261004-1"></script>
+<script type="module" src="don-nova-cms.js?v=20261102-featureblock1"></script>
 </body>
 </html>
