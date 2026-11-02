@@ -35,7 +35,7 @@ onValue(
     text2Body.textContent = data.text2?.body ||
       "Bij HV Novitas hebben we het seizoen afgesloten met een waterdag vol spelletjes, lachen en teamgevoel. Geen training vandaag... maar plezier, zon en samen genieten. Jeugd, ouders en trainers deden allemaal mee aan een dag vol energie en gezelligheid. Dit is waar een club voor staat.";
 
-    renderFeatureSection(data.featureSection || {});
+    renderFeatureSection(data.extraSection || {});
     renderVideo(video1, data.video1?.youtubeUrl, data.video1?.title || "Don Video 1");
     renderVideo(video2, data.video2?.youtubeUrl, data.video2?.title || "Don Video 2");
   },
