@@ -20,3 +20,10 @@ body {
     padding: 0;
     border: 0;
 }
+
+
+/* KiKa actie-banner direct onder de wisselende aankondigingsfoto */
+.aankondiging-stack{display:flex;flex-direction:column;gap:10px;width:100%;}
+.aankondigingsfoto{width:100%;height:auto;}
+.kika-banner-link{display:block;width:100%;line-height:0;border-radius:10px;overflow:hidden;}
+.kika-banner{display:block;width:100%;height:auto;max-height:145px;object-fit:contain;}
