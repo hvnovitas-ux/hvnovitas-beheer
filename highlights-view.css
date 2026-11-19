@@ -2,7 +2,48 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#111;overflow:hidden}
 .wrap{width:100%;height:100%;background:#fff;overflow:hidden}
-.bar{height:70px;background:#ff6a00;color:#fff;display:flex;align-items:center;gap:12px;padding:12px 22px;font-size:22px;font-weight:800;letter-spacing:.2px;text-transform:uppercase}
+.bar{
+ position:relative;
+ isolation:isolate;
+ height:70px;
+ display:flex;
+ align-items:center;
+ padding:12px 28px 12px 38px;
+ overflow:hidden;
+ color:#fff;
+ background:
+   radial-gradient(ellipse at 8% 50%,rgba(255,106,0,.32),transparent 34%),
+   linear-gradient(110deg,#080808 0%,#202020 48%,#090909 100%);
+ border-bottom:4px solid #ff6a00;
+ font-size:22px;
+ font-weight:900;
+ letter-spacing:1.3px;
+ text-transform:uppercase;
+ text-shadow:0 2px 8px rgba(0,0,0,.7);
+}
+.bar::before{
+ content:"";
+ position:absolute;
+ z-index:-1;
+ left:0;
+ top:-18px;
+ width:9px;
+ height:108px;
+ background:#ff6a00;
+ transform:skewX(-18deg);
+ box-shadow:10px 0 22px rgba(255,106,0,.35);
+}
+.bar::after{
+ content:"";
+ position:absolute;
+ z-index:-1;
+ left:17px;
+ top:-12px;
+ width:3px;
+ height:96px;
+ background:rgba(255,106,0,.65);
+ transform:skewX(-18deg);
+}
 .card{position:relative;overflow:hidden;background:#fff;padding:16px 20px 20px}
 .copy{position:relative;z-index:2;width:100%}
 .highlight-card{
@@ -24,7 +65,7 @@ html,body{margin:0;padding:0;background:#fff;font-family:Arial,Helvetica,sans-se
 .highlight-content p{margin:0 0 14px;max-width:760px;color:#4b5563;font-size:16px;line-height:1.5;white-space:pre-wrap}
 .empty-title{font-size:20px;font-weight:800}.empty-sub{margin-top:6px;color:#6b7280;font-size:14px}
 @media(max-width:700px){
- .bar{height:58px;padding:11px 16px;font-size:18px}
+ .bar{height:58px;padding:10px 18px 10px 30px;font-size:17px;letter-spacing:1px}
  .card{padding:12px}
  .highlight-card{grid-template-columns:1fr;height:auto;min-height:620px}
  .highlight-image-wrap,.highlight-image{height:300px;min-height:300px}
