@@ -19,7 +19,7 @@ import {
 const PATH = "evenementenbanner";
 const BANNERS_API = "https://api.github.com/repos/hvnovitas-ux/hvnovitas-home/contents/banners?ref=main";
 const BANNERS_SITE_PATH = "https://www.hvnovitas.nl/banners/";
-const BANNER_VERSION = "20261011-imagepicker";
+const BANNER_VERSION = "20261119-live-site-preview";
 
 const $ = id =>
   document.getElementById(id);
@@ -682,12 +682,10 @@ function refreshFramePreview() {
   const frame = $("previewFrame");
   if (!frame) return;
 
+  // Toon altijd dezelfde banner als de openbare website:
+  // de widget bepaalt zelf welk evenement op dit moment actief is.
   const url = new URL("evenementenbanner-widget.html", window.location.href);
-  url.searchParams.set("preview", "1");
-  url.searchParams.set("slot", selectedSlot);
-  url.searchParams.set("v", BANNER_VERSION);
-  // Een lege waarde overschrijft ook tijdelijk een eerder opgeslagen afbeelding.
-  url.searchParams.set("imagePreview", $("imageUrl")?.value.trim() || "");
+  url.searchParams.set("v", "20261119-live-site-preview");
   frame.src = url.toString();
 }
 
