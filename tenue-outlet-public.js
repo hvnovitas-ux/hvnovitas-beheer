@@ -58,7 +58,7 @@ $("outlet").addEventListener("click",e=>{
     const [gid,iid]=b.dataset.reserve.split(":");selected={gid,iid};
     const it=groups[gid]?.items?.[iid];
     $("modalItem").textContent=it?it.type+" · maat "+it.size+" · "+euro(it.price):"";
-    $("buyer").value="";$("modalMessage").textContent="";$("modal").classList.add("open");$("buyer").focus();
+    $("buyer").value="";$("buyerEmail").value="";$("modalMessage").textContent="";$("modal").classList.add("open");$("buyer").focus();
   }
   if(b.dataset.share){
     const url=location.href,title=groups[b.dataset.share]?.title||"HV Novitas Tenue Outlet";
@@ -72,7 +72,9 @@ $("cancel").addEventListener("click",()=>{$("modal").classList.remove("open");se
 
 $("confirm").addEventListener("click",async()=>{
   const name=$("buyer").value.trim();
+  const email=$("buyerEmail").value.trim();
   if(!name){$("modalMessage").textContent="Vul je naam in.";return;}
+  if(!email||!$("buyerEmail").checkValidity()){$("modalMessage").textContent="Vul een geldig e-mailadres in.";return;}
   if(!selected)return;
   if(!storeOpen){refreshStore();$("modal").classList.remove("open");selected=null;return;}
   const {gid,iid}=selected,button=$("confirm");
@@ -83,7 +85,7 @@ $("confirm").addEventListener("click",async()=>{
     const user=await getOutletUser();
     reservationStage="reserveringsnaam privé opslaan";
     reservationRef=ref(outletDb,"tenueOutlet/reservationsPrivate/"+gid+"/"+iid+"/"+user.uid);
-    await set(reservationRef,{name,createdAt:Date.now()});
+    await set(reservationRef,{name,email,createdAt:Date.now()});
     reservationStage="artikel blokkeren in de voorraad";
     const itemRef=ref(outletDb,"tenueOutlet/groups/"+gid+"/items/"+iid);
     const result=await runTransaction(itemRef,current=>{
