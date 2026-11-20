@@ -12,6 +12,7 @@
 <main>
 <a class="back" href="dashboard.html">← Terug naar dashboard</a>
 <section class="panel"><h1>Tenue Outlet beheren</h1><p class="hint">Maak per verkoopronde een groep aan met één gezamenlijke foto. Voeg daaronder de losse shirts, sets en shorts toe. Verkochte en gereserveerde artikelen blijven bewaard. Je kunt verkochte artikelen later uit de actieve voorraad opschonen; de verkoopgeschiedenis blijft behouden.</p><p><strong>Openbare, verborgen pagina:</strong> <a href="tenue-outlet.html" target="_blank" rel="noopener">tenue-outlet.html</a></p></section>
+<section class="panel"><h2>Automatische opening en sluiting</h2><p class="hint">Plan vooraf wanneer de winkel open en dicht gaat. De tijden zijn Nederlandse lokale tijden.</p><div class="grid"><div class="field"><label for="openAt">Openingsdatum en -tijd</label><input id="openAt" type="datetime-local"></div><div class="field"><label for="closeAt">Sluitingsdatum en -tijd</label><input id="closeAt" type="datetime-local"></div></div><button class="btn" id="saveSchedule" type="button">Planning opslaan</button><p id="scheduleMessage" class="small" aria-live="polite"></p><p id="storeCountdown" class="hint">Planning laden…</p><p class="small">Handmatig openen of sluiten wist de geplande tijden.</p></section>
 <section class="panel">
 <h2>Nieuwe verkoopronde / artikelgroep</h2>
 <div class="grid">
@@ -37,5 +38,5 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.
 onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return;}document.getElementById("userInfo").textContent=user.displayName||user.email||"Beheerder";});
 document.getElementById("logoutButton").addEventListener("click",async()=>{await signOut(auth);location.href="login.html";});
 </script>
-<script type="module" src="./tenue-outlet-cms.js?v=2"></script>
+<script type="module" src="./tenue-outlet-cms.js?v=4"></script>
 </body></html>
