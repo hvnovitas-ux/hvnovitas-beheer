@@ -11,7 +11,7 @@
 <header class="top"><strong>HV NOVITAS CMS — TENUE OUTLET</strong><div><span id="userInfo">Laden...</span> <button id="logoutButton">Uitloggen</button></div></header>
 <main>
 <a class="back" href="dashboard.html">← Terug naar dashboard</a>
-<section class="panel"><h1>Tenue Outlet beheren</h1><p class="hint">Maak per verkoopronde een groep aan met één gezamenlijke foto. Voeg daaronder de losse shirts, sets en shorts toe. Verkochte en gereserveerde artikelen blijven bewaard.</p><p><strong>Openbare, verborgen pagina:</strong> <a href="tenue-outlet.html" target="_blank" rel="noopener">tenue-outlet.html</a></p></section>
+<section class="panel"><h1>Tenue Outlet beheren</h1><p class="hint">Maak per verkoopronde een groep aan met één gezamenlijke foto. Voeg daaronder de losse shirts, sets en shorts toe. Verkochte en gereserveerde artikelen blijven bewaard. Je kunt verkochte artikelen later uit de actieve voorraad opschonen; de verkoopgeschiedenis blijft behouden.</p><p><strong>Openbare, verborgen pagina:</strong> <a href="tenue-outlet.html" target="_blank" rel="noopener">tenue-outlet.html</a></p></section>
 <section class="panel">
 <h2>Nieuwe verkoopronde / artikelgroep</h2>
 <div class="grid">
@@ -29,7 +29,7 @@
 <div class="field"><label for="itemPrice">Prijs (€)</label><input id="itemPrice" type="number" min="0" step="0.50" placeholder="10,00"></div>
 </div><button class="btn" id="addItem">Artikel toevoegen</button><p id="itemMessage" class="small" aria-live="polite"></p>
 </section>
-<section class="panel"><h2>Verkooprondes en voorraad</h2><p class="hint">Gebruik ‘Archiveren’ om een ronde van de openbare pagina te halen. De gegevens en verkoopstatus blijven bewaard. Je kunt later een nieuwe ronde toevoegen.</p><div id="groups"><p class="empty">Voorraad laden…</p></div></section>
+<section class="panel"><h2>Verkooprondes en voorraad</h2><p class="hint">Gebruik ‘Archiveren’ om een ronde van de openbare pagina te halen. Gebruik ‘Verkochte artikelen verwijderen’ om alleen verkochte stuks uit de actieve voorraad te halen. Ze blijven terug te vinden in de verkoopgeschiedenis. Een geannuleerde reservering kan weer beschikbaar worden gemaakt.</p><div id="groups"><p class="empty">Voorraad laden…</p></div></section>
 </main>
 <script type="module">
 import {auth} from "./firebase.js";
@@ -37,5 +37,5 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.
 onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return;}document.getElementById("userInfo").textContent=user.displayName||user.email||"Beheerder";});
 document.getElementById("logoutButton").addEventListener("click",async()=>{await signOut(auth);location.href="login.html";});
 </script>
-<script type="module" src="./tenue-outlet-cms.js?v=1"></script>
+<script type="module" src="./tenue-outlet-cms.js?v=2"></script>
 </body></html>
