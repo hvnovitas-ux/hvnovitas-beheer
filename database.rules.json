@@ -167,6 +167,9 @@
           ".validate": "auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true"
         }
       }
+    },
+    "tenueOutlet": {
+      ".read": true
     }
   }
 }
