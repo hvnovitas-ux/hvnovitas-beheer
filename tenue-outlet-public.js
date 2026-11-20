@@ -1,10 +1,11 @@
 import {db,app} from "./firebase.js";
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {getAuth,signInAnonymously,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import {ref,onValue,runTransaction,set,remove} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import {getDatabase,ref,onValue,runTransaction,set,remove} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const outletApp=initializeApp(app.options,"tenueOutletPublic");
 const outletAuth=getAuth(outletApp);
+const outletDb=getDatabase(outletApp);
 let outletUserPromise=null;
 function getOutletUser(){
   if(!outletUserPromise){
@@ -79,9 +80,9 @@ $("confirm").addEventListener("click",async()=>{
   let reservationRef=null;
   try{
     const user=await getOutletUser();
-    reservationRef=ref(db,"tenueOutlet/reservationsPrivate/"+gid+"/"+iid+"/"+user.uid);
+    reservationRef=ref(outletDb,"tenueOutlet/reservationsPrivate/"+gid+"/"+iid+"/"+user.uid);
     await set(reservationRef,{name,createdAt:Date.now()});
-    const itemRef=ref(db,"tenueOutlet/groups/"+gid+"/items/"+iid);
+    const itemRef=ref(outletDb,"tenueOutlet/groups/"+gid+"/items/"+iid);
     const result=await runTransaction(itemRef,current=>{
       if(!current||current.status!=="available"||current.reservationUid)return;
       return {...current,status:"reserved",reservationUid:user.uid,reservedAt:Date.now()};
