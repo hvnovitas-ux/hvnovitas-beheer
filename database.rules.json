@@ -167,6 +167,18 @@
           ".validate": "auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true"
         }
       }
+    },
+    "tenueOutlet": {
+      ".read": true,
+      "groups": {
+        "$groupId": {
+          "items": {
+            "$itemId": {
+              ".write": "(auth != null && auth.token.email === 'hvnovitas@gmail.com' && auth.token.email_verified === true) || (data.exists() && data.child('status').val() === 'available' && newData.child('status').val() === 'reserved' && newData.child('reservedBy').isString() && newData.child('reservedBy').val().length > 0 && newData.child('reservedBy').val().length <= 80 && newData.child('reservedAt').isNumber() && newData.child('type').val() === data.child('type').val() && newData.child('number').val() === data.child('number').val() && newData.child('size').val() === data.child('size').val() && newData.child('price').val() === data.child('price').val() && newData.child('createdAt').val() === data.child('createdAt').val())"
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tenue Outlet beheren - HV Novitas</title>
+<style>
+:root{--orange:#ff6900;--ink:#202124;--muted:#667085;--line:#e5e7eb;--bg:#f5f6f8}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px Arial,sans-serif}.top{background:var(--orange);color:white;padding:17px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}.top strong{letter-spacing:.04em}.top button,.btn{border:0;border-radius:8px;padding:11px 15px;font-weight:700;cursor:pointer}.top button{background:white;color:#a43f00}main{max-width:1050px;margin:26px auto;padding:0 16px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px}.back{color:#a94700;text-decoration:none;font-weight:700}.hint{color:var(--muted);line-height:1.5}h1{margin:16px 0 8px}h2{margin:0 0 15px;font-size:20px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-weight:700;font-size:13px}input,select{width:100%;padding:12px;border:1px solid #cfd4dc;border-radius:8px;font:inherit;background:white}button:disabled{opacity:.55;cursor:wait}.btn{background:var(--orange);color:white;margin-top:14px}.btn.secondary{background:#30343b}.btn.danger{background:#a83224}.group{border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}.group-head{display:flex;gap:14px;align-items:flex-start}.group-head img{width:116px;height:90px;object-fit:cover;border-radius:8px;background:#eee}.group-head h3{margin:2px 0 7px}.group-actions{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap}.small{font-size:12px;color:var(--muted)}.items{margin-top:12px;border-top:1px solid var(--line)}.item{display:grid;grid-template-columns:1.2fr .7fr .7fr .6fr .8fr auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}.item strong{font-size:14px}.pill{font-size:12px;font-weight:700;border-radius:30px;padding:5px 9px;background:#eef0f3;display:inline-block}.pill.available{background:#e3f5e9;color:#176b36}.pill.reserved{background:#fff2d8;color:#8a5700}.pill.sold{background:#eee;color:#555}.empty{color:var(--muted);padding:15px 0}@media(max-width:700px){.grid{grid-template-columns:1fr}.item{grid-template-columns:1fr 1fr;gap:7px}.group-head{flex-wrap:wrap}.group-actions{margin-left:0;width:100%}.top{padding:14px;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="top"><strong>HV NOVITAS CMS — TENUE OUTLET</strong><div><span id="userInfo">Laden...</span> <button id="logoutButton">Uitloggen</button></div></header>
+<main>
+<a class="back" href="dashboard.html">← Terug naar dashboard</a>
+<section class="panel"><h1>Tenue Outlet beheren</h1><p class="hint">Maak per verkoopronde een groep aan met één gezamenlijke foto. Voeg daaronder de losse shirts, sets en shorts toe. Verkochte en gereserveerde artikelen blijven bewaard.</p><p><strong>Openbare, verborgen pagina:</strong> <a href="tenue-outlet.html" target="_blank" rel="noopener">tenue-outlet.html</a></p></section>
+<section class="panel">
+<h2>Nieuwe verkoopronde / artikelgroep</h2>
+<div class="grid">
+<div class="field"><label for="groupTitle">Titel boven de foto</label><input id="groupTitle" maxlength="100" placeholder="Bijv. Hummel – sponsornaam"></div>
+<div class="field"><label for="groupPhoto">Foto van deze tenuegroep</label><input id="groupPhoto" type="file" accept="image/*"></div>
+</div><button class="btn" id="createGroup">Verkoopronde toevoegen</button><p id="groupMessage" class="small" aria-live="polite"></p>
+</section>
+<section class="panel">
+<h2>Artikel toevoegen</h2>
+<div class="grid">
+<div class="field full"><label for="itemGroup">Verkoopronde / fotogroep</label><select id="itemGroup"><option value="">Kies eerst een groep</option></select></div>
+<div class="field"><label for="itemType">Soort</label><select id="itemType"><option>Shirt</option><option>Set</option><option>Short</option></select></div>
+<div class="field"><label for="itemNumber">Rugnummer</label><input id="itemNumber" maxlength="12" placeholder="Bijv. 7 of n.v.t."></div>
+<div class="field"><label for="itemSize">Maat</label><input id="itemSize" maxlength="20" placeholder="Bijv. 152, S, M, L"></div>
+<div class="field"><label for="itemPrice">Prijs (€)</label><input id="itemPrice" type="number" min="0" step="0.50" placeholder="10,00"></div>
+</div><button class="btn" id="addItem">Artikel toevoegen</button><p id="itemMessage" class="small" aria-live="polite"></p>
+</section>
+<section class="panel"><h2>Verkooprondes en voorraad</h2><p class="hint">Gebruik ‘Archiveren’ om een ronde van de openbare pagina te halen. De gegevens en verkoopstatus blijven bewaard. Je kunt later een nieuwe ronde toevoegen.</p><div id="groups"><p class="empty">Voorraad laden…</p></div></section>
+</main>
+<script type="module">
+import {auth} from "./firebase.js";
+import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return;}document.getElementById("userInfo").textContent=user.displayName||user.email||"Beheerder";});
+document.getElementById("logoutButton").addEventListener("click",async()=>{await signOut(auth);location.href="login.html";});
+</script>
+<script type="module" src="./tenue-outlet-cms.js?v=1"></script>
+</body></html>
