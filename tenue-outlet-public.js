@@ -78,10 +78,13 @@ $("confirm").addEventListener("click",async()=>{
   const {gid,iid}=selected,button=$("confirm");
   button.disabled=true;$("modalMessage").textContent="Reservering controleren…";
   let reservationRef=null;
+  let reservationStage="anoniem aanmelden";
   try{
     const user=await getOutletUser();
+    reservationStage="reserveringsnaam privé opslaan";
     reservationRef=ref(outletDb,"tenueOutlet/reservationsPrivate/"+gid+"/"+iid+"/"+user.uid);
     await set(reservationRef,{name,createdAt:Date.now()});
+    reservationStage="artikel blokkeren in de voorraad";
     const itemRef=ref(outletDb,"tenueOutlet/groups/"+gid+"/items/"+iid);
     const result=await runTransaction(itemRef,current=>{
       if(!current||current.status!=="available"||current.reservationUid)return;
@@ -96,13 +99,18 @@ $("confirm").addEventListener("click",async()=>{
       $("modal").classList.remove("open");selected=null;
     }
   }catch(err){
-    console.error(err);
+    console.error("Tenue Outlet reservering mislukt tijdens: "+reservationStage,err);
     if(reservationRef){
       try{await remove(reservationRef);}catch(cleanupError){console.warn("Tijdelijke reserveringsnaam kon niet worden opgeruimd.",cleanupError);}
     }
-    $("modalMessage").textContent=err?.code==="auth/operation-not-allowed"
-      ?"Reserveren is tijdelijk niet beschikbaar. De beheerder moet anoniem aanmelden in Firebase inschakelen."
-      :"Reserveren lukte niet. Controleer of de winkel nog open is en probeer het opnieuw.";
+    const errorCode=String(err?.code||"onbekende fout");
+    if(errorCode==="auth/operation-not-allowed"||errorCode==="auth/admin-restricted-operation"){
+      $("modalMessage").textContent="Anoniem aanmelden staat nog niet aan in Firebase. Schakel Authentication > Sign-in method > Anonymous in en laad deze pagina opnieuw.";
+    }else if(errorCode==="PERMISSION_DENIED"||String(err?.message||"").includes("PERMISSION_DENIED")){
+      $("modalMessage").textContent="Firebase weigert de bewerking tijdens: "+reservationStage+". Controleer of de database-regels gepubliceerd zijn en of de winkel en verkoopronde open zijn. Foutcode: "+errorCode;
+    }else{
+      $("modalMessage").textContent="Er ging iets mis tijdens: "+reservationStage+". Foutcode: "+errorCode+". Probeer de pagina opnieuw te laden.";
+    }
   }finally{button.disabled=false;}
 });
 
