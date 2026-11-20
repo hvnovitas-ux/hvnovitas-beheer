@@ -47,7 +47,7 @@ function render(){
     return '<section class="group"><h2>'+esc(g.title)+'</h2><img class="photo" src="'+esc(g.imageUrl)+'" alt="'+esc(g.title)+'"><div class="items">'+items.map(([iid,it])=>{
       const status=it.status||"available",label={available:"Beschikbaar",reserved:"Gereserveerd",sold:"Verkocht"}[status]||"Niet beschikbaar";
       return '<div class="item"><div class="details"><strong>'+esc(it.type)+(it.number?' · rugnummer '+esc(it.number):"")+'</strong><small>Maat '+esc(it.size)+'</small></div><div class="price">'+euro(it.price)+'</div><div class="actions">'+(status==="available"?'<button class="reserve" data-reserve="'+esc(gid)+':'+esc(iid)+'">Reserveer</button>':'<span class="status '+esc(status)+'">'+label+'</span>')+'</div></div>';
-    }).join("")+'</div><div style="padding:0 20px 18px"><button class="share" data-share="'+esc(gid)+'">Deel deze verkoopronde</button></div></section>';
+    }).join("")+'</div></section>';
   }).join("")||'<p class="empty">Er zijn nog geen artikelen toegevoegd.</p>';
 }
 
@@ -59,12 +59,6 @@ $("outlet").addEventListener("click",e=>{
     const it=groups[gid]?.items?.[iid];
     $("modalItem").textContent=it?it.type+" · maat "+it.size+" · "+euro(it.price):"";
     $("buyer").value="";$("buyerEmail").value="";$("modalMessage").textContent="";$("modal").classList.add("open");$("buyer").focus();
-  }
-  if(b.dataset.share){
-    const url=location.href,title=groups[b.dataset.share]?.title||"HV Novitas Tenue Outlet";
-    if(navigator.share){navigator.share({title,text:"Bekijk de Tenue Outlet van HV Novitas",url}).catch(()=>{});}
-    else if(navigator.clipboard){navigator.clipboard.writeText(url).then(()=>alert("Link gekopieerd. Deel hem in de groepsapp."));}
-    else{prompt("Kopieer deze link om te delen:",url);}
   }
 });
 
