@@ -1,4 +1,4 @@
-import {db,app} from "./firebase.js";
+import {app} from "./firebase.js";
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {getAuth,signInAnonymously,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {getDatabase,ref,onValue,runTransaction,set,remove} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
@@ -116,10 +116,10 @@ $("confirm").addEventListener("click",async()=>{
   }finally{button.disabled=false;}
 });
 
-onValue(ref(db,"tenueOutlet/settings"),snap=>{storeSettings=snap.val()||{open:false};refreshStore();},err=>{
+onValue(ref(outletDb,"tenueOutlet/settings"),snap=>{storeSettings=snap.val()||{open:false};refreshStore();},err=>{
   console.error(err);storeOpen=false;$("outlet").innerHTML='<p class="empty">De winkelstatus kon niet worden geladen. Reserveren is tijdelijk uitgeschakeld.</p>';
 });
 setInterval(refreshStore,1000);
-onValue(ref(db,"tenueOutlet/groups"),snap=>{groups=snap.val()||{};refreshStore();},err=>{
+onValue(ref(outletDb,"tenueOutlet/groups"),snap=>{groups=snap.val()||{};refreshStore();},err=>{
   console.error(err);$("outlet").innerHTML='<p class="empty">De voorraad kon niet worden geladen. Probeer het later opnieuw.</p>';
 });
