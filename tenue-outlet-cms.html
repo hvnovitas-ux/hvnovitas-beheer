@@ -39,5 +39,5 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.
 onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return;}document.getElementById("userInfo").textContent=user.displayName||user.email||"Beheerder";});
 document.getElementById("logoutButton").addEventListener("click",async()=>{await signOut(auth);location.href="login.html";});
 </script>
-<script type="module" src="./tenue-outlet-cms.js?v=5"></script>
+<script type="module" src="./tenue-outlet-cms.js?v=6"></script>
 </body></html>
