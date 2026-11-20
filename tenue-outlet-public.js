@@ -34,7 +34,7 @@ function refreshStore(){
       const sec=Math.ceil((a-now)/1000);
       msg="De verkoop start over "+Math.floor(sec/3600)+" uur, "+Math.floor(sec%3600/60)+" minuten en "+sec%60+" seconden.";
     }else if(z&&now>=z)msg="Deze verkoopronde is afgelopen.";
-    $("outlet").innerHTML='<div class="closed"><h2>De Tenue Outlet is momenteel gesloten</h2><p>'+msg+'</p></div>';
+    $("outlet").innerHTML='<div class="closed"><h2>De HV Novitas Outlet is momenteel gesloten</h2><p>'+msg+'</p></div>';
   }else render();
 }
 
