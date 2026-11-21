@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recreantenteam beheren - HV Novitas</title>
+<link rel="stylesheet" href="cms.css">
+<style>
+.rec-admin-intro{color:#657080;line-height:1.55;margin:8px 0 18px}
+.rec-admin-section{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:22px;margin:22px 0;box-shadow:0 4px 16px #00000008}
+.rec-admin-section h2{margin:0 0 7px;font-size:21px}
+.rec-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rec-admin-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.rec-admin-field.full{grid-column:1/-1}
+.rec-admin-field label{font-size:13px;font-weight:800;color:#303640}
+.rec-admin-field small{font-size:12px;color:#68717d;line-height:1.4}
+.rec-admin-field input,.rec-admin-field textarea,.rec-admin-field select{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:#fff}
+.rec-admin-field textarea{min-height:86px;resize:vertical}
+.rec-admin-check{display:flex;align-items:center;gap:9px;font-size:13px;color:#4b5563;margin-top:10px}
+.rec-admin-check input{width:17px;height:17px;accent-color:#ff6a00}
+.rec-admin-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.rec-admin-actions .secondary{background:#e9edf2;color:#303640}
+.rec-admin-actions .danger{background:#dc2626;color:#fff}
+.rec-admin-list{display:grid;gap:10px;margin-top:18px}
+.rec-admin-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:13px 14px;background:#fafafa;border:1px solid #e5e7eb;border-radius:10px}
+.rec-admin-item strong{display:block;margin-bottom:4px}
+.rec-admin-item small{color:#68717d;line-height:1.4}
+.rec-admin-item-actions{display:flex;gap:7px;flex-wrap:wrap}
+.rec-admin-item-actions button{padding:8px 11px}
+.rec-admin-status{display:none;margin-top:12px;padding:11px 13px;border-radius:8px;font-size:13px}
+.rec-admin-status.show{display:block;background:#ecfdf3;border:1px solid #bbf7d0;color:#166534}
+.rec-admin-status.error{display:block;background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.rec-admin-note{background:#fff7ed;border-left:4px solid #ff6a00;padding:12px 14px;border-radius:8px;color:#7c3f12;font-size:13px;line-height:1.5;margin:14px 0}
+@media(max-width:700px){.rec-admin-grid{grid-template-columns:1fr}.rec-admin-field.full{grid-column:auto}.rec-admin-item{grid-template-columns:1fr}.rec-admin-item-actions{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="title">HV NOVITAS CMS — RECREANTENTEAM</div>
+  <div class="userbox"><span id="userInfo">Laden...</span><button type="button" class="logout" id="logoutButton">Uitloggen</button></div>
+</header>
+<main class="page">
+  <a class="back" href="dashboard.html">← Terug naar dashboard</a>
+  <section class="section">
+    <h1>Recreantenteam beheren</h1>
+    <p class="rec-admin-intro">Beheer de teksten, deskundigen, ervaringen, foto's en video's op de recreantenpagina. Wijzigingen worden direct opgeslagen in Firebase. De pagina is nog niet aan de homepage gekoppeld.</p>
+    <div class="rec-admin-note"><strong>Foto's:</strong> kies een afbeelding om deze via de bestaande Novitas-upload te plaatsen, of vul een bestaande afbeeldingslink in. <strong>Video's:</strong> gebruik een YouTube-link of een directe videolink.</div>
+    <div id="globalStatus" class="rec-admin-status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="rec-admin-section">
+    <h2>Pagina en teksten</h2>
+    <p class="rec-admin-intro">Pas hier de vaste teksten en koppen aan.</p>
+    <form id="settingsForm">
+      <div class="rec-admin-grid">
+        <div class="rec-admin-field"><label for="heroKicker">Kleine kop bovenaan</label><input id="heroKicker" name="heroKicker"></div>
+        <div class="rec-admin-field"><label for="heroTitle">Hoofdtitel</label><input id="heroTitle" name="heroTitle"></div>
+        <div class="rec-admin-field full"><label for="heroLead">Introductie bovenaan</label><textarea id="heroLead" name="heroLead"></textarea></div>
+        <div class="rec-admin-field"><label for="heroNoteTitle">Tekst in het donkere kader</label><input id="heroNoteTitle" name="heroNoteTitle"></div>
+        <div class="rec-admin-field"><label for="heroNoteText">Uitleg in het donkere kader</label><textarea id="heroNoteText" name="heroNoteText"></textarea></div>
+        <div class="rec-admin-field"><label for="introKicker">Kleine kop bij introductie</label><input id="introKicker" name="introKicker"></div>
+        <div class="rec-admin-field"><label for="introTitle">Titel bij introductie</label><input id="introTitle" name="introTitle"></div>
+        <div class="rec-admin-field full"><label for="introText">Introductietekst</label><textarea id="introText" name="introText"></textarea></div><div class="rec-admin-field"><label for="reason1Title">Kaart 1 - titel</label><input id="reason1Title" name="reason1Title"></div><div class="rec-admin-field"><label for="reason1Text">Kaart 1 - tekst</label><textarea id="reason1Text" name="reason1Text"></textarea></div><div class="rec-admin-field"><label for="reason2Title">Kaart 2 - titel</label><input id="reason2Title" name="reason2Title"></div><div class="rec-admin-field"><label for="reason2Text">Kaart 2 - tekst</label><textarea id="reason2Text" name="reason2Text"></textarea></div><div class="rec-admin-field"><label for="reason3Title">Kaart 3 - titel</label><input id="reason3Title" name="reason3Title"></div><div class="rec-admin-field"><label for="reason3Text">Kaart 3 - tekst</label><textarea id="reason3Text" name="reason3Text"></textarea></div>
+        <div class="rec-admin-field"><label for="healthKicker">Kleine kop gezondheid</label><input id="healthKicker" name="healthKicker"></div>
+        <div class="rec-admin-field"><label for="healthTitle">Titel gezondheid</label><input id="healthTitle" name="healthTitle"></div>
+        <div class="rec-admin-field full"><label for="healthIntro">Inleiding gezondheid</label><textarea id="healthIntro" name="healthIntro"></textarea></div>
+        <div class="rec-admin-field full"><label for="healthBody">Uitgebreide informatie over bewegen en gezondheid</label><textarea id="healthBody" name="healthBody" rows="6"></textarea><small>Gebruik een lege regel tussen alinea's.</small></div>
+        <div class="rec-admin-field"><label for="expertsKicker">Kleine kop deskundigen</label><input id="expertsKicker" name="expertsKicker"></div><div class="rec-admin-field"><label for="expertsTitle">Titel deskundigen</label><input id="expertsTitle" name="expertsTitle"></div>
+        <div class="rec-admin-field"><label for="expertsIntro">Intro deskundigen</label><textarea id="expertsIntro" name="expertsIntro"></textarea></div>
+        <div class="rec-admin-field"><label for="teamKicker">Kleine kop recreantenteam</label><input id="teamKicker" name="teamKicker"></div>
+        <div class="rec-admin-field"><label for="teamTitle">Titel recreantenteam</label><input id="teamTitle" name="teamTitle"></div>
+        <div class="rec-admin-field full"><label for="teamIntro">Intro recreantenteam</label><textarea id="teamIntro" name="teamIntro"></textarea></div>
+        <div class="rec-admin-field full"><label for="teamBody">Uitleg: wat doen jullie tijdens de training?</label><textarea id="teamBody" name="teamBody" rows="5"></textarea><small>Gebruik een lege regel tussen alinea's.</small></div>
+        <div class="rec-admin-field"><label for="mediaKicker">Kleine kop foto's en video's</label><input id="mediaKicker" name="mediaKicker"></div><div class="rec-admin-field"><label for="mediaTitle">Titel foto's en video's</label><input id="mediaTitle" name="mediaTitle"></div>
+        <div class="rec-admin-field"><label for="mediaIntro">Intro foto's en video's</label><textarea id="mediaIntro" name="mediaIntro"></textarea></div>
+        <div class="rec-admin-field"><label for="storiesKicker">Kleine kop ervaringen</label><input id="storiesKicker" name="storiesKicker"></div><div class="rec-admin-field"><label for="storiesTitle">Titel ervaringen</label><input id="storiesTitle" name="storiesTitle"></div>
+        <div class="rec-admin-field"><label for="storiesIntro">Intro ervaringen</label><textarea id="storiesIntro" name="storiesIntro"></textarea></div>
+        <div class="rec-admin-field"><label for="ctaTitle">Titel contactblok</label><input id="ctaTitle" name="ctaTitle"></div>
+        <div class="rec-admin-field"><label for="ctaLinkText">Tekst contactknop</label><input id="ctaLinkText" name="ctaLinkText"></div>
+        <div class="rec-admin-field full"><label for="ctaText">Tekst contactblok</label><textarea id="ctaText" name="ctaText"></textarea></div>
+        <div class="rec-admin-field full"><label for="ctaLink">Link contactknop</label><input id="ctaLink" name="ctaLink" placeholder="mailto:info@hvnovitas.nl"></div>
+      </div>
+      <div class="rec-admin-actions"><button type="submit">Pagina-teksten opslaan</button></div>
+    </form>
+    <div id="settingsStatus" class="rec-admin-status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="rec-admin-section">
+    <h2>Deskundigen aan het woord</h2>
+    <p class="rec-admin-intro">Voeg deskundigen en interviews toe. De bezoeker kan via 'Lees verder' het volledige verhaal openen.</p>
+    <form id="expertForm">
+      <input type="hidden" id="expertId">
+      <div class="rec-admin-grid">
+        <div class="rec-admin-field"><label for="expertTitle">Titel / onderwerp</label><input id="expertTitle" required></div>
+        <div class="rec-admin-field"><label for="expertName">Naam deskundige</label><input id="expertName"></div>
+        <div class="rec-admin-field"><label for="expertRole">Functie / deskundigheid</label><input id="expertRole" placeholder="Bijvoorbeeld fysiotherapeut"></div>
+        <div class="rec-admin-field"><label for="expertOrder">Volgorde</label><input id="expertOrder" type="number" value="10"></div>
+        <div class="rec-admin-field full"><label for="expertIntro">Korte introductie</label><textarea id="expertIntro" required></textarea></div>
+        <div class="rec-admin-field full"><label for="expertDetail">Volledig verhaal (Lees verder)</label><textarea id="expertDetail" rows="6"></textarea></div>
+        <div class="rec-admin-field"><label for="expertImageUrl">Foto-URL (optioneel)</label><input id="expertImageUrl" type="url" placeholder="https://..."></div>
+        <div class="rec-admin-field"><label for="expertImageFile">Of upload een foto</label><input id="expertImageFile" type="file" accept="image/*"></div>
+      </div>
+      <label class="rec-admin-check"><input id="expertActive" type="checkbox" checked> Zichtbaar op de pagina</label>
+      <div class="rec-admin-actions"><button type="submit">Deskundige opslaan</button><button type="button" class="secondary" data-reset="expertForm">Leegmaken</button></div>
+    </form>
+    <div id="expertStatus" class="rec-admin-status" role="status" aria-live="polite"></div>
+    <div id="expertList" class="rec-admin-list"></div>
+  </section>
+
+  <section class="rec-admin-section">
+    <h2>Ervaringen van recreanten</h2>
+    <p class="rec-admin-intro">Bewaar persoonlijke verhalen en uitspraken. Publiceer alleen met toestemming van de betreffende persoon.</p>
+    <form id="storyForm">
+      <input type="hidden" id="storyId">
+      <div class="rec-admin-grid">
+        <div class="rec-admin-field"><label for="storyTitle">Titel</label><input id="storyTitle" required></div>
+        <div class="rec-admin-field"><label for="storyName">Naam / omschrijving</label><input id="storyName" placeholder="Bijvoorbeeld een oud-keeper"></div>
+        <div class="rec-admin-field full"><label for="storyQuote">Korte uitspraak</label><input id="storyQuote" placeholder="Ik heb er zoveel plezier in!"></div>
+        <div class="rec-admin-field full"><label for="storyText">Het verhaal</label><textarea id="storyText" rows="5" required></textarea></div>
+        <div class="rec-admin-field"><label for="storyOrder">Volgorde</label><input id="storyOrder" type="number" value="10"></div>
+      </div>
+      <label class="rec-admin-check"><input id="storyActive" type="checkbox" checked> Zichtbaar op de pagina</label>
+      <div class="rec-admin-actions"><button type="submit">Ervaring opslaan</button><button type="button" class="secondary" data-reset="storyForm">Leegmaken</button></div>
+    </form>
+    <div id="storyStatus" class="rec-admin-status" role="status" aria-live="polite"></div>
+    <div id="storyList" class="rec-admin-list"></div>
+  </section>
+
+  <section class="rec-admin-section">
+    <h2>Foto's en video's</h2>
+    <p class="rec-admin-intro">Voeg trainingsfoto's en video's toe met een korte begeleidende tekst.</p>
+    <form id="mediaForm">
+      <input type="hidden" id="mediaId">
+      <div class="rec-admin-grid">
+        <div class="rec-admin-field"><label for="mediaItemTitle">Titel</label><input id="mediaItemTitle" required></div>
+        <div class="rec-admin-field"><label for="mediaType">Soort</label><select id="mediaType"><option value="image">Foto</option><option value="video">Video</option></select></div>
+        <div class="rec-admin-field full"><label for="mediaText">Begeleidende tekst</label><textarea id="mediaText"></textarea></div>
+        <div class="rec-admin-field"><label for="mediaImageUrl">Foto-URL</label><input id="mediaImageUrl" type="url" placeholder="https://..."></div>
+        <div class="rec-admin-field"><label for="mediaImageFile">Of upload een foto</label><input id="mediaImageFile" type="file" accept="image/*"></div>
+        <div class="rec-admin-field full"><label for="mediaVideoUrl">Video-URL (YouTube of directe videolink)</label><input id="mediaVideoUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."></div>
+        <div class="rec-admin-field"><label for="mediaOrder">Volgorde</label><input id="mediaOrder" type="number" value="10"></div>
+      </div>
+      <label class="rec-admin-check"><input id="mediaActive" type="checkbox" checked> Zichtbaar op de pagina</label>
+      <div class="rec-admin-actions"><button type="submit">Foto / video opslaan</button><button type="button" class="secondary" data-reset="mediaForm">Leegmaken</button></div>
+    </form>
+    <div id="mediaStatus" class="rec-admin-status" role="status" aria-live="polite"></div>
+    <div id="mediaList" class="rec-admin-list"></div>
+  </section>
+</main>
+
+<script type="module" src="recreanten-cms.js?v=20261122-1"></script>
+</body>
+</html>
