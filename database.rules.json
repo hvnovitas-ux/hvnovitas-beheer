@@ -179,6 +179,9 @@
           }
         }
       }
+    },
+    "videotheek": {
+      ".read": true
     }
   }
 }
