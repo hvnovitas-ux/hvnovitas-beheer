@@ -11,17 +11,114 @@
 import { db, auth } from "./firebase.js";
 import { ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-const defaults=[
-["training01","Warming-up"],["training02","Passen & vangen"],["training03","Sprongschot"],["training04","Coördinatie"],["training05","Verdediging"],["training06","Aanvalsspel"],["training07","Jeugdtraining"],["training08","Keeperstraining"],["training09","Oefeningen"],["training10","Complete training"],["archive01","Novitas – De beginjaren"],["archive02","Novitas door de jaren heen"]
+
+const defaults = [
+  ["training01","Warming-up"],["training02","Passen & vangen"],
+  ["training03","Sprongschot"],["training04","Coördinatie"],
+  ["training05","Verdediging"],["training06","Aanvalsspel"],
+  ["training07","Jeugdtraining"],["training08","Keeperstraining"],
+  ["training09","Oefeningen"],["training10","Complete training"],
+  ["archive01","Novitas – De beginjaren"],["archive02","Novitas door de jaren heen"]
 ];
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-onAuthStateChanged(auth,user=>{if(!user){location.href="login.html";return}document.getElementById("userInfo").textContent=user.displayName||user.email||"Beheerder"},error=>{console.error("CMS-aanmeldstatus kon niet worden geladen:",error);document.getElementById("userInfo").textContent="Videotheekbeheer"});
-document.getElementById("logoutButton").addEventListener("click",async()=>{await signOut(auth);location.href="login.html"});
-function makeCard([id,defaultTitle],data={}){
- return '<article class="vt-admin-card" data-id="'+id+'"><span class="slot">'+(id.startsWith("archive")?"ARCHIEF":"TRAINING")+" · "+id.toUpperCase()+"</span><h3>"+esc(defaultTitle)+"</h3><label for="'+id+'Title">Titel</label><input id="'+id+'Title" maxlength="100" value="'+esc(data.title||defaultTitle)+'"><label for="'+id+'Url">YouTube-link</label><input id="'+id+'Url" type="url" placeholder="https://www.youtube.com/watch?v=..." value="'+esc(data.url||"")+'"><label for="'+id+'Description">Korte omschrijving (optioneel)</label><textarea id="'+id+'Description" maxlength="240" placeholder="Waar gaat deze video over?">'+esc(data.description||"")+'</textarea><label for="'+id+'Thumb">Eigen thumbnail-URL (optioneel)</label><input id="'+id+'Thumb" type="url" placeholder="https://..." value="'+esc(data.thumbnail||"")+'"><button type="button" data-save="'+id+'">Opslaan</button><span class="vt-status" id="'+id+'Status"></span></article>';
+
+const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[char]));
+
+function makeCard([id, defaultTitle]) {
+  return `
+    <article class="vt-admin-card">
+      <span class="slot">${id.startsWith("archive") ? "ARCHIEF" : "TRAINING"} · ${id.toUpperCase()}</span>
+      <h3>${esc(defaultTitle)}</h3>
+      <label for="${id}Title">Titel van de video</label>
+      <input id="${id}Title" maxlength="100" value="${esc(defaultTitle)}" placeholder="Geef de video een titel">
+      <label for="${id}Url">Plak hier de YouTube-link</label>
+      <input id="${id}Url" type="url" inputmode="url" autocomplete="url" placeholder="https://www.youtube.com/watch?v=..." aria-label="YouTube-link voor ${esc(defaultTitle)}">
+      <button type="button" data-save="${id}">Video opslaan</button>
+      <span class="vt-status" id="${id}Status" aria-live="polite"></span>
+    </article>`;
 }
-function render(data){document.getElementById("trainingAdmin").innerHTML=defaults.slice(0,10).map(x=>makeCard(x,data[x[0]]||{})).join("");document.getElementById("archiveAdmin").innerHTML=defaults.slice(10).map(x=>makeCard(x,data[x[0]]||{})).join("");document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",async()=>{const id=btn.dataset.save;const value={title:document.getElementById(id+"Title").value.trim(),url:document.getElementById(id+"Url").value.trim(),description:document.getElementById(id+"Description").value.trim(),thumbnail:document.getElementById(id+"Thumb").value.trim(),updatedAt:Date.now()};if(value.url&&!/^https?:\/\//i.test(value.url)){alert("Vul een volledige YouTube-link in die begint met https://");return}try{await set(ref(db,"videotheek/"+id),value);document.getElementById(id+"Status").textContent="Opgeslagen";}catch(e){console.error(e);alert("Opslaan is niet gelukt. Controleer je CMS-toegang.");}}))}
-// Toon de invulvakken direct; daarna vullen we eventuele eerder opgeslagen gegevens in.
-render({});
-onValue(ref(db,"videotheek"),s=>render(s.val()||{}),e=>{console.error(e);alert("De videotheekgegevens konden niet worden geladen. De invulvakken blijven beschikbaar.");});
+
+// Bouw de invulvakken direct op, onafhankelijk van het laden van Firebase.
+document.getElementById("trainingAdmin").innerHTML = defaults.slice(0, 10).map(makeCard).join("");
+document.getElementById("archiveAdmin").innerHTML = defaults.slice(10).map(makeCard).join("");
+
+let signedInUser = null;
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  signedInUser = user;
+  document.getElementById("userInfo").textContent = user.displayName || user.email || "Beheerder";
+}, error => {
+  console.error("Aanmeldstatus:", error);
+  document.getElementById("userInfo").textContent = "Videotheekbeheer";
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    window.location.href = "login.html";
+  } catch (error) {
+    console.error("Uitloggen mislukt:", error);
+    alert("Uitloggen is niet gelukt.");
+  }
+});
+
+// Laad bestaande waarden in de velden zonder de invulvakken opnieuw op te bouwen.
+onValue(ref(db, "videotheek"), snapshot => {
+  const data = snapshot.val() || {};
+  defaults.forEach(([id, defaultTitle]) => {
+    const saved = data[id] || {};
+    const titleInput = document.getElementById(id + "Title");
+    const urlInput = document.getElementById(id + "Url");
+    if (titleInput && document.activeElement !== titleInput) titleInput.value = saved.title || defaultTitle;
+    if (urlInput && document.activeElement !== urlInput) urlInput.value = saved.url || "";
+  });
+}, error => {
+  console.error("Videotheekgegevens laden mislukt:", error);
+  document.getElementById("userInfo").textContent = signedInUser
+    ? (signedInUser.displayName || signedInUser.email || "Beheerder")
+    : "Videotheekbeheer";
+});
+
+// Eén opsla-handler voor alle twaalf vakken.
+document.addEventListener("click", async event => {
+  const button = event.target.closest("[data-save]");
+  if (!button) return;
+
+  const id = button.dataset.save;
+  const title = document.getElementById(id + "Title").value.trim();
+  const url = document.getElementById(id + "Url").value.trim();
+  const status = document.getElementById(id + "Status");
+
+  if (!title) {
+    status.textContent = "Vul eerst een titel in.";
+    return;
+  }
+  if (!url || !/^https?:\/\//i.test(url)) {
+    status.textContent = "Plak eerst een volledige YouTube-link.";
+    document.getElementById(id + "Url").focus();
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Opslaan...";
+  status.textContent = "";
+  try {
+    await set(ref(db, "videotheek/" + id), {
+      title,
+      url,
+      updatedAt: Date.now()
+    });
+    status.textContent = "Opgeslagen — deze video staat op deze plek in de videotheek.";
+  } catch (error) {
+    console.error("Video opslaan mislukt:", error);
+    status.textContent = "Opslaan mislukt. Controleer je verbinding en CMS-toegang.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Video opslaan";
+  }
+});
 </script></body></html>
