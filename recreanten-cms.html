@@ -129,16 +129,16 @@
 
   <section class="rec-admin-section">
     <h2>Foto's en video's</h2>
-    <p class="rec-admin-intro">Voeg trainingsfoto's en video's toe met een korte begeleidende tekst.</p>
+    <p class="rec-admin-intro">Voeg hier beeldmateriaal toe dat op de openbare recreantenpagina verschijnt. Kies eerst bij <strong>Soort</strong> voor Foto of Video. De velden passen zich daarna aan.</p>
     <form id="mediaForm">
       <input type="hidden" id="mediaId">
       <div class="rec-admin-grid">
         <div class="rec-admin-field"><label for="mediaItemTitle">Titel</label><input id="mediaItemTitle" required></div>
-        <div class="rec-admin-field"><label for="mediaType">Soort</label><select id="mediaType"><option value="image">Foto</option><option value="video">Video</option></select></div>
+        <div class="rec-admin-field"><label for="mediaType">1. Wat wil je toevoegen?</label><select id="mediaType"><option value="image">Foto</option><option value="video">Video</option></select><small>Kies hier eerst Video als je een videolink wilt plaatsen.</small></div>
         <div class="rec-admin-field full"><label for="mediaText">Begeleidende tekst</label><textarea id="mediaText"></textarea></div>
-        <div class="rec-admin-field"><label for="mediaImageUrl">Foto-URL</label><input id="mediaImageUrl" type="url" placeholder="https://..."></div>
-        <div class="rec-admin-field"><label for="mediaImageFile">Of upload een foto</label><input id="mediaImageFile" type="file" accept="image/*"></div>
-        <div class="rec-admin-field full"><label for="mediaVideoUrl">Video-URL (YouTube of directe videolink)</label><input id="mediaVideoUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."></div>
+        <div class="rec-admin-field" id="mediaPhotoUrlField"><label for="mediaImageUrl">Foto-link</label><input id="mediaImageUrl" type="url" placeholder="https://..."></div>
+        <div class="rec-admin-field" id="mediaPhotoFileField"><label for="mediaImageFile">Of upload een foto</label><input id="mediaImageFile" type="file" accept="image/*"></div>
+        <div class="rec-admin-field full" id="mediaVideoField" hidden><label for="mediaVideoUrl">2. Plak hier de link van je video</label><input id="mediaVideoUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="url"><small>Open je video op YouTube, kies Delen en kopieer de link. Plak de volledige link in dit vak. Bijvoorbeeld: https://www.youtube.com/watch?v=xxxxxxxxxxx</small></div>
         <div class="rec-admin-field"><label for="mediaOrder">Volgorde</label><input id="mediaOrder" type="number" value="10"></div>
       </div>
       <label class="rec-admin-check"><input id="mediaActive" type="checkbox" checked> Zichtbaar op de pagina</label>
@@ -149,6 +149,6 @@
   </section>
 </main>
 
-<script type="module" src="recreanten-cms.js?v=20261122-1"></script>
+<script type="module" src="recreanten-cms.js?v=20261125-2"></script>
 </body>
 </html>
