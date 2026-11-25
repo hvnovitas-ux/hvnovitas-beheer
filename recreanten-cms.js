@@ -113,7 +113,7 @@ const DEFAULT_SETTINGS = {
 onValue(ref(db, ROOT + "/settings"), async snapshot => {
   const settings = snapshot.val() || {};
   const missing = Object.fromEntries(
-    Object.entries(DEFAULT_SETTINGS).filter(([key]) => !Object.prototype.hasOwnProperty.call(settings, key))
+    Object.entries(DEFAULT_SETTINGS).filter(([key]) => !Object.prototype.hasOwnProperty.call(settings, key) || settings[key] === null || String(settings[key]).trim() === "")
   );
   if (Object.keys(missing).length) {
     try {
