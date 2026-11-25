@@ -131,6 +131,16 @@ function value(id) {
   return $(id).value.trim();
 }
 
+function updateMediaFields() {
+  const isVideo = $("mediaType").value === "video";
+  $("mediaVideoField").hidden = !isVideo;
+  $("mediaPhotoUrlField").hidden = isVideo;
+  $("mediaPhotoFileField").hidden = isVideo;
+}
+
+$("mediaType").addEventListener("change", updateMediaFields);
+updateMediaFields();
+
 async function saveItem(type, payload, id, fileInputId, urlInputId, statusId) {
   try {
     const file = fileInputId ? $(fileInputId).files[0] : null;
@@ -155,7 +165,7 @@ async function saveItem(type, payload, id, fileInputId, urlInputId, statusId) {
     $(type === "experts" ? "expertId" : type === "stories" ? "storyId" : "mediaId").value = "";
     if (type === "experts") $("expertOrder").value = "10";
     if (type === "stories") $("storyOrder").value = "10";
-    if (type === "media") $("mediaOrder").value = "10";
+    if (type === "media") { $("mediaOrder").value = "10"; updateMediaFields(); }
     $(type === "experts" ? "expertActive" : type === "stories" ? "storyActive" : "mediaActive").checked = true;
   } catch (error) {
     console.error(error);
@@ -238,6 +248,7 @@ function fillForm(type, item) {
     else if (key === "active") $(id).checked = item.active !== false;
     else if ($(id)) $(id).value = item[key] ?? "";
   });
+  if (type === "media") updateMediaFields();
   const formId = type === "experts" ? "expertForm" : type === "stories" ? "storyForm" : "mediaForm";
   $(formId).scrollIntoView({ behavior: "smooth", block: "center" });
 }
