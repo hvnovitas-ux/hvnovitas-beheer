@@ -72,12 +72,62 @@ async function uploadImage(file) {
   return result.secure_url;
 }
 
-onValue(ref(db, ROOT + "/settings"), snapshot => {
+const DEFAULT_SETTINGS = {
+  heroKicker: "RECREATIEF HANDBAL BIJ HV NOVITAS",
+  heroTitle: "WAAROM STOPPEN MET WAT JE HET LIEFSTE DOET?",
+  heroLead: "Je hoeft niet meer in competitie te spelen om te blijven handballen. Blijf bewegen, ontmoet anderen en houd plezier in de sport.",
+  heroNoteTitle: "Handbal blijft leuk!",
+  heroNoteText: "Bij HV Novitas kun je ook zonder wedstrijddruk blijven trainen. Oud-handballers en beginners zijn welkom.",
+  introKicker: "MEER DAN WEDSTRIJDEN",
+  introTitle: "Blijf bewegen met de sport die je graag doet",
+  introText: "Handbal hoeft niet te eindigen bij je laatste competitiewedstrijd. Recreatief handbal biedt ruimte om op een ontspannen manier actief te blijven, samen te sporten en plezier te hebben.",
+  reason1Title: "Blijf in beweging",
+  reason1Text: "Handbal brengt je in beweging en daagt je uit om actief bezig te blijven.",
+  reason2Title: "Blijf mensen ontmoeten",
+  reason2Text: "Samen sporten betekent samen lachen, contact houden en ergens bij horen.",
+  reason3Title: "Blijf handballen",
+  reason3Text: "Geen competitieverplichting, maar wel de bal, het samenspel en het plezier.",
+  healthKicker: "GEZOND BEWEGEN",
+  healthTitle: "Waarom blijven sporten belangrijk is",
+  healthIntro: "We willen op deze pagina betrouwbare informatie delen over bewegen en gezondheid. Daarom geven we deskundigen de ruimte om hun kennis en ervaring te delen.",
+  healthBody: "Bewegen is belangrijk in iedere levensfase. Hoe je verantwoord actief blijft, verschilt per persoon. Op deze pagina verzamelen we informatie en inzichten van deskundigen, zodat bezoekers zich goed kunnen informeren.\n\nHV Novitas deelt vanuit de liefde voor handbal de uitnodiging om in beweging te blijven. Voor persoonlijk medisch advies kun je terecht bij je huisarts of een andere zorgprofessional.",
+  expertsKicker: "KENNIS EN ERVARING",
+  expertsTitle: "Deskundigen aan het woord",
+  expertsIntro: "Fysiotherapeuten, beweegdeskundigen en andere professionals delen hier hun kennis over bewegen, gezondheid en actief blijven.",
+  teamKicker: "RECREANTEN BIJ NOVITAS",
+  teamTitle: "Maar wat doen jullie dan?",
+  teamIntro: "Een heel begrijpelijke vraag. Daarom laten we graag zien hoe onze trainingen eruitzien.",
+  teamBody: "We trainen op een ontspannen manier met de handbal als uitgangspunt. Er is aandacht voor bewegen, balvaardigheid, samenspel en afronden op doel. Iedereen doet mee op zijn of haar eigen niveau.\n\nJe hoeft geen oud-handballer te zijn en je hoeft niet aan wedstrijden mee te doen. Het gaat om actief bezig zijn en plezier hebben in handbal.",
+  mediaKicker: "KIJK MEE",
+  mediaTitle: "Recreatief handbal in beeld",
+  mediaIntro: "Foto's en video's laten beter dan woorden zien wat we samen doen en hoeveel plezier handbal kan geven.",
+  storiesKicker: "VERHALEN UIT DE GROEP",
+  storiesTitle: "Handbalplezier opnieuw ontdekt",
+  storiesIntro: "Iedereen heeft zijn eigen reden om te blijven of opnieuw te gaan handballen.",
+  ctaTitle: "Zin om weer te gaan handballen?",
+  ctaText: "Wil je weten of recreatief handbal bij je past? Neem vrijblijvend contact op met HV Novitas. We vertellen je graag meer.",
+  ctaLinkText: "Plan een proeftraining",
+  ctaLink: "https://www.hvnovitas.nl/proeftrainingen.html"
+};
+
+onValue(ref(db, ROOT + "/settings"), async snapshot => {
   const settings = snapshot.val() || {};
+  const missing = Object.fromEntries(
+    Object.entries(DEFAULT_SETTINGS).filter(([key]) => !Object.prototype.hasOwnProperty.call(settings, key))
+  );
+  if (Object.keys(missing).length) {
+    try {
+      await update(ref(db, ROOT + "/settings"), { ...missing, updated: Date.now() });
+    } catch (error) {
+      console.error("Standaardteksten invullen mislukt:", error);
+      status("globalStatus", "De standaardteksten konden niet automatisch worden ingevuld. Controleer de Firebase-rechten.", true);
+    }
+  }
+  const merged = { ...DEFAULT_SETTINGS, ...settings };
   const form = $("settingsForm");
   Array.from(form.elements).forEach(field => {
-    if (field.name && Object.prototype.hasOwnProperty.call(settings, field.name)) {
-      field.value = settings[field.name] ?? "";
+    if (field.name && Object.prototype.hasOwnProperty.call(merged, field.name)) {
+      field.value = merged[field.name] ?? "";
     }
   });
 });
