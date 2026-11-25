@@ -110,26 +110,41 @@ const DEFAULT_SETTINGS = {
   ctaLink: "https://www.hvnovitas.nl/proeftrainingen.html"
 };
 
-onValue(ref(db, ROOT + "/settings"), async snapshot => {
+onValue(ref(db, ROOT + "/settings"), snapshot => {
   const settings = snapshot.val() || {};
-  const missing = Object.fromEntries(
-    Object.entries(DEFAULT_SETTINGS).filter(([key]) => !Object.prototype.hasOwnProperty.call(settings, key) || settings[key] === null || String(settings[key]).trim() === "")
-  );
-  if (Object.keys(missing).length) {
-    try {
-      await update(ref(db, ROOT + "/settings"), { ...missing, updated: Date.now() });
-    } catch (error) {
-      console.error("Standaardteksten invullen mislukt:", error);
-      status("globalStatus", "De standaardteksten konden niet automatisch worden ingevuld. Controleer de Firebase-rechten.", true);
+
+  // Start met de complete voorbeeldteksten en neem alleen niet-lege waarden uit Firebase over.
+  // Zo kunnen lege velden in de database de standaardteksten niet wissen.
+  const merged = { ...DEFAULT_SETTINGS };
+  Object.entries(settings).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && String(value).trim() !== "") {
+      merged[key] = value;
     }
-  }
-  const merged = { ...DEFAULT_SETTINGS, ...settings };
+  });
+
   const form = $("settingsForm");
   Array.from(form.elements).forEach(field => {
     if (field.name && Object.prototype.hasOwnProperty.call(merged, field.name)) {
       field.value = merged[field.name] ?? "";
     }
   });
+
+  // Sla ontbrekende of lege standaardvelden apart op; het formulier wordt daar niet op laten wachten.
+  const missing = Object.fromEntries(
+    Object.entries(DEFAULT_SETTINGS).filter(([key]) =>
+      !Object.prototype.hasOwnProperty.call(settings, key) ||
+      settings[key] === null ||
+      String(settings[key]).trim() === ""
+    )
+  );
+  if (Object.keys(missing).length) {
+    update(ref(db, ROOT + "/settings"), { ...missing, updated: Date.now() })
+      .then(() => status("globalStatus", "De standaardteksten zijn ingevuld. Je kunt ze hieronder aanpassen en opslaan."))
+      .catch(error => {
+        console.error("Standaardteksten invullen mislukt:", error);
+        status("globalStatus", "De teksten zijn in het formulier geladen, maar konden niet in Firebase worden opgeslagen. Controleer de Firebase-rechten.", true);
+      });
+  }
 });
 
 $("settingsForm").addEventListener("submit", async event => {
